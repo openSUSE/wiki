@@ -1,0 +1,32 @@
+/* 
+ * Adapted common print styles from MediWiki for openSUSE.org
+ * Only works in addition to the commonPrint.css from MediaWiki
+ * Author: Frank Sundermeyer <fs@suse.de>
+ * Last changed: 29 Mar 2006
+ */
+
+.skipLinks,
+div.bar,
+div#p-cactions,
+li#f-numberofwatchingusers,
+li#f-tagline,
+li#f-copyright {
+    display: none;
+}
+#footer-content {
+    margin: 0 0 .6em 0;
+}
+#footer {
+    margin: 1em 0 0 0;
+    padding: 5px 0 0 0;
+}
+#bodyContent a {
+    background: none !important;
+    padding: 0;
+}
+body {
+    margin: 5px;
+}
+h1, h2, h3, h4, h5, h6 {
+    color: #000 ! important;
+}

@@ -1,0 +1,13 @@
+/* 
+**
+**  $Id: $
+**
+**  Funktion: Master Patch (IE Fixes) CSS-file for the openSUSE.org wiki
+**  Author:   Frank Sundermeyer <fs@opensuse.org>
+**  License:  see copyright/COPYRIGHT
+*/
+@import url(../yaml/core/iehacks.css);
+@media screen {
+  @import url(../common/patch_2col_left_13.css);
+  @import url(../common/iehacks_opensuse.css);
+}
