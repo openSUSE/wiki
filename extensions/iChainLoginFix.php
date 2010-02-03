@@ -1,5 +1,5 @@
 <?php
-global $wgUser;
+global $wgUser,$wgAuth ;
 
 # include this file in index.php after$mediaWiki->initialize() 
 
@@ -8,6 +8,7 @@ global $wgUser;
 if (isset($_SERVER['HTTP_X_USERNAME']) && $wgUser->isAnon()) {
     error_log("User '" . $_SERVER['HTTP_X_USERNAME'] . "' is logged in ichain but not the wiki, doing it automatically");
     $wgUser = $wgUser->newFromName( $_SERVER['HTTP_X_USERNAME'] );
+    $wgAuth->updateUser( $wgUser );
     $wgUser->setCookies();
 }
 

@@ -63,6 +63,7 @@ if( $wgTitle === NULL ) {
 }
 
 wfProfileOut( 'main-misc-setup' );
+require( $IP . '/extensions/iChainLoginFix.php' );
 
 #
 # Send Ajax requests to the Ajax dispatcher.
@@ -114,7 +115,6 @@ $mediaWiki->setVal( 'UseExternalEditor', $wgUseExternalEditor );
 $mediaWiki->setVal( 'UsePathInfo', $wgUsePathInfo );
 
 $mediaWiki->initialize( $wgTitle, $wgArticle, $wgOut, $wgUser, $wgRequest );
-require_once( $IP . '/extensions/iChainLoginFix.php' );
 $mediaWiki->finalCleanup( $wgDeferredUpdateList, $wgOut );
 
 # Not sure when $wgPostCommitUpdateList gets set, so I keep this separate from finalCleanup
