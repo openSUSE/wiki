@@ -368,8 +368,8 @@ var $skin;
   <?php $this->html('bottomscripts'); /* JS call to runBodyOnloadHook */ ?>
   <?php $this->html('reporttime') ?>
 
-  <script type="text/javascript" src="http://www.novell.com/inc/superstats.js"></script>
-  <noscript><img src="https://novellcom.112.2O7.net/b/ss/novellcom/1/G.6--NS/0" height="1" width="1" alt="" /></noscript>
+  <script type="text/javascript"> var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www."); document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E")); </script> <script type="text/javascript"> try { var pageTracker = _gat._getTracker("UA-3367212-3"); pageTracker._trackPageview(); } catch(err) {}</script>
+
  </body>
 </html>
 <?php
