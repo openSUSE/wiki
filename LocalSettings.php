@@ -153,7 +153,10 @@ $wgMetaNamespace = 'openSUSE';
 $wgExtraNamespaces[100] = 'SDB';                                                                  
 $wgExtraNamespaces[101] = 'SDB_Talk';                                                               
 $wgExtraNamespaces[102] = 'Portal';                                                                 
-$wgExtraNamespaces[103] = 'Portal_Talk';                                                             
+$wgExtraNamespaces[103] = 'Portal_Talk';
+$wgExtraNamespaces[104] = 'Archive';
+$wgExtraNamespaces[105] = 'Archive_Talk';                                                             
+
 # Enable/Disable subpages                                                                              
 $wgNamespacesWithSubpages[-1] = false;                                                             
 $wgNamespacesWithSubpages[0] = true;                                                           
@@ -172,6 +175,8 @@ $wgNamespacesWithSubpages[100] = true;
 $wgNamespacesWithSubpages[101] = true;                                               
 $wgNamespacesWithSubpages[102] = true;                                                         
 $wgNamespacesWithSubpages[103] = true;                                               
+$wgNamespacesWithSubpages[104] = true;                                               
+$wgNamespacesWithSubpages[105] = true;                                               
 
 ##### Misc #####
 
@@ -234,4 +239,5 @@ enableSemantics('wiki.opensuse.org');
 
 # MultiBoilerplate ----------------
 require_once( "$IP/extensions/MultiBoilerplate/MultiBoilerplate.php" );
+$wgMultiBoilerplateOptions = false;
 #-------------------------------------------------------------- ?>
