@@ -474,6 +474,11 @@ span.diffchange {
     background: url(images/mail.png) center right no-repeat;
     padding-right: 18px;
 }
+#bodyContent a[href ^="xmpp:"],
+.link-xmpp {
+    background: url(images/xmpp_icon.png) center right no-repeat;
+    padding-right: 10px;
+}
 #bodyContent a[href^="news://"] {
     background: url(images/news.png) center right no-repeat;
     padding-right: 18px;

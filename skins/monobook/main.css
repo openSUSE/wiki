@@ -543,6 +543,11 @@ table.rimage {
 	background: url(mail_icon.gif) center right no-repeat;
 	padding: 0 18px;
 }
+#bodyContent a[href ^="xmpp:"],
+.link-xmpp {
+    background: url(xmpp_icon.png) center right no-repeat;
+    padding-right: 10px;
+}
 #bodyContent a[href ^="news://"] {
 	background: url(news_icon.png) center right no-repeat;
 	padding: 0 18px;
