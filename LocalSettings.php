@@ -184,6 +184,8 @@ $wgUseAjax = true; // Enable Ajax
 $wgAllowExternalImages = true; // Enable links to external images
 # Allow upload of files with the following extensions            
 $wgFileExtensions = array( 'doc', 'docx', 'gif', 'jpg', 'jpeg', 'odp', 'ods', 'odt', 'pdf', 'png', 'ppt', 'pptx', 'svg', 'sxc', 'sxw', 'xls', 'xlsx' );                                                                     
+# Add XMPP functionality
+$wgUrlProtocols[] = 'xmpp:';
 
 # Disable all upload/edit rights during the transition
 # to be removed once the wiki is finished             

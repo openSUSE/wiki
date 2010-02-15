@@ -524,6 +524,7 @@ class wikiFuzz {
             'nntp://',
             'worldwind://',
             'mailto:',
+	    'xmpp:',
 
             // images.
             "[[image:",
