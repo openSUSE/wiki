@@ -702,17 +702,14 @@ class PreferencesForm {
 				)
 			);
 		}
-		if ( $wgEnableEmail ) {
-			$wgOut->addHTML(
-				$this->tableRow(
-					Xml::label( wfMsg('youremail'), 'wpUserEmail' ),
-					Xml::input( 'wpUserEmail', 25, $this->mUserEmail, array( 'id' => 'wpUserEmail' ) ),
-					Xml::tags('div', array( 'class' => 'prefsectiontip' ),
-						wfMsgExt( $wgEmailConfirmToEdit ? 'prefs-help-email-required' : 'prefs-help-email', 'parseinline' )
-					)
-				)
-			);
-		}
+        if ( $wgEnableEmail ) {
+                $wgOut->addHTML(
+                        $this->tableRow(
+                                Xml::label( wfMsg('youremail'), 'wpUserEmail' ),
+                                $this->mUserEmail
+                        )
+                );
+        }
 
 		global $wgParser, $wgMaxSigChars;
 		if( mb_strlen( $this->mNick ) > $wgMaxSigChars ) {

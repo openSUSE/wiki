@@ -261,6 +261,10 @@
             return false;
         }
 
+        function allowPasswordChange() {
+            return false;
+        }
+
         /**
          * When creating a user account, optionally fill in preferences and such.
          * For instance, you might pull the email address or real name from the
