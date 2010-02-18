@@ -175,7 +175,6 @@
          */
         function updateUser( &$user ) {
            # Override this and do something
-           $user->setPassword( '' );
            $user->setOption('skin','opensuse');
            $user->saveSettings();
             return true;
