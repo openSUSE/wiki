@@ -42,7 +42,6 @@ $wgExtensionFunctions[] = 'initHermesNotify';
 
 class hermesNotify {
 	function notifyHermes(&$rc) {
-        require("http.php");
         global $wgServer, $hermesHost, $hermesUser, $hermesPwd;
 
         switch ( $rc->mAttribs['rc_type'] ) {
@@ -87,10 +86,13 @@ class hermesNotify {
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_USERPWD, $hermesUser . ":" . $hermesPwd);
-        curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+        if ($hermesUser != '' && $hermesPwd != '') {
+            curl_setopt($ch, CURLOPT_USERPWD, $hermesUser . ":" . $hermesPwd);
+            curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+        }
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_TIMEOUT, '10');
 
         $data = curl_exec($ch);
         curl_close($ch);
