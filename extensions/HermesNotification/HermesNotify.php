@@ -76,7 +76,7 @@ class hermesNotify {
             $url = $title->getFullURL();
             $hermesSender = "wiki_noreply@opensuse.org";
 
-            $url = "https://notify.opensuse.org/index.cgi?rm=notify&_type=WIKI:CHANGE&sender=" . urlencode($hermesSender) .
+            $url = $hermesHost . "?rm=notify&_type=WIKI:CHANGE&sender=" . urlencode($hermesSender) .
                "&change_type=" . urlencode($action) .
                "&page=" . urlencode($title) .
                "&revision=" . urlencode($revision) .
