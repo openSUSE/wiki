@@ -43,6 +43,7 @@ $wgExtensionFunctions[] = 'initHermesNotify';
 class hermesNotify {
     function notifyHermes(&$rc) {
         global $wgServer, $hermesHost, $hermesUser, $hermesPwd;
+        global $wgCanonicalNamespaceNames;
 
         switch ( $rc->mAttribs['rc_type'] ) {
             case RC_EDIT:
@@ -71,7 +72,13 @@ class hermesNotify {
             $log = $rc->mAttribs['rc_comment'];
             $lines = $rc->mAttribs['rc_new_len'] - $rc->mAttribs['rc_old_len'];
             $title = Title::makeTitle($rc->mAttribs['rc_namespace'], $rc->mAttribs['rc_title']);
-            $namespace = $rc->mAttribs['rc_namespace'];
+            $namespace_nr = $rc->mAttribs['rc_namespace'];
+            $namespace_name = $wgCanonicalNamespaceNames[$namespace_nr];
+            $is_minor = $rc->mAttribs['rc_minor'];
+            $bot_edit = $rc->mAttribs['rc_bot'];
+            $patrolled = $rc->mAttribs['rc_patrolled'];
+            $lang = $rc->mExtra['lang'];
+            $last_change = $rc->mExtra['lastTimestamp'];
             $file = $title->getLocalURL();
             $url = $title->getFullURL();
             $hermesSender = "wiki_noreply@opensuse.org";
@@ -87,7 +94,12 @@ class hermesNotify {
                "&host=" . urlencode($branch) .
                "&last_revision=" . urlencode($last_revision) .
                "&url=" . urlencode($url) .
-               "&namespace=" . urlencode($namespace);
+               "&last_change=" . urlencode($last_change) .
+               "&lang=" . urlencode($lang) .
+               "&patrolled=" . urlencode($patrolled) .
+               "&bot_edit=" . urlencode($bot_edit) .
+               "&is_minor=" . urlencode($is_minor) .
+               "&namespace=" . urlencode($namespace_name);
 
             $ch = curl_init();
             curl_setopt($ch, CURLOPT_URL, $url);
