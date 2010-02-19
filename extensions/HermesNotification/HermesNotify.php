@@ -98,11 +98,11 @@ class hermesNotify {
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
             // 1s timeout -> fire and forget, we are not interested in the reply
-            curl_setopt($ch, CURLOPT_TIMEOUT, '1');
+            curl_setopt($ch, CURLOPT_TIMEOUT, '5');
 
             $data = curl_exec($ch);
             curl_close($ch);
-            //error_log("Hermes response: $data");
+            error_log("Changed $title, Hermes response: $data");
 
             # all is always well
             return true;
