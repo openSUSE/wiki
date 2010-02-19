@@ -247,5 +247,5 @@ $wgMultiBoilerplateOptions = false;
 # Hermes Notification ----------------
 require_once("$IP/extensions/HermesNotification/HermesNotify.php");
 
+//$wgShowExceptionDetails = true;
 ?>
-
