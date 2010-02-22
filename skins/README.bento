@@ -1,0 +1,9 @@
+To install the openSUSE bento theme, do this: 
+
+cd <wikidir>
+sudo git clone git://gitorious.org/opensuse/webdesign.git
+cd skins
+sudo ln -s ../webdesign/design_concept/theme_o.o-bento-mediawiki/bento bento
+sudo ln -s ../webdesign/design_concept/theme_o.o-bento-mediawiki/bento.deps.php
+sudo ln -s ../webdesign/design_concept/theme_o.o-bento-mediawiki/bento.php
+
