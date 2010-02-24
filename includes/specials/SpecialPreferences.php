@@ -706,7 +706,8 @@ class PreferencesForm {
                 $wgOut->addHTML(
                         $this->tableRow(
                                 Xml::label( wfMsg('youremail'), 'wpUserEmail' ),
-                                $this->mUserEmail
+                                $this->mUserEmail,
+                                Xml::hidden( 'wpUserEmail', $this->mUserEmail )
                         )
                 );
         }

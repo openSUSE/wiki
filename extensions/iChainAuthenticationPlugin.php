@@ -176,6 +176,11 @@
         function updateUser( &$user ) {
            # Override this and do something
            $user->setOption('skin','opensuse');
+           if (isset($_SERVER['HTTP_X_EMAIL'])) {
+             $user->setEmail( $_SERVER['HTTP_X_EMAIL'] );
+           } else {
+             $user->setEmail( '' );
+           }
            $user->saveSettings();
             return true;
         }
@@ -280,19 +285,12 @@
            //We are creating an LDAP user, it is very important that we do
            //NOT set a local password because it could compromise the
            //security of our domain.
-           $user->setPassword( '' );
+           //$user->setPassword( '' );
            $user->setOption('skin','opensuse');
-           if ('' != $this->lang) {
-              $user->setOption('language',$this->lang);
-           }
-           if ('' != $this->nickname) {
-              $user->setOption('nickname',$this->nickname);
-           }
-           if ('' != $this->realname) {
-              $user->setRealName($this->realname);
-           }
-           if ('' != $this->email) {
-              $user->setEmail($this->email);
+           if (isset($_SERVER['HTTP_X_EMAIL'])) {
+             $user->setEmail( $_SERVER['HTTP_X_EMAIL'] );
+           } else {
+             $user->setEmail( '' );
            }
            $user->saveSettings();
             return true;
