@@ -73,7 +73,7 @@ class hermesNotify {
             $lines = $rc->mAttribs['rc_new_len'] - $rc->mAttribs['rc_old_len'];
             $title = Title::makeTitle($rc->mAttribs['rc_namespace'], $rc->mAttribs['rc_title']);
             $namespace_nr = $rc->mAttribs['rc_namespace'];
-            $namespace_name = $wgCanonicalNamespaceNames[$namespace_nr];
+            if( defined( $namespace_nr ) ) $namespace_name = $wgCanonicalNamespaceNames[$namespace_nr]; else $namespace_name = 'undefined';
             $is_minor = $rc->mAttribs['rc_minor'];
             $bot_edit = $rc->mAttribs['rc_bot'];
             $patrolled = $rc->mAttribs['rc_patrolled'];
