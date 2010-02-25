@@ -1,9 +1,48 @@
+The openSUSE bento theme is the common theme for all openSUSE sites
+
+
+=== INSTALL ===
+
 To install the openSUSE bento theme, do this: 
 
 cd <wikidir>
-sudo git clone git://gitorious.org/opensuse/webdesign.git
+
+== with git: ==
+
+  sudo git clone git://gitorious.org/opensuse/webdesign.git
+
+== without git: ==
+
+  wget -O webdesign.tar.gz http://gitorious.org/opensuse/webdesign/archive-tarball/master 
+  (needed twice, the first request triggers the tarball creation on gitorious, wait some seconds after the first request)
+  tar -xvf webdesign.tar.gz
+  mv opensuse-webdesign/ webdesign
+
+==
+
 cd skins
 sudo ln -s ../webdesign/design_concept/theme_o.o-bento-mediawiki/bento bento
 sudo ln -s ../webdesign/design_concept/theme_o.o-bento-mediawiki/bento.deps.php
 sudo ln -s ../webdesign/design_concept/theme_o.o-bento-mediawiki/bento.php
+
+
+
+=== UPDATE ===
+
+cd <wikidir>
+
+== with git: ==
+
+  cd webdesign
+  sudo git pull
+
+== without git: ==
+
+  wget -O webdesign.tar.gz http://gitorious.org/opensuse/webdesign/archive-tarball/master
+  (needed twice, the first request triggers the tarball creation on gitorious, wait some seconds after the first request)
+  tar -xvf webdesign.tar.gz
+  rm -r webdesign
+  mv opensuse-webdesign/ webdesign
+
+==
 
