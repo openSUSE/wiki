@@ -175,7 +175,7 @@
          */
         function updateUser( &$user ) {
            # Override this and do something
-           $user->setOption('skin','opensuse');
+           //$user->setOption('skin','opensuse');
            if (isset($_SERVER['HTTP_X_EMAIL'])) {
              $user->setEmail( $_SERVER['HTTP_X_EMAIL'] );
            } else {
