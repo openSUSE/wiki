@@ -31,6 +31,11 @@ class InputBox {
 	private $mID = '';
 	private $mInline = false;
 	private $mPrefix = '';
+        private $mBugsearch_dist = 'openSUSE 11.3';
+        private $mBugsearch_word;
+        private $mBugsearch_state = '__open__';
+
+
 
 	/* Functions */
 
@@ -55,6 +60,8 @@ class InputBox {
 				return $this->getSearchForm('fulltext');
 			case 'search2':
 				return $this->getSearchForm2();
+                        case 'bugzilla_search':
+                                return $this->getBugSearchForm();
 			default:
 				return Xml::tags( 'div', null,
 					Xml::element( 'strong',
@@ -450,6 +457,66 @@ class InputBox {
 		return $htmlOut;
 	}
 
+        /**
+         * Generate new section form
+         */
+        public function getBugSearchForm() {
+                global $wgScript;
+                // example: https://bugzilla.novell.com/buglist.cgi?query_format=specific&
+                //            order=relevance+desc&bug_status=__open__&product=openSUSE+11.2&content=fate
+                if ( !$this->mButtonLabel ) {
+                                $this->mButtonLabel = wfMsgHtml( "postcomment" );
+                }
+
+		$htmlOut .= Xml::openElement( 'form',
+                        array(
+                                'name' => 'bug_search_box',
+                                'class' => 'bug_search_box',
+                                'action' => 'https://bugzilla.novell.com/buglist.cgi?query_format=specific&order=relevance+desc',
+                                'method' => 'post'
+                        )
+                );
+                $htmlOut .= 'Search for: ';
+                $htmlOut .= Xml::openElement( 'input',
+                        array(
+                                'type' => 'text',
+                                'name' => 'content',
+                                'value' => $this->mBugsearch_word
+                        )
+                );
+                if (isset( $this->mBugsearch_state )) {
+                        $htmlOut .= Xml::openElement( 'input',
+                                array(
+                                       'type' => 'hidden',
+                                       'name' => 'bug_status',
+                                       'value' => $this->mBugsearch_state
+                                )
+                        );
+                        $htmlOut .= ' in ' . str_replace( '_' , '', htmlspecialchars($this->mBugsearch_state) ) . ' bugs of ';
+                }
+                if (isset( $this->mBugsearch_dist )) {
+                    $htmlOut .= Xml::openElement( 'input',
+                            array(
+                                    'type' => 'hidden',
+                                    'name' => 'product',
+                                    'value' => $this->mBugsearch_dist
+                            )
+                    );
+                    $htmlOut .= htmlspecialchars($this->mBugsearch_dist) . ' ';
+                }
+                $htmlOut .= Xml::openElement( 'input',
+                        array(
+                                'type' => 'submit',
+                                'name' => 'Search',
+                                'class' => 'bugzillaSearchboxButton',
+                                'value' => 'Search'
+                        )
+                );
+                $htmlOut .= Xml::closeElement( 'form' );
+
+                return $htmlOut;
+        }
+
 	/**
 	 * Extract options from a blob of text
 	 *
@@ -488,6 +555,9 @@ class InputBox {
 			'id' => 'mID',
 			'inline' => 'mInline',
 			'prefix' => 'mPrefix',
+                        'bugsearch_dist' => 'mBugsearch_dist',
+                        'bugsearch_word' => 'mBugsearch_word',
+                        'bugsearch_state' => 'mBugsearch_state',
 		);
 		foreach ( $options as $name => $var ) {
 			if ( isset( $values[$name] ) ) {
