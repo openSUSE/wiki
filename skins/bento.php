@@ -16,7 +16,7 @@ class SkinBento extends SkinTemplate {
   function setupSkinUserCss( OutputPage $out ) {
     parent::setupSkinUserCss( $out );
     // Append to the default screen common & print styles...
-    $out->addStyle( 'bento/css/style.css', 'screen' );
+    $out->addStyle( 'https://static.opensuse.org/stage/themes/bento/css/style.css', 'screen' );
     $out->addStyle( 'bento/css_local/style.css', 'screen' );
   }
 }
@@ -42,10 +42,11 @@ var $skin;
   <![endif]-->
   <?php print Skin::makeGlobalVariablesScript( $this->data ); ?>
   <script type="<?php $this->text('jsmimetype') ?>" src="<?php $this->text('stylepath' ) ?>/common/wikibits.js?<?php echo $GLOBALS['wgStyleVersion'] ?>"><!-- wikibits js --></script>
-  <script type="<?php $this->text('jsmimetype') ?>" src="<?php $this->text('stylepath') ?>/bento/js/jquery.js"></script>
-  <script type="<?php $this->text('jsmimetype') ?>" src="<?php $this->text('stylepath') ?>/bento/js/script.js"></script>
+  <script type="<?php $this->text('jsmimetype') ?>" src="https://static.opensuse.org/stage/themes/bento/js/jquery.js"></script>
+  <script type="<?php $this->text('jsmimetype') ?>" src="https://static.opensuse.org/stage/themes/bento/js/script.js"></script>
   <script type="<?php $this->text('jsmimetype') ?>" src="<?php $this->text('stylepath') ?>/bento/js_local/script.js"></script>
-  <script type="<?php $this->text('jsmimetype') ?>" src="<?php $this->text('stylepath') ?>/bento/js/global-navigation.js"></script>
+  <script type="<?php $this->text('jsmimetype') ?>" src="https://static.opensuse.org/themes/bento/js/l10n/global-navigation-data-en_US.js"></script> 
+  <script type="<?php $this->text('jsmimetype') ?>" src="https://static.opensuse.org/themes/bento/js/global-navigation.js"></script>
 
   <!-- Head Scripts -->
   <?php $this->html('headscripts') ?>
@@ -65,7 +66,7 @@ var $skin;
 
   <!-- Start: Header -->
 <?php
-  $handle = fopen(dirname( __FILE__ ) . "/bento/theme_o.o-bento/includes/header.html","rb");
+  $handle = fopen(dirname( __FILE__ ) . "/bento/includes/header.html","rb");
   $content = stream_get_contents($handle);
   fclose($handle);
   $lastsearch = "Search";
@@ -90,7 +91,7 @@ var $skin;
 
   <div id="subheader" class="container_16">
     <div id="breadcrump" class="grid_12 alpha">
-      <a href="http://www.opensuse.org" title="Home"><img src="<?php $this->text('stylepath' ) ?>/bento/images/home_grey.png" width="16" height="16" alt="Home" /> Home</a> &gt; <a href="/" title="">Support</a> &gt; <a href="/" title="">Wiki</a> &gt; <a href="" title=""><?php $this->data['displaytitle']!=""?$this->html('title'):$this->text('title') ?></a>
+      <a href="http://www.opensuse.org" title="Home"><img src="<?php $this->text('stylepath' ) ?>/bento/home_grey.png" width="16" height="16" alt="Home" /> Home</a> &gt; <a href="/" title="">Support</a> &gt; <a href="/" title="">Wiki</a> &gt; <a href="" title=""><?php $this->data['displaytitle']!=""?$this->html('title'):$this->text('title') ?></a>
     </div>
 
    
@@ -285,7 +286,7 @@ var $skin;
 
   <!-- Start: Footer -->
 <?php
-  $handle = fopen(dirname( __FILE__ ) . "/bento/theme_o.o-bento/includes/footer.html","rb");
+  $handle = fopen(dirname( __FILE__ ) . "/bento/includes/footer.html","rb");
   $content = stream_get_contents($handle);
   fclose($handle);
   if(isset($this->data['lastmod'])) {

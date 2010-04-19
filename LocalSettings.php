@@ -242,6 +242,7 @@ enableSemantics('wiki.opensuse.org');
 # MultiBoilerplate ----------------
 require_once( "$IP/extensions/MultiBoilerplate/MultiBoilerplate.php" );
 $wgMultiBoilerplateOptions = false;
+$wgMultiBoilerplatePerNamespace = false;
 #-------------------------------------------------------------- 
 
 # Hermes Notification ----------------
