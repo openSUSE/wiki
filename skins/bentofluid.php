@@ -5,23 +5,23 @@
 
 if( !defined( 'MEDIAWIKI' ) ) die();
 
-class SkinBento extends SkinTemplate {
+class SkinBentoFluid extends SkinTemplate {
     function initPage( OutputPage $out ) {
         parent::initPage( $out );
-        $this->skinname  = 'bento';
-        $this->stylename = 'bento';
-        $this->template  = 'BentoTemplate';
+        $this->skinname  = 'bentofluid';
+        $this->stylename = 'bentofluid';
+        $this->template  = 'BentoFluidTemplate';
 
     }
   function setupSkinUserCss( OutputPage $out ) {
     parent::setupSkinUserCss( $out );
     // Append to the default screen common & print styles...
-    $out->addStyle( 'https://static.opensuse.org/themes/bento/css/style.css', 'screen' );
+    $out->addStyle( 'https://static.opensuse.org/themes/bento/css/style.fluid.css', 'screen' );
     $out->addStyle( 'bento/css_local/style.css', 'screen' );
   }
 }
 
-class BentoTemplate extends QuickTemplate {
+class BentoFluidTemplate extends QuickTemplate {
 var $skin;
   function execute() {
     global $wgRequest;
