@@ -146,7 +146,6 @@ class BentoFluidTemplate extends QuickTemplate {
                         <li><a href="/How_to_Participate">How to Participate</a></li>
                         <li><a href="/Documentation">Documentation</a></li>
                         <li><a href="/Support">Support</a></li>
-                        <li><a href="http://forums.opensuse.org">Support Forums</a></li>
                         <li><a href="/Contact">Contact</a></li>
                         <li><a href="/openSUSE:Browse">Sitemap</a></li>
                     </ul>
