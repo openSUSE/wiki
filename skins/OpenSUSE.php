@@ -191,7 +191,6 @@ var $skin;
        <!-- End custom navigation -->
        <!-- Begin Language navigation noscript -->
 <?php if( $this->data['language_urls'] ) { ?>
-       <noscript>
        <div class="green_box" id="p-lang">
         <div class="box_top_row">
          <div class="box_left"></div>
@@ -215,7 +214,6 @@ var $skin;
         </div>
        </div>
        <br />
-       </noscript>
 <?php } ?>
        <!-- End Language navigation noscript -->       
       </div>
@@ -280,20 +278,7 @@ var $skin;
          </div>
          <div class="box_title_row">
           <div class="box_title">
-           <div id="langsel" class="hide">
-            <!-- Begin language select -->
-<?php if( $this->data['language_urls'] ) { ?>
-            <form action="" name="langsel">
-             <select name="lang" onchange="langRedirect()">
-              <option value=""><?php $this->msg('otherlanguages') ?></option>
-<?php foreach($this->data['language_urls'] as $langlink) { ?>
-              <option value="<?php echo htmlspecialchars($langlink['href']) ?>"><?php echo $langlink['text'] ?></option>
-<?php } ?>
-             </select>
-            </form>
-<?php } ?>
-            <!-- End langauge select -->
-           </div>
+
            <div id="page_actions">
             <!-- Begin page actions -->
             <ul>
