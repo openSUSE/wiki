@@ -186,10 +186,8 @@ var $skin;
         </div>
        </div>
        <br />
-<?php print wfMsgWikiHtml('sponsors'); ?>
-       <br />
-       <!-- End custom navigation -->
-       <!-- Begin Language navigation noscript -->
+
+       <!-- Begin Language navigation -->
 <?php if( $this->data['language_urls'] ) { ?>
        <div class="green_box" id="p-lang">
         <div class="box_top_row">
@@ -215,7 +213,12 @@ var $skin;
        </div>
        <br />
 <?php } ?>
-       <!-- End Language navigation noscript -->       
+       <!-- End Language navigation -->
+
+<?php print wfMsgWikiHtml('sponsors'); ?>
+       <br />
+       <!-- End custom navigation -->
+
       </div>
      </div>
      <!-- End left column -->
