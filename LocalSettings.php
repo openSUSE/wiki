@@ -251,5 +251,13 @@ $wgMultiBoilerplatePerNamespace = true;
 # Hermes Notification ----------------
 require_once("$IP/extensions/HermesNotification/HermesNotify.php");
 
+# Interwiki links management ----------------------------------
+require_once("$IP/extensions/Interwiki/Interwiki.php");
+$wgInterwikiMagic=true;
+$wgHideInterlanguageLinks=false;
+$wgGroupPermissions['*']['interwiki'] = false;
+$wgGroupPermissions['sysop']['interwiki'] = true;
+
+
 //$wgShowExceptionDetails = true;
 ?>
