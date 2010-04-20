@@ -195,7 +195,7 @@ class BentoFluidTemplate extends QuickTemplate {
 
             <div id="some-content" class="box box-shadow grid_13 clearfix">
                 <!-- box header -->
-                <div class="box-header grid_13">
+                <div class="box-header">
                     <ul>
                                 <?php $check=false;
                                 foreach($this->data['content_actions'] as $key => $tab) {
@@ -230,7 +230,7 @@ class BentoFluidTemplate extends QuickTemplate {
             <?php } ?>
 
 
-                <div class="grid_13 alpha omega">
+                <div class="alpha omega">
                     <h3><?php $this->data['displaytitle']!=""?$this->html('title'):$this->text('title') ?></h3>
 
                     <h3 id="siteSub">tagline: <?php $this->msg('tagline') ?></h3>
@@ -255,7 +255,7 @@ class BentoFluidTemplate extends QuickTemplate {
 
                 </div>
 
-                <div class="box-footer grid_13">
+                <div class="box-footer">
                     <ul>
                                 <?php $check=false;
                                 foreach($this->data['content_actions'] as $key => $tab) {
