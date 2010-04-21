@@ -92,7 +92,7 @@ class BentoFluidTemplate extends QuickTemplate {
 
         <div id="subheader" class="container_16">
             <div id="breadcrump" class="grid_12 alpha">
-                <a href="http://www.opensuse.org" title="Home"><img src="<?php $this->text('stylepath' ) ?>/bento/home_grey.png" width="16" height="16" alt="Home" /> Wiki</a> &gt; <a href="" title=""><?php $this->data['displaytitle']!=""?$this->html('title'):$this->text('title') ?></a>
+                <a href="/" title="Home"><img src="<?php $this->text('stylepath' ) ?>/bento/home_grey.png" width="16" height="16" alt="Home" /> Wiki</a> &gt; <a href="" title=""><?php $this->data['displaytitle']!=""?$this->html('title'):$this->text('title') ?></a>
             </div>
 
 
