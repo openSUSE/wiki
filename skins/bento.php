@@ -92,7 +92,7 @@ class BentoTemplate extends QuickTemplate {
 
         <div id="subheader" class="container_16">
             <div id="breadcrump" class="grid_12 alpha">
-                <a href="http://www.opensuse.org" title="Home"><img src="<?php $this->text('stylepath' ) ?>/bento/home_grey.png" width="16" height="16" alt="Home" /> Home</a> &gt; <a href="/" title="">Support</a> &gt; <a href="/" title="">Wiki</a> &gt; <a href="" title=""><?php $this->data['displaytitle']!=""?$this->html('title'):$this->text('title') ?></a>
+                <a href="/" title="Home"><img src="<?php $this->text('stylepath' ) ?>/bento/home_grey.png" width="16" height="16" alt="Home" /> Wiki</a> &gt; <a href="" title=""><?php $this->data['displaytitle']!=""?$this->html('title'):$this->text('title') ?></a>
             </div>
 
 
@@ -142,7 +142,7 @@ class BentoTemplate extends QuickTemplate {
                 <div id="some_other_content" class="box box-shadow alpha clear-both navigation">
                     <h2 class="box-header">Navigation</h2>
                     <ul class="navigation">
-                        <li><a href="/Project_Overview">Project Overview</a></li>
+                        <li><a href="/Portal:Project">Project Overview</a></li>
                         <li><a href="/How_to_Participate">How to Participate</a></li>
                         <li><a href="/Documentation">Documentation</a></li>
                         <li><a href="/Support">Support</a></li>
@@ -195,7 +195,7 @@ class BentoTemplate extends QuickTemplate {
 
             <div id="some-content" class="box box-shadow grid_13 clearfix">
                 <!-- box header -->
-                <div class="box-header">
+                <div class="box-header header-tabs">
                     <ul>
                                 <?php $check=false;
                                 foreach($this->data['content_actions'] as $key => $tab) {
@@ -255,7 +255,7 @@ class BentoTemplate extends QuickTemplate {
 
                 </div>
 
-                <div class="box-footer">
+                <div class="box-footer header-tabs">
                     <ul>
                                 <?php $check=false;
                                 foreach($this->data['content_actions'] as $key => $tab) {

@@ -161,3 +161,12 @@ legend {
 }
 
 /* END OFF: Styles for wiki user actions under the main navigations */
+
+td {
+  border: none;
+}
+
+h4.mw-specialpagesgroup  {
+  margin:1em;
+  padding:4px;
+}
