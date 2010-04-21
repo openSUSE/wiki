@@ -254,6 +254,7 @@ class BentoFluidTemplate extends QuickTemplate {
                     <!-- End Content Area -->
 
                 </div>
+                <br/>
 
                 <div class="box-footer  header-tabs">
                     <ul>
