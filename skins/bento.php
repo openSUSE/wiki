@@ -17,7 +17,6 @@ class SkinBento extends SkinTemplate {
         parent::setupSkinUserCss( $out );
         // Append to the default screen common & print styles...
         $out->addStyle( 'https://static.opensuse.org/themes/bento/css/style.css', 'screen' );
-        $out->addStyle( 'bento/css_local/style.css', 'screen' );
     }
 }
 
@@ -38,6 +37,7 @@ class BentoTemplate extends QuickTemplate {
         <?php $this->html('headlinks') ?>
         <title><?php $this->text('pagetitle') ?></title>
         <?php $this->html('csslinks') ?>
+        <link rel="stylesheet" href="/skins/bento/css_local/style.css" type="text/css" media="screen" />
         <!--[if lt IE 7]>
         <meta http-equiv="imagetoolbar" content="no" />
         <![endif]-->

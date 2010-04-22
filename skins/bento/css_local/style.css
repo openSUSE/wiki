@@ -199,7 +199,8 @@ shell {
 
 /* trying to move the flaggedrev box out of the way */
 .flaggedrevs_short {
-    border:1px dotted;
+    /* border:1px dotted; */
     position:relative;
     top:-68px;
+    line-height: 1;
 }
