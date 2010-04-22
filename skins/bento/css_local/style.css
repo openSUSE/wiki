@@ -170,3 +170,29 @@ h4.mw-specialpagesgroup  {
   margin:1em;
   padding:4px;
 }
+
+shell {
+    background-color:#000000;
+    color:#FFFFFF;
+    font-family:courier,monospace;
+    font-weight:bold;
+    margin:2em;
+    padding:0.3em 1em;
+    white-space:pre;
+    width:85%;
+}
+
+#contentSub, #contentSub2 {
+    margin-left:15px;
+    margin-right:15px;
+}
+
+.toc {
+    background:url("../geeko_tail.gif") no-repeat scroll right top #D9E5BF;
+    border-bottom:1px solid;
+    border-top:1px solid;
+    display:block;
+    font-size:95%;
+    margin:0 -17px;
+    padding:5px 0;
+}
