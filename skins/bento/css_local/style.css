@@ -171,37 +171,48 @@ h4.mw-specialpagesgroup  {
   padding:4px;
 }
 
-#contentSub, #contentSub2, hr {
+#contentSub, #contentSub2, hr, toolbar, editform, editoptions {
     margin-left:15px;
     margin-right:15px;
 }
 
-h2 .editsection {
-    font-size:67%;
+hr {
+    color: #AAAAAA;
+    background-color: #AAAAAA;
+}
+
+h2 .editsection, h3 .editsection {
+    font-size: 67%;
 }
 
 .toc {
     background:url("../geeko_tail.gif") no-repeat scroll right top #DDDDDD;
-    display:block;
-    font-size:95%;
+    display: block;
+    font-size: 95%;
     border: 1px solid;
     margin: 1;
     margin-top: 7px;
 }
 
 #toc h2, .toc h2 {
-    display:inline;
+    display: inline;
 }
 
 /* trying to move the flaggedrev box out of the way */
 .flaggedrevs_short {
     /* border:1px dotted; */
-    position:relative;
-    top:-80px;
+    position: relative;
+    top: -80px;
     line-height: 1;
+}
+
+.flaggedrevs_basic, .flaggedrevs_quality, .flaggedrevs_pristine,
+.flaggedrevs_notice, .flaggedrevs_editnotice, .flaggedrevs_diffnotice,
+.flaggedrevs_warning, .flaggedrevs_preview  {
+    margin: 1em;
 }
 
 .external {
     background:url("../http.png") no-repeat scroll right center transparent;
-    padding-right:18px;
+    padding-right: 18px;
 }
