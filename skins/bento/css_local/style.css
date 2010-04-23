@@ -171,7 +171,7 @@ h4.mw-specialpagesgroup  {
   padding:4px;
 }
 
-#contentSub, #contentSub2, hr, #toolbar, #editform, #editoptions {
+#contentSub, #contentSub2, hr, #toolbar, #editform, #editoptions, #catlinks {
     margin-left:15px;
     margin-right:15px;
 }
@@ -216,3 +216,9 @@ h2 .editsection, h3 .editsection {
     background:url("../http.png") no-repeat scroll right center transparent;
     padding-right: 18px;
 }
+
+#catlinks {
+    border-top: 2px solid #D9E5BF;
+    padding: 0.5em 0 0 2em;
+}
+
