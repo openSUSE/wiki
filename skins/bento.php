@@ -231,7 +231,7 @@ class BentoTemplate extends QuickTemplate {
 
 
                 <div class="alpha omega">
-                    <h3><?php $this->data['displaytitle']!=""?$this->html('title'):$this->text('title') ?></h3>
+                    <h1><?php $this->data['displaytitle']!=""?$this->html('title'):$this->text('title') ?></h1>
 
                     <h3 id="siteSub">tagline: <?php $this->msg('tagline') ?></h3>
                     <div id="contentSub"><?php $this->html('subtitle') ?></div>
