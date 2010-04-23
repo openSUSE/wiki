@@ -171,7 +171,7 @@ h4.mw-specialpagesgroup  {
   padding:4px;
 }
 
-#contentSub, #contentSub2, hr, toolbar, editform, editoptions {
+#contentSub, #contentSub2, hr, .toolbar, .editform, .editoptions {
     margin-left:15px;
     margin-right:15px;
 }
