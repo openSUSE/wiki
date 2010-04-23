@@ -182,7 +182,9 @@ hr {
 }
 
 h2 .editsection, h3 .editsection {
-    font-size: 67%;
+    position: 1;
+    font-size:small;
+    font-weight:normal;
 }
 
 .toc {
