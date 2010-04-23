@@ -197,6 +197,11 @@ h2 .editsection {
 .flaggedrevs_short {
     /* border:1px dotted; */
     position:relative;
-    top:-68px;
+    top:-80px;
     line-height: 1;
+}
+
+.external {
+    background:url("../http.png") no-repeat scroll right center transparent;
+    padding-right:18px;
 }
