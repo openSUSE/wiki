@@ -178,6 +178,8 @@ $wgNamespacesWithSubpages[103] = true;
 $wgNamespacesWithSubpages[104] = true;                                               
 $wgNamespacesWithSubpages[105] = true;
 
+$wgContentNamespaces = array (0, 4, 12, 100, 102, 104);
+
 $wgAllowCategorizedRecentChanges = true;
 
 ##### Misc #####
@@ -232,6 +234,7 @@ require_once( "$IP/extensions/ParserFunctions/ParserFunctions.php" );
 
 # CategoryTree.php ----------------
 require_once("$IP/extensions/CategoryTree/CategoryTree.php");
+$wgCategoryTreeMaxDepth = array(CT_MODE_PAGES => 2, CT_MODE_ALL => 2, CT_MODE_CATEGORIES => 3);
 
 # EventCountdown ------------------
 require_once("$IP/extensions/EventCountdown.php");

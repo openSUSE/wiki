@@ -8,6 +8,7 @@ float: right;
 margin-left: 0.7em;
 margin-right: 15px;
 }
+
 div.thumb {
 border: 1px solid #ddd;
 padding: 5px 5px 0;
@@ -20,18 +21,6 @@ padding: 5px 5px 0;
   float: right;
 }
 
-.toc {
-  font-size: 0.8em;
-}
-
-  #toctitle {
-    color: #999;
-    font-size: 0.9em;
-  }
-  .toc a {
-    text-decoration: none;
-  }
-  
   
 /* Styles for wiki user actions under the main navigations */
 #local-user-actions {
@@ -90,6 +79,10 @@ padding: 5px 5px 0;
   padding-right: 1.2em;
   background: transparent url('../css/images/unfold-indicator-single.png') no-repeat scroll 4em 0.4em; /* toggle indicator */
   
+}
+
+.ui-oo-content-wrapper .ui-oo-box-shadow > * > h2, .content-wrapper .box-shadow > * > h2 {
+  margin-top:1em;
 }
 
 /* Don't display things that shouldn't be displayed */
@@ -171,7 +164,8 @@ h4.mw-specialpagesgroup  {
   padding:4px;
 }
 
-#contentSub, #contentSub2, hr, #toolbar, #editform, #editoptions, #catlinks {
+#contentSub, #contentSub2, hr, #toolbar, #editform, #editoptions, #catlinks, .mw-searchresult, #search,
+.special_info {
     margin-left:15px;
     margin-right:15px;
 }
@@ -181,7 +175,7 @@ hr {
     background-color: #AAAAAA;
 }
 
-h2 .editsection, h3 .editsection {
+h1 .editsection, h2 .editsection, h3 .editsection {
     position: 1;
     font-size:small;
     font-weight:normal;
@@ -194,6 +188,14 @@ h2 .editsection, h3 .editsection {
     border: 1px solid;
     margin: 1;
     margin-top: 7px;
+}
+
+.toc a {
+    text-decoration: none;
+  }
+
+.special_info, .toc {
+    padding-right: 4em;
 }
 
 #toc h2, .toc h2 {
@@ -224,3 +226,13 @@ h2 .editsection, h3 .editsection {
     padding: 0.5em 0 0 2em;
 }
 
+.shell {
+    background-color:#F6F6F6;
+    border:1px dotted #669900;
+    font-family:monospace;
+    border:1px solid #666666;
+}
+
+.image {
+    
+}
