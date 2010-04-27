@@ -244,3 +244,8 @@ h1 .editsection, h2 .editsection, h3 .editsection {
 .CategoryTreeTag {
     margin:0.5ex 0 0 1em;
 }
+
+
+.lable-overley label {
+    left:20px;
+}
