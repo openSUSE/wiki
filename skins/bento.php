@@ -143,10 +143,9 @@ class BentoTemplate extends QuickTemplate {
                     <h2 class="box-header">Navigation</h2>
                     <ul class="navigation">
                         <li><a href="/Portal:Project">Project Overview</a></li>
-                        <li><a href="/How_to_Participate">How to Participate</a></li>
-                        <li><a href="/Documentation">Documentation</a></li>
-                        <li><a href="/Support">Support</a></li>
-                        <li><a href="/Contact">Contact</a></li>
+                        <li><a href="/Portal:Distribution">Distribution</a></li>
+                        <li><a href="/Portal:Support">Support</a></li>
+                        <li><a href="/openSUSE:Support_channels">Contact</a></li>
                         <li><a href="/openSUSE:Browse">Sitemap</a></li>
                     </ul>
                 </div>

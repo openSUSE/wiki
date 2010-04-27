@@ -1,3 +1,7 @@
+body {
+    color: #000000;
+}
+
 #header ul#global-navigation {
   width: 650px; /* to get space for advanced search */
 }
@@ -235,4 +239,8 @@ h1 .editsection, h2 .editsection, h3 .editsection {
 
 .image {
     
+}
+
+.CategoryTreeTag {
+    margin:0.5ex 0 0 1em;
 }
