@@ -170,8 +170,8 @@ h4.mw-specialpagesgroup  {
 
 #contentSub, #contentSub2, hr, #toolbar, #editform, #editoptions, #catlinks, .mw-searchresult, #search,
 .special_info {
-    margin-left:15px;
-    margin-right:15px;
+    margin-left: 1em;
+    margin-right: 1em;
 }
 
 hr {
@@ -187,11 +187,11 @@ h1 .editsection, h2 .editsection, h3 .editsection {
 
 .toc {
     background:url("../geeko_tail.gif") no-repeat scroll right top #DDDDDD;
-    display: block;
+    /* display: block; */
     font-size: 95%;
     border: 1px solid;
     margin: 1;
-    margin-top: 7px;
+    /* margin-top: 7px; */
 }
 
 .toc a {
@@ -248,4 +248,14 @@ h1 .editsection, h2 .editsection, h3 .editsection {
 
 .lable-overley label {
     left:20px;
+}
+
+table  {
+    max-width: 1;
+}
+
+.editsection {
+    float: right;
+    margin-left: 1em;
+    margin-right: 1em;
 }
