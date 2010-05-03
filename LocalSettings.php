@@ -182,6 +182,12 @@ $wgContentNamespaces = array (0, 4, 12, 100, 102, 104);
 
 $wgAllowCategorizedRecentChanges = true;
 
+$wgNamespacesToBeSearchedDefault = array(
+        NS_MAIN =>           true,
+        102 => true,
+        100 => true
+);
+
 ##### Misc #####
 
 $wgUseAjax = true; // Enable Ajax
