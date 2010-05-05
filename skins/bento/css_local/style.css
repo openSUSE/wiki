@@ -3,173 +3,173 @@ body {
 }
 
 #header ul#global-navigation {
-  width: 650px; /* to get space for advanced search */
+    width: 650px; /* to get space for advanced search */
 }
 
 div.tright {
-clear: right;
-float: right;
-margin-left: 0.7em;
-margin-right: 15px;
+    clear: right;
+    float: right;
+    margin-left: 0.7em;
+    margin-right: 15px;
 }
 
 div.thumb {
-border: 1px solid #ddd;
-padding: 5px 5px 0;
+    border: 1px solid #ddd;
+    padding: 5px 5px 0;
 }
 
 .thumbcaption {
-  font-size: 0.8em;
+    font-size: 0.8em;
 }
 .magnify  {
-  float: right;
+    float: right;
 }
 
-  
+
 /* Styles for wiki user actions under the main navigations */
 #local-user-actions {
-  height: 1em;
-  text-align: right;
+    height: 1em;
+    text-align: right;
 }
 
 #local-user-actions a {
-  margin-right: 10px;
-  text-decoration: none;
+    margin-right: 10px;
+    text-decoration: none;
 }
 
 #pt-personal {
-  display: none;
-  position: absolute;
-  z-index: 9999;
-  list-style: none inside;
-  margin: 0;
-  padding: 0;
-  font-size: 12px;
-  
-  background: white;
-  background: #fff url('../css/images/gradient-light-short-02.png') repeat-x scroll 0 -23px; /*TODO: fix path for different applications */
-  
-  border: 1px solid transparent;
-  border-color: transparent #f6f6f6 #eee;
-  
-  -moz-box-shadow: 0 1px 2px #ddd;
-  -webkit-box-shadow: 0 1px 2px #ddd;
-  box-shadow: 0 1px 2px #ddd;
-  
-  border-bottom-left-radius: 5px;
-  border-bottom-right-radius: 5px;
-  -moz-border-radius-bottomleft: 5px;
-  -moz-border-radius-bottomright: 5px;
-  -webkit-border-bottom-left-radius: 5px;
-  -webkit-border-bottom-right-radius: 5px;
-  -khtml-border-bottom-left-radius: 5px;
-  -khtml-border-bottom-right-radius: 5px;
-  
+    display: none;
+    position: absolute;
+    z-index: 9999;
+    list-style: none inside;
+    margin: 0;
+    padding: 0;
+    font-size: 12px;
+
+    background: white;
+    background: #fff url('../css/images/gradient-light-short-02.png') repeat-x scroll 0 -23px; /*TODO: fix path for different applications */
+
+    border: 1px solid transparent;
+    border-color: transparent #f6f6f6 #eee;
+
+    -moz-box-shadow: 0 1px 2px #ddd;
+    -webkit-box-shadow: 0 1px 2px #ddd;
+    box-shadow: 0 1px 2px #ddd;
+
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    -moz-border-radius-bottomleft: 5px;
+    -moz-border-radius-bottomright: 5px;
+    -webkit-border-bottom-left-radius: 5px;
+    -webkit-border-bottom-right-radius: 5px;
+    -khtml-border-bottom-left-radius: 5px;
+    -khtml-border-bottom-right-radius: 5px;
+
 }
 
 #pt-personal li {
-  margin: 0 10px;
-  padding: 2px 0;
+    margin: 0 10px;
+    padding: 2px 0;
 }
 
 #pt-personal li a {
-  margin: 3px;
-  display: block;
-  width: 100%;
-  text-decoration: none;
+    margin: 3px;
+    display: block;
+    width: 100%;
+    text-decoration: none;
 }
 
 #actions-trigger {
-  padding-right: 1.2em;
-  background: transparent url('../css/images/unfold-indicator-single.png') no-repeat scroll 4em 0.4em; /* toggle indicator */
-  
+    padding-right: 1.2em;
+    background: transparent url('../css/images/unfold-indicator-single.png') no-repeat scroll 4em 0.4em; /* toggle indicator */
+
 }
 
 .ui-oo-content-wrapper .ui-oo-box-shadow > * > h2, .content-wrapper .box-shadow > * > h2 {
-  margin-top:1em;
+    margin-top:1em;
 }
 
 /* Don't display things that shouldn't be displayed */
 #siteSub {
-	display: none;
+    display: none;
 }
 #jump-to-nav {
-	display: none;
+    display: none;
 }
 .printfooter {
-	display: none;
+    display: none;
 }
 
 /* Preferences page */
 #preferences {
-	margin: 0;
-	clear: both;
-	padding: 1.5em;
+    margin: 0;
+    clear: both;
+    padding: 1.5em;
 }
 #preferences legend {
-	display: none;
+    display: none;
 }
 #preftoc {
-	width: 100%;
-	clear: both;
-	display: block;
+    width: 100%;
+    clear: both;
+    display: block;
 }
 #preftoc li {
-	float: left;
-	white-space: nowrap;
-	padding-right: 10px;
-	list-style-type: none;
-	list-style-image: none;
-	border: 1px solid #ddd;
-	background: #fff url('../css/images/gradient-light-short.png') repeat-x scroll 0 -20px ;
+    float: left;
+    white-space: nowrap;
+    padding-right: 10px;
+    list-style-type: none;
+    list-style-image: none;
+    border: 1px solid #ddd;
+    background: #fff url('../css/images/gradient-light-short.png') repeat-x scroll 0 -20px ;
 }
 #preftoc a {
-	color: #666;
-	text-decoration: none;
+    color: #666;
+    text-decoration: none;
 }
 #preftoc li.selected {
-	margin-top: 5px;
-	font-weight: bold;
+    margin-top: 5px;
+    font-weight: bold;
 }
 
 /* fieldsets */
 fieldset {
-	border-top: 1px solid #ddd;
-	border-bottom: 1px solid #ddd;
-	margin: 1em 0 1em 0;
-	padding: 0 1em 1em;
-	line-height: 1.5em;
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    margin: 1em 0 1em 0;
+    padding: 0 1em 1em;
+    line-height: 1.5em;
 }
 fieldset.nested {
-	margin: 0 0 0.5em 0;
-	padding: 0 0.5em 0.5em;
+    margin: 0 0 0.5em 0;
+    padding: 0 0.5em 0.5em;
 }
 legend {
-	padding: .5em;
-	font-size: 95%;
+    padding: .5em;
+    font-size: 95%;
 }
 
 /* contentSub */
 #contentSub, #contentSub2 {
-	font-size: 84%;
-	line-height: 1.2em;
-	margin: 0 0 1.4em 1em;
-	width: auto;
+    font-size: 84%;
+    line-height: 1.2em;
+    margin: 0 0 1.4em 1em;
+    width: auto;
 }
 
 /* END OFF: Styles for wiki user actions under the main navigations */
 
 td {
-  border: none;
+    border: none;
 }
 
 h4.mw-specialpagesgroup  {
-  margin:1em;
-  padding:4px;
+    margin:1em;
+    padding:4px;
 }
 
 #contentSub, #contentSub2, hr, #toolbar, #editform, #editoptions, #catlinks, .mw-searchresult, #search,
-.special_info, .shell, object, div.mw-geshi, form {
+.special_info, .shell, .flash_video, div.mw-geshi, form {
     margin-left: 1em;
     margin-right: 1em;
 }
@@ -197,7 +197,7 @@ h1 .editsection, h2 .editsection, h3 .editsection {
 
 .toc a {
     text-decoration: none;
-  }
+}
 
 .special_info, .toc {
     padding-right: 4em;
@@ -240,7 +240,7 @@ h1 .editsection, h2 .editsection, h3 .editsection {
 }
 
 .image {
-    
+
 }
 
 .CategoryTreeTag {
@@ -263,5 +263,10 @@ table  {
 }
 
 ul, ol {
-  list-style: disc outside none;
+    list-style: disc outside none;
+}
+
+.flash_video {
+    background-color: #F6F6F6;
+    border: 1px dotted #669900;
 }

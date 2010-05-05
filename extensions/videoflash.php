@@ -91,7 +91,7 @@ function renderVideoFlash($input, $args) {
 					$fullscreen = 'true';
 				break;
 			}
-        $output = '<object width="%2$u" height="%3$u" style="%4$s">'
+        $output = '<object width="%2$u" height="%3$u" style="%4$s" class="flash_video">'
                 .' <param name="movie" value="'.$url[$type].'">'
 				.' <param name="allowfullscreen" value="' . $fullscreen . '" />'
                 .' <param name="wmode" value="transparent"></param>'
