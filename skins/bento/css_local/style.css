@@ -169,7 +169,7 @@ h4.mw-specialpagesgroup  {
 }
 
 #contentSub, #contentSub2, hr, #toolbar, #editform, #editoptions, #catlinks, .mw-searchresult, #search,
-.special_info, .shell, object {
+.special_info, .shell, object, div.mw-geshi, form {
     margin-left: 1em;
     margin-right: 1em;
 }
@@ -231,7 +231,7 @@ h1 .editsection, h2 .editsection, h3 .editsection {
     padding: 0.5em 0 0 2em;
 }
 
-.shell {
+.shell, div.mw-geshi {
     background-color:#F6F6F6;
     border:1px dotted #669900;
     font-family:monospace;
