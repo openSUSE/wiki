@@ -236,6 +236,7 @@ h1 .editsection, h2 .editsection, h3 .editsection {
     border:1px dotted #669900;
     font-family:monospace;
     border:1px solid #666666;
+    padding: 0.3em;
 }
 
 .image {

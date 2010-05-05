@@ -273,6 +273,8 @@ require_once("extensions/videoflash.php");
 # Syntax highlighting ----------------------------------
 require_once("$IP/extensions/SyntaxHighlight_GeSHi/SyntaxHighlight_GeSHi.php");
 
+# Category watching ----------------------------------
+require_once("$IP/extensions/CategoryWatch/CategoryWatch.php");
 
 //$wgShowExceptionDetails = true;
 ?>
