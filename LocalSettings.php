@@ -267,6 +267,9 @@ $wgHideInterlanguageLinks=false;
 $wgGroupPermissions['*']['interwiki'] = false;
 $wgGroupPermissions['sysop']['interwiki'] = true;
 
+# Flash video links management ----------------------------------
+require_once("extensions/videoflash.php");
+
 
 //$wgShowExceptionDetails = true;
 ?>

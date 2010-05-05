@@ -169,7 +169,7 @@ h4.mw-specialpagesgroup  {
 }
 
 #contentSub, #contentSub2, hr, #toolbar, #editform, #editoptions, #catlinks, .mw-searchresult, #search,
-.special_info {
+.special_info, .shell, object {
     margin-left: 1em;
     margin-right: 1em;
 }
@@ -191,6 +191,7 @@ h1 .editsection, h2 .editsection, h3 .editsection {
     font-size: 95%;
     border: 1px solid;
     margin: 1;
+    min-width: 30em;
     /* margin-top: 7px; */
 }
 
@@ -255,7 +256,11 @@ table  {
 }
 
 .editsection {
-    float: right;
+    font-weight: normal;
     margin-left: 1em;
     margin-right: 1em;
+}
+
+ul, ol {
+  list-style: disc outside none;
 }
