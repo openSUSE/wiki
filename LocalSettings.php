@@ -233,7 +233,9 @@ $wgFlaggedRevsNamespaces = array(NS_MAIN, NS_IMAGE, NS_TEMPLATE, 100, 102); // S
 $wgSimpleFlaggedRevsUI = true;                                                           
 $wgFlaggedRevComments = true;                                                           
 $wgFlaggedRevsLowProfile = false;                                                         
-$wgFlaggedRevTabs = false;                                                               
+$wgFlaggedRevTabs = false;
+$wgFlaggedRevsAutoReview = true;
+$wgFlaggedRevsAutoReviewNew = true; 
 
 # ParserFunctions -----------------
 require_once( "$IP/extensions/ParserFunctions/ParserFunctions.php" );

@@ -220,6 +220,7 @@ class BentoTemplate extends QuickTemplate {
         } ?>
                     </ul>
                 </div>
+                <div id="contentSub"><?php $this->html('subtitle') ?></div>
                 <!-- End: box header -->
 
 
@@ -233,7 +234,7 @@ class BentoTemplate extends QuickTemplate {
                     <h1><?php $this->data['displaytitle']!=""?$this->html('title'):$this->text('title') ?></h1>
 
                     <h3 id="siteSub">tagline: <?php $this->msg('tagline') ?></h3>
-                    <div id="contentSub"><?php $this->html('subtitle') ?></div>
+                    <!-- <div id="contentSub"><?php $this->html('subtitle') ?></div> -->
                             <?php if($this->data['undelete']) { ?>
                     <div id="contentSub2">undelete: <?php $this->html('undelete') ?></div>
                                 <?php } ?>
