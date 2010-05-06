@@ -265,8 +265,3 @@ table  {
 ul, ol {
     list-style: disc outside none;
 }
-
-.flash_video {
-    background-color: #F6F6F6;
-    border: 1px dotted #669900;
-}
