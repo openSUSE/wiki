@@ -169,7 +169,7 @@ h4.mw-specialpagesgroup  {
 }
 
 #contentSub, #contentSub2, hr, #toolbar, #editform, #editoptions, #catlinks, .mw-searchresult, #search,
-.special_info, .shell, .flash_video, div.mw-geshi, form {
+.special_info, .shell, .flash_video, div.mw-geshi, form, #successbox, #prefcache {
     margin-left: 1em;
     margin-right: 1em;
 }
