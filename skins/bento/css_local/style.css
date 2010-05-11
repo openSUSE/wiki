@@ -150,12 +150,12 @@ legend {
 }
 
 /* contentSub */
-#contentSub, #contentSub2 {
+/* #contentSub, #contentSub2 {
     font-size: 84%;
     line-height: 1.2em;
     margin: 0 0 1.4em 1em;
     width: auto;
-}
+} */
 
 /* END OFF: Styles for wiki user actions under the main navigations */
 
@@ -169,9 +169,13 @@ h4.mw-specialpagesgroup  {
 }
 
 #contentSub, #contentSub2, hr, #toolbar, #editform, #editoptions, #catlinks, .mw-searchresult, #search,
-.special_info, .shell, .flash_video, div.mw-geshi, form, #successbox, #prefcache {
+.special_info, .shell, .flash_video, div.mw-geshi, form, #successbox, #prefcache, dl {
     margin-left: 1em;
     margin-right: 1em;
+}
+
+#contentSub {
+    position: relative;
 }
 
 hr {
@@ -212,7 +216,7 @@ h1 .editsection, h2 .editsection, h3 .editsection {
     border:1px dotted;
     line-height: 1;
     position: absolute;
-    right: 6em;
+    right: 1em;
     max-width: 320px;
 }
 
@@ -254,7 +258,7 @@ h1 .editsection, h2 .editsection, h3 .editsection {
 }
 
 table  {
-    max-width: 1;
+    max-width: none;
 }
 
 .editsection {
@@ -265,4 +269,16 @@ table  {
 
 ul, ol {
     list-style: disc outside none;
+}
+
+td {
+    vertical-align: text-top;
+}
+
+.center {
+    text-align: center;
+}
+
+pre {
+    margin-bottom: 1em;
 }
