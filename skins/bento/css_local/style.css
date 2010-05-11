@@ -190,7 +190,7 @@ h1 .editsection, h2 .editsection, h3 .editsection {
 }
 
 .toc {
-    background:url("../geeko_tail.gif") no-repeat scroll right top #DDDDDD;
+    background:url("../geeko_tail.gif") no-repeat scroll right top #F6F6F6;
     /* display: block; */
     font-size: 95%;
     border: 1px solid;
