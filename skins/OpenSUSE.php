@@ -64,6 +64,16 @@ var $skin;
   <?php if($this->data['userjs']) { ?><script type="<?php $this->text('jsmimetype') ?>" src="<?php $this->text('userjs' ) ?>"></script><?php }?>
   <?php if($this->data['userjsprev']) { ?><script type="<?php $this->text('jsmimetype') ?>"><?php $this->html('userjsprev') ?></script><?php }?>
   <?php if($this->data['trackbackhtml']) print $this->data['trackbackhtml']; ?>
+  <script type="text/javascript" src="http://www.google-analytics.com/ga.js"i/>
+<script type="text/javascript">
+//<![CDATA[
+try {
+var pageTracker = _gat._getTracker("UA-3367212-3");
+pageTracker._setDomainName(".opensuse.org");
+pageTracker._trackPageview();
+} catch(err) {}
+//]]>  
+</script>
  </head>
  <body onload="langShow ();<?php if($this->data['body_onload']) { ?> <?php $this->text('body_onload')?><?php } ?>" <?php if($this->data['body_ondblclick']) { ?> ondblclick="<?php $this->text('body_ondblclick') ?>"<?php } ?> class="mediawiki <?php $this->text('dir') ?> <?php $this->text('pageclass') ?> <?php $this->text('skinnameclass') ?>">
   <div class="skipLinks">
@@ -355,21 +365,6 @@ var $skin;
   </div>
   <?php $this->html('bottomscripts'); /* JS call to runBodyOnloadHook */ ?>
   <?php $this->html('reporttime') ?>
-  <script type="text/javascript">
-   //<![CDATA[
-   var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-   document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-   //]]>
-  </script>
-  <script type="text/javascript">
-   //<![CDATA[
-   try {
-   var pageTracker = _gat._getTracker("UA-3367212-3");
-   pageTracker._setDomainName(".opensuse.org");
-   pageTracker._trackPageview();
-   } catch(err) {}
-   //]]>
-  </script>
  </body>
 </html>
 <?php
