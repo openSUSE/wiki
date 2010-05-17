@@ -282,20 +282,19 @@
          */
 
         function initUser( &$user ) {
-           //We are creating an LDAP user, it is very important that we do
-           //NOT set a local password because it could compromise the
-           //security of our domain.
-           //$user->setPassword( '' );
-           $user->setOption('skin','opensuse');
+           // automatically creating a new wiki user on first login
+           // $user->setPassword( '' );
+           // $user->setOption('skin','opensuse');
            if (isset($_SERVER['HTTP_X_EMAIL'])) {
              $user->setEmail( $_SERVER['HTTP_X_EMAIL'] );
            } else {
              $user->setEmail( '' );
            }
            $user->saveSettings();
-            return true;
+           return true;
         }
     }
+
     $wgHooks['UserLogoutComplete'][] = 'iChainLogout';
     function iChainLogout($user) {
       // http://de.opensuse.org/cmd/ICSLogout
