@@ -172,11 +172,12 @@ class BentoTemplate extends QuickTemplate {
                     </ul>
                 </div>
 
-
                 <div id="some_other_content" class="box box-shadow alpha clear-both navigation">
                     <h2 class="box-header">Sponsors</h2>
-
+                    <?php $arr = array("sponsor_amd.png", 'sponsor_b1-systems.png', 'sponsor_ip-exchange2.png'); ?>
+                    <img src="https://static.opensuse.org/themes/bento/images/sponsors/<?php echo $arr[rand(0, count($arr)-1)] ?>" alt="Sponsor"/>
                 </div>
+
 
         <?php if( $this->data['language_urls'] ) { ?>
                 <div id="language_box" class="box box-shadow alpha clear-both navigation">
