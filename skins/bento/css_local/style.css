@@ -3,7 +3,7 @@ body {
 }
 
 #header ul#global-navigation {
-    width: 650px; /* to get space for advanced search */
+    width: auto; /* to get space for advanced search */
 }
 
 div.tright {
