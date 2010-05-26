@@ -280,3 +280,12 @@ ul, ol {
 pre {
     margin-bottom: 1em;
 }
+
+div.minutes {
+    background: none repeat scroll 0 0 #F0F0F4;
+    border: 1px solid #669900;
+    color: #000000;
+    margin: 0 0 1em 1em;
+    padding: 0 0.5em;
+    white-space: pre;
+}
