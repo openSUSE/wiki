@@ -217,7 +217,7 @@ h1 .editsection, h2 .editsection, h3 .editsection {
     -moz-border-radius: 5px 5px 5px 5px;
     line-height: 1;
     position: absolute;
-    right: 1em;
+    right: 0;
     max-width: 320px;
 }
 
