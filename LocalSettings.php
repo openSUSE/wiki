@@ -180,8 +180,7 @@ $wgAllowCategorizedRecentChanges = true;
 
 $wgNamespacesToBeSearchedDefault = array(
         NS_MAIN =>           true,
-        102 => true,
-        100 => true
+        102 => true
 );
 
 ##### Misc #####
