@@ -49,6 +49,8 @@ class BentoTemplate extends QuickTemplate {
         <script type="<?php $this->text('jsmimetype') ?>" src="https://static.opensuse.org/themes/bento/js/l10n/global-navigation-data-en_US.js"></script>
         <script type="<?php $this->text('jsmimetype') ?>" src="https://static.opensuse.org/themes/bento/js/global-navigation.js"></script>
 
+        <link rel="icon" type="image/png" href="http://static.opensuse.org/themes/bento/images/favicon.png" />
+
         <!-- Head Scripts -->
                 <?php $this->html('headscripts') ?>
                 <?php if($this->data['jsvarurl']) { ?><script type="<?php $this->text('jsmimetype') ?>" src="<?php $this->text('jsvarurl') ?>"><!-- site js --></script><?php }?>
