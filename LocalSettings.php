@@ -151,7 +151,9 @@ $wgExtraNamespaces[101] = 'SDB_Talk';
 $wgExtraNamespaces[102] = 'Portal';                                                                 
 $wgExtraNamespaces[103] = 'Portal_Talk';
 $wgExtraNamespaces[104] = 'Archive';
-$wgExtraNamespaces[105] = 'Archive_Talk';                                                             
+$wgExtraNamespaces[105] = 'Archive_Talk';
+$wgExtraNamespaces[106] = 'HCL';
+$wgExtraNamespaces[107] = 'HCL_Talk';
 
 # Enable/Disable subpages                                                                              
 $wgNamespacesWithSubpages[-1] = false;                                                             
@@ -174,7 +176,7 @@ $wgNamespacesWithSubpages[103] = true;
 $wgNamespacesWithSubpages[104] = true;                                               
 $wgNamespacesWithSubpages[105] = true;
 
-$wgContentNamespaces = array (0, 4, 12, 100, 102, 104);
+$wgContentNamespaces = array (0, 4, 12, 100, 102, 104, 106);
 
 $wgAllowCategorizedRecentChanges = true;
 
