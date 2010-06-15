@@ -275,5 +275,12 @@ require_once("$IP/extensions/SyntaxHighlight_GeSHi/SyntaxHighlight_GeSHi.php");
 # Category watching ----------------------------------
 require_once("$IP/extensions/CategoryWatch/CategoryWatch.php");
 
+require_once( 'extensions/SelectCategory/SelectCategory.php' );
+
+require_once("$IP/extensions/ExpandTemplates/ExpandTemplates.php");
+
+require_once("$IP/extensions/CrossNamespaceLinks/CrossNamespaceLinks.php");
+
+
 //$wgShowExceptionDetails = true;
 ?>
