@@ -280,6 +280,10 @@ require_once( 'extensions/SelectCategory/SelectCategory.php' );
 require_once("$IP/extensions/ExpandTemplates/ExpandTemplates.php");
 
 require_once("$IP/extensions/CrossNamespaceLinks/CrossNamespaceLinks.php");
+$wgSelectCategoryNamespaces[100] = true;
+$wgSelectCategoryNamespaces[102] = true;
+$wgSelectCategoryNamespaces[104] = true;
+$wgSelectCategoryNamespaces[106] = true;
 
 
 //$wgShowExceptionDetails = true;
