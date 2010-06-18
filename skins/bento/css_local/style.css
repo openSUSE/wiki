@@ -296,10 +296,13 @@ div.minutes {
 #SelectCategoryList {
     height:20em;
     overflow:auto;
-    border: 1px solid #679E37;
+    border: 1px solid #E0E0E0;
     margin-bottom:10px;
     margin-left: 0;
 }
+
+#SelectCategoryList li { margin: 0.1em 0; }
+
 
 /* expand templates inputbox */
 textarea#input {
