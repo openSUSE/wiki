@@ -99,7 +99,7 @@ class CrossNamespaceLinksPage extends QueryPage {
 			FROM $pagelinks
 			LEFT JOIN $page ON page_id = pl_from
 			WHERE page_is_redirect = 0 AND page_namespace = " . NS_MAIN . " AND pl_namespace NOT IN ($namespaces)
-			GROUP BY page_id
+			GROUP BY page_id, page_title, pl_namespace
 			";
 	}
 
