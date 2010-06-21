@@ -154,6 +154,8 @@ $wgExtraNamespaces[104] = 'Archive';
 $wgExtraNamespaces[105] = 'Archive_Talk';
 $wgExtraNamespaces[106] = 'HCL';
 $wgExtraNamespaces[107] = 'HCL_Talk';
+$wgExtraNamespaces[108] = '11.2';
+$wgExtraNamespaces[109] = '11.2_Talk';
 
 # Enable/Disable subpages                                                                              
 $wgNamespacesWithSubpages[-1] = false;                                                             
@@ -176,7 +178,7 @@ $wgNamespacesWithSubpages[103] = true;
 $wgNamespacesWithSubpages[104] = true;                                               
 $wgNamespacesWithSubpages[105] = true;
 
-$wgContentNamespaces = array (0, 4, 12, 100, 102, 104, 106);
+$wgContentNamespaces = array (0, 4, 12, 100, 102, 104, 106, 108);
 
 $wgAllowCategorizedRecentChanges = true;
 
@@ -277,14 +279,15 @@ require_once("$IP/extensions/CategoryWatch/CategoryWatch.php");
 
 require_once( 'extensions/SelectCategory/SelectCategory.php' );
 
-require_once("$IP/extensions/ExpandTemplates/ExpandTemplates.php");
-
-require_once("$IP/extensions/CrossNamespaceLinks/CrossNamespaceLinks.php");
 $wgSelectCategoryNamespaces[100] = true;
 $wgSelectCategoryNamespaces[102] = true;
 $wgSelectCategoryNamespaces[104] = true;
 $wgSelectCategoryNamespaces[106] = true;
+$wgSelectCategoryNamespaces[108] = true;
 
+require_once("$IP/extensions/ExpandTemplates/ExpandTemplates.php");
+
+require_once("$IP/extensions/CrossNamespaceLinks/CrossNamespaceLinks.php");
 
 //$wgShowExceptionDetails = true;
 ?>
