@@ -235,7 +235,6 @@ h1 .editsection, h2 .editsection, h3 .editsection {
 #catlinks {
     border-top: 2px solid #D9E5BF;
     padding: 0.5em 0 0 2em;
-    overflow: auto;
     margin-top: 0.5em;
     margin-bottom: 0.5em;
 }
