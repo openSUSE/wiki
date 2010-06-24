@@ -313,3 +313,7 @@ textarea#input {
     overflow: auto;
 
 }
+
+dt, dd {
+    font-weight: bold;
+}
