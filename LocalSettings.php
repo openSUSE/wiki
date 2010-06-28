@@ -277,13 +277,13 @@ require_once("$IP/extensions/SyntaxHighlight_GeSHi/SyntaxHighlight_GeSHi.php");
 # Category watching ----------------------------------
 require_once("$IP/extensions/CategoryWatch/CategoryWatch.php");
 
-require_once( 'extensions/SelectCategory/SelectCategory.php' );
-
-$wgSelectCategoryNamespaces[100] = true;
-$wgSelectCategoryNamespaces[102] = true;
-$wgSelectCategoryNamespaces[104] = true;
-$wgSelectCategoryNamespaces[106] = true;
-$wgSelectCategoryNamespaces[108] = true;
+// This plugin caused trouble
+//require_once( 'extensions/SelectCategory/SelectCategory.php' );
+//$wgSelectCategoryNamespaces[100] = true;
+//$wgSelectCategoryNamespaces[102] = true;
+//$wgSelectCategoryNamespaces[104] = true;
+//$wgSelectCategoryNamespaces[106] = true;
+//$wgSelectCategoryNamespaces[108] = true;
 
 require_once("$IP/extensions/ExpandTemplates/ExpandTemplates.php");
 
