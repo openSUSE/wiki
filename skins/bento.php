@@ -147,7 +147,7 @@ class BentoTemplate extends QuickTemplate {
                         <li><a href="/Portal:Project">Project Overview</a></li>
                         <li><a href="/Portal:Distribution">Distribution</a></li>
                         <li><a href="/Portal:Support">Support</a></li>
-                        <li><a href="/openSUSE:Support_channels">Contact</a></li>
+                        <li><a href="/openSUSE:Communication_channels">Contact</a></li>
                         <li><a href="/openSUSE:Browse">Sitemap</a></li>
                     </ul>
                 </div>
