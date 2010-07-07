@@ -141,16 +141,19 @@ class BentoTemplate extends QuickTemplate {
 
             <div class="column grid_3 alpha">
 
-                <div id="some_other_content" class="box box-shadow alpha clear-both navigation">
-                    <h2 class="box-header">Navigation</h2>
-                    <ul class="navigation">
-                        <li><a href="/Portal:Project">Project Overview</a></li>
-                        <li><a href="/Portal:Distribution">Distribution</a></li>
-                        <li><a href="/Portal:Support">Support</a></li>
-                        <li><a href="/openSUSE:Communication_channels">Contact</a></li>
-                        <li><a href="/openSUSE:Browse">Sitemap</a></li>
-                    </ul>
-                </div>
+               <!-- Begin custom navigation -->
+               <?php foreach ($this->data['sidebar'] as $bar => $cont) { ?>
+               <div id="some_other_content" class="box box-shadow alpha clear-both navigation">
+               <h2 class="box-header">
+                  <?php $out = wfMsg( $bar ); if (wfEmptyMsg($bar, $out)) echo $bar; else echo $out;?>
+               </h2>
+                 <ul class="navigation">
+                  <?php foreach($cont as $key => $val) { ?>
+                  <li><a href="<?php echo htmlspecialchars($val['href']) ?>"><?php echo htmlspecialchars($val['text'])?></a></li>
+                  <?php } ?>
+                 </ul>          
+               </div>
+               <?php } ?>
 
 
                 <div id="some_other_content" class="box box-shadow alpha clear-both navigation">
