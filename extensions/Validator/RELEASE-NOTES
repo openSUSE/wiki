@@ -1,0 +1,82 @@
+For a documentation of all features, see http://www.mediawiki.org/wiki/Extension:Validator
+
+== Validator change log ==
+This change log contains a list of completed to-do's (new features, bug fixes, refactoring) for every version of Validator.
+
+
+== Validator change log ==
+
+=== Validator 0.3.4 ===
+(2010-07-07)
+
+* Fixed issue with parameter reference that occured in php 5.3 and later. 
+
+* Fixed escaping issue that caused parameter names in error messages to be shown incorrectly.
+
+* Fixed small issue with parameter value trimming that caused problems when objects where passed.
+
+=== Validator 0.3.3 ===
+(2010-06-20)
+
+* Fixed bug that caused notices when using the ValidatorManager::manageParsedParameters method in some cases.
+
+=== Validator 0.3.2 ===
+(2010-06-07)
+
+* Added lower casing to parameter names, and optionally, but default on, lower-casing for parameter values.
+
+* Added removal of default parameters from the default parameter queue when used as a named parameter.
+
+=== Validator 0.3.1 ===
+(2010-06-04)
+
+* Added ValidatorManager::manageParsedParameters and Validator::setParameters.
+
+=== Validator 0.3 ===
+(2010-05-31)
+
+* Added generic default parameter support.
+
+* Added parameter dependency support.
+
+* Added full meta data support for validation and formatting functions, enabling more advanced handling of parameters.
+
+* Major refactoring to conform to MediaWiki convention.
+
+=== Validator 0.2.2 ===
+(2010-03-01)
+
+* Fixed potential xss vectors.
+
+* Minor code improvements.
+
+=== Validator 0.2.1 ===
+(2010-02-01)
+
+* Changed the inclusion of the upper bound for range validation functions.
+
+* Small language fixes.
+
+=== Validator 0.2 ===
+(2009-12-25)
+
+* Added handling for lists of a type, instead of having list as a type. This includes per-item-validation and per-item-defaulting.
+
+* Added list validation functions: item_count and unique_items
+
+* Added boolean, number and char types.
+
+* Added support for output types. The build in output types are lists, arrays, booleans and strings. Via a hook you can add your own output types.
+
+* Added Validator_ERRORS_MINIMAL value for $egValidatorErrorLevel.
+
+* Added warning message to ValidatorManager that will be shown for errors when egValidatorErrorLevel is Validator_ERRORS_WARN.
+
+* Added criteria support for is_boolean, has_length and regex.
+
+=== Validator 0.1 ===
+(2009-12-17)
+
+* Initial release, featuring parameter validation, defaulting and error generation.
+
+{{Validator see also}}
