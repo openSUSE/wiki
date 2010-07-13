@@ -281,6 +281,7 @@ require_once("$IP/extensions/CrossNamespaceLinks/CrossNamespaceLinks.php");
 
 // Semantic Maps: 
 
+include_once( "$IP/extensions/SemanticForms/includes/SF_Settings.php");
 require_once( "$IP/extensions/Validator/Validator.php" );
 require_once( "$IP/extensions/Maps/Maps.php" );
 require_once( "$IP/extensions/SemanticMaps/SemanticMaps.php" );
