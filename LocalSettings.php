@@ -286,6 +286,8 @@ require_once( "$IP/extensions/Validator/Validator.php" );
 require_once( "$IP/extensions/Maps/Maps.php" );
 require_once( "$IP/extensions/SemanticMaps/SemanticMaps.php" );
 
+$egGoogleMapsKey = ""; # Your Google Maps API key. Required for displaying Google Maps, and using the Google Geocoder services.
+$egYahooMapsKey = ""; # Your Yahoo! Maps API key. Required for displaying Yahoo! Maps.
 
 //$wgShowExceptionDetails = true;
 ?>
