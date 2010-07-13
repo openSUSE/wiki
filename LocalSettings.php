@@ -196,20 +196,10 @@ $wgFileExtensions = array( 'doc', 'docx', 'gif', 'jpg', 'jpeg', 'odp', 'ods', 'o
 # Add XMPP functionality
 $wgUrlProtocols[] = 'xmpp:';
 
-# Disable all upload/edit rights during the transition
-# to be removed once the wiki is finished             
-#                                                     
-#$wgGroupPermissions['user']['move']               = false;
-#$wgGroupPermissions['user']['move-subpages']      = false;
-#$wgGroupPermissions['user']['move-rootuserpages'] = false;
-#$wgGroupPermissions['user']['edit']               = false;
-#$wgGroupPermissions['user']['createpage']         = false;
-#$wgGroupPermissions['user']['createtalk']         = false;
-#$wgGroupPermissions['user']['writeapi']           = false;
-#$wgGroupPermissions['user']['upload']             = false;
-#$wgGroupPermissions['user']['reupload']           = false;
-#$wgGroupPermissions['user']['reupload-shared']    = false;
-#$wgGroupPermissions['user']['minoredit']          = false;
+# To be removed once the wiki transition is finished
+$wgGroupPermissions['user']['import'] = true;
+$wgGroupPermissions['user']['importupload'] = true;
+
 
 ##### Extensions #####
 
