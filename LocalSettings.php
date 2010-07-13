@@ -288,6 +288,7 @@ require_once( "$IP/extensions/SemanticMaps/SemanticMaps.php" );
 
 #$egGoogleMapsKey = ""; # Your Google Maps API key. Required for displaying Google Maps, and using the Google Geocoder services.
 #$egYahooMapsKey = ""; # Your Yahoo! Maps API key. Required for displaying Yahoo! Maps.
+include_once( "/srv/settings/map_settings.php" );
 
 //$wgShowExceptionDetails = true;
 ?>
