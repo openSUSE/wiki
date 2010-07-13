@@ -318,3 +318,6 @@ textarea#input {
 dt {
     font-weight: bold;
 }
+
+/* fix screenshot galleries */
+table.gallery td { vertical-align: top; }
