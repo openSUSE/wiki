@@ -276,18 +276,13 @@ require_once("$IP/extensions/CategoryWatch/CategoryWatch.php");
 //$wgSelectCategoryNamespaces[108] = true;
 
 require_once("$IP/extensions/ExpandTemplates/ExpandTemplates.php");
-
 require_once("$IP/extensions/CrossNamespaceLinks/CrossNamespaceLinks.php");
 
 // Semantic Maps: 
-
 include_once( "$IP/extensions/SemanticForms/includes/SF_Settings.php");
 require_once( "$IP/extensions/Validator/Validator.php" );
 require_once( "$IP/extensions/Maps/Maps.php" );
 require_once( "$IP/extensions/SemanticMaps/SemanticMaps.php" );
-
-#$egGoogleMapsKey = ""; # Your Google Maps API key. Required for displaying Google Maps, and using the Google Geocoder services.
-#$egYahooMapsKey = ""; # Your Yahoo! Maps API key. Required for displaying Yahoo! Maps.
 include_once( "/srv/settings/map_settings.php" );
 
 // protect user pages
@@ -295,6 +290,10 @@ include_once( "$IP/extensions/UserPageEditProtection/UserPageEditProtection.php"
 $wgOnlyUserEditUserPage = true; /* Set this to true to turn on user page protection */
 $wgGroupPermissions['sysop']['editalluserpages'] = true; /* Set this to allow sysops to edit all user pages */
 
+// Multiple Uploads
+require_once("$IP/extensions/MultiUpload/MultiUpload.php");
+//Uncomment this to make it the default uploader
+//$wgUploadNavigationUrl = '/index.php?title=Special:MultipleUpload';
+$wgMaxUploadFiles = 5;
 
-//$wgShowExceptionDetails = true;
 ?>
