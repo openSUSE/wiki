@@ -26,6 +26,13 @@ class SkinOpenSUSE extends SkinTemplate {
     $this->stylename = 'opensuse';
     $this->template  = 'OpenSUSETemplate';
   }
+  function setupSkinUserCss( OutputPage $out ) {
+    parent::setupSkinUserCss( $out );
+    // Append to the default screen common & print styles...
+    $out->addStyle( 'opensuse/css/local/wiki.css', 'screen' );
+    $out->addStyle( 'opensuse/css/local/wiki_print.css', 'print' );
+    $out->addStyle( 'opensuse/css/local/wiki_iehacks.css', 'screen', 'lte IE 7' );
+  }
 }
 class OpenSUSETemplate extends QuickTemplate {
 var $skin;
@@ -42,11 +49,7 @@ var $skin;
   <meta http-equiv="Content-Type" content="<?php $this->text('mimetype') ?>; charset=<?php $this->text('charset') ?>" />
   <?php $this->html('headlinks') ?>
   <title><?php $this->text('pagetitle') ?></title>
-  <link href="<?php $this->text('stylepath') ?>/opensuse/css/local/wiki.css" rel="stylesheet" type="text/css" />
-  <!--[if lte IE 7]>
-  <link href="<?php $this->text('stylepath') ?>/opensuse/css/local/wiki_iehacks.css" rel="stylesheet" type="text/css"/>
-  <![endif]-->
-  <link rel="stylesheet" type="text/css" <?php if(empty($this->data['printable']) ) { ?>media="print"<?php } ?> href="<?php $this->text('stylepath') ?>/opensuse/css/local/wiki_print.css" />
+  <?php $this->html('csslinks') ?>
   <!--[if lt IE 7]>
   <meta http-equiv="imagetoolbar" content="no" />
   <![endif]-->
@@ -364,9 +367,23 @@ var $skin;
   </div>
   <?php $this->html('bottomscripts'); /* JS call to runBodyOnloadHook */ ?>
   <?php $this->html('reporttime') ?>
-
-  <script type="text/javascript" src="http://www.novell.com/inc/superstats.js"></script>
-  <noscript><img src="https://novellcom.112.2O7.net/b/ss/novellcom/1/G.6--NS/0" height="1" width="1" alt="" /></noscript>
+  <script type="text/javascript">
+   //<![CDATA[
+   var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl
+   ." : "http://www.");
+   document.write(unescape("%3Cscript src='" + gaJsHost + "google- 
+   analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+   //]]>
+  </script>
+  <script type="text/javascript">
+   //<![CDATA[
+   try {
+   var pageTracker = _gat._getTracker("UA-3367212-3");
+   pageTracker._setDomainName(".opensuse.org");
+   pageTracker._trackPageview();
+   } catch(err) {}
+   //]]>
+  </script>
  </body>
 </html>
 <?php
