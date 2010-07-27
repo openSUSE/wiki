@@ -11,7 +11,7 @@ require_once( "/srv/settings/wiki_settings.php" );
 ini_set( "include_path", ".:$IP:$IP/includes:$IP/languages" );
 
 # If PHP's memory limit is very low, some operations may fail.
-ini_set( 'memory_limit', '32M' );
+ini_set( 'memory_limit', '64M' );
 
 if ( $wgCommandLineMode ) {
 	if ( isset( $_SERVER ) && array_key_exists( 'REQUEST_METHOD', $_SERVER ) ) {
@@ -275,8 +275,8 @@ require_once("$IP/extensions/CategoryWatch/CategoryWatch.php");
 //$wgSelectCategoryNamespaces[106] = true;
 //$wgSelectCategoryNamespaces[108] = true;
 
-require_once("$IP/extensions/ExpandTemplates/ExpandTemplates.php");
 require_once("$IP/extensions/CrossNamespaceLinks/CrossNamespaceLinks.php");
+require_once("$IP/extensions/notitle.php");
 
 // Semantic Maps: 
 include_once( "$IP/extensions/SemanticForms/includes/SF_Settings.php");
@@ -284,6 +284,11 @@ require_once( "$IP/extensions/Validator/Validator.php" );
 require_once( "$IP/extensions/Maps/Maps.php" );
 require_once( "$IP/extensions/SemanticMaps/SemanticMaps.php" );
 include_once( "/srv/settings/map_settings.php" );
+
+// Smooth Gallery
+require_once( "$IP/extensions/SmoothGallery/SmoothGallery.php" );
+$wgSmoothGalleryExtensionPath = "/mediawiki/extensions/smoothgallery";
+$wgSmoothGalleryDelimiter = "\n";
 
 // protect user pages
 include_once( "$IP/extensions/UserPageEditProtection/UserPageEditProtection.php" );
