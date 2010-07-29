@@ -103,8 +103,8 @@ class BentoTemplate extends QuickTemplate {
                 <a href="<?php echo $this->data['personal_urls'][login][href] ?>">Sign up</a> | <a id="login-trigger" href="#login">Login</a>
 
                 <div id="login-form">
-                    <form action="http://<?php echo $_SERVER['SERVER_NAME'] ?>/ICSLogin/auth-up" method="post" enctype="application/x-www-form-urlencoded" id="login_form">
-                        <input name="url" value="http://<?php echo $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'] ?>" type="hidden"/>
+                    <form action="https://<?php echo $_SERVER['SERVER_NAME'] ?>/ICSLogin/auth-up" method="post" enctype="application/x-www-form-urlencoded" id="login_form">
+                        <input name="url" value="https://<?php echo $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'] ?>" type="hidden"/>
                         <input name="context" value="default" type="hidden"/>
                         <input name="proxypath" value="reverse" type="hidden"/>
                         <input name="message" value="Please log In" type="hidden"/>

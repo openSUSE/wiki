@@ -202,7 +202,6 @@ $wgGroupPermissions['user']['importupload'] = true;
 
 
 ##### Extensions #####
-
 # Intersection ---------------------
 include("$IP/extensions/intersection/DynamicPageList.php");
 
@@ -285,14 +284,14 @@ require_once( "$IP/extensions/Maps/Maps.php" );
 require_once( "$IP/extensions/SemanticMaps/SemanticMaps.php" );
 include_once( "/srv/settings/map_settings.php" );
 
-// Smooth Gallery
-require_once( "$IP/extensions/SmoothGallery/SmoothGallery.php" );
-$wgSmoothGalleryExtensionPath = "/mediawiki/extensions/smoothgallery";
-$wgSmoothGalleryDelimiter = "\n";
+// Smooth Gallery... it is not working right now
+//require_once( "$IP/extensions/SmoothGallery/SmoothGallery.php" );
+//$wgSmoothGalleryExtensionPath = "/extensions/SmoothGallery";
+//$wgSmoothGalleryDelimiter = "\n";
 
 // protect user pages
 include_once( "$IP/extensions/UserPageEditProtection/UserPageEditProtection.php" );
-$wgOnlyUserEditUserPage = true; /* Set this to true to turn on user page protection */
+$wgOnlyUserEditUserPage = true; /* Set this to true to turn on user page protection */ 
 $wgGroupPermissions['sysop']['editalluserpages'] = true; /* Set this to allow sysops to edit all user pages */
 
 // Multiple Uploads
@@ -300,5 +299,7 @@ require_once("$IP/extensions/MultiUpload/MultiUpload.php");
 //Uncomment this to make it the default uploader
 //$wgUploadNavigationUrl = '/index.php?title=Special:MultipleUpload';
 $wgMaxUploadFiles = 5;
+
+include("$IP/extensions/google-coop.php");
 
 ?>
