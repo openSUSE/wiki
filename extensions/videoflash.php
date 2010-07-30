@@ -102,4 +102,3 @@ function renderVideoFlash($input, $args) {
         return sprintf($output,$id,$width,$height,$style);
  }
 ?>
-
