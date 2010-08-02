@@ -199,7 +199,7 @@ $wgUrlProtocols[] = 'xmpp:';
 # To be removed once the wiki transition is finished
 $wgGroupPermissions['user']['import'] = true;
 $wgGroupPermissions['user']['importupload'] = true;
-
+$wgGroupPermissions['sysop']['deleterevision']  = true;
 
 ##### Extensions #####
 # Intersection ---------------------
