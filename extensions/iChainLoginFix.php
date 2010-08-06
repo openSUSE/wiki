@@ -4,9 +4,9 @@ global $wgUser,$wgAuth ;
 # include this file in index.php after$mediaWiki->initialize() 
 
 # The user has logged in at another .opensuse.org site
-if (isset($_SERVER['HTTP_X_USERNAME']) && $wgUser->isAnon()) {
+if (isset($_SERVER['HTTP_X_USERNAME']) && $wgUser->isAnon() && validEmail()) {
+    if (!session_id()) session_start();
     error_log("User '" . $_SERVER['HTTP_X_USERNAME'] . "' is logged in ichain but not the wiki, doing it automatically");
-
     $wgUser = $wgUser->newFromName( $_SERVER['HTTP_X_USERNAME'] );
     if (!($wgUser->getID() > 0)) {
         error_log("Creating new user " . $_SERVER['HTTP_X_USERNAME']);
@@ -39,4 +39,20 @@ if (isset($_SERVER['HTTP_X_EMAIL']) && !$wgUser->isAnon() && $wgUser->getEmail()
     $wgUser->setCookies();
 }
 
+function validEmail() {
+   if (isset($_SERVER['HTTP_X_ENTITLEMENTGRANTED'])) {
+      if (!strpos($_SERVER['HTTP_X_ENTITLEMENTGRANTED'],'EmailValidated--NR')) {
+         if (!isset($_SESSION['redirected']) && session_id()) {
+            error_log($_SERVER['HTTP_X_USERNAME'] . " does not have a validated email address");
+            $_SESSION['redirected'] = true;
+            header( 'Location: http://en.opensuse.org/Help:Email_validation' );
+            exit(0);
+         }
+         return FALSE;
+      }
+   } else{
+      error_log('Entitlements are not being passed!');
+   }
+   return TRUE;
+}
 ?>
