@@ -1407,6 +1407,8 @@ class FlaggedArticle extends Article {
 		list($templateParams,$imageParams,$fileVersion) = 
 			FlaggedRevs::getIncludeParams( $this->parent, $templateIDs, $imageSHA1Keys );
 
+                $form .= Xml::openElement( 'br' );
+                $form .= Xml::closeElement( 'br' );
 		$form .= Xml::openElement( 'span', array('style' => 'white-space: nowrap;') );
 		# Hide comment if needed
 		if( !$disabled ) {
