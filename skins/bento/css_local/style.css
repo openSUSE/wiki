@@ -275,6 +275,10 @@ ul, ol {
     list-style: disc outside none;
 }
 
+ol {
+    list-style-type: decimal;
+}
+
 .center {
     text-align: center;
 }
