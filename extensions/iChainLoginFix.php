@@ -5,7 +5,6 @@ global $wgUser,$wgAuth ;
 
 # The user has logged in at another .opensuse.org site
 if (isset($_SERVER['HTTP_X_USERNAME']) && $wgUser->isAnon() && validEmail()) {
-    if (!session_id()) session_start();
     error_log("User '" . $_SERVER['HTTP_X_USERNAME'] . "' is logged in ichain but not the wiki, doing it automatically");
     $wgUser = $wgUser->newFromName( $_SERVER['HTTP_X_USERNAME'] );
     if (!($wgUser->getID() > 0)) {
@@ -40,9 +39,10 @@ if (isset($_SERVER['HTTP_X_EMAIL']) && !$wgUser->isAnon() && $wgUser->getEmail()
 }
 
 function validEmail() {
+   if (!session_id()) session_start();
    if (isset($_SERVER['HTTP_X_ENTITLEMENTGRANTED'])) {
       if (!strpos($_SERVER['HTTP_X_ENTITLEMENTGRANTED'],'EmailValidated--NR')) {
-         if (!isset($_SESSION['redirected']) && session_id()) {
+         if (!isset($_SESSION['redirected'])) {
             error_log($_SERVER['HTTP_X_USERNAME'] . " does not have a validated email address");
             $_SESSION['redirected'] = true;
             header( 'Location: http://en.opensuse.org/Help:Email_validation' );
