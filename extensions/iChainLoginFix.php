@@ -39,20 +39,23 @@ if (isset($_SERVER['HTTP_X_EMAIL']) && !$wgUser->isAnon() && $wgUser->getEmail()
 }
 
 function validEmail() {
-   if (!session_id()) session_start();
-   if (isset($_SERVER['HTTP_X_ENTITLEMENTGRANTED'])) {
-      if (!strpos($_SERVER['HTTP_X_ENTITLEMENTGRANTED'],'EmailValidated--NR')) {
-         if (!isset($_SESSION['redirected'])) {
-            error_log($_SERVER['HTTP_X_USERNAME'] . " does not have a validated email address");
-            $_SESSION['redirected'] = true;
-            header( 'Location: http://en.opensuse.org/Help:Email_validation' );
-            exit(0);
-         }
-         return FALSE;
-      }
-   } else{
-      error_log('Entitlements are not being passed!');
-   }
-   return TRUE;
+    if (!session_id()) session_start();
+    if (isset($_SERVER['HTTP_X_ENTITLEMENTGRANTED'])) {
+        if (!strpos($_SERVER['HTTP_X_ENTITLEMENTGRANTED'],'EmailValidated--NR')) {
+            if (!isset($_SESSION['redirected'])) {
+                error_log($_SERVER['HTTP_X_USERNAME'] . " does not have a validated email address");
+                if ($_SERVER['REQUEST_URI'] != "/Help:Email_validation") {
+                    $_SESSION['redirected'] = true;
+                    header( 'Location: http://' . $_SERVER['SERVER_NAME'] . '/Help:Email_validation' );
+                    exit(0);
+                }
+            }
+            return FALSE;
+        }
+    } else {
+        error_log('Entitlements are not being passed!');
+    }
+    return TRUE;
 }
+
 ?>
