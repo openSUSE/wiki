@@ -15,6 +15,7 @@ if ( isset($_SERVER['HTTP_X_USERNAME']) && !email_validated() ){
 
 # The user has logged in at another .opensuse.org site
 if (isset($_SERVER['HTTP_X_USERNAME']) && $wgUser->isAnon() && email_validated()) {
+    if (!session_id()) session_start();
     error_log("User '" . $_SERVER['HTTP_X_USERNAME'] . "' is logged in ichain but not the wiki, doing it automatically");
     $wgUser = $wgUser->newFromName( $_SERVER['HTTP_X_USERNAME'] );
     if (!($wgUser->getID() > 0)) {
