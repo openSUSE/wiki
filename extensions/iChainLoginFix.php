@@ -41,7 +41,7 @@ if (isset($_SERVER['HTTP_X_EMAIL']) && !$wgUser->isAnon() && $wgUser->getEmail()
 function validEmail() {
     if (!session_id()) session_start();
     if (isset($_SERVER['HTTP_X_ENTITLEMENTGRANTED'])) {
-        if (!strpos($_SERVER['HTTP_X_ENTITLEMENTGRANTED'],'EmailValidated--NR')) {
+        if (strpos($_SERVER['HTTP_X_ENTITLEMENTGRANTED'],'EmailValidated--NR') === FALSE) {
             if (!isset($_SESSION['redirected'])) {
                 error_log($_SERVER['HTTP_X_USERNAME'] . " does not have a validated email address");
                 if ($_SERVER['REQUEST_URI'] != "/Help:Email_validation") {
