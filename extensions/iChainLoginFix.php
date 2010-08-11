@@ -3,10 +3,9 @@ global $wgUser,$wgAuth ;
 
 # include this file in index.php after$mediaWiki->initialize() 
 
-if (!session_id()) session_start();
-
 # do not log in users without email validation. show them a message why
 if ( isset($_SERVER['HTTP_X_USERNAME']) && !email_validated() ){
+    if (!session_id()) session_start();
     $wgSiteNotice = "Please [[Help:Email_validation|validate your email account]] to login and edit the wiki. ";
     if (!$wgUser->isAnon()) {
         $wgUser->logout();

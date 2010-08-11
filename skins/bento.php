@@ -215,7 +215,7 @@ class BentoTemplate extends QuickTemplate {
                 <div class="ui-state-highlight ui-corner-all">
                     <p>
                         <span class="ui-icon ui-icon-info"/>
-                        <div id="siteNotice"><?php $this->html('sitenotice') ?></div>
+                        <?php $this->html('sitenotice') ?>
                     </p>
                 </div>
             </div>
