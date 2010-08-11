@@ -209,6 +209,19 @@ class BentoTemplate extends QuickTemplate {
 
             </div>
 
+
+                        <?php if($this->data['sitenotice']) { ?>
+            <div class="grid_13">
+                <div class="ui-state-highlight ui-corner-all">
+                    <p>
+                        <span class="ui-icon ui-icon-info"/>
+                        <div id="siteNotice"><?php $this->html('sitenotice') ?></div>
+                    </p>
+                </div>
+            </div>
+                            <?php } ?>
+
+
             <div id="some-content" class="box box-shadow grid_13 clearfix">
                 <!-- box header -->
                 <div class="box-header header-tabs">
@@ -242,10 +255,6 @@ class BentoTemplate extends QuickTemplate {
 
 
                 <a name="top" id="top"></a>
-        <?php if($this->data['sitenotice']) { ?>
-                <div id="siteNotice"><?php $this->html('sitenotice') ?></div>
-            <?php } ?>
-
 
                 <div class="alpha omega">
                     <h1><?php $this->data['displaytitle']!=""?$this->html('title'):$this->text('title') ?></h1>
