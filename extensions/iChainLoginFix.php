@@ -3,8 +3,19 @@ global $wgUser,$wgAuth ;
 
 # include this file in index.php after$mediaWiki->initialize() 
 
+if (!session_id()) session_start();
+
+# do not log in users without email validation. show them a message why
+if ( isset($_SERVER['HTTP_X_USERNAME']) && !email_validated() ){
+    $wgSiteNotice = "Please [[Help:Email_validation|validate your email account]] to login and edit the wiki. ";
+    if (!$wgUser->isAnon()) {
+        $wgUser->logout();
+        $wgUser->setCookies();
+    }
+}
+
 # The user has logged in at another .opensuse.org site
-if (isset($_SERVER['HTTP_X_USERNAME']) && $wgUser->isAnon() && validEmail()) {
+if (isset($_SERVER['HTTP_X_USERNAME']) && $wgUser->isAnon() && email_validated()) {
     error_log("User '" . $_SERVER['HTTP_X_USERNAME'] . "' is logged in ichain but not the wiki, doing it automatically");
     $wgUser = $wgUser->newFromName( $_SERVER['HTTP_X_USERNAME'] );
     if (!($wgUser->getID() > 0)) {
@@ -38,18 +49,11 @@ if (isset($_SERVER['HTTP_X_EMAIL']) && !$wgUser->isAnon() && $wgUser->getEmail()
     $wgUser->setCookies();
 }
 
-function validEmail() {
-    if (!session_id()) session_start();
+
+function email_validated() {
     if (isset($_SERVER['HTTP_X_ENTITLEMENTGRANTED'])) {
         if (strpos($_SERVER['HTTP_X_ENTITLEMENTGRANTED'],'EmailValidated--NR') === FALSE) {
-            if (!isset($_SESSION['redirected'])) {
-                error_log($_SERVER['HTTP_X_USERNAME'] . " does not have a validated email address");
-                if ($_SERVER['REQUEST_URI'] != "/Help:Email_validation") {
-                    $_SESSION['redirected'] = true;
-                    header( 'Location: http://' . $_SERVER['SERVER_NAME'] . '/Help:Email_validation' );
-                    exit(0);
-                }
-            }
+            error_log($_SERVER['HTTP_X_USERNAME'] . " does not have a validated email address");
             return FALSE;
         }
     } else {
@@ -57,5 +61,6 @@ function validEmail() {
     }
     return TRUE;
 }
+
 
 ?>
