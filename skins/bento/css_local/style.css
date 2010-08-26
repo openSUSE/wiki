@@ -325,3 +325,29 @@ dt {
 
 /* fix screenshot galleries */
 table.gallery td { vertical-align: top; }
+
+/* add nice link icons */
+a.external[href$=".ogm"], a.external[href$=".OGM"], a.external[href$=".avi"], a.external[href$=".AVI"], a.external[href$=".mpeg"], a.external[href$=".MPEG"], a.external[href$=".mpg"], a.external[href$=".MPG"], .link-video {
+    background: url("../film.png") no-repeat scroll right center transparent;
+    padding: 3px 16px 0 0;
+}
+
+a.external[href$=".iso"], a.external[href$=".ISO"] {
+    background: url("../cd.png") no-repeat scroll right center transparent;
+    padding: 3px 16px 0 0;
+}
+
+a.external[href$=".txt"], a.external[href$=".TXT"], a.external[href$=".doc"], a.external[href$=".DOC"] {
+    background: url("../page_white.png") no-repeat scroll right center transparent;
+    padding: 3px 16px 0 0;
+}
+
+a.external[href$=".pdf"], a.external[href$=".PDF"] {
+    background: url("../page_white_acrobat.png") no-repeat scroll right center transparent;
+    padding: 3px 16px 0 0;
+}
+
+a.external[href$=".png"], a.external[href$=".jpg"], a.external[href$=".jpeg"], a.external[href$=".gif"] {
+    background: url("../picture.png") no-repeat scroll right center transparent;
+    padding: 3px 16px 0 0;
+}
