@@ -300,6 +300,7 @@ require_once("$IP/extensions/MultiUpload/MultiUpload.php");
 //$wgUploadNavigationUrl = '/index.php?title=Special:MultipleUpload';
 $wgMaxUploadFiles = 5;
 
+include("$IP/extensions/BentoLanguage.php");
 include("$IP/extensions/google-coop.php");
 
 ?>

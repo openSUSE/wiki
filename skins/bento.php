@@ -23,7 +23,7 @@ class SkinBento extends SkinTemplate {
 class BentoTemplate extends QuickTemplate {
     var $skin;
     function execute() {
-        global $wgRequest;
+        global $wgRequest, $bento_lang;
         $this->skin = $skin = $this->data['skin'];
         $action = $wgRequest->getText( 'action' );
 
@@ -47,17 +47,7 @@ class BentoTemplate extends QuickTemplate {
         <script type="<?php $this->text('jsmimetype') ?>" src="https://static.opensuse.org/stage/themes/bento/js/script.js"></script>
         <script type="<?php $this->text('jsmimetype') ?>" src="<?php $this->text('stylepath') ?>/bento/js_local/script.js"></script>
 
-        <?php $avail_bento_langs = array("cs", "de", "el", "en", "es", "fi", "fr", "hu", "it", "ja", "nl", "pl", "pt", "ru", "sv", "tr", "vi", "zh_tw");
-           $lang = "en_US";
-           $wiki_lang = substr($_SERVER['SERVER_NAME'], 0, strpos($_SERVER['SERVER_NAME'], '.') );
-           $wiki_lang = str_replace( 'stage', '', $wiki_lang );
-           $wiki_lang = str_replace( 'test', '', $wiki_lang );
-           $wiki_lang = str_replace( 'wiki', '', $wiki_lang );
-           $wiki_lang = str_replace( 'cz', 'cs', $wiki_lang );
-           $wiki_lang = str_replace( 'ch_tw', 'ch_TW', $wiki_lang );
-           if ( in_array( $wiki_lang , $avail_bento_langs ) ) { $lang = $wiki_lang; }
-        ?>
-        <script type="<?php $this->text('jsmimetype') ?>" src="https://static.opensuse.org/themes/bento/js/l10n/global-navigation-data-<?php echo $lang; ?>.js"></script>
+        <script type="<?php $this->text('jsmimetype') ?>" src="https://static.opensuse.org/themes/bento/js/l10n/global-navigation-data-<?php echo $bento_lang; ?>.js"></script>
         <script type="<?php $this->text('jsmimetype') ?>" src="https://static.opensuse.org/themes/bento/js/global-navigation.js"></script>
 
         <link rel="icon" type="image/png" href="http://static.opensuse.org/themes/bento/images/favicon.png" />
