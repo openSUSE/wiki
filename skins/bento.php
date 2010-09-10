@@ -198,7 +198,7 @@ class BentoTemplate extends QuickTemplate {
 
         <?php if( $this->data['language_urls'] ) { ?>
                 <div id="language_box" class="box box-shadow alpha clear-both navigation">
-                    <h2 class="box-header">In other languages</h2>
+                    <h2 class="box-header"><?php $this->msg('otherlanguages') ?></h2>
                     <ul class="navigation">
             <?php foreach($this->data['language_urls'] as $langlink) { ?>
                         <li><a href='<?php echo htmlspecialchars($langlink['href']) ?>'><?php echo $langlink['text'] ?></a></li>
