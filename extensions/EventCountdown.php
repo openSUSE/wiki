@@ -2,6 +2,8 @@
 # EventCountdown extension
 # Copyright 2006 Matt Curtis (matt.r.curtis at gmail.com)
 #
+# Minor edits by Kaolin Fire to get rid of undefined index warnings
+#
 # License:
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -43,6 +45,13 @@
 
 $wgExtensionFunctions[] = "wfEventCountdownExtension";
 
+$wgExtensionCredits['parserhook'][] = array(
+        'name' => 'EventCountdown',
+        'description' => 'Makes it easy to display upcoming events.',
+        'version' => '1.0',
+        'author' => 'Matt Curtis',
+        'url' => 'http://www.mediawiki.org/wiki/Extension:EventCountdown',
+);
 
 function wfEventCountdownExtension() {
         global $wgParser;
@@ -61,6 +70,7 @@ function runDaysUntil( $input, $argv ) {
 
         $daysUntil = getDaysBetween($now, $then);
         $output = $daysUntil;
+        if (!array_key_exists("in",$argv)) return $output;
         switch ($argv["in"]) {
         case "days":
                 if ($daysUntil == 1) {
@@ -79,6 +89,7 @@ function runDaysUntil( $input, $argv ) {
 
 function runShowEventCountdown( $input, $argv ) {
         $now = time();
+        if (!array_key_exists("date",$argv)) return "";
         $then = strtotime($argv["date"]);
         $daysUntil = getDaysBetween($now, $then);
 
