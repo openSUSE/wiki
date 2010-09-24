@@ -1,13 +1,84 @@
 For a documentation of all features, see http://semantic-mediawiki.org
 
+== SMW 1.5.2 ==
+
+* 'Printouts' textarea in Special:Ask now has autocompletion on property
+  names.
+* SMW now has it's own copy of the jQuery and jQuery UI libraries.
+* Added a number of hooks to allow further customization by extensions.
+* 'Semantic' extension type that can be used by extensions to SMW to be
+  grouped together on Special:Version and other pages listing extensions.
+* Various bugfixes, style and documentation improvements and translation updates.
+
+== SMW 1.5.1 ==
+
+* Added query comparator "!~" that works like the negation of "~", i.e. that
+  retrieves exactly those values to which the provided pattern (with * and ?)
+  does not match.
+* Updated OWL/RDF export to include more data (modification dates, and page
+  namespaces). Changed export ontology to no longer use OWL AnnoationProperties
+  since OWL 2 DL supports property values also for classes/properties.
+* Improvements in code style and structure, following general MediaWiki
+  conventions. Most notably, the file to include for loading SMW now is
+  SemanticMediaWiki.php in the base directory (including the old Settings.php
+  will still work).
+* Preparation of future "SMWLight" release for wikis that want to enable users
+  to add property values to pages, but which do not want to include complex
+  query features.
+* Added a nmber of hooks to improve compatibility with extensions.
+* Various bugfixes, and translation updates.
+
+== SMW 1.5.0 ==
+
+* The former multi-valued/n-ary properties are now supported by a dedicated
+  datatype Record. Wikis that use the old style of these properties need to
+  update affected property pages as described at
+  http://semantic-mediawiki.org/wiki/SMW_1.5.0
+* The Type:Geographic_coordinates has been moved from SMW to the SemanticMaps
+  extension. Wikis that use this datatype need to install this extension to get
+  it back.
+* The "like" comparator ~ in inline queries is now enabled by default. To use
+  the former setting, use $smwgQComparators = '<|>|!'; in your LocalSettings.php.
+* A new datatype, "Telephone number", has been introduced for validating phone
+  numbers based on RFC 3966. Only global phone numbers are accepted, and no
+  vanity numbers (those containing letters) are allowed. Use Type:String if
+  you want to store more general strings as telephone numbers.
+* Support for additional parameters for ?printouts in inline queries, specified
+  by |+parameter=value after the printout. Currently supported are
+  *  limit: set the maximum number of values for this printout
+  *	 order: order values ascending or descending
+  *  align: right/center/left alignment for printouts in tables
+  *  index: directly address one value of a multi-valued (n-ary) property
+* Support for inverse properties: use "-" in front of property names anywhere to
+  refer to the inverse direction of a property. Works in browsing interfaces,
+  queries, and query output directives. In queries only for properties of Type:Page.
+* New configuration options $smwgUseCategoryHierarchy and $smwgCategoriesAsInstances
+  to configure how MediaWiki categories should be interpreted by SMW.
+* Compatibility with new MediaWiki skin "Vector" and with MediaWiki 1.16.
+* Removed support for backwards compatibility to SMW <1.0 ($smwgSMWBetaCompatible).
+* The page Special:Ask was overhauled to include inputs for entering values
+  for the selected format's parameters, and to use Ajax where possible
+* To that end, each format's query printer now includes a getParameters()
+  function that supplies the name and attributes of each the format's parameters
+* "before" and "after" hooks for updateData() and deleteSubject() were added
+* A hook was added for deleteSemanticData() as well
+
 == SMW 1.4.3 ==
 
 See http://semantic-mediawiki.org/wiki/SMW_1.4.3
 
+* A new query format, 'category', that displays values in the style of a
+  MediaWiki category page
+* A new 'columns' parameter for the 'ol' and 'ul' formats
+* The 'csv' format now prints a header row by default
+* The "::~" comparator in queries can now also be used for properties of type
+  Geographical coordinate, to find points within a certain distance
 * Using "-" as an output format for query printouts, or leaving the formatting
   string empty now leads to printout values being returned as plain, unformatted
   values. Recall that the general format for printouts in #ask is as follows:
    ?propertyname # format = label
+* New special property "Has improper value for" can be used to track input errors
+  (links pages where error happened to properties for which improper data was given).
 * New configuration parameter $smwgMaxNonExpNumber to set the maximal number that
   SMW will normally display without using scientific exp notation. Defaults to
   1000000000000000.
@@ -439,10 +510,10 @@ Semantic MediaWiki 0.4 includes the following new features:
   relations and attributes is now counted
 * Improved ontology import feature, allowing to import ontologies and to
   update existing pages with new ontological information
-* Experimental suport for date/time datatype
-* More datypes with units: mass and time duration
+* Experimental support for date/time datatype
+* More datatypes with units: mass and time duration
 * Support for EXP-notation with numbers, as e.g. 2.345e13. Improved number
-  formating in infobox.
+  formatting in infobox.
 * Configurable infobox: infobox can be hidden if empty, or switched off
   completely. This also works around a bug with MediaWiki galeries.
 * Prototype version of Special:Types, showing all available datatypes with

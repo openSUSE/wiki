@@ -50,7 +50,7 @@ class SFFormEdit extends SpecialPage {
 	}
 
 	static function printForm( $form_name, $target_name, $alt_forms = array() ) {
-		global $wgOut, $wgRequest, $wgScriptPath, $sfgScriptPath, $sfgFormPrinter, $sfgYUIBase;
+		global $wgOut, $wgRequest, $wgScriptPath, $sfgScriptPath, $sfgFormPrinter;
 
 		wfLoadExtensionMessages( 'SemanticForms' );
 
@@ -124,6 +124,7 @@ class SFFormEdit extends SpecialPage {
 		} elseif ( $target_name == '' && $page_name_formula == '' ) {
 			$text = '<p class="error">' . wfMsg( 'sf_formedit_badurl' ) . "</p>\n";
 		} else {
+			SFUtils::addJavascriptAndCSS();
 			$form_article = new Article( $form_title );
 			$form_definition = $form_article->getContent();
 
@@ -238,7 +239,6 @@ END;
 				$text .= $form_text;
 			}
 		}
-		SFUtils::addJavascriptAndCSS();
 		// instead of adding the Javascript using addScript(), which is
 		// the standard approach, we add it using addHTML(), below the
 		// form text - that's so the Javascript created for fields with

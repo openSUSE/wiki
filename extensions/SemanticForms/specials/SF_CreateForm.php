@@ -180,7 +180,7 @@ function doSpecialCreateForm() {
 	$ct = SpecialPage::getPage( 'CreateTemplate' );
 	$create_template_link = $sk->makeKnownLinkObj( $ct->getTitle(), $ct->getDescription() );
 	$text .= <<<END
-	<input type="submit" name="add_field" value="$add_button_text"></p>
+	<input type="submit" name="add_field" value="$add_button_text" /></p>
 	<br />
 	<div class="editButtons">
 	<p>
@@ -202,11 +202,6 @@ END;
 END;
 	$text .= "	" . Xml::tags( 'p', null, $create_template_link . '.' );
 
-	$wgOut->addLink( array(
-		'rel' => 'stylesheet',
-		'type' => 'text/css',
-		'media' => "screen",
-		'href' => $sfgScriptPath . "/skins/SF_main.css"
-	) );
+	$wgOut->addExtensionStyle( $sfgScriptPath . "/skins/SemanticForms.css" );
 	$wgOut->addHTML( $text );
 }

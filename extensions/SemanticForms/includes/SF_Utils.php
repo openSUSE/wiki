@@ -108,71 +108,60 @@ END;
 	 * Accepts an optional Parser instance, or uses $wgOut if omitted.
 	 */
 	static function addJavascriptAndCSS( $parser = NULL ) {
-		global $wgOut, $sfgScriptPath, $sfgYUIBase, $smwgScriptPath, $wgScriptPath, $wgFCKEditorDir, $wgJsMimeType, $sfgUseFormEditPage;
+		global $wgOut, $sfgScriptPath, $smwgScriptPath, $wgScriptPath, $wgFCKEditorDir, $wgJsMimeType, $sfgUseFormEditPage;
+		global $smwgJQueryIncluded, $smwgJQUIAutoIncluded;
+		// jQuery and jQuery UI are used so often in forms, we might as
+		// well assume they'll always be used, and include them in
+		// every form
+		$smwgJQueryIncluded = true;
+		$smwgJQUIAutoIncluded = true;
 
-		$links = array(
-			array(
-				'rel' => 'stylesheet',
-				'type' => 'text/css',
-				'media' => "screen",
-				'href' => $sfgScriptPath . '/skins/SF_main.css'
-			),
-			array(
-				'rel' => 'stylesheet',
-				'type' => 'text/css',
-				'media' => "screen",
-				'href' => $sfgYUIBase . "autocomplete/assets/skins/sam/autocomplete.css"
-			),
-			array(
-				'rel' => 'stylesheet',
-				'type' => 'text/css',
-				'media' => "screen",
-				'href' => $sfgScriptPath . '/skins/SF_yui_autocompletion.css'
-			),
-			array(
-				'rel' => 'stylesheet',
-				'type' => 'text/css',
-				'media' => "screen",
-				'href' => $sfgScriptPath . '/skins/floatbox.css'
-			),
-			array(
-				'rel' => 'stylesheet',
-				'type' => 'text/css',
-				'media' => "screen",
-				'href' => $smwgScriptPath . '/skins/SMW_custom.css'
-			),
+		$css_files = array(
+			"$smwgScriptPath/skins/SMW_custom.css",
+			"$sfgScriptPath/skins/jquery-ui/base/jquery.ui.all.css",
+			"$sfgScriptPath/skins/SemanticForms.css",
+			"$sfgScriptPath/skins/jquery.fancybox-1.3.1.css"
 		);
-		foreach ( $links as $link ) {
+		foreach ( $css_files as $css_file ) {
+			$link = array(
+				'rel' => 'stylesheet',
+				'type' => 'text/css',
+				'media' => "screen",
+				'href' => $css_file
+			);
 			if ( $parser )
 				$parser->getOutput()->addHeadItem( Xml::element( 'link', $link ) );
 			else
 				$wgOut->addLink( $link );
 		}
-		
+		$wgOut->addStyle( "$sfgScriptPath/skins/SF_IEfixes.css", 'screen', 'IE' );
 		
 		$scripts = array();
-		$scripts[] = "{$sfgYUIBase}yahoo/yahoo-min.js";
-		$scripts[] = "{$sfgYUIBase}dom/dom-min.js";
-		$scripts[] = "{$sfgYUIBase}event/event-min.js";
-		$scripts[] = "{$sfgYUIBase}get/get-min.js";
-		$scripts[] = "{$sfgYUIBase}connection/connection-min.js";
-		$scripts[] = "{$sfgYUIBase}json/json-min.js";
-		$scripts[] = "{$sfgYUIBase}datasource/datasource-min.js";
-		$scripts[] = "{$sfgYUIBase}autocomplete/autocomplete-min.js";
-		$scripts[] = "$sfgScriptPath/libs/SF_yui_autocompletion.js";
 		if ( !$sfgUseFormEditPage )
 			$scripts[] = "$sfgScriptPath/libs/SF_ajax_form_preview.js";
-		$scripts[] = "$sfgScriptPath/libs/floatbox.js";
 		$scripts[] = "$smwgScriptPath/skins/SMW_tooltip.js";
 		$scripts[] = "$smwgScriptPath/skins/SMW_sorttable.js";
+		if ( method_exists( 'OutputPage', 'includeJQuery' ) ) {
+			$wgOut->includeJQuery();
+		} else {
+			$scripts[] = "$sfgScriptPath/libs/jquery-1.4.2.min.js";
+		}
+		$scripts[] = "$sfgScriptPath/libs/jquery-ui/jquery.ui.core.min.js";
+		$scripts[] = "$sfgScriptPath/libs/jquery-ui/jquery.ui.widget.min.js";
+		$scripts[] = "$sfgScriptPath/libs/jquery-ui/jquery.ui.button.min.js";
+		$scripts[] = "$sfgScriptPath/libs/jquery-ui/jquery.ui.position.min.js";
+		$scripts[] = "$sfgScriptPath/libs/jquery-ui/jquery.ui.autocomplete.min.js";
+		$scripts[] = "$sfgScriptPath/libs/SemanticForms.js";
+
 		if ( $wgFCKEditorDir )
 			$scripts[] = "$wgScriptPath/$wgFCKEditorDir/fckeditor.js";
 		foreach ( $scripts as $js ) {
-			$script = "<script type=\"$wgJsMimeType\" src=\"$js\"></script>\n";
-			if ( $parser )
+			if ( $parser ) {
+				$script = "<script type=\"$wgJsMimeType\" src=\"$js\"></script>\n";
 				$parser->getOutput()->addHeadItem( $script );
-			else
-				$wgOut->addScript( $script );
+			} else {
+				$wgOut->addScriptFile( $js );
+			}
 		}
 		if ( !$parser )
 			$wgOut->addMeta( 'robots', 'noindex,nofollow' );
@@ -214,7 +203,7 @@ END;
 	 * This function, unlike the others, doesn't take in a substring
 	 * because it uses the SMW data store, which can't perform
 	 * case-insensitive queries; for queries with a substring, the
-	 * function SFAutocompletAPI::getAllValuesForProperty() exists.
+	 * function SFAutocompleteAPI::getAllValuesForProperty() exists.
 	 */
 	static function getAllValuesForProperty( $property_name ) {
 		global $sfgMaxAutocompleteValues;
@@ -232,6 +221,7 @@ END;
 			if ( array_search( $string_value, $values ) === false )
 				$values[] = $string_value;
 		}
+		sort( $values );
 		return $values;
 	}
 
@@ -264,7 +254,8 @@ END;
 					array( 'categorylinks', 'page' ),
 					array( 'page_title', 'page_namespace' ),
 					array( 'cl_from = page_id', $conditions ),
-					__METHOD__ );
+					__METHOD__,
+					'SORT BY cl_sortkey' );
 				if ( $res ) {
 					while ( $res && $row = $db->fetchRow( $res ) ) {
 						if ( array_key_exists( 'page_title', $row ) ) {

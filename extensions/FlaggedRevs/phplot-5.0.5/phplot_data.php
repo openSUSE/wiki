@@ -20,7 +20,7 @@ class PHPlot_Data extends PHPlot
     /*!
      * Constructor
      */
-    function PHPlot_Data($which_width=600, $which_height=400, $which_output_file=NULL, $which_input_file=NULL)
+    function PHPlot_Data($which_width=600, $which_height=400, $which_output_file=null, $which_input_file=null)
     { 
         if (! isset($this->img)) { 
             $this->PHPlot($which_width, $which_height, $which_output_file, $which_input_file);
@@ -114,7 +114,7 @@ class PHPlot_Data extends PHPlot
      *
      *  \note Original idea by Theimo Nagel
      */
-    function DoMovingAverage($datarow, $interval, $show=TRUE, $color=NULL, $width=NULL)
+    function DoMovingAverage($datarow, $interval, $show=TRUE, $color=null, $width=null)
     {
         $off = 1;               // Skip record #0 (data label) 
         

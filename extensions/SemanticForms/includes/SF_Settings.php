@@ -1,6 +1,10 @@
 <?php
 /**
- * Default settings for Semantic Forms
+ * Default settings for Semantic Forms.
+ * 
+ * Note: 
+ * Do not use this file as entry point,
+ * use SemanticForms.php in this extensions root instead.
  */
 if ( !defined( 'MEDIAWIKI' ) ) die();
 
@@ -70,13 +74,6 @@ $wgAvailableRights[] = 'createclass';
 $sfgListSeparator = ",";
 
 # ##
-# The base URL for all YUI Javascript files - to store the YUI library
-# locally, download it (from http://developer.yahoo.com/yui/) and change this
-# value to the URL of the local installation's 'build' directory.
-# ##
-$sfgYUIBase = "http://yui.yahooapis.com/2.7.0/build/";
-
-# ##
 # Extend the edit form from the internal EditPage class rather than using a
 # special page and hacking things up.
 # 
@@ -95,3 +92,14 @@ $sfg24HourTime = false;
 # speed
 # ##
 $sfgCacheFormDefinitions = false;
+
+# ##
+# Page properties, used for the API
+# ##
+$wgPageProps['formdefinition'] = 'Definition of the semantic form used on the page';
+
+# ##
+# Ensures that the FancyBox Javascript library is only included once
+# ##
+$sfgFancyBoxIncluded = false;
+

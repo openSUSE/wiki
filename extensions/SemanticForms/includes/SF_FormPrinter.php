@@ -16,7 +16,7 @@ class SFFormPrinter {
   var $standardInputsIncluded;
   var $mPageTitle;
 
-  function SFFormPrinter() {
+  function __construct() {
     global $smwgContLang;
 
     // initialize the set of hooks for the entry-field functions to call for
@@ -64,6 +64,7 @@ class SFFormPrinter {
     $this->setInputTypeHook( 'radiobutton', array( 'SFFormInputs', 'radioButtonHTML' ), array() );
     $this->setInputTypeHook( 'checkboxes', array( 'SFFormInputs', 'checkboxesHTML' ), array() );
     $this->setInputTypeHook( 'listbox', array( 'SFFormInputs', 'listboxHTML' ), array() );
+    $this->setInputTypeHook( 'combobox', array( 'SFFormInputs', 'comboboxHTML' ), array() );
     $this->setInputTypeHook( 'category', array( 'SFFormInputs', 'categoryHTML' ), array() );
     $this->setInputTypeHook( 'categories', array( 'SFFormInputs', 'categoriesHTML' ), array() );
 
@@ -122,6 +123,25 @@ class SFFormPrinter {
     }
 
     return false;
+  }
+
+  /**
+   * Like PHP's str_replace(), but only replaces the first found instance -
+   * unfortunately, str_replace() doesn't allow for that.
+   * This code is basically copied directly from
+   * http://www.php.net/manual/en/function.str-replace.php#86177
+   * - this might make sense in some SF utils class, if it's useful in
+   * other places.
+   */
+  function strReplaceFirst( $search, $replace, $subject) {
+    $firstChar = strpos( $subject, $search );
+    if ( $firstChar !== false ) {
+      $beforeStr = substr( $subject, 0, $firstChar );
+      $afterStr = substr( $subject, $firstChar + strlen( $search ) );
+      return $beforeStr . $replace . $afterStr;
+    } else {
+      return $subject;
+    }
   }
 
   function formHTML( $form_def, $form_submitted, $source_is_page, $form_id = null, $existing_page_content = null, $page_name = null, $page_name_formula = null, $is_query = false, $embedded = false ) {
@@ -235,8 +255,9 @@ class SFFormPrinter {
       }
     }
     // otherwise, parse it
-    if ( ! $got_form_def_from_cache )
+    if ( ! $got_form_def_from_cache ) {
       $form_def = $wgParser->parse( $form_def, $this->mPageTitle, $wgParser->mOptions )->getText();
+    }
     $wgParser->mStripState = $old_strip_state;
     
     // turn form definition file into an array of sections, one for each
@@ -281,8 +302,6 @@ class SFFormPrinter {
     $instance_num = 0;
     $all_instances_printed = false;
     $strict_parsing = false;
-    // initialize list of choosers (dropdowns with available templates)
-    $choosers = array();
     for ( $section_num = 0; $section_num < count( $form_def_sections ); $section_num++ ) {
       $tif = new SFTemplateInForm();
       $start_position = 0;
@@ -307,8 +326,6 @@ class SFFormPrinter {
           // also replace periods with underlines, since that's what
           // POST does to strings anyway
           $query_template_name = str_replace( '.', '_', $query_template_name );
-          $chooser_name = false;
-          $chooser_caption = false;
 	  // cycle through the other components
           for ( $i = 2; $i < count( $tag_components ); $i++ ) {
             $component = $tag_components[$i];
@@ -318,22 +335,12 @@ class SFFormPrinter {
             if ( count( $sub_components ) == 2 ) {
               if ( $sub_components[0] == 'label' ) {
                 $template_label = $sub_components[1];
-              } elseif ( $sub_components[0] == 'chooser' ) {
-                $allow_multiple = true;
-                $chooser_name = $sub_components[1];
-              } elseif ( $sub_components[0] == 'chooser caption' ) {
-                $chooser_caption = $sub_components[1];
               }
             }
           }
           // if this is the first instance, add the label in the form
           if ( ( $old_template_name != $template_name ) && isset( $template_label ) ) {
-            // add a placeholder to the form text so the fieldset can be
-            // hidden if chooser support demands it
-            if ( $chooser_name !== false )
-              $form_text .= "<fieldset [[placeholder]] haschooser=true>\n";
-            else
-               $form_text .= "<fieldset>\n";
+            $form_text .= "<fieldset>\n";
             $form_text .= "<legend>$template_label</legend>\n";
           }
           $template_text .= "{{" . $tif->template_name;
@@ -372,7 +379,7 @@ class SFFormPrinter {
             // even if there are more
 	    if ( $found_instance ) {
               $matches = array();
-              $search_pattern = '/{{' . $search_template_str . '\s*[\|}]/i';
+              $search_pattern = '/{{' . $preg_match_template_str . '\s*[\|}]/i';
               $content_str = str_replace( '_', ' ', $existing_page_content );
               preg_match($search_pattern, $content_str, $matches, PREG_OFFSET_CAPTURE);
 	      // is this check necessary?
@@ -435,7 +442,7 @@ class SFFormPrinter {
                     $existing_page_content = str_replace( $existing_template_text, '{{{insertionpoint}}}', $existing_page_content );
                   }
                 } else {
-                  $existing_page_content = str_replace( $existing_template_text, '', $existing_page_content );
+                  $existing_page_content = self::strReplaceFirst( $existing_template_text, '', $existing_page_content );
                 }
                 // if this is not a multiple-instance template, and we've found
                 // a match in the source page, there's a good chance that this
@@ -496,10 +503,6 @@ class SFFormPrinter {
           $allow_multiple = false;
           $all_instances_printed = false;
           $instance_num = 0;
-          // if the hiding placeholder is still around, this fieldset should
-          // be hidden because it is empty and choosers are being used. So,
-          // hide it.
-          $form_text = str_replace( "[[placeholder]]", "style='display:none'", $form_text );
         // =====================================================
         // field processing
         // =====================================================  
@@ -821,7 +824,7 @@ END;
             // form values, see if the current input is part of that formula,
             // and if so, substitute in the actual value
             if ( $form_submitted && $generated_page_name != '' ) {
-              // this line appears unnecessary
+              // this line appears to be unnecessary
               // $generated_page_name = str_replace('.', '_', $generated_page_name);
               $generated_page_name = str_replace( ' ', '_', $generated_page_name );
               $escaped_input_name = str_replace( ' ', '_', $input_name );
@@ -972,6 +975,8 @@ END;
                     if ( empty( $default_value ) ) {
                       $sfgJSValidationCalls[] = "validate_mandatory_radiobutton('$input_id', '$info_id')";
                     }
+                  } elseif ( $input_type == 'combobox' ) {
+                    $sfgJSValidationCalls[] = "validate_mandatory_combobox('$input_id', '$info_id')";
                   } elseif ( ( $form_field->template_field->is_list && $form_field->template_field->field_type == 'enumeration' && $input_type != 'listbox' ) || ( $input_type == 'checkboxes' ) ) {
                     $sfgJSValidationCalls[] = "validate_mandatory_checkboxes('$input_id', '$info_id')";
                   } else {
@@ -1134,10 +1139,7 @@ END;
 END;
           // this will cause the section to be re-parsed on the next go
           $section_num--;
-          // because there is an instance, the fieldset will never be hidden,
-          // even if choosers are being used. So, do not hide the fieldset.
-          $form_text = str_replace( "[[placeholder]]", "", $form_text );
-        } else {
+	} else {
           // this is the last instance of this template - stick an 'add'
           // button in the form
         $form_text .= <<<END
@@ -1153,10 +1155,6 @@ END;
 	<p><input type="button" onclick="addInstance('starter_$query_template_name', 'main_$query_template_name', '$sfgFieldNum');" value="$add_another" tabindex="$sfgTabIndex" class="addAnother" /></p>
 
 END;
-           // if a chooser is being used for this template, add the template
-           // to the chooser data array
-          if ( $chooser_name !== false )
-            $choosers[$chooser_name][] = array( $query_template_name, $sfgFieldNum, $chooser_caption );
         }
       } else {
         $form_text .= $section;
@@ -1228,84 +1226,6 @@ END;
       $form_text = '	<div class="warningMessage">' . wfMsg( 'sf_formedit_formwarning', $this->mPageTitle->getFullURL() ) . "</div>\n" . $form_text;
     }
 
-    // Substitute the choosers in here too.
-    $chooser_count = 0;
-    $chooser_text = "";
-    $using_choosers = "false";
-    foreach ( $choosers as $choosername => $chooser ) {
-      if ( count( $chooser ) != 0 ) {
-        $chooser_count++;
-        if ( $chooser_count == 1 ) {
-          // emit the initial javascript code
-          $using_choosers = "true";
-          $chooser_text .= <<<END
-<script type="text/javascript">/* <![CDATA[ */
-
-function updatechooserbutton(f,n)
-{
-	document.getElementById(n).disabled = (f.options[f.selectedIndex].value=="invalid");
-}
-
-function addInstanceFromChooser(chooserid)
-{
-	var chooser = document.getElementById(chooserid);
-	var optionstring = chooser.options[chooser.selectedIndex].value;
-	var pos = optionstring.indexOf(",");
-	var tabindex = optionstring.substr(0,pos);
-	var chooservalue = optionstring.substr(pos+1);
-	addInstance('starter_' + chooservalue, 'main_' + chooservalue, parseInt(tabindex));
-}
-
-//The fieldset containing the given element was just updated. If the fieldset is associated with a chooser,
-//ensure that the fieldset is hidden if and only if there are no template instances inside.
-function hideOrShowFieldset(element)
-{
-	//Find fieldset
-	while (element.tagName.toLowerCase() != "fieldset")
-		element = element.parentNode;
-	//Bail out if fieldset is not part of chooser
-	if (!element.getAttribute("haschooser"))
-		return;
-	//Now look for "input" or "select" tags that don't look like they're part of the starter template
-	var inputs = element.getElementsByTagName("input");
-	var x;
-	var show = false;
-	for (x=0;x<inputs.length;x++)
-	{
-		if (inputs[x].type=="text" && inputs[x].name.indexOf("[num]") == -1)
-			show = true;
-	}
-	var selects = element.getElementsByTagName("select");
-	for (x=0;x<selects.length;x++)
-	{
-		if (selects[x].name.indexOf("[num]") == -1)
-			show = true;
-	}
-	//Now show or hide fieldset
-	element.style.display = (show?"block":"none");
-}
-/* ]]> */ </script>
-
-END;
-        }
-
-        $chooser_text .= "<p>$choosername:<select id='chooserselect$chooser_count' size='1' onchange='updatechooserbutton(this,\"chooserbutton$chooser_count\")'>\n";
-        $chooser_text .= "<option value='invalid'>" . wfMsg( 'sf_createform_choosefield' ) . "</option>\n";
-        foreach ( $chooser as $chooser_item ) {
-          $chooser_value = str_replace( '"', '\\"', $chooser_item[0] );
-          $tabindex = $chooser_item[1];
-          $chooser_caption = $chooser_item[2];
-          if ( $chooser_caption === false )
-            $chooser_caption = str_replace( '_', ' ', $chooser_value );
-          $chooser_text .= "<option value=\"$tabindex ,$chooser_value\">$chooser_caption</option>\n";
-        }
-        $chooser_text .= "</select>\n";
-      }
-      $chooser_text .= "<input type='button' onclick=\"addInstanceFromChooser('chooserselect$chooser_count');\" value='" . wfMsg( 'sf_formedit_addanother' ) . "' disabled='true' id='chooserbutton$chooser_count'></p>";
-    }
-	
-    $form_text = str_replace( '{{{choosers}}}', $chooser_text, $form_text );
-
     // add form bottom, if no custom "standard inputs" have been defined
     if ( !$this->standardInputsIncluded ) {
       if ( $is_query )
@@ -1329,7 +1249,7 @@ END;
 
     // add Javascript code for form-wide use
     $javascript_text .= SFFormUtils::validationJavascript();
-    $javascript_text .= SFFormUtils::instancesJavascript( $using_choosers );
+    $javascript_text .= SFFormUtils::instancesJavascript();
     $javascript_text .= SFFormUtils::autocompletionJavascript();
     if ( $free_text_was_included && $showFCKEditor > 0 ) {
       $javascript_text .= SFFormUtils::mainFCKJavascript( $showFCKEditor );
@@ -1351,6 +1271,12 @@ END;
     $new_text = "";
     if ( !$embedded )
       $new_text = $wgParser->preprocess( str_replace( "{{!}}", "|", $form_page_title ), $this->mPageTitle, new ParserOptions() );
+
+    // keep it simple - if the form has already been submitted, i.e. this is
+    // just the redirect page, get rid of all the Javascript, to avoid JS errors
+    if ( $form_submitted ) {
+      $javascript_text = '';
+    }
     
     return array( $form_text, "/*<![CDATA[*/ $javascript_text /*]]>*/",
       $data_text, $new_text, $generated_page_name );

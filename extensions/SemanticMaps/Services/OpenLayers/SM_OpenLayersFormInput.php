@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Form input hook that adds an Open Layers map format to Semantic Forms
+ * File holding the SMOpenLayersFormInput class.
  *
  * @file SM_OpenLayersFormInput.php
  * @ingroup SMOpenLayers
@@ -13,22 +13,23 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 	die( 'Not an entry point.' );
 }
 
-final class SMOpenLayersFormInput extends SMFormInput {
-	
-	protected $specificParameters = array();
+/**
+ * Class for OpenLayers form inputs.
+ * 
+ * @ingroup SMOpenLayers
+ * 
+ * @author Jeroen De Dauw
+ */
+class SMOpenLayersFormInput extends SMFormInput {
 	
 	/**
-	 * @see MapsMapFeature::setMapSettings()
+	 * @see SMFormInput::getEarthZoom
+	 * 
+	 * @since 0.6.5
 	 */
-	protected function setMapSettings() {
-		global $egMapsOpenLayersZoom, $egMapsOpenLayersPrefix;
-		
-		$this->elementNamePrefix = $egMapsOpenLayersPrefix;
-
-		$this->earthZoom = 1;
-
-        $this->defaultZoom = $egMapsOpenLayersZoom;
-	}
+	protected function getEarthZoom() {
+		return 1;
+	}	
 	
 	/**
 	 * @see MapsMapFeature::addFormDependencies()
@@ -37,46 +38,28 @@ final class SMOpenLayersFormInput extends SMFormInput {
 		global $wgOut;
 		global $smgScriptPath, $smgOLFormsOnThisPage, $smgStyleVersion, $egMapsJsExt;
 		
-		$this->mService->addDependencies( $wgOut );
-		
-		if ( empty( $smgOLFormsOnThisPage ) ) {
-			$smgOLFormsOnThisPage = 0;
-			
-			$wgOut->addScriptFile( "$smgScriptPath/Services/OpenLayers/SM_OpenLayersFunctions{$egMapsJsExt}?$smgStyleVersion" );
-		}
+		$this->service->addDependency( Html::linkedScript( "$smgScriptPath/Services/OpenLayers/SM_OpenLayersForms{$egMapsJsExt}?$smgStyleVersion" ) );
+		$this->service->addDependencies( $wgOut );
 	}
 	
 	/**
-	 * @see MapsMapFeature::doMapServiceLoad()
+	 * @see MapsMapFeature::addSpecificMapHTML
 	 */
-	protected function doMapServiceLoad() {
-		global $egOpenLayersOnThisPage, $smgOLFormsOnThisPage, $egMapsOpenLayersPrefix;
-		
-		self::addFormDependencies();
-		
-		$egOpenLayersOnThisPage++;
-		$smgOLFormsOnThisPage++;
-
-		$this->elementNr = $egOpenLayersOnThisPage;
-		$this->mapName = $egMapsOpenLayersPrefix . '_' . $egOpenLayersOnThisPage;
-	}
-	
-	/**
-	 * @see MapsMapFeature::addSpecificMapHTML()
-	 */
-	protected function addSpecificMapHTML() {
+	public function addSpecificMapHTML() {
 		global $wgOut, $wgLang;
+		
+		$mapName = $this->service->getMapId( false );
 		
 		$this->output .= Html::element(
 			'div',
 			array(
-				'id' => $this->mapName,
+				'id' => $mapName,
 				'style' => "width: $this->width; height: $this->height; background-color: #cccccc; overflow: hidden;",
 			),
 			wfMsg( 'maps-loading-map' )
 		);
 		
-		$layerItems = $this->mService->createLayersStringAndLoadDependencies( $this->layers );
+		$layerItems = $this->service->createLayersStringAndLoadDependencies( $this->layers );
 		
 		$langCode = $wgLang->getCode();
 		
@@ -84,8 +67,8 @@ final class SMOpenLayersFormInput extends SMFormInput {
 addOnloadHook(
 	function() {
 		makeFormInputOpenLayer(
-			'$this->mapName',
-			'$this->coordsFieldName',
+			"$mapName",
+			"$this->coordsFieldName",
 			$this->centreLat,
 			$this->centreLon,
 			$this->zoom,
@@ -93,21 +76,13 @@ addOnloadHook(
 			{$this->markerCoords['lon']},
 			[$layerItems],
 			[$this->controls],
-			'$langCode'
+			"$langCode"
 		);
 	}
 );
 EOT
 		);
 		
-	}
-	
-	/**
-	 * @see SMFormInput::manageGeocoding()
-	 * TODO: find a geocoding service that can be used here
-	 */
-	protected function manageGeocoding() {
-		$this->enableGeocoding = false;
 	}
 	
 }

@@ -26,13 +26,13 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 class MapsGoogleMaps3 extends MapsMappingService {
 	
 	/**
-	 * Constructor
+	 * Constructor.
 	 * 
-	 * @since 0.6.3
+	 * @since 0.6.6
 	 */	
-	function __construct() {
+	function __construct( $serviceName ) {
 		parent::__construct(
-			'googlemaps3',
+			$serviceName,
 			array( 'google3', 'googlemap3', 'gmap3', 'gmaps3' )
 		);
 	}
@@ -43,7 +43,7 @@ class MapsGoogleMaps3 extends MapsMappingService {
 	 * @since 0.5
 	 */	
 	protected function initParameterInfo( array &$parameters ) {
-		global $egMapsServices, $egMapsGMaps3Type, $egMapsGMaps3Types;
+		global $egMapsGMaps3Type, $egMapsGMaps3Types;
 		
 		Validator::addOutputFormat( 'gmap3type', array( __CLASS__, 'setGMapType' ) );
 		Validator::addOutputFormat( 'gmap3types', array( __CLASS__, 'setGMapTypes' ) );		
@@ -72,6 +72,53 @@ class MapsGoogleMaps3 extends MapsMappingService {
 				*/
 		);
 	}
+	
+	/**
+	 * @see iMappingService::getDefaultZoom
+	 * 
+	 * @since 0.6.5
+	 */	
+	public function getDefaultZoom() {
+		global $egMapsGoogleMaps3Zoom;
+		return $egMapsGoogleMaps3Zoom;
+	}	
+	
+	/**
+	 * @see MapsMappingService::getMapId
+	 * 
+	 * @since 0.6.5
+	 */
+	public function getMapId( $increment = true ) {
+		global $egMapsGoogleMaps3Prefix, $egGoogleMaps3OnThisPage;
+		
+		if ( $increment ) {
+			$egGoogleMaps3OnThisPage++;
+		}
+		
+		return $egMapsGoogleMaps3Prefix . '_' . $egGoogleMaps3OnThisPage;
+	}	
+	
+	/**
+	 * @see MapsMappingService::createMarkersJs
+	 * 
+	 * @since 0.6.5
+	 */
+	public function createMarkersJs( array $markers ) {
+		$markerItems = array();
+		
+		foreach ( $markers as $marker ) {
+			$markerItems[] = Xml::encodeJsVar( (object)array(
+				'lat' => $marker[0],
+				'lon' => $marker[1],
+				'title' => $marker[2],
+				'label' =>$marker[3],
+				'icon' => $marker[4]
+			) );
+		}
+		
+		// Create a string containing the marker JS.
+		return '[' . implode( ',', $markerItems ) . ']';
+	}	
 	
 	protected static $mapTypes = array(
 		'normal' => 'ROADMAP',

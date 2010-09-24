@@ -13,9 +13,9 @@
  * @licence GNU General Public Licence 2.0 or later
  */
 
-if ( !defined( 'MEDIAWIKI' ) ) die( 'Not an entry point.' );
+if ( !defined('MEDIAWIKI' ) ) die( 'Not an entry point.' );
 
-define( 'CATEGORYWATCH_VERSION', '1.1.1, 2010-04-21' );
+define( 'CATEGORYWATCH_VERSION', '1.1.0, 2009-04-21' );
 
 $wgCategoryWatchNotifyEditor = true;
 $wgCategoryWatchUseAutoCat   = false;
@@ -25,14 +25,16 @@ $wgExtensionCredits['other'][] = array(
 	'path'           => __FILE__,
 	'name'           => 'CategoryWatch',
 	'author'         => '[http://www.organicdesign.co.nz/User:Nad User:Nad]',
+	'description'    => 'Extends watchlist functionality to include notification about membership changes of watched categories',
 	'descriptionmsg' => 'categorywatch-desc',
 	'url'            => 'http://www.mediawiki.org/wiki/Extension:CategoryWatch',
 	'version'        => CATEGORYWATCH_VERSION,
 );
 
-$wgExtensionMessagesFiles['CategoryWatch'] =  dirname( __FILE__ ) . '/CategoryWatch.i18n.php';
+$wgExtensionMessagesFiles['CategoryWatch'] =  dirname(__FILE__) . '/CategoryWatch.i18n.php';
 
 class CategoryWatch {
+
 	function __construct() {
 		global $wgHooks;
 		$wgHooks['ArticleSave'][] = $this;
@@ -44,7 +46,7 @@ class CategoryWatch {
 	 */
 	function onArticleSave( &$article, &$user, &$text ) {
 		global $wgCategoryWatchUseAutoCat;
-
+		
 		$this->before = array();
 		$dbr  = wfGetDB( DB_SLAVE );
 		$cl   = $dbr->tableName( 'categorylinks' );
@@ -63,7 +65,7 @@ class CategoryWatch {
 			$wtbl = $dbr->tableName( 'watchlist' );
 			$sql = "SELECT user_id FROM $utbl LEFT JOIN $wtbl ON user_id=wl_user AND wl_title LIKE '%$like%' WHERE wl_user IS NULL";
 			$res = $dbr->query( $sql );
-
+			
 			# Insert an entry into watchlist for each
 			while ( $row = $dbr->fetchRow( $res ) ) {
 				$uname = User::newFromId( $row[0] )->getName();
@@ -71,7 +73,7 @@ class CategoryWatch {
 				$dbr->insert( $wtbl, array( 'wl_user' => $row[0], 'wl_namespace' => NS_CATEGORY, 'wl_title' => $wl_title ) );
 			}
 			$dbr->freeResult( $res );
-		}
+		}		
 
 		return true;
 	}
@@ -80,6 +82,7 @@ class CategoryWatch {
 	 * Find changes in categorisation and send messages to watching users
 	 */
 	function onArticleSaveComplete( &$article, &$user, &$text, &$summary, &$medit ) {
+
 		# Get cats after update
 		$this->after = array();
 		$dbr  = wfGetDB( DB_SLAVE );
@@ -95,11 +98,12 @@ class CategoryWatch {
 
 		# Notify watchers of each cat about the addition or removal of this article
 		if ( count( $add ) > 0 || count( $sub ) > 0 ) {
+			
 			$page     = $article->getTitle();
 			$pagename = $page->getPrefixedText();
 			$pageurl  = $page->getFullUrl();
 			$page     = "$pagename ($pageurl)";
-
+			
 			if ( count( $add ) == 1 && count( $sub ) == 1 ) {
 				$add = array_shift( $add );
 				$sub = array_shift( $sub );
@@ -108,21 +112,23 @@ class CategoryWatch {
 				$message = wfMsg( 'categorywatch-catmovein', $page, $this->friendlyCat( $add ), $this->friendlyCat( $sub ) );
 				$this->notifyWatchers( $title, $user, $message, $summary, $medit );
 
-				# $title   = Title::newFromText( $sub, NS_CATEGORY );
-				# $message = wfMsg( 'categorywatch-catmoveout', $page, $this->friendlyCat( $sub ), $this->friendlyCat( $add ) );
-				# $this->notifyWatchers( $title, $user, $message, $summary, $medit );
-			} else {
+				#$title   = Title::newFromText( $sub, NS_CATEGORY );
+				#$message = wfMsg( 'categorywatch-catmoveout', $page, $this->friendlyCat( $sub ), $this->friendlyCat( $add ) );
+				#$this->notifyWatchers( $title, $user, $message, $summary, $medit );
+			}
+			else {
+
 				foreach ( $add as $cat ) {
 					$title   = Title::newFromText( $cat, NS_CATEGORY );
 					$message = wfMsg( 'categorywatch-catadd', $page, $this->friendlyCat( $cat ) );
 					$this->notifyWatchers( $title, $user, $message, $summary, $medit );
 				}
 
-				# foreach ( $sub as $cat ) {
+				#foreach ( $sub as $cat ) {
 				#	$title   = Title::newFromText( $cat, NS_CATEGORY );
 				#	$message = wfMsg( 'categorywatch-catsub', $page, $this->friendlyCat( $cat ) );
 				#	$this->notifyWatchers( $title, $user, $message, $summary, $medit );
-				# }
+				#}
 			}
 		}
 
@@ -146,7 +152,7 @@ class CategoryWatch {
 		# Get list of users watching this category
 		$dbr = wfGetDB( DB_SLAVE );
 		$conds = array( 'wl_title' => $title->getDBkey(), 'wl_namespace' => $title->getNamespace() );
-		if ( !$wgCategoryWatchNotifyEditor ) $conds[] = 'wl_user <> ' . intval( $editor->getId() );
+		if ( !$wgCategoryWatchNotifyEditor) $conds[] = 'wl_user <> ' . intval( $editor->getId() );
 		$res = $dbr->select( 'watchlist', array( 'wl_user' ), $conds, __METHOD__ );
 
 		# Wrap message with common body and send to each watcher
@@ -159,8 +165,8 @@ class CategoryWatch {
 			$watchingUser   = User::newFromId( $row[0] );
 			$timecorrection = $watchingUser->getOption( 'timecorrection' );
 			$editdate       = $wgLang->timeanddate( wfTimestampNow(), true, false, $timecorrection );
-
 			if ( $watchingUser->getOption( 'enotifwatchlistpages' ) && $watchingUser->isEmailConfirmed() ) {
+				
 				$to      = new MailAddress( $watchingUser );
 				$subject = wfMsg( 'categorywatch-emailsubject', $page );
 				$body    = wfMsgForContent( 'enotif_body' );
@@ -213,11 +219,8 @@ class CategoryWatch {
 				# Replace keys, wrap text and send
 				$body = strtr( $body, $keys );
 				$body = wordwrap( $body, 72 );
-				if ( function_exists( 'userMailer' ) ) {
-					userMailer( $to, $from, $subject, $body, $replyto );
-				} else {
-					UserMailer::send( $to, $from, $subject, $body, $replyto );
-				}
+				if ( function_exists( 'userMailer' ) ) userMailer( $to, $from, $subject, $body, $replyto );
+				else UserMailer::send( $to, $from, $subject, $body, $replyto );
 			}
 		}
 
@@ -237,4 +240,5 @@ function wfSetupCategoryWatch() {
 
 	# Instantiate the CategoryWatch singleton now that the environment is prepared
 	$wgCategoryWatch = new CategoryWatch();
+
 }

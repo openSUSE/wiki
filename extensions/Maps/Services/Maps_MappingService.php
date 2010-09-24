@@ -21,101 +21,112 @@ if ( !defined( 'MEDIAWIKI' ) ) {
  * 
  * @author Jeroen De Dauw
  */
-class MapsMappingService implements iMappingService {
+abstract class MapsMappingService implements iMappingService {
 	
 	/**
 	 * The internal name of the service.
 	 * 
+	 * @since 0.6.3
+	 * 
 	 * @var string
 	 */
-	protected $mServiceName;
+	protected $serviceName;
 	
 	/**
 	 * A list of aliases for the internal name.
 	 * 
+	 * @since 0.6.3
+	 * 
 	 * @var array
 	 */
-	protected $mAliases;
+	protected $aliases;
 	
 	/**
 	 * A list of features that support the service, used for validation and defaulting.
 	 * 
+	 * @since 0.6.3
+	 * 
 	 * @var array
 	 */
-	protected $mFeatures;
+	protected $features;
 	
 	/**
 	 * A list of parameter info specific to the service, which can be used by any feature
 	 * to pass along to Validator to handle parameters.
 	 * 
+	 * @since 0.6.3
+	 * 
 	 * @var mixed Array or false
 	 */
-	private $mParameterInfo = false;
+	private $parameterInfo = false;
 	
 	/**
 	 * A list of dependencies (header items) that have been added.
 	 * 
+	 * @since 0.6.3
+	 * 
 	 * @var array
 	 */
-	private $mAddedDependencies = array();
+	private $addedDependencies = array();
 	
 	/**
 	 * A list of dependencies (header items) that need to be added.
 	 * 
+	 * @since 0.6.3
+	 * 
 	 * @var array
 	 */
-	private $mDependencies = array();
+	private $dependencies = array();
 	
 	/**
 	 * Constructor. Creates a new instance of MapsMappingService.
+	 * 
+	 * @since 0.6.3
 	 * 
 	 * @param string $serviceName
 	 * @param array $aliases
 	 */
 	function __construct( $serviceName, array $aliases = array() ) {
-		$this->mServiceName = $serviceName;
-		$this->mAliases = $aliases;
+		$this->serviceName = $serviceName;
+		$this->aliases = $aliases;
 	}
 	
 	/**
-	 * Returns the service parameters by first checking if they have been initialized yet,
-	 * doing to work if this is not the case, and then returning them.
+	 * @see iMappingService::getParameterInfo
 	 * 
-	 * @return array
+	 * @since 0.6.3
 	 */	
 	public final function getParameterInfo() {
-		if ( $this->mParameterInfo === false ) {
-			$this->mParameterInfo = array();
-			$this->initParameterInfo( $this->mParameterInfo );
+		if ( $this->parameterInfo === false ) {
+			$this->parameterInfo = array();
+			$this->initParameterInfo( $this->parameterInfo );
 		}
 		
-		return $this->mParameterInfo;
+		return $this->parameterInfo;
 	}
 	
 	/**
-	 * Initializes the service parameters.
+	 * @see iMappingService::createMarkersJs
 	 * 
-	 * You can override this method to set service specific parameters in the inheriting class. 
-	 * 
-	 * @param array $parameters
-	 */	
-	protected function initParameterInfo( array &$parameters ) {
-	}
+	 * @since 0.6.5
+	 */
+	public function createMarkersJs( array $markers ) {
+		return '[]';
+	}		
 	
 	/**
-	 * Adds a feature to this service. This is to indicate this service has support for this feature.
+	 * @see iMappingService::addFeature
 	 * 
-	 * @param string $featureName
-	 * @param string $handlingClass
+	 * @since 0.6.3
 	 */
 	public function addFeature( $featureName, $handlingClass ) {
-		$this->mFeatures[$featureName] = $handlingClass;
+		$this->features[$featureName] = $handlingClass;
 	}
 	
 	/**
-	 * Adds the mapping services dependencies to the header. 
+	 * @see iMappingService::addDependencies 
 	 * 
-	 * @param mixed $parserOrOut
+	 * @since 0.6.3
 	 */
 	public final function addDependencies( &$parserOrOut ) {
 		$dependencies = $this->getDependencyHtml();
@@ -132,19 +143,19 @@ class MapsMappingService implements iMappingService {
 	}
 	
 	/**
-	 * Returns the html for the needed dependencies or false.
+	 * @see iMappingService::getDependencyHtml 
 	 * 
-	 * @return mixed Steing or false
+	 * @since 0.6.3
 	 */
 	public final function getDependencyHtml() {
-		$allDependencies = array_merge( $this->getDependencies(), $this->mDependencies );
+		$allDependencies = array_merge( $this->getDependencies(), $this->dependencies );
 		$dependencies = array();
 		
 		// Only add dependnecies that have not yet been added.
 		foreach ( $allDependencies as $dependency ) {
-			if ( !in_array( $dependency, $this->mAddedDependencies ) ) {
+			if ( !in_array( $dependency, $this->addedDependencies ) ) {
 				$dependencies[] = $dependency;
-				$this->mAddedDependencies[] = $dependency;
+				$this->addedDependencies[] = $dependency;
 			}
 		}
 		
@@ -153,17 +164,69 @@ class MapsMappingService implements iMappingService {
 	}
 	
 	/**
-	 * Adds a dependency that is needed for this service. It will be passed along with the next 
-	 * call to getDependencyHtml or addDependencies.
+	 * @see iMappingService::addDependency
 	 * 
-	 * @param string $dependencyHtml
+	 * @since 0.6.3
 	 */
 	public final function addDependency( $dependencyHtml ) {
-		$this->mDependencies[] = $dependencyHtml;
+		$this->dependencies[] = $dependencyHtml;
 	}	
 	
 	/**
+	 * @see iMappingService::getName
+	 * 
+	 * @since 0.6.3
+	 */	
+	public function getName() {
+		return $this->serviceName;
+	}
+	
+	/**
+	 * @see iMappingService::getFeature
+	 * 
+	 * @since 0.6.3
+	 */
+	public function getFeature( $featureName ) {
+		return array_key_exists( $featureName, $this->features ) ? $this->features[$featureName] : false;
+	}
+	
+	/**
+	 * @see iMappingService::getFeatureInstance
+	 * 
+	 * @since 0.6.6
+	 */
+	public function getFeatureInstance( $featureName ) {
+		$className = $this->getFeature( $featureName );
+		
+		if ( $className === false || !class_exists( $className ) ) {
+			// TODO: log/throw error, as this should not happen
+		}
+		
+		return new $className( $this );
+	}	
+	
+	/**
+	 * @see iMappingService::getAliases
+	 * 
+	 * @since 0.6.3
+	 */
+	public function getAliases() {
+		return $this->aliases;
+	}
+	
+	/**
+	 * @see iMappingService::hasAlias
+	 * 
+	 * @since 0.6.3
+	 */
+	public function hasAlias( $alias ) {
+		return in_array( $alias, $this->aliases );
+	}
+	
+	/**
 	 * Returns a list of html fragments, such as script includes, the current service depends on.
+	 * 
+	 * @since 0.6.3
 	 * 
 	 * @return array
 	 */
@@ -172,43 +235,15 @@ class MapsMappingService implements iMappingService {
 	}
 	
 	/**
-	 * Returns the internal name of the service.
+	 * Initializes the service parameters.
 	 * 
-	 * @return string
-	 */
-	public function getName() {
-		return $this->mServiceName;
-	}
-	
-	/**
-	 * Returns the name of the class that handles the provided feature in this service, or false if there is none.
+	 * You can override this method to set service specific parameters in the inheriting class. 
 	 * 
-	 * @param string $featureName.
+	 * @since 0.6.3
 	 * 
-	 * @return mixed String or false
-	 */
-	public function getFeature( $featureName ) {
-		return array_key_exists( $featureName, $this->mFeatures ) ? $this->mFeatures[$featureName] : false;
-	}
-	
-	/**
-	 * Returns a list of aliases.
-	 * 
-	 * @return array
-	 */
-	public function getAliases() {
-		return $this->mAliases;
-	}
-	
-	/**
-	 * Returns if the service has a certain alias or not.
-	 * 
-	 * @param string $alias
-	 * 
-	 * @return boolean
-	 */
-	public function hasAlias( $alias ) {
-		return in_array( $alias, $this->mAliases );
-	}
+	 * @param array $parameters
+	 */	
+	protected function initParameterInfo( array &$parameters ) {
+	}	
 	
 }

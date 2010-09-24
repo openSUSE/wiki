@@ -25,7 +25,7 @@ final class SMQueryPrinters {
 	 * Initialization function for Maps query printer functionality.
 	 */
 	public static function initialize() {
-		global $smgDir, $wgAutoloadClasses, $egMapsServices;
+		global $smgDir, $wgAutoloadClasses;
 		
 		$wgAutoloadClasses['SMMapper'] 	= dirname( __FILE__ ) . '/SM_Mapper.php';
 		$wgAutoloadClasses['SMMapPrinter'] 	= dirname( __FILE__ ) . '/SM_MapPrinter.php';
@@ -34,7 +34,9 @@ final class SMQueryPrinters {
 		
 		$hasQueryPrinters = false;
 
-		foreach ( $egMapsServices as $service ) {
+		foreach ( MapsMappingServices::getServiceIdentifiers() as $serviceIdentifier ) {
+			$service = MapsMappingServices::getServiceInstance( $serviceIdentifier );	
+				
 			// Check if the service has a query printer.
 			$QPClass = $service->getFeature( 'qp' );
 			
@@ -66,6 +68,9 @@ final class SMQueryPrinters {
 			'height' => array(
 				'default' => $egMapsMapHeight
 			),
+			'mappingservice' => array(
+				'default' => $egMapsDefaultServices['qp']
+			),			
 			'geoservice' => array(
 				'criteria' => array(
 					'in_array' => $egMapsAvailableGeoServices
@@ -73,11 +78,10 @@ final class SMQueryPrinters {
 				'default' => $egMapsDefaultGeoService
 			),
 			'format' => array(
-				'required' => true,
-				'default' => $egMapsDefaultServices['qp']
 			),
 			'centre' => array(
 				'aliases' => array( 'center' ),
+				'tolower' => false,
 			),
 			'forceshow' => array(
 				'type' => 'boolean',
@@ -90,6 +94,7 @@ final class SMQueryPrinters {
 					'not_empty' => array()
 				),
 				'default' => $smgQPTemplate,
+				'tolower' => false
 			),
 			'showtitle' => array(
 				'type' => 'boolean',

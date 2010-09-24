@@ -3,7 +3,7 @@
  * Internationalisation file for extension CategoryWatch.
  *
  * @addtogroup Extensions
- */
+*/
 
 $messages = array();
 
@@ -428,7 +428,7 @@ $messages['ko'] = array(
 	'categorywatch-autocat' => '$1에 의해 자동 주시됨',
 );
 
-/** Colognian (Ripoarisch)
+/** Ripoarisch (Ripoarisch)
  * @author Purodha
  */
 $messages['ksh'] = array(
@@ -563,11 +563,10 @@ $messages['pms'] = array(
 );
 
 /** Portuguese (Português)
- * @author Hamilton Abreu
  * @author Malafaya
  */
 $messages['pt'] = array(
-	'categorywatch-desc' => 'Expande a funcionalidade das páginas vigiadas para incluir notificações sobre alterações nos membros das categorias vigiadas',
+	'categorywatch-desc' => 'Estende a funcionalidade da lista de vigiados para incluir notificações sobre alterações nos membros de categorias vigiadas',
 	'categorywatch-emailsubject' => 'Actividade envolvendo a categoria vigiada "$1"',
 	'categorywatch-catmovein' => 'moveu $1 para a categoria $2 a partir de $3',
 	'categorywatch-catmoveout' => 'moveu $1 da categoria $2 para $3',

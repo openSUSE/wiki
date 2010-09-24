@@ -97,6 +97,7 @@
  * @author Sergey Chernyshev
  * @author Daniel Friesen
  * @author Barry Welch
+ * @author Christoph Burgmer
  */
 
 class SFParserFunctions {
@@ -192,7 +193,7 @@ class SFParserFunctions {
 			$link_url = str_replace( "'", "\'", $link_url );
 			$str = "<form><input type=\"button\" value=\"$inLinkStr\" onclick=\"window.location.href='$link_url'\"></form>";
 		} elseif ( $inLinkType == 'post button' ) {
-			$str = "<form action=\"$link_url\" method=\"post\"><input type=\"submit\" value=\"$inLinkStr\">$hidden_inputs</form>";
+			$str = "<form action=\"$link_url\" method=\"post\"><input type=\"submit\" value=\"$inLinkStr\" />$hidden_inputs</form>";
 		} else {
 			$str = "<a href=\"$link_url\">$inLinkStr</a>";
 		}
@@ -283,20 +284,13 @@ END;
 
 END;
 		} else {
-			// if there's autocompletion, we need to place it in
-			// a table so that the autocompletion <div> won't lead
-			// to the button being on a separate line (this can
-			// probably be done just with CSS instead, but I don't
-			// know how)
 			$str = <<<END
 			<form name="createbox" action="$fs_url" method="get">
-			<table><tr><td><input type="text" name="page_name" id="input_$input_num" size="$inSize" value="$inValue"  class="autocompleteInput createboxInput" />
-			<div class="page_name_auto_complete" id="div_$input_num"></div>
-			</td>
+			<p><input type="text" name="page_name" id="input_$input_num" size="$inSize" value="$inValue"  class="autocompleteInput createboxInput" />
 
 END;
 		}
-		// if the add page URL looks like "index.php?title=Special:AddPage"
+		// if the form start URL looks like "index.php?title=Special:FormStart"
 		// (i.e., it's in the default URL style), add in the title as a
 		// hidden value
 		if ( ( $pos = strpos( $fs_url, "title=" ) ) > - 1 ) {
@@ -306,7 +300,6 @@ END;
 			$str .= SFUtils::formDropdownHTML();
 		} else {
 			$str .= '			<input type="hidden" name="form" value="' . $inFormName . '">' . "\n";
-			$str .= '			<input type="hidden" name="form2" value="' . $inFormName . '">' . "\n";
 		}
 		// recreate the passed-in query string as a set of hidden variables
 		$query_components = explode( '&', $inQueryStr );
@@ -314,23 +307,36 @@ END;
 			$subcomponents = explode( '=', $component, 2 );
 			$key = ( isset( $subcomponents[0] ) ) ? $subcomponents[0] : '';
 			$val = ( isset( $subcomponents[1] ) ) ? $subcomponents[1] : '';
-			if ( ! empty( $key ) )
-				$str .= '			<input type="hidden" name="' . $key . '" value="' . $val . '">' . "\n";
+			if ( ! empty( $key ) ){
+				$str .= '			' .
+					Xml::element( 'input',
+						array(
+							'type' => 'hidden',
+							'name' => $key,
+							'value' => $val,
+						)
+					) . "\n";
+			}
 		}
 		wfLoadExtensionMessages( 'SemanticForms' );
 		$button_str = ( $inButtonStr != '' ) ? $inButtonStr : wfMsg( 'sf_formstart_createoredit' );
-		if ( empty( $inAutocompletionSource ) ) {
-			$str .= <<<END
-			<input type="submit" value="$button_str"></p>
+		$str .= <<<END
+			<input type="submit" value="$button_str" /></p>
 			</form>
 
 END;
-		} else {
-			$str .= <<<END
-			<td><input type="submit" value="$button_str"></td></tr></table>
-			</form>
-
-END;
+		if ( ! empty( $inAutocompletionSource ) ) {
+			$str .= '			' .
+				Xml::element( 'div',
+					array(
+						'class' => 'page_name_auto_complete',
+						'id' => "div_$input_num",
+					),
+					// it has to be <div></div>, not
+					// <div />, to work properly - stick
+					// in a space as the content
+					' '
+				) . "\n";
 		}
 
 		// hack to remove newline from beginning of output, thanks to
@@ -345,8 +351,15 @@ END;
 		// let '\n' represent newlines - chances that anyone will
 		// actually need the '\n' literal are small
 		$delimiter = str_replace( '\n', "\n", $delimiter );
+		$actual_delimiter = $parser->mStripState->unstripNoWiki( $delimiter );
 		$new_delimiter = str_replace( '\n', "\n", $new_delimiter );
-		$values_array = explode( $parser->mStripState->unstripNoWiki( $delimiter ), $value );
+
+		if ( $actual_delimiter == '' ) {
+			$values_array = preg_split( '/(.)/u', $value, -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE );
+		} else {
+			$values_array = explode( $actual_delimiter, $value );
+		}
+
 		$results = array();
 		foreach ( $values_array as $cur_value ) {
 			$cur_value = trim( $cur_value );
@@ -376,15 +389,24 @@ END;
 		$delimiter = str_replace( '\n', "\n", $delimiter );
 		$new_delimiter = str_replace( '\n', "\n", $new_delimiter );
 	
-		$values_array = explode( $delimiter, $value );
+		if ( $delimiter == '' ) {
+			$values_array = preg_split( '/(.)/u', $value, -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE );
+		} else {
+			$values_array = explode( $delimiter, $value );
+		}
+
 		$results_array = array();
+		// add results to the results array only if the old value was
+		// non-null, and the new, mapped value is non-null as well.
 		foreach ( $values_array as $old_value ) {
 			$old_value = trim( $old_value );
 			if ( $old_value == '' ) continue;
 			$result_value = $frame->expand( $formula, PPFrame::NO_ARGS | PPFrame::NO_TEMPLATES );
 			$result_value  = str_replace( $var, $old_value, $result_value );
 			$result_value  = $parser->preprocessToDom( $result_value, $frame->isTemplate() ? Parser::PTD_FOR_INCLUSION : 0 );
-			$results_array[] = trim( $frame->expand( $result_value ) );
+			$result_value = trim( $frame->expand( $result_value ) );
+			if ( $result_value == '' ) continue;
+			$results_array[] = $result_value;
 		}
 		return implode( $new_delimiter, $results_array );
 	}
@@ -395,8 +417,15 @@ END;
 	static function renderArrayMapTemplate( &$parser, $value = '', $template = '', $delimiter = ',', $new_delimiter = ', ' ) {
 		# let '\n' represent newlines
 		$delimiter = str_replace( '\n', "\n", $delimiter );
+		$actual_delimiter = $parser->mStripState->unstripNoWiki( $delimiter );
 		$new_delimiter = str_replace( '\n', "\n", $new_delimiter );
-		$values_array = explode( $parser->mStripState->unstripNoWiki( $delimiter ), $value );
+
+		if ( $actual_delimiter == '' ) {
+			$values_array = preg_split( '/(.)/u', $value, -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE );
+		} else {
+			$values_array = explode( $actual_delimiter, $value );
+		}
+
 		$results = array();
 		$template = trim( $template );
 		
@@ -428,7 +457,12 @@ END;
 		$delimiter = str_replace( '\n', "\n", $delimiter );
 		$new_delimiter = str_replace( '\n', "\n", $new_delimiter );
 
-		$values_array = explode( $delimiter, $value );
+		if ( $delimiter == '' ) {
+			$values_array = preg_split( '/(.)/u', $value, -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE );
+		} else {
+			$values_array = explode( $delimiter, $value );
+		}
+
 		$results_array = array();
 		foreach ( $values_array as $old_value ) {
 			$old_value = trim( $old_value );

@@ -93,7 +93,7 @@ function doSpecialCreateCategory() {
 
 END;
 	foreach ( $all_forms as $form ) {
-		$text .= "	<option>$form</option>\n";
+		$text .= '	' . Xml::element( 'option', null, $form ) . "\n";
 	}
 
 	$subcategory_label = wfMsg( 'sf_createcategory_makesubcategory' );
@@ -125,11 +125,6 @@ END;
 	$text .= "	" . Xml::tags( 'p', null, $create_form_link . '.' ) . "\n";
 	$text .= "	</form>\n";
 
-	$wgOut->addLink( array(
-		'rel' => 'stylesheet',
-		'type' => 'text/css',
-		'media' => "screen",
-		'href' => $sfgScriptPath . "/skins/SF_main.css"
-	) );
+	$wgOut->addExtensionStyle( $sfgScriptPath . "/skins/SemanticForms.css" );
 	$wgOut->addHTML( $text );
 }

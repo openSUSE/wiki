@@ -1,30 +1,21 @@
 <?php
 
 /**
- * File holding class MapsBaseMap.
+ * Abstract class MapsBaseMap provides the scafolding for classes handling display_map
+ * calls for a specific mapping service. It inherits from MapsMapFeature and therefore
+ * forces inheriting classes to implement sereveral methods.
  *
  * @file Maps_BaseMap.php
  * @ingroup Maps
  *
  * @author Jeroen De Dauw
  */
-
-if ( !defined( 'MEDIAWIKI' ) ) {
-	die( 'Not an entry point.' );
-}
-
-/**
- * Abstract class MapsBaseMap provides the scafolding for classes handling display_map
- * calls for a specific mapping service. It inherits from MapsMapFeature and therefore
- * forces inheriting classes to implement sereveral methods.
- *
- * @ingroup Maps
- *
- * @author Jeroen De Dauw
- */
-abstract class MapsBaseMap implements iMapParserFunction {
+abstract class MapsBaseMap implements iMappingParserFunction {
 	
-	protected $mService;
+	/**
+	 * @var iMappingService
+	 */	
+	protected $service;
 	
 	protected $centreLat, $centreLon;
 
@@ -35,10 +26,13 @@ abstract class MapsBaseMap implements iMapParserFunction {
 	private $specificParameters = false;
 	protected $featureParameters = false;
 	
-	protected abstract function getDefaultZoom();	
-	
-	public function __construct( MapsMappingService $service ) {
-		$this->mService = $service;
+	/**
+	 * Constructor.
+	 * 
+	 * @param MapsMappingService $service
+	 */
+	public function __construct( iMappingService $service ) {
+		$this->service = $service;
 	}
 	
 	/**
@@ -78,6 +72,8 @@ abstract class MapsBaseMap implements iMapParserFunction {
 	 * 
 	 * Override this method to set parameters specific to a feature service comibination in
 	 * the inheriting class.
+	 * 
+	 * @param array $parameters
 	 */
 	protected function initSpecificParamInfo( array &$parameters ) {
 	}
@@ -95,11 +91,12 @@ abstract class MapsBaseMap implements iMapParserFunction {
 			'height' => array(
 				'default' => $egMapsMapHeight
 			),			
-			'service' => array(
+			'mappingservice' => array(
 				'default' => $egMapsDefaultServices['display_map']
 			),
 			'coordinates' => array(
 				'required' => true,
+				'tolower' => false,
 				'aliases' => array( 'coords', 'location', 'address' ),
 				'criteria' => array(
 					'is_location' => array()
@@ -128,12 +125,12 @@ abstract class MapsBaseMap implements iMapParserFunction {
 		$this->setCentre();
 		
 		if ( $this->zoom == 'null' ) {
-			$this->zoom = $this->getDefaultZoom();
+			$this->zoom = $this->service->getDefaultZoom();
 		}
 		
 		$this->addSpecificMapHTML();
 		
-		$this->mService->addDependencies( $this->parser );
+		$this->service->addDependencies( $this->parser );
 		
 		return $this->output;
 	}
@@ -146,7 +143,7 @@ abstract class MapsBaseMap implements iMapParserFunction {
 			$this->setDefaultCentre();
 		}
 		else { // If a centre value is set, geocode when needed and use it.
-			$this->coordinates = MapsGeocoder::attemptToGeocode( $this->coordinates, $this->geoservice, $this->mService->getName() );
+			$this->coordinates = MapsGeocoder::attemptToGeocode( $this->coordinates, $this->geoservice, $this->service->getName() );
 
 			// If the centre is not false, it will be a valid coordinate, which can be used to set the  latitude and longitutde.
 			if ( $this->coordinates ) {

@@ -1,7 +1,10 @@
 <?php
 
 /**
- * Initialization file for parser function functionality in the Maps extension
+ * Initialization file for parser function functionality in the Maps extension.
+ * Also contains a common handler for map display parser functions which does
+ * service, geoservice and coordinates resolving, and then passes the parameters
+ * to the relevant parser function class.
  *
  * @file Maps_ParserFunctions.php
  * @ingroup Maps
@@ -27,11 +30,13 @@ final class MapsParserFunctions {
 	/**
 	 * Initialize the parser functions feature. This function handles the parser function hook,
 	 * and will load the required classes.
+	 * 
+	 * @return true
 	 */
 	public static function initialize() {
 		global $egMapsFeatures;
 		
-		include_once dirname( __FILE__ ) . '/Maps_iMapParserFunction.php';
+		include_once dirname( __FILE__ ) . '/iMappingParserFunction.php';
 		
 		// This runs a small hook that enables parser functions to run initialization code.
 		foreach ( $egMapsFeatures['pf'] as $hook ) {
@@ -55,7 +60,7 @@ final class MapsParserFunctions {
 	 * @return array
 	 */
 	public static function getMapHtml( Parser &$parser, array $args, $parserFunction ) {
-        global $egValidatorFatalLevel, $egMapsServices;
+        global $egValidatorFatalLevel;
         
         array_shift( $args ); // We already know the $parser.
 
@@ -65,10 +70,11 @@ final class MapsParserFunctions {
 		foreach ( $args as $arg ) {
 			$split = explode( '=', $arg );
 			$name = strtolower( trim( array_shift( $split ) ) );
-			if ( count( $split ) > 0 && self::inParamAliases( $name, 'service', MapsMapper::getCommonParameters() ) ) {
+			
+			if ( count( $split ) > 0 && self::inParamAliases( $name, 'mappingservice', MapsMapper::getCommonParameters() ) ) {
 				if ( !$setService ) {
 					$serviceName = implode( '=', $split );
-					$parameters[] = 'service=' . $serviceName;
+					$parameters[] = 'mappingservice=' . $serviceName;
 					$setService = true;
 				}
 			} else {
@@ -76,15 +82,11 @@ final class MapsParserFunctions {
 			}
 		}
 		
-		// Make sure the service name is valid, and then get the class associated with it.
-		$serviceName = MapsMapper::getValidService( $setService ? $serviceName : '', $parserFunction );
-		$service = $egMapsServices[$serviceName];
+		// Get the instance of the service class.
+		$service = MapsMappingServices::getValidServiceInstance( $setService ? $serviceName : '', $parserFunction );
 		
-		// Get the name of the class handling the current parser function and service.
-		$className = $service->getFeature( $parserFunction );
-		$mapClass = new $className( $service );
-		
-		$manager = new ValidatorManager();
+		// Get an instance of the class handling the current parser function and service.
+		$mapClass = $service->getFeatureInstance( $parserFunction );
 		
 		/*
 		 * Assembliy of the allowed parameters and their information. 
@@ -97,6 +99,8 @@ final class MapsParserFunctions {
 		$parameterInfo = array_merge_recursive( $parameterInfo, $service->getParameterInfo() );
 		$parameterInfo = array_merge_recursive( $parameterInfo, $mapClass->getSpecificParameterInfo() );
 
+		$manager = new ValidatorManager();
+		
 		$displayMap = $manager->manageParameters(
 			$parameters,
 			$parameterInfo,
@@ -134,9 +138,10 @@ final class MapsParserFunctions {
 		$equals = $compareMainName && $mainParamName == $name;
 
 		if ( !$equals && array_key_exists( $mainParamName, $paramInfo ) ) {
-			$equals = in_array( $name, $paramInfo[$mainParamName] );
+			$equals = in_array( $name, $paramInfo[$mainParamName]['aliases'] );
 		}
 
 		return $equals;
 	}
+	
 }

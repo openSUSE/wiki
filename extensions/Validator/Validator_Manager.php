@@ -25,10 +25,13 @@ if ( !defined( 'MEDIAWIKI' ) ) {
  */
 final class ValidatorManager {
 
+	/**
+	 * @var Validator
+	 */
 	private $validator;
 	
 	/**
-	 * Validates the provided parameters, and corrects them depending on the error level.
+	 * Parses and validates the provided parameters, and corrects them depending on the error level.
 	 *
 	 * @param array $rawParameters The raw parameters, as provided by the user.
 	 * @param array $parameterInfo Array containing the parameter definitions, which are needed for validation and defaulting.
@@ -38,7 +41,7 @@ final class ValidatorManager {
 	 */
 	public function manageParameters( array $rawParameters, array $parameterInfo, array $defaultParams = array() ) {
 		global $egValidatorErrorLevel;
- 
+
 		$this->validator = new Validator();
 
 		$this->validator->parseAndSetParams( $rawParameters, $parameterInfo, $defaultParams );
@@ -51,6 +54,14 @@ final class ValidatorManager {
 		return !$this->validator->hasFatalError();
 	}
 	
+	/**
+	 * Validates the provided parameters, and corrects them depending on the error level.
+	 * 
+	 * @since 3.x
+	 * 
+	 * @param $parameters Array
+	 * @param $parameterInfo Array
+	 */
 	public function manageParsedParameters( array $parameters, array $parameterInfo ) {
 		global $egValidatorErrorLevel;
 		
@@ -68,6 +79,8 @@ final class ValidatorManager {
 
 	/**
 	 * Returns an array with the valid parameters.
+	 * 
+	 * @since 3.x
 	 * 
 	 * @param boolean $includeMetaData
 	 * 
@@ -173,4 +186,5 @@ final class ValidatorManager {
 			return '';
 		}
 	}
+	
 }

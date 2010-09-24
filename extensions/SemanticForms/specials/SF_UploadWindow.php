@@ -578,7 +578,7 @@ END;
 END;
 			}
 			$output .= <<<END
-		parent.fb.end();
+		parent.jQuery.fancybox.close();
 	</script>
 
 END;

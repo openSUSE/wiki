@@ -19,10 +19,8 @@ $wgHooks['MappingFeatureLoad'][] = 'SMFormInputs::initialize';
 
 final class SMFormInputs {
 	
-	public static $parameters = array();
-	
 	public static function initialize() {
-		global $smgDir, $wgAutoloadClasses, $egMapsServices, $sfgFormPrinter;
+		global $smgDir, $wgAutoloadClasses, $sfgFormPrinter;
 
 		// This code should not get called when SF is not loaded, but let's have this
 		// check to not run into problems when people mess up the settings.
@@ -32,9 +30,9 @@ final class SMFormInputs {
 		
 		$hasFormInputs = false;
 		
-		self::initializeParams();
-		
-		foreach ( $egMapsServices as $service ) {
+		foreach ( MapsMappingServices::getServiceIdentifiers() as $serviceIdentifier ) {
+			$service = MapsMappingServices::getServiceInstance( $serviceIdentifier );
+			
 			// Check if the service has a form input.
 			$FIClass = $service->getFeature( 'fi' );
 			
@@ -57,36 +55,7 @@ final class SMFormInputs {
 		return true;
 	}
 	
-	private static function initializeParams() {
-		global $egMapsAvailableServices, $egMapsDefaultServices, $egMapsAvailableGeoServices, $egMapsDefaultGeoService;
-		global $smgFIWidth, $smgFIHeight;
-		
-		self::$parameters = array(
-			'width' => array(
-				'default' => $smgFIWidth
-			),
-			'height' => array(
-				'default' => $smgFIHeight
-			),		
-			'centre' => array(
-				'aliases' => array( 'center' ),
-			),
-			'geoservice' => array(
-				'criteria' => array(
-					'in_array' => $egMapsAvailableGeoServices
-				),
-				'default' => $egMapsDefaultGeoService
-			),
-			'service_name' => array(),
-			'part_of_multiple' => array(),
-			'possible_values' => array(
-				'type' => array( 'string', 'array' ),
-			),
-			'is_list' => array(),
-			'semantic_property' => array(),
-			'value_labels' => array(),
-		);
-	}
+
 	
 	/**
 	 * Adds a mapping service's form hook.
@@ -117,8 +86,6 @@ final class SMFormInputs {
  * @return array
  */
 function smfSelectFormInputHTML( $coordinates, $input_name, $is_mandatory, $is_disabled, array $field_args ) {
-    global $egMapsServices;
-    
 	// Get the service name from the field_args, and set it to null if it doesn't exist.
     if ( array_key_exists( 'service_name', $field_args ) ) {
         $serviceName = $field_args['service_name'];
@@ -127,11 +94,11 @@ function smfSelectFormInputHTML( $coordinates, $input_name, $is_mandatory, $is_d
         $serviceName = null;
     }
     
-    // Ensure the service is valid and create a new instance of the handling form input class.
-    $serviceName = MapsMapper::getValidService( $serviceName, 'fi' );
-    $FIClass = $egMapsServices[$serviceName]->getFeature( 'fi' );
-    
-    $formInput = new $FIClass( $egMapsServices[$serviceName] );
+	// Get the instance of the service class.
+	$service = MapsMappingServices::getValidServiceInstance( $serviceName, 'fi' );
+	
+	// Get an instance of the class handling the current form input and service.
+	$formInput = $service->getFeatureInstance( 'fi' );    
     
     // Get and return the form input HTML from the hook corresponding with the provided service.
     return $formInput->formInputHTML( $coordinates, $input_name, $is_mandatory, $is_disabled, $field_args );

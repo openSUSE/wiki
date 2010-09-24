@@ -7,9 +7,12 @@
  * @ingroup Language
  * @file
  *
+ * @author Purodha
  * @author Slomox
  * @author Wikipeeta
  */
+
+$fallback = 'de';
 
 $messages = array(
 # User preference toggles
@@ -26,6 +29,7 @@ $messages = array(
 'tog-editsectiononrightclick' => 'Eenzelne Aufschnette mett eenem Rajsch-Klick beoabeide (JavaScript)',
 'tog-showtoc'                 => 'Wies dee List mettem Enhault (fe Siede mett meea aus dree Ewaschrefte)',
 'tog-rememberpassword'        => 'Login bewoare, dee Brucka blift aun disem Computer aunjemaldt',
+'tog-previewontop'            => 'Wies Preview bowe em Beoabeide-Fensta',
 'tog-showhiddencats'          => "Wies fe'stoakne Kategorien",
 
 'underline-always' => 'Emma',
@@ -75,35 +79,37 @@ $messages = array(
 'mar'           => 'Moa',
 'apr'           => 'Apr',
 'may'           => 'Mei',
-'jun'           => 'Jün',
-'jul'           => 'Jül',
+'jun'           => 'Jun',
+'jul'           => 'Jul',
 'aug'           => 'Aug',
 'sep'           => 'Sep',
 'oct'           => 'Okt',
 'nov'           => 'Now',
-'dec'           => 'Dee',
+'dec'           => 'Dez',
 
 # Categories related messages
 'pagecategories'           => '{{PLURAL:$1|Kategorie|Kategorien}}',
 'category_header'          => 'Siede in Kategorie "$1"',
 'category-media-header'    => 'Bilda in Kategorie "$1"',
 'hidden-categories'        => "{{PLURAL:$1|Fe'stoakne Kategorie|Fe'stoakne Kategorien}}",
-'hidden-category-category' => "Fe'stoakne Kategorien", # Name of the category where hidden categories will be listed
+'hidden-category-category' => "Fe'stoakne Kategorien",
 
-'about'          => 'Äwa',
-'newwindow'      => '(got in en nie Fensta op)',
-'cancel'         => 'Aufbräakje',
+'about'         => 'Äwa',
+'newwindow'     => '(got in en nie Fensta op)',
+'cancel'        => 'Aufbräakje',
+'moredotdotdot' => 'Mea...',
+'mypage'        => 'Miene Sied',
+'mytalk'        => 'Miene Beredsied',
+'anontalk'      => 'Beredsied fe dise IP',
+'navigation'    => 'Navigatioon',
+'and'           => '&#32;onn',
+
+# Cologne Blue skin
 'qbfind'         => 'finje',
 'qbedit'         => 'Endre',
 'qbpageoptions'  => 'Dise Sied',
 'qbmyoptions'    => 'Miene Siede',
 'qbspecialpages' => "Opp'poate Siede",
-'moredotdotdot'  => 'Mea...',
-'mypage'         => 'Miene Sied',
-'mytalk'         => 'Miene Beredsied',
-'anontalk'       => 'Beredsied fe dise IP',
-'navigation'     => 'Navigatioon',
-'and'            => '&#32;onn',
 
 'errorpagetitle'   => 'Fäla',
 'returnto'         => 'Trigj no $1.',
@@ -114,11 +120,11 @@ $messages = array(
 'go'               => 'Go',
 'searcharticle'    => 'Sied',
 'history'          => "Siedeje'schijchte",
-'history_short'    => "Je'schijchte",
+'history_short'    => 'Jeschicht',
 'updatedmarker'    => 'fresch jemoakt',
 'info_short'       => 'Informatioon',
 'printableversion' => 'Drekdoastalinj',
-'permalink'        => "Be'stendijch Link",
+'permalink'        => 'Bestendja Link',
 'print'            => 'Drek',
 'edit'             => 'Endre',
 'create'           => 'Moak',
@@ -147,7 +153,7 @@ $messages = array(
 'otherlanguages'   => 'In aundre Sproake',
 'redirectedfrom'   => '(wieda jeleidt von $1)',
 'redirectpagesub'  => 'Sied tom Wiedaleide',
-'lastmodifiedat'   => "Dise Sied word aum $1, klock $2 daut latzte Mol je'endat.", # $1 date, $2 time
+'lastmodifiedat'   => "Dise Sied word aum $1, klock $2 daut latzte Mol je'endat.",
 'protectedpage'    => 'Sied mett besondrem Schutz',
 'jumpto'           => 'Sprinj no:',
 'jumptonavigation' => 'Navigatioon',
@@ -203,7 +209,8 @@ $messages = array(
 'nstab-main'      => 'Sied',
 'nstab-user'      => 'Bruckasied',
 'nstab-media'     => 'Media',
-'nstab-special'   => 'Spezial',
+'nstab-special'   => 'Besondre Sied
+Spezial',
 'nstab-project'   => 'Portalsied',
 'nstab-image'     => 'Datei',
 'nstab-mediawiki' => 'Norejcht',
@@ -214,9 +221,9 @@ $messages = array(
 'nosuchaction'      => 'Soone Aktioon jefft et nich',
 'nosuchactiontext'  => 'Dee Aktioon von dise URL woat von MediaWiki nich unjastett.',
 'nosuchspecialpage' => 'Soone Spezialsied jefft et nich',
-'nospecialpagetext' => "<big>'''Dee oppjeroopde Spezialsied jefft et nich.'''</big>
+'nospecialpagetext' => '<strong>Dee oppjeroopde Spezialsied jefft et nich.</strong>
 
-Aula bruckboare Spezialsiede send bie [[Special:SpecialPages|{{int:specialpages}}]] to finje.",
+Aula bruckboare Spezialsiede send bie [[Special:SpecialPages|{{int:specialpages}}]] to finje.',
 
 # General errors
 'error'           => 'Fehla',
@@ -227,13 +234,15 @@ Daut latzte Opproope vonne Dotebank we:
 <blockquote><tt>$1</tt></blockquote>
 ute Funktioon "<tt>$2</tt>".
 MySQL mald dem Fehla "<tt>$3: $4</tt>".',
-'noconnect'       => 'Sorry! Daut jefft technische Schwierichtjeite, tjeen Kontakt es meajlich mette Dotebank opp <br />
-$1',
-'nodb'            => 'Kunn Dotebank $1 nich utwehle',
-'cachederror'     => 'Waut hia tjemmt es eene Kopie utem Cache en es vleicht nich meea aktuell.',
 'laggedslavemode' => 'Oppjepausst: Dee jewesne Sied es nich onbedinjt dee latzte Versioon.',
 'readonly'        => 'Dotebank es jeschlote',
 'enterlockreason' => 'Nan bitte een Grunt doafea, wurom dee Dotebank jeschlote saul en saj, woolang daut onjefea diere saul',
+'missing-article' => 'Dee Database haft nich dem Tatjst von eene Sied jefunge, woone hee haud finje sullt, mettem Nome "$1" $2.
+
+Dit tjemm jeweenlich soo, wan een oola nich jelaschda Link jebruckt worde es.
+
+Wan daut nich soo es, dan es doa vleicht een Fehla enne Software.
+Bitte schriew eene Notiz aun [[Special:ListUsers/sysop|administrator]], en lot dem dee URL weete.',
 'badtitle'        => 'Schlajchta Titel',
 'viewsourcefor'   => 'fer $1',
 
@@ -246,21 +255,15 @@ $1',
 'logout'                  => 'Rut hia',
 'userlogout'              => 'Rut hia',
 'notloggedin'             => 'Nich aunjemaldt',
-'nologin'                 => 'Hast tjeen Bruckakonto? $1.',
+'nologin'                 => "Hast tjeen Bruckakonto? '''$1'''.",
 'nologinlink'             => 'Nieet Bruckakonto moake',
 'createaccount'           => 'Bruckakonto moake',
-'gotaccount'              => 'Hast aul een Bruckakonto? $1.',
+'gotaccount'              => "Hast aul een Bruckakonto? '''$1'''.",
 'gotaccountlink'          => 'Aunmalde',
 'createaccountmail'       => 'Ewa Email',
 'badretype'               => 'Dee beid Pauswed stemme nich ewaeen.',
 'userexists'              => 'Dem Bruckanome haft aul wea.
 Bitte nemm eenen aundren.',
-'youremail'               => 'Email:',
-'username'                => 'Bruckanome:',
-'uid'                     => 'Brucka-ID:',
-'prefs-memberingroups'    => 'Mettjliet von {{PLURAL:$1|group|groups}}:',
-'yourrealname'            => 'Ajchta Nome:',
-'yourlanguage'            => 'Sproak:',
 'loginlanguagelabel'      => 'Sproak: $1',
 
 # Edit page toolbar
@@ -287,27 +290,47 @@ Bitte nemm eenen aundren.',
 'template-protected'   => "(be'schutst)",
 
 # History pages
-'cur'        => 'dise',
-'last'       => 'latste',
-'page_first' => 'easchte',
-'page_last'  => 'latste',
+'revisionasof'  => 'Versioon von $1',
+'revision-info' => 'Versioon von $1 von $2',
+'cur'           => 'dise',
+'last'          => 'latste',
+'page_first'    => 'easchte',
+'page_last'     => 'latste',
 
 # Revision feed
-'history-feed-item-nocomment' => '$1 omm $2', # user at time
+'history-feed-item-nocomment' => '$1 omm $2',
+
+# Revision deletion
+'rev-delundel' => 'wies/vestopp',
 
 # Diffs
 'lineno'   => 'Lien $1:',
 'editundo' => 'trigjsate',
 
 # Search results
-'prevn'          => '$1 ferhäa',
-'nextn'          => 'näakjste $1',
-'searchhelp-url' => 'Help:Enhault',
-'powersearch'    => 'Bätre Sääk',
+'searchresults'             => 'Setj Resultaute',
+'searchresults-title'       => 'Setj Resultaute fe "$1"',
+'searchsubtitle'            => 'Du sochst \'\'\'[[:$1]]\'\'\' ([[Special:Prefixindex/$1|all pages starting with "$1"]]{{int:pipe-separator}}[[Special:WhatLinksHere/$1|all pages that link to "$1"]])',
+'prevn'                     => '{{PLURAL:$1|$1}} ferhäa',
+'nextn'                     => 'näakjste {{PLURAL:$1|$1}}',
+'viewprevnext'              => 'Tjitj ($1 {{int:pipe-separator}} $2) ($3)',
+'searchhelp-url'            => 'Help:Enhault',
+'search-result-size'        => '$1 ({{PLURAL:$2|1 Wot|$2 Wed}})',
+'search-mwsuggest-enabled'  => 'mett Veaschlag',
+'search-mwsuggest-disabled' => 'Tjeen Veaschlag',
+'powersearch'               => 'Bätre Sääk',
+'powersearch-legend'        => 'Betret Setje',
+'powersearch-field'         => 'Setj no',
 
 # Preferences page
-'preferences'   => 'Ennstalinje',
-'mypreferences' => 'Miene Ennstalinje',
+'preferences'          => 'Ennstalinje',
+'mypreferences'        => 'Miene Ennstalinje',
+'youremail'            => 'Email:',
+'username'             => 'Bruckanome:',
+'uid'                  => 'Brucka-ID:',
+'prefs-memberingroups' => 'Mettjliet von {{PLURAL:$1|group|groups}}:',
+'yourrealname'         => 'Ajchta Nome:',
+'yourlanguage'         => 'Sproak:',
 
 # Recent changes
 'nchanges'        => '$1 {{PLURAL:$1|Endaniss|Endanisse}}',
@@ -317,7 +340,7 @@ Bitte nemm eenen aundren.',
 'rcshowhidemine'  => '$1 miene Endanisse',
 'rclinks'         => 'Wies de latste $1 Endanisse in de latste $2 Doag<br />$3',
 'diff'            => 'Unjascheet',
-'hist'            => "Je'schijchte",
+'hist'            => 'Jeschicht',
 'hide'            => "Fe'stäakje",
 'show'            => 'Wiese',
 'minoreditletter' => 'k',
@@ -326,6 +349,8 @@ Bitte nemm eenen aundren.',
 
 # Recent changes linked
 'recentchangeslinked'          => 'Endarunge aun velinkte Siede',
+'recentchangeslinked-feed'     => 'Endarunge aun velinkte Siede',
+'recentchangeslinked-toolbox'  => 'Endarunge aun velinkte Siede',
 'recentchangeslinked-title'    => 'Endarunge aun Siede, woone von "$1" velinkt send',
 'recentchangeslinked-backlink' => '← $1',
 'recentchangeslinked-noresult' => 'Em utjesochten Tietrum es aun dee velinkte Siede nuscht aundasch jemoakt worde.',
@@ -347,6 +372,8 @@ Bitte nemm eenen aundren.',
 'listfiles_user' => 'Brucker',
 
 # File description page
+'file-anchor-link'    => 'Datei',
+'filehist'            => 'Dokument-Jeschicht',
 'filehist-datetime'   => 'Tiet',
 'filehist-user'       => 'Brucker',
 'filehist-dimensions' => 'Moten',
@@ -411,11 +438,11 @@ Bitte nemm eenen aundren.',
 
 # Protect
 'protectexpiry'          => 'Ütgontiet:',
-'protect-expiry-options' => '2 Stunde:2 hours,1 Dach:1 day,3 Doag:3 days,1 Wäakj:1 week,2 Wäakje:2 weeks,1 Moonat:1 month,3 Moonate:3 months,6 Moonate:6 months,1 Joa:1 year,one Enj:infinite', # display1:time1,display2:time2,...
+'protect-expiry-options' => '2 Stunde:2 hours,1 Dach:1 day,1 Wäakj:1 week,2 Wäakje:2 weeks,1 Moonat:1 month,3 Moonate:3 months,6 Moonate:6 months,1 Joa:1 year,one Enj:infinite',
 'restriction-type'       => "Er'laubniss:",
 
 # Namespace form on various pages
-'namespace'      => 'Nomerüm:',
+'namespace'      => 'Nomerum:',
 'blanknamespace' => '(Haupt)',
 
 # Contributions
@@ -423,6 +450,8 @@ Bitte nemm eenen aundren.',
 'uctop'     => '(bowe)',
 'month'     => 'Fonn Moonat (onn ferdäm):',
 'year'      => 'Fonn Joa (onn ferdäm):',
+
+'sp-contributions-talk' => 'Beredsied',
 
 # What links here
 'whatlinkshere'          => 'Links opp dise Sied',
@@ -438,7 +467,7 @@ Bitte nemm eenen aundren.',
 'whatlinkshere-links'    => '← Links',
 
 # Block/unblock
-'ipboptions'       => '2 Stunde:2 hours,1 Dach:1 day,3 Doag:3 days,1 Wäakj:1 week,2 Wäakje:2 weeks,1 Moonat:1 month,3 Moonate:3 months,6 Moonate:6 months,1 Joa:1 year,one Enj:infinite', # display1:time1,display2:time2,...
+'ipboptions'       => '2 Stunde:2 hours,1 Dach:1 day,3 Doag:3 days,1 Wäakj:1 week,2 Wäakje:2 weeks,1 Moonat:1 month,3 Moonate:3 months,6 Moonate:6 months,1 Joa:1 year,one Enj:infinite',
 'blocklink'        => 'blocke',
 'unblocklink'      => 'frie jewe',
 'change-blocklink' => 'Daut Blocke endre',
@@ -446,7 +475,6 @@ Bitte nemm eenen aundren.',
 'autoblocker'      => 'Automatisch jeblockt, wiels diene IP-Adras soo es aus bie "[[User:$1|$1]]".
 Dee Grunt es: "$2"',
 'blocklogpage'     => 'Block-Logbok',
-'blocklog-fulllog' => 'Vollstendjet Block-Logbok',
 'blocklogentry'    => 'haft [[$1]] jeblockt fe dee Tiet $2 $3',
 'reblock-logentry' => "haft dee Block-Enstalinj fe [[$1]] je'endat fe dee Tiet $2 $3",
 
@@ -460,7 +488,7 @@ Dee Grunt es: "$2"',
 'allmessages' => "Sis'teem-Norejchte",
 
 # Thumbnails
-'thumbnail-more' => "Fe'jreetre",
+'thumbnail-more' => 'Vejratre',
 
 # Tooltip help for the actions
 'tooltip-pt-userpage'             => 'Diene Bruckersied',
@@ -486,6 +514,7 @@ Dee Grunt es: "$2"',
 'tooltip-search-go'               => 'Go opp dee Sied, woone jenau disem Nome haft',
 'tooltip-search-fulltext'         => 'Setj no Siede mett soonem Tatjst',
 'tooltip-n-mainpage'              => 'Besäkj de Hauptsied',
+'tooltip-n-mainpage-description'  => 'Besetj dee Hauptsied',
 'tooltip-n-portal'                => 'Ewa daut Portal, waut du doone kaunst, woo waut to finje es',
 'tooltip-n-currentevents'         => 'Hinjagruntinformatioone ewa aktuelle Sache finje',
 'tooltip-n-recentchanges'         => 'List mette latste Endanisse em Wiki.',
@@ -553,7 +582,7 @@ Dee Grunt es: "$2"',
 # Attribution
 'anonymous'        => 'Onbekaunda Brucka {{PLURAL:$1|user|users}} von {{SITENAME}}',
 'siteuser'         => '{{SITENAME}}-Brucka $1',
-'lastmodifiedatby' => "Dise Sied word daut latste Mol aum $1, Klock $2 von $3 je'endat.", # $1 date, $2 time, $3 user
+'lastmodifiedatby' => "Dise Sied word daut latste Mol aum $1, Klock $2 von $3 je'endat.",
 'othercontribs'    => 'Oppe Gruntloag vonne Oabeit von $1.',
 'others'           => 'aundre',
 'siteusers'        => '{{SITENAME}}-{{PLURAL:$2|user|users}} $1',
@@ -595,6 +624,9 @@ Daut woat aun eenem Link lidje, woona no eene externe Sied wiest.',
 'bad_image_list' => 'Format:
 
 Bloos items, woone mett eenem * aunfange, woare jenome. Dee eschta Link no dem * mott een Link opp een schlajchtet Dokument (file) senne. Dee Links, woone dan kome, wiese opp Utnohme, aulsoo soone Siede, woo daut Dokument (file) jewese en jeseene woare kaun.',
+
+# Metadata
+'metadata' => 'Meta-Dote',
 
 # 'all' in various places, this might be different for inflected languages
 'watchlistall2' => 'aule',

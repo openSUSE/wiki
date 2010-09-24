@@ -13,12 +13,19 @@
 
 $fallback = 'fr';
 
+$defaultUserOptionOverrides = array(
+	'editfont' => 'sans-serif', # poor font support
+);
+
 $linkPrefixExtension = true;
 
 # Same as the French (bug 8485)
 $separatorTransformTable = array( ',' => "\xc2\xa0", '.' => ',' );
 
 $messages = array(
+# User preference toggles
+'tog-underline' => 'Kotíya sulimá na bikangisi :',
+
 # Dates
 'monday'        => 'mokɔlɔ ya libosó',
 'tuesday'       => 'mokɔlɔ ya míbalé',
@@ -74,14 +81,16 @@ $messages = array(
 'subcategories'   => 'Ndéngé-bǎna',
 'category-empty'  => "''Loléngé loye ezalí na ekakola tɛ̂, loléngé-mwǎna tɛ̂ tǒ nkásá mitímediá tɛ̂.''",
 
-'about'          => 'elɔ́kɔ elobámí',
-'article'        => 'ekakoli',
-'cancel'         => 'Kozóngela',
+'about'      => 'elɔ́kɔ elobámí',
+'article'    => 'ekakoli',
+'cancel'     => 'Kozóngela',
+'mytalk'     => 'Ntembe na ngáí',
+'navigation' => 'Botamboli',
+'and'        => '&#32;mpé',
+
+# Cologne Blue skin
 'qbedit'         => 'kobalusa',
 'qbspecialpages' => 'Nkásá ya ndéngé isúsu',
-'mytalk'         => 'Ntembe na ngáí',
-'navigation'     => 'Botamboli',
-'and'            => '&#32;mpé',
 
 'errorpagetitle'   => 'Mbéba',
 'tagline'          => 'Artíclɛ ya {{SITENAME}}.',
@@ -90,19 +99,19 @@ $messages = array(
 'searchbutton'     => 'Boluki',
 'go'               => 'kokɛndɛ',
 'searcharticle'    => 'Kɛndɛ́',
-'history'          => 'Makambo ya lokásá',
+'history'          => 'Makambo ya lonkásá',
 'history_short'    => 'likambo',
 'printableversion' => 'Mpɔ̂ na kofínela',
 'permalink'        => 'Ekangeli ya ntángo yɔ́nsɔ',
 'print'            => 'kobimisa nkomá',
 'edit'             => 'Kobimisela',
 'create'           => 'Kokela',
-'editthispage'     => 'Kokoma lokásá loye',
+'editthispage'     => 'Kobɔngisa lonkásá óyo',
 'create-this-page' => 'Kokela lokásá yango',
 'delete'           => 'Kolímwisa',
 'protect'          => 'Kobátela',
 'unprotect'        => 'Kobátela tɛ̂',
-'newpage'          => 'Lokásá ya sika',
+'newpage'          => 'Lonkásá ya sika',
 'talkpagelinktext' => 'Ntembe',
 'personaltools'    => 'Bisáleli ya moto-mɛ́i',
 'talk'             => 'Ntembe',
@@ -112,22 +121,27 @@ $messages = array(
 'redirectedfrom'   => '(Eyendísí útá $1)',
 'redirectpagesub'  => 'Lokásá la boyendisi',
 'jumpto'           => 'Kokɛndɛ na:',
+'jumptonavigation' => 'bolúki',
 'jumptosearch'     => 'boluki',
 
 # All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
 'aboutsite'            => 'elɔ́kɔ elobí {{SITENAME}}',
+'aboutpage'            => 'Project:Etalí',
 'copyrightpage'        => '{{ns:project}}:Mikokisi',
 'currentevents'        => 'Elɔ́kɔ ya sika',
+'disclaimers'          => 'Ndelo ya boyanoli',
 'edithelp'             => 'Kobimisela bosálisi',
-'mainpage'             => 'Lokásá ya libosó',
+'mainpage'             => 'Lonkásá ya libosó',
 'mainpage-description' => 'Lokásá ya libosó',
 'portal'               => 'Bísó na bísó',
 
 'ok'                 => 'Nandimi',
+'retrievedfrom'      => 'Ezwámí úta « $1 »',
 'youhavenewmessages' => 'Nazweí $1 ($2).',
 'newmessageslink'    => 'nsango ya sika',
 'editsection'        => 'kobimisela',
 'editold'            => 'kokoma',
+'editlink'           => 'kobɔngisa',
 'editsectionhint'    => 'Kobimisela sɛksíɔ : $1',
 'toc'                => 'Etápe',
 'showtoc'            => 'komɔ́nisa',
@@ -135,17 +149,38 @@ $messages = array(
 'site-rss-feed'      => 'Ebale RSS ya $1',
 'site-atom-feed'     => 'Ebale Atom ya $1',
 'page-rss-feed'      => 'Ebale RSS ya « $1 »',
+'red-link-title'     => '$1 (lonkásá  ezalí tɛ̂)',
 
 # Short words for each namespace, by default used in the namespace tab in monobook
-'nstab-main'     => 'ekakoli',
-'nstab-image'    => 'elilingi',
-'nstab-template' => 'Emekoli',
-'nstab-help'     => 'Bosálisi',
-'nstab-category' => 'loléngé',
+'nstab-main'      => 'lonkásá',
+'nstab-user'      => 'lonkásá ya mosáleli',
+'nstab-media'     => 'Mediá',
+'nstab-special'   => 'Lonkásá gudi',
+'nstab-project'   => 'Etalí',
+'nstab-image'     => 'Kásá',
+'nstab-mediawiki' => 'Liyébísí',
+'nstab-template'  => 'Emekoli',
+'nstab-help'      => 'Lonkásá ya lisálisi',
+'nstab-category'  => 'Katégori',
+
+# Main script and global functions
+'nosuchaction'      => 'Ekelá eyébani tɛ̂',
+'nosuchspecialpage' => 'Lonkásá gudi yangó ezalí tɛ̂',
+'nospecialpagetext' => '<strong>Otúní lonkásá gudi kasi yangó ezalí tɛ̂.</strong>
+
+Ezalí listɛ́ ya nkásá gudi bizalí  na [[Special:SpecialPages|{{int:specialpages}}]].',
 
 # General errors
-'error'         => 'Mbéba',
-'viewsourcefor' => 'na $1',
+'error'              => 'Mbéba',
+'databaseerror'      => 'Zíko ya litákoli ya kabo',
+'laggedslavemode'    => "'''Likébisi''' : lonkásá óyo ekokí kokwa mbóngwana ya nsúka nyɔ́nsɔ tɛ̂",
+'readonly'           => 'Litákoli ya kabo efúngámí',
+'enterlockreason'    => 'Ópésa ntína mpé ntángo ya kokanisa ya bofúngi ya litákoli ya kabo',
+'internalerror'      => 'Zíko ya káti',
+'internalerror_info' => 'Zíko ya káti : $1',
+'perfcached'         => 'Bipeseli byangó bizalí o mobómbisi-lombángu mpé bikokí kozala ya lɛlɔ́ tɛ̂.',
+'perfcachedts'       => 'Bipeseli byangó bizalí o mobómbisi-lombángu mpé bikokí kozala ya lɛlɔ́ tɛ̂. Bizalí bya $1.',
+'viewsourcefor'      => 'na $1',
 
 # Login and logout pages
 'yourname'                => 'Nkómbó ya ekitoli :',
@@ -156,15 +191,10 @@ $messages = array(
 'userlogin'               => 'Komíkomisa tǒ kokɔtɔ',
 'logout'                  => 'kolongwa',
 'userlogout'              => 'kolongwa (log out)',
-'nologin'                 => 'Omíkomísí naíno tɛ̂? $1.',
+'nologin'                 => "Omíkomísí naíno tɛ̂? '''$1'''.",
 'nologinlink'             => 'Míkomísá yɔ̌-mɛ́i',
-'gotaccount'              => 'Omíkomísí naíno ? $1.',
+'gotaccount'              => "Omíkomísí naíno ? '''$1'''.",
 'createaccountmail'       => 'na mokánda',
-'youremail'               => 'Mokandá (e-mail) *',
-'username'                => 'Nkómbó ya ekitoli :',
-'yourrealname'            => 'nkómbó ya sɔ̂lɔ́',
-'yourlanguage'            => 'Lokótá',
-'email'                   => 'Mokánda',
 
 # Edit page toolbar
 'bold_sample'     => 'Nkomá ya mbinga',
@@ -179,14 +209,14 @@ $messages = array(
 'summary'                => 'Likwé ya mokusé:',
 'subject'                => 'Mokonza/litɛ́mɛ:',
 'minoredit'              => 'Ezalí mbóngwana ya mokɛ́',
-'watchthis'              => 'Kolanda lokásá loye',
-'savearticle'            => 'kobómbisa ekakoli',
+'watchthis'              => 'Kolanda lonkásá óyo',
+'savearticle'            => 'kobómbisa lonkásá',
 'preview'                => 'Botáli',
 'newarticle'             => '(Sika)',
 'editing'                => 'Kobimisela « $1 »',
 'editingcomment'         => 'Kokoma « $1 » (ndimbola)',
 'yourtext'               => 'Nkomá na yɔ̌',
-'templatesused'          => 'Bimekoli na mosálá o lokásá loye :',
+'templatesused'          => '{{PLURAL:$1|Emekoli esálélí|Bimekoli bisálélí}} o lonkásá óyo :',
 'templatesusedpreview'   => 'Bimekoli na mosálá o botáli boye :',
 'template-protected'     => '(na bobáteli)',
 'template-semiprotected' => '(na bobáteli ya ndámbo)',
@@ -200,7 +230,6 @@ $messages = array(
 'cur'                 => 'sika',
 'next'                => 'bolɛngɛli',
 'last'                => 'ya nsúka',
-'deletedrev'          => '[elímwísámí]',
 
 # Revision deletion
 'rev-delundel' => 'komɔ́nisa/kobomba',
@@ -211,20 +240,29 @@ $messages = array(
 'editundo'      => 'kozóngela',
 
 # Search results
-'prevn'        => '$1 ya libosó',
-'nextn'        => 'bolɛngɛli $1',
-'viewprevnext' => 'Komɔ́na ($1) ($2) ($3)',
-'powersearch'  => 'Boluki',
+'prevn'               => '{{PLURAL:$1|$1}} ya libosó',
+'nextn'               => 'bolɛngɛli {{PLURAL:$1|$1}}',
+'viewprevnext'        => 'Komɔ́na ($1 {{int:pipe-separator}} $2) ($3)',
+'search-result-size'  => '$1 ({{PLURAL:$2|lokomá 1|nkomá $2}})',
+'search-result-score' => 'Ntína : $1%',
+'search-redirect'     => '(bopengoli útá $1)',
+'search-section'      => '(sɛksió ya $1)',
+'search-suggest'      => 'Ómeka na lokomá : $1',
+'powersearch'         => 'Boluki',
 
 # Preferences page
 'preferences'       => 'Malúli',
 'mypreferences'     => 'Malúli ma ngáí',
-'dateformat'        => 'bokomi ya mokɔlɔ',
-'datetime'          => 'Mokɔlɔ mpé ntángo',
+'prefs-datetime'    => 'Mokɔlɔ mpé ntángo',
 'prefs-rc'          => 'Mbóngwana ya nsúka',
 'saveprefs'         => 'kobómbisa',
 'searchresultshead' => 'Boluki',
 'allowemail'        => 'Enable mokánda from other users',
+'youremail'         => 'Mokandá (e-mail) *',
+'username'          => 'Nkómbó ya ekitoli :',
+'yourrealname'      => 'nkómbó ya sɔ̂lɔ́',
+'yourlanguage'      => 'Lokótá',
+'email'             => 'Mokánda',
 
 # Groups
 'group-sysop' => 'Bayángeli',
@@ -247,7 +285,9 @@ $messages = array(
 'boteditletter'   => 'b',
 
 # Recent changes linked
-'recentchangeslinked' => 'Bolandi ekangisi',
+'recentchangeslinked'         => 'Bolandi ekangisi',
+'recentchangeslinked-feed'    => 'Bolandi ekangisi',
+'recentchangeslinked-toolbox' => 'Bolandi ekangisi',
 
 # Upload
 'upload'    => 'Kokumbisa (elilingi)',
@@ -258,7 +298,8 @@ $messages = array(
 'listfiles_date' => 'Mokɔlɔ',
 
 # File description page
-'filehist' => 'Mokóló ya kásá',
+'file-anchor-link' => 'Elilingi',
+'filehist'         => 'Mokóló ya kásá',
 
 # File deletion
 'filedelete-submit' => 'Kolímwisa',
@@ -267,7 +308,7 @@ $messages = array(
 'unusedtemplates' => 'Bimekoli na mosálá tɛ̂',
 
 # Random page
-'randompage' => 'Lokásá epɔní tɛ́',
+'randompage' => 'Lonkásá na mbɛsɛ',
 
 # Statistics
 'statistics' => 'Mitúya',
@@ -300,7 +341,7 @@ $messages = array(
 'allpages'       => 'Nkásá ínsɔ',
 'alphaindexline' => '$1 kina $2',
 'nextpage'       => 'Lokásá ya nsima ($1)',
-'prevpage'       => 'Lokasá ya libosó ($1)',
+'prevpage'       => 'Lonkasá o libosó ($1)',
 'allpagesprev'   => '< ya libosó',
 'allpagesnext'   => 'bolɛngɛli >',
 'allpagessubmit' => 'kokɛndɛ',
@@ -322,9 +363,9 @@ $messages = array(
 'mywatchlist'       => 'Nkásá nalandí',
 'watchlistfor'      => "(mpɔ̂ na moto '''$1''')",
 'watch'             => 'Kolanda',
-'watchthispage'     => 'Kolanda lokásá loye',
+'watchthispage'     => 'Kolanda lonkásá óyo',
 'unwatch'           => 'Kolanda tɛ́',
-'watchlist-details' => '{{PLURAL:$1|Lokásá $1 lolandámí|Nkásá $1 ilandámí}}, longola nkásá ya ntembe.',
+'watchlist-details' => '{{PLURAL:$1|Lonkásá $1 elandámí|Nkásá $1 bilandámí}}, longola nkásá ya ntembe.',
 'wlnote'            => "Áwa o nsé {{PLURAL:$1|ezalí mbóngwana ya nsúka|izalí mbóngwana '''$1''' ya nsúka}} o {{PLURAL:$2|ngonga|ngonga '''$2'''}} ya nsúka.",
 'wlshowlast'        => 'Komɔ́nisa ngónga $1 ya nsúka, mikɔ́lɔ $2 mya nsúka tǒ $3',
 
@@ -352,14 +393,19 @@ $messages = array(
 'contributions-title' => 'Mosálá ya moto mpɔ̂ na $1',
 'mycontris'           => 'Nkásá nakomí',
 
+'sp-contributions-talk' => 'Ntembe',
+
 # What links here
 'whatlinkshere'       => 'Ekangísí áwa',
-'isredirect'          => 'Lokásá ya boyendisi',
+'isredirect'          => 'Lonkásá ya bopengoli',
 'whatlinkshere-links' => '← ekangisi',
+
+# Block/unblock
+'contribslink' => 'bíteni ya mosálá',
 
 # Move page
 'movearticle'             => 'Kobóngola nkómbó ya ekakoli :',
-'move-watch'              => 'Kolánda lokásá loye',
+'move-watch'              => 'Kolánda lonkásá ya líziba mpé lonkásá ya tíndamelo',
 'movepagebtn'             => 'Kobóngola lokásá',
 'movedto'                 => 'nkómbó ya sika',
 'revertmove'              => 'kozóngela',
@@ -378,18 +424,26 @@ $messages = array(
 'import' => 'koútisa...',
 
 # Tooltip help for the actions
-'tooltip-pt-userpage'       => 'Lokásá la ngáí',
-'tooltip-pt-mytalk'         => 'Lokásá ntembe la ngáí',
-'tooltip-pt-preferences'    => 'Malúli ma ngáí',
-'tooltip-pt-watchlist'      => 'Nkásá nalandí mpɔ̂ na mbóngwana',
-'tooltip-pt-mycontris'      => 'Nkásá nakomí',
-'tooltip-pt-logout'         => 'Ombémbóí',
-'tooltip-search'            => 'Boluki {{SITENAME}}',
-'tooltip-p-logo'            => 'Lokásá ya libosó',
-'tooltip-n-mainpage'        => 'Kokɛndɛ na Lokásá ya libosó',
-'tooltip-n-help'            => 'Lisálisi',
-'tooltip-ca-nstab-template' => 'Komɔ́nisela emekoli',
-'tooltip-ca-nstab-category' => 'Komɔ́nisela lokásá ya loléngé',
+'tooltip-pt-userpage'            => 'Lonkásá na ngáí',
+'tooltip-pt-mytalk'              => 'Lokásá ntembe la ngáí',
+'tooltip-pt-preferences'         => 'Malúli ma ngáí',
+'tooltip-pt-watchlist'           => 'Nkásá nalandí mpɔ̂ na mbóngwana',
+'tooltip-pt-mycontris'           => 'Nkásá nakomí',
+'tooltip-pt-logout'              => 'Ombémbóí',
+'tooltip-ca-move'                => 'Kobóngola nkómbó ya lonkásá óyo',
+'tooltip-ca-watch'               => 'Kobakisa na nkásá olandaka',
+'tooltip-ca-unwatch'             => 'Kolongola na nkásá olandaka',
+'tooltip-search'                 => 'Boluki {{SITENAME}}',
+'tooltip-search-go'              => 'Kokɛndɛ na lonkásá na nkómbó óyo sɔ́kí ezalí',
+'tooltip-search-fulltext'        => 'Koluka nkásá na nkomá yangó.',
+'tooltip-p-logo'                 => 'Lokásá ya libosó',
+'tooltip-n-mainpage'             => 'Kokɛndɛ na Lonkásá ya libosó',
+'tooltip-n-mainpage-description' => 'Kokɛndɛ na lonkásá ya libosó',
+'tooltip-n-portal'               => "etalí ''projet'' óyo",
+'tooltip-n-randompage'           => 'Tómbisa lonkásá na mbɛsɛ',
+'tooltip-n-help'                 => 'Lisálisi',
+'tooltip-ca-nstab-template'      => 'Komɔ́nisela emekoli',
+'tooltip-ca-nstab-category'      => 'Komɔ́nisela lonkásá ya katégori',
 
 # Browsing diffs
 'previousdiff' => '← diff ya libosó',

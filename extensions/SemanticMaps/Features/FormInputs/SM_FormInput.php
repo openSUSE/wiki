@@ -13,42 +13,88 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 	die( 'Not an entry point.' );
 }
 
-abstract class SMFormInput {
+abstract class SMFormInput implements iMappingFeature {
 
-	/**
-	 * Determine if geocoding will be enabled and load the required dependencies.
-	 */
-	protected abstract function manageGeocoding();
-	
 	/**
 	 * Ensures all dependencies for the used map are loaded, and increases that map service's count
 	 */
 	protected abstract function addFormDependencies();
 	
-	protected $mService;
+	/**
+	 * Returns the zoom level at which the whole earth is visible.
+	 */
+	protected abstract function getEarthZoom();	
 	
 	/**
-	 * @var string
-	 */	
-	protected $mapName;
+	 * List of parameter definitions for forms.
+	 * 
+	 * @var array or false
+	 */
+	protected static $formParameters = false;
+	
+	/**
+	 * @var iMappingService
+	 */
+	protected $service;
 	
 	/**
 	 * @var array
 	 */
 	protected $markerCoords;
-
-	protected $earthZoom;
 	
-	protected $showAddresFunction;
+	/**
+	 * @var string
+	 */
+	protected $errorList;
 	
-	protected $enableGeocoding = false;
+	/**
+	 * Parameters specific to this feature.
+	 * 
+	 * @var mixed
+	 */
+	protected $specificParameters = false;
 	
-	protected $mErrorList;
+	protected $coordsFieldName;
 	
 	private $coordinates;
 	
-	public function __construct( MapsMappingService $service ) {
-		$this->mService = $service;
+	/**
+	 * Constructor.
+	 * 
+	 * @param iMappingService $service
+	 */
+	public function __construct( iMappingService $service ) {
+		$this->service = $service;
+	}
+	
+	/**
+	 * Returns the specific parameters by first checking if they have been initialized yet,
+	 * doing to work if this is not the case, and then returning them.
+	 * 
+	 * @since 0.6.5
+	 * 
+	 * @return array
+	 */
+	public final function getSpecificParameterInfo() {
+		if ( $this->specificParameters === false ) {
+			$this->specificParameters = array();
+			$this->initSpecificParamInfo( $this->specificParameters );
+		}
+		
+		return $this->specificParameters;
+	}
+	
+	/**
+	 * Initializes the specific parameters.
+	 * 
+	 * Override this method to set parameters specific to a feature service comibination in
+	 * the inheriting class.
+	 * 
+	 * @since 0.6.5
+	 * 
+	 * @param array $parameters
+	 */
+	protected function initSpecificParamInfo( array &$parameters ) {
 	}	
 	
 	/**
@@ -59,8 +105,6 @@ abstract class SMFormInput {
 	 * @return boolean Indicates whether the map should be shown or not.
 	 */
 	protected final function setMapProperties( array $mapProperties ) {
-		global $egMapsServices;
-		
 		/*
 		 * Assembliy of the allowed parameters and their information. 
 		 * The main parameters (the ones that are shared by everything) are overidden
@@ -68,9 +112,10 @@ abstract class SMFormInput {
 		 * again overidden by the service parameters (the ones specific to the service),
 		 * and finally by the specific parameters (the ones specific to a service-feature combination).
 		 */
-		$parameterInfo = array_merge_recursive( MapsMapper::getCommonParameters(), SMFormInputs::$parameters );
-		$parameterInfo = array_merge_recursive( $parameterInfo, $this->mService->getParameterInfo() );
-		$parameterInfo = array_merge_recursive( $parameterInfo, $this->specificParameters );
+		$parameterInfo = MapsMapper::getCommonParameters();
+		$parameterInfo = array_merge_recursive( $parameterInfo, $this->getFormParameterInfo() );
+		$parameterInfo = array_merge_recursive( $parameterInfo, $this->service->getParameterInfo() );
+		$parameterInfo = array_merge_recursive( $parameterInfo, $this->getSpecificParameterInfo() );
 		
 		$manager = new ValidatorManager();
 
@@ -90,7 +135,7 @@ abstract class SMFormInput {
 			}
 		}
 		
-		$this->mErrorList = $manager->getErrorList();
+		$this->errorList = $manager->getErrorList();
 		
 		return $showMap;
 	}
@@ -108,26 +153,22 @@ abstract class SMFormInput {
 
 		$this->coordinates = $coordinates;
 		
-		$this->setMapSettings();
-		
 		$showInput = $this->setMapProperties( $field_args );
 		
 		if ( !$showInput ) {
 			return array( $this->errorList );
 		}
 		
-		$this->doMapServiceLoad();
-		
-		$this->manageGeocoding();
-
 		$this->setCoordinates();
 		$this->setCentre();
 		$this->setZoom();
 		
 		// Create html element names.
-		$this->geocodeFieldName = $this->elementNamePrefix . '_geocode_' . $this->elementNr . '_' . $sfgTabIndex;
-		$this->coordsFieldName = $this->elementNamePrefix . '_coords_' . $this->elementNr . '_' . $sfgTabIndex;
-		$this->infoFieldName = $this->elementNamePrefix . '_info_' . $this->elementNr . '_' . $sfgTabIndex;
+		$mapName = $this->service->getMapId();
+		$this->coordsFieldName = $mapName . '_coords_' . $sfgTabIndex;
+		$infoFieldName = $mapName . '_info_' . $sfgTabIndex;				
+		
+		$geocodingFunction = $this->getShowAddressFunction(); 
 
 		// Create the non specific form HTML.
 		$this->output .= Html::input( 
@@ -135,7 +176,7 @@ abstract class SMFormInput {
 			$this->markerCoords ? MapsCoordinateParser::formatCoordinates( $this->markerCoords ) : '',
 			'text',
 			array(
-				'size' => 42,
+				'size' => 42, #_O
 				'tabindex' => $sfgTabIndex,
 				'id' => $this->coordsFieldName
 			)
@@ -145,27 +186,39 @@ abstract class SMFormInput {
 			'span',
 			array(
 				'class' => 'error_message',
-				'id' => $this->infoFieldName
+				'id' => $infoFieldName
 			)
 		);
 		
-		if ( $this->enableGeocoding ) $this->addGeocodingField();
+		if ( $geocodingFunction !== false ) {
+			$this->addGeocodingField( $geocodingFunction, $mapName, $mapName . '_geocode_' . $sfgTabIndex );
+		}			
 		
 		if ( $this->markerCoords === false ) {
 			$this->markerCoords = array(
 				'lat' => 'null',
 				'lon' => 'null'
 			);
+			
 			$this->centreLat = 'null';
 			$this->centreLon = 'null';
 		}
 		
 		$this->addSpecificMapHTML();
 		
-		return array( $this->output . $this->mErrorList, '' );
+		$this->addFormDependencies();
+		
+		return array( $this->output . $this->errorList, '' );
 	}
 	
-	private function addGeocodingField() {
+	/**
+	 * Adds geocoding controls to the form.
+	 * 
+	 * @param string $geocodingFunction
+	 * @param string $mapName
+	 * @param string $geocodeFieldName
+	 */
+	private function addGeocodingField( $geocodingFunction, $mapName, $geocodeFieldId ) {
 		global $sfgTabIndex, $wgOut, $smgAddedFormJs;
 		$sfgTabIndex++;
 		
@@ -190,24 +243,29 @@ EOT
 			);
 		}
 		
-		$adress_field = SMFormInput::getDynamicInput(
-			$this->geocodeFieldName,
+		$adressField = SMFormInput::getDynamicInput(
+			'geocode',
 			wfMsg( 'semanticmaps_enteraddresshere' ),
-			'size="30" name="geocode" style="color: #707070" tabindex="' . htmlspecialchars( $sfgTabIndex ) . '"'
+			array(
+				'size' => '30',
+				'id' => $geocodeFieldId,
+				'style' => 'color: #707070',
+				'tabindex' => $sfgTabIndex
+			)
 		);
 		
 		$notFoundText = Xml::escapeJsString( wfMsg( 'semanticmaps_notfound' ) );
-		$mapName = Xml::escapeJsString( $this->mapName );
-		$geoFieldName = Xml::escapeJsString( $this->geocodeFieldName );
+		$mapName = Xml::escapeJsString( $mapName );
+		$geoFieldId = Xml::escapeJsString( $geocodeFieldId );
 		$coordFieldName = Xml::escapeJsString( $this->coordsFieldName );
 		
-		$this->output .= '<p>' . $adress_field .
+		$this->output .= '<p>' . $adressField .
 			Html::input(
 				'geosubmit',
 				wfMsg( 'semanticmaps_lookupcoordinates' ),
 				'submit',
 				array(
-					'onClick' => "$this->showAddresFunction( document.forms['createbox'].$geoFieldName.value, '$mapName', '$coordFieldName', '$notFoundText'); return false"
+					'onClick' => "$geocodingFunction( document.forms['createbox'].$geoFieldId.value, '$mapName', '$coordFieldName', '$notFoundText'); return false"
 				)
 			) . 
 			'</p>';
@@ -219,9 +277,9 @@ EOT
 	 */
 	private function setZoom() {
         if ( empty( $this->coordinates ) ) {
-            $this->zoom = $this->earthZoom;
+            $this->zoom = $this->getEarthZoom();
         } else if ( $this->zoom == 'null' ) {
-             $this->zoom = $this->defaultZoom;
+             $this->zoom = $this->service->getDefaultZoom();
         }
 	}
 	
@@ -266,13 +324,96 @@ EOT
 	 * Returns html for an html input field with a default value that will automatically dissapear when
 	 * the user clicks in it, and reappers when the focus on the field is lost and it's still empty.
 	 *
-	 * @param string $id
+	 * @param string $name
 	 * @param string $value
-	 * @param string $args
+	 * @param array $attribs
 	 * 
-	 * @return html
+	 * @return string (html)
 	 */
-	private static function getDynamicInput( $id, $value, $args = '' ) {
-		return '<input id="' . $id . '" ' . $args . ' value="' . $value . '" onfocus="if (this.value==\'' . $value . '\') {this.value=\'\';}" onblur="if (this.value==\'\') {this.value=\'' . $value . '\';}" />';
+	protected static function getDynamicInput( $name, $value, $attribs = array() ) {
+		$escapedValue = Xml::escapeJsString( $value );
+		
+		$attribs['onfocus'] = "if (this.value==\"$escapedValue\") {this.value='';}";
+		$attribs['onblur'] = "if (this.value=='') {this.value=\"$escapedValue\";}";
+		
+		return Html::input(
+			$name,
+			$value,
+			'text',
+			$attribs
+		);
 	}
+	
+	/**
+	 * Returns the name of the JavaScript function to use for live geocoding,
+	 * or false to indicate there is no such function. Override this method
+	 * to implement geocoding functionallity.
+	 * 
+	 * @return mixed: string or false
+	 */
+	protected function getShowAddressFunction() {
+		return false;
+	}
+	
+	/**
+	 * Gets the definitions for the parameters specific to the form input feature.
+	 * This function implements a form of caching by storing the definitions, once
+	 * created, in self::$formParameters, and returning that field when set.
+	 * 
+	 * @since 0.6.5
+	 * 
+	 * @return array
+	 */
+	protected function getFormParameterInfo() {
+		$parameters = self::$formParameters;
+		
+		if ( $parameters === false ) {
+			$parameters = $this->initializeFormParameters();
+			self::$formParameters = $parameters;
+		}
+		
+		return $parameters;
+	}	
+	
+	/**
+	 * Initializes and returns the definitions for the parameters specific to the form input feature.
+	 * 
+	 * @since 0.6.5
+	 * 
+	 * @return array
+	 */
+	private static function initializeFormParameters() {
+		global $egMapsAvailableServices, $egMapsDefaultServices, $egMapsAvailableGeoServices, $egMapsDefaultGeoService;
+		global $smgFIWidth, $smgFIHeight;
+		
+		return array(
+			'width' => array(
+				'default' => $smgFIWidth
+			),
+			'height' => array(
+				'default' => $smgFIHeight
+			),		
+			'centre' => array(
+				'aliases' => array( 'center' ),
+			),
+			'geoservice' => array(
+				'criteria' => array(
+					'in_array' => $egMapsAvailableGeoServices
+				),
+				'default' => $egMapsDefaultGeoService
+			),
+			'mappingservice' => array(
+				'default' => $egMapsDefaultServices['fi']
+			),				
+			'service_name' => array(),
+			'part_of_multiple' => array(),
+			'possible_values' => array(
+				'type' => array( 'string', 'array' ),
+			),
+			'is_list' => array(),
+			'semantic_property' => array(),
+			'value_labels' => array(),
+		);
+	}	
+		
 }

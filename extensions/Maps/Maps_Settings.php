@@ -83,7 +83,7 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 	# service is present in the $egMapsDefaultServices array for a certain feature.
 	# A service that supports all features is recommended. This service needs to be
 	# enabled, if not, the first one from the available services will be taken.
-	$egMapsDefaultService = 'osm';
+	$egMapsDefaultService = 'googlemaps2';
 	
 	# Array of String. The default mapping service for each feature, which will be
 	# used when no valid service is provided by the user. Each service needs to be
@@ -91,8 +91,8 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 	# Note: The default service needs to be available for the feature you set it
 	# for, since it's used as a fallback mechanism.
 	$egMapsDefaultServices = array(
-		'display_point' => 'osm',
-		'display_map' => 'osm'
+		'display_point' => 'googlemaps2',
+		'display_map' => 'googlemaps2'
 	);
 
 
@@ -121,6 +121,8 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 	# one from the available services will be taken.
 	$egMapsDefaultGeoService = 'geonames';
 	
+	# Boolean. Indicates if geocoders can override the default geoservice based on
+	# the used mapping service.
 	$egMapsUserGeoOverrides = true;
 
 
@@ -148,12 +150,16 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 	
 	# Boolean. Sets if geocoded addresses should be stored in a cache.
 	$egMapsEnableGeoCache = true;
+	
+	# Boolean. Sets if direction labels should be translated to their equivalent in the wiki language or not.
+	$egMapsInternatDirectionLabels = true;
 
 
 
 # Distance configuration
 	
 	# Array. A list of units (keys) and how many meters they represent (value).
+	# No spaces! If the unit consists out of multple words, just write them together.
 	$egMapsDistanceUnits = array(
 		'm' => 1,
 		'meter' => 1,
@@ -165,12 +171,12 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 		'mile' => 1609.344,
 		'miles' => 1609.344,
 		'nm' => 1852,
-		'nautical mile' => 1852,
-		'nautical miles' => 1852,
+		'nauticalmile' => 1852,
+		'nauticalmiles' => 1852,
 	);
 	
 	# String. The default unit for distances.
-	$egMapsDistanceUnit = 'km';
+	$egMapsDistanceUnit = 'm';
 	
 	# Integer. The default limit of fractal digits in a distance.
 	$egMapsDistanceDecimals = 2;	

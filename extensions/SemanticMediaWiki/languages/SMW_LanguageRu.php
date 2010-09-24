@@ -8,10 +8,10 @@
  * Protect against register_globals vulnerabilities.
  * This line must be present before any global variable is referenced.
  */
-if (!defined('MEDIAWIKI')) die();
+if ( !defined( 'MEDIAWIKI' ) ) die();
 
 global $smwgIP;
-include_once($smwgIP . '/languages/SMW_Language.php');
+include_once( $smwgIP . 'languages/SMW_Language.php' );
 
 /**
  * Russian language labels for important SMW labels (namespaces, datatypes,...).
@@ -34,7 +34,9 @@ protected $m_DatatypeLabels = array(
 	'_dat' => 'Дата',  // name of the datetime (calendar) type
 	'_ema' => 'Почта',  // name of the email type
 	'_uri' => 'URL',  // name of the URL type
-	'_anu' => 'URI аннотации'  // name of the annotation URI type (OWL annotation property)
+	'_anu' => 'URI аннотации',  // name of the annotation URI type (OWL annotation property)
+	'_tel' => 'Telephone number',  // name of the telephone (URI) type //TODO: translate
+	'_rec' => 'Record', // name of record data type //TODO: translate
 );
 
 protected $m_DatatypeAliases = array(
@@ -42,55 +44,32 @@ protected $m_DatatypeAliases = array(
 	'Целое'                 => '_num',
 	'Десятичное'            => '_num',
 	'Плавающее'             => '_num',
-	'Перечисление'          => '_str',
-	// support English aliases:
-	'Page'                  => '_wpg',
-	'String'                => '_str',
-	'Text'                  => '_txt',
-	'Code'                  => '_cod',
-	'Boolean'               => '_boo',
-	'Number'                => '_num',
-	'Geographic coordinate' => '_geo',
-	'Temperature'           => '_tem',
-	'Date'                  => '_dat',
-	'Email'                 => '_ema',
-	'Annotation URI'        => '_anu'
+	'Перечисление'          => '_str'
 );
 
 protected $m_SpecialProperties = array(
-	//always start upper-case
+	// always start upper-case
 	'_TYPE' => 'Имеет тип',
 	'_URI'  => 'Эквивалентный URI',
 	'_SUBP' => 'Подчиненное свойству',
+	'_SUBC' => 'Subcategory of', // TODO: translate
 	'_UNIT' => 'Отображаемые единицы',
 	'_IMPO' => 'Импортировано из',
 	'_CONV' => 'Относится к',
 	'_SERV' => 'Предоставляет сервис',
 	'_PVAL' => 'Допустимое значение',
 	'_MDAT' => 'Modification date',  // TODO: translate
-	'_ERRP' => 'Has improper value for' // TODO: translate
+	'_ERRP' => 'Has improper value for', // TODO: translate
+	'_LIST' => 'Has fields', // TODO: translate
 );
 
 protected $m_SpecialPropertyAliases = array(
 	'Тип данных'				=> '_TYPE',
-	'Отображаемая единица' => '_UNIT',
-	// support English aliases for special properties
-	'Has type'          => '_TYPE',
-	'Equivalent URI'    => '_URI',
-	'Subproperty of'    => '_SUBP',
-	'Display units'     => '_UNIT',
-	'Imported from'     => '_IMPO',
-	'Corresponds to'    => '_CONV',
-	'Provides service'  => '_SERV',
-	'Allows value'      => '_PVAL',
-	'Modification date' => '_MDAT',
-	'Has improper value for' => '_ERRP'
+	'Отображаемая единица' => '_UNIT'
 );
 
 
 protected $m_Namespaces = array(
-	SMW_NS_RELATION       => 'Отношение',
-	SMW_NS_RELATION_TALK  => 'Обсуждение_отношения',
 	SMW_NS_PROPERTY       => 'Свойство',
 	SMW_NS_PROPERTY_TALK  => 'Обсуждение_свойства',
 	SMW_NS_TYPE           => 'Тип',
@@ -99,22 +78,10 @@ protected $m_Namespaces = array(
 	SMW_NS_CONCEPT_TALK   => 'Обсуждение_концепции'
 );
 
-protected $m_NamespaceAliases = array(
-	// support English aliases for namespaces
-	'Relation'      => SMW_NS_RELATION,
-	'Relation_talk' => SMW_NS_RELATION_TALK,
-	'Property'      => SMW_NS_PROPERTY,
-	'Property_talk' => SMW_NS_PROPERTY_TALK,
-	'Type'          => SMW_NS_TYPE,
-	'Type_talk'     => SMW_NS_TYPE_TALK,
-	'Concept'       => SMW_NS_CONCEPT,
-	'Concept_talk'  => SMW_NS_CONCEPT_TALK
-);
+protected $m_dateformats = array( array( SMW_Y ), array( SMW_MY, SMW_YM ), array( SMW_DMY, SMW_MDY, SMW_YMD, SMW_YDM ) );
 
-protected $m_dateformats = array(array(SMW_Y), array(SMW_MY,SMW_YM), array(SMW_DMY,SMW_MDY,SMW_YMD,SMW_YDM));
+protected $m_months = array( "января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентрября", "октября", "ноября", "декабря" );
 
-protected $m_months = array("января","февраля","марта","апреля", "мая","июня","июля","августа","сентрября", "октября","ноября","декабря");
-
-protected $m_monthsshort = array("янв","фев","мар","апр", "мая","июн","июл","авг","сен", "окт","ноя","дек");
+protected $m_monthsshort = array( "янв", "фев", "мар", "апр", "мая", "июн", "июл", "авг", "сен", "окт", "ноя", "дек" );
 
 }

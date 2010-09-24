@@ -7,7 +7,6 @@
  * @ingroup Maps
  *
  * @author Jeroen De Dauw
- * 
  */
 
 if ( !defined( 'MEDIAWIKI' ) ) {
@@ -33,7 +32,7 @@ final class MapsYahooGeocoder extends MapsBaseGeocoder {
 		// Create the request url
 		$requestURL = "http://where.yahooapis.com/v1/places.q('" . urlencode( $address ) . "')?appid=" . urlencode( $egYahooMapsKey ) . "&format=xml";
 
-		$result = self::GetResponse( $requestURL );
+		$result = Http::get( $requestURL );
 	
 		$lon = self::getXmlElementValue( $result, 'longitude' );
 		$lat = self::getXmlElementValue( $result, 'latitude' );

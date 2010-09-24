@@ -9,6 +9,9 @@
  *
  * @author Codex Sinaiticus
  * @author Elfalem
+ * @author Hinstein
+ * @author Romaine
+ * @author Solomon
  * @author Teferra
  */
 
@@ -23,12 +26,17 @@ $namespaceNames = array(
 	NS_FILE_TALK        => 'ስዕል_ውይይት',
 	NS_MEDIAWIKI        => 'መልዕክት',
 	NS_MEDIAWIKI_TALK   => 'መልዕክት_ውይይት',
-	NS_TEMPLATE         => 'መልጠፊያ',
-	NS_TEMPLATE_TALK    => 'መልጠፊያ_ውይይት',
+	NS_TEMPLATE         => 'መለጠፊያ',
+	NS_TEMPLATE_TALK    => 'መለጠፊያ_ውይይት',
 	NS_HELP             => 'እርዳታ',
 	NS_HELP_TALK        => 'እርዳታ_ውይይት',
 	NS_CATEGORY         => 'መደብ',
 	NS_CATEGORY_TALK    => 'መደብ_ውይይት',
+);
+
+$namespaceAliases = array(
+	'መልጠፊያ' => NS_TEMPLATE,
+	'መልጠፊያ_ውይይት' => NS_TEMPLATE_TALK,
 );
 
 $specialPageAliases = array(
@@ -43,8 +51,10 @@ $messages = array(
 'tog-highlightbroken'         => 'የተሰበረ (ቀይ) መያያዣን <a href="" class="new">እንዲህ</a>? አለዚያ: እንዲህ<a href="" class="internal">?</a>',
 'tog-justify'                 => 'አንቀጾችን አስተካክል',
 'tog-hideminor'               => 'በቅርብ ጊዜ የተደረጉ አነስተኛ እርማቶችን ደብቅ',
+'tog-hidepatrolled'           => 'ተደጋጋሚ እርማቶችን ከቅርብ ጌዜ እርማቶች ዝርዝር ውስጥ ደብቅ',
+'tog-newpageshidepatrolled'   => 'በተደጋጋሚ የታዩ ገፆችን ከአዲስ ገፆች ዝርዝር ውስጥ ደብቅ።',
 'tog-extendwatchlist'         => 'የሚደረጉ ለውጦችን ለማሳየት መቆጣጠሪያ-ዝርዝርን ዘርጋ',
-'tog-usenewrc'                => 'የተሻሻሉ የቅርብ ለውጦች (JavaScript)',
+'tog-usenewrc'                => 'የተሻሻሉ የቅርብ ጊዜ ለውጦች ተጠቀም (JavaScript ያስፈልጋል)',
 'tog-numberheadings'          => 'አርዕስቶችን በራስገዝ ቁጥር ስጥ',
 'tog-showtoolbar'             => 'አርም ትዕዛዝ-ማስጫ ይታይ (JavaScript)',
 'tog-editondblclick'          => 'ሁለቴ መጫን ገጹን ማረም ያስችል (JavaScript)',
@@ -66,6 +76,7 @@ $messages = array(
 'tog-enotifminoredits'        => 'ለአነስተኛ የገጽ እርማቶችም ኤመልዕክት ይላክልኝ',
 'tog-enotifrevealaddr'        => 'ኤመልዕክት አድራሻዬን በማሳወቂያ መልዕክቶች ውስጥ አሳይ',
 'tog-shownumberswatching'     => 'የሚከታተሉ ተጠቃሚዎችን ቁጥር አሳይ',
+'tog-oldsig'                  => ' የቀድሞው ፊርማ ቅደመ እይታ',
 'tog-fancysig'                => 'ጥሬ ፊርማ (ያለራስገዝ ማያያዣ)',
 'tog-externaleditor'          => 'በቀዳሚነት ውጪያዊ አራሚን ተጠቀም',
 'tog-externaldiff'            => 'በቀዳሚነት የውጭ ልዩነት-ማሳያን ተጠቀም',
@@ -145,7 +156,7 @@ $messages = array(
 'category-media-header'          => 'በመደቡ «$1» የተገኙ ፋይሎች፦',
 'category-empty'                 => 'ይህ መደብ አሁን ባዶ ነው።',
 'hidden-categories'              => '{{PLURAL:$1|የተደበቀ መደብ|የተደበቁ መደቦች}}',
-'hidden-category-category'       => 'የተደበቁ መደቦች', # Name of the category where hidden categories will be listed
+'hidden-category-category'       => 'የተደበቁ መደቦች',
 'category-subcat-count'          => '{{PLURAL:$2|በዚሁ መደብ ውስጥ አንድ ንዑስ-መደብ አለ|በዚሁ መደብ ውስጥ {{PLURAL:$1|የሚከተለው ንዕስ-መደብ አለ|የሚከተሉት $1 ንዑስ-መደቦች አሉ}} (በጠቅላላም ከነስውር መደቦች $2 አሉ)}}፦',
 'category-subcat-count-limited'  => 'በዚሁ መደብ ውስጥ {{PLURAL:$1|የሚከተለው ንዑስ መደብ አለ| የሚከተሉት $1 ንዑስ መደቦች አሉ}}፦',
 'category-article-count'         => '{{PLURAL:$2|ይኸው መደብ የሚከተለውን መጣጥፍ ብቻ አለው።|በዚሁ መደብ ውስጥ (ከ$2 በጠቅላላ) {{PLURAL:$1|የሚከተለው መጣጥፍ አለ።|የሚከተሉት $1 መጣጥፎች አሉ።}}}}',
@@ -154,7 +165,7 @@ $messages = array(
 'category-file-count-limited'    => 'በዚሁ መደብ ውስጥ {{PLURAL:$1|የሚከተለው ፋይል አለ|የሚከተሉት $1 ፋይሎች አሉ}}።',
 'listingcontinuesabbrev'         => '(ተቀጥሏል)',
 
-'mainpagetext'      => "<big>'''MediaWiki በትክክል ማስገባቱ ተከናወነ።'''</big>",
+'mainpagetext'      => "'''MediaWiki በትክክል ማስገባቱ ተከናወነ።'''",
 'mainpagedocfooter' => "ስለ ዊኪ ሶፍትዌር ጥቅም ለመረዳት፣ [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] ያንብቡ።
 
 == ለመጀመር ==
@@ -163,10 +174,18 @@ $messages = array(
 * [http://www.mediawiki.org/wiki/Manual:FAQ MediaWiki FAQ]
 * [https://lists.wikimedia.org/mailman/listinfo/mediawiki-announce MediaWiki release mailing list]",
 
-'about'          => 'ስለ',
-'article'        => 'መጣጥፍ',
-'newwindow'      => '(ባዲስ መስኮት ውስጥ ይከፈታል።)',
-'cancel'         => 'ሰርዝ',
+'about'         => 'ስለ',
+'article'       => 'መጣጥፍ',
+'newwindow'     => '(ባዲስ መስኮት ውስጥ ይከፈታል።)',
+'cancel'        => 'ሰርዝ',
+'moredotdotdot' => 'ተጨማሪ...',
+'mypage'        => 'የኔ ገጽ',
+'mytalk'        => 'የኔ ውይይት',
+'anontalk'      => 'ውይይት ለዚሁ ቁ. አድራሻ',
+'navigation'    => 'መቃኘት',
+'and'           => '&#32;እና',
+
+# Cologne Blue skin
 'qbfind'         => 'አግኝ',
 'qbbrowse'       => 'ቃኝ',
 'qbedit'         => 'አርም',
@@ -174,15 +193,20 @@ $messages = array(
 'qbpageinfo'     => 'አግባብ',
 'qbmyoptions'    => 'የኔ ገጾች',
 'qbspecialpages' => 'ልዩ ገጾች',
-'moredotdotdot'  => 'ተጨማሪ...',
-'mypage'         => 'የኔ ገጽ',
-'mytalk'         => 'የኔ ውይይት',
-'anontalk'       => 'ውይይት ለዚሁ ቁ. አድራሻ',
-'navigation'     => 'መቃኘት',
-'and'            => '&#32;እና',
+'faq'            => 'ብጊየጥ (ብዙ ጊዜ የሚጠየቁ ጥያቀዎች)',
+'faqpage'        => 'Project:ብጊየጥ',
 
-# Metadata in edit box
-'metadata_help' => 'ተጨማሪ መረጃ:',
+# Vector skin
+'vector-action-addsection'  => 'ርዕስ ጨምር',
+'vector-action-delete'      => 'አጥፋ',
+'vector-namespace-category' => 'መደብ',
+'vector-namespace-image'    => 'ፋይል',
+'vector-namespace-talk'     => 'ውይይት',
+'vector-namespace-user'     => 'የተጠቃሚው ገጽ',
+'vector-view-create'        => 'አዲስ ፍጠር',
+'vector-view-edit'          => 'አርም',
+'vector-view-history'       => ' ታሪኩን አሳይ',
+'vector-view-view'          => ' የተነበበ',
 
 'errorpagetitle'    => 'ስህተት',
 'returnto'          => '(ወደ $1 ለመመለስ)',
@@ -196,7 +220,7 @@ $messages = array(
 'history_short'     => 'ታሪክ',
 'updatedmarker'     => 'ከመጨረሻው ጉብኝቴ በኋላ የተሻሻለ',
 'info_short'        => 'መረጃ',
-'printableversion'  => 'የህትመት ዝርያ',
+'printableversion'  => 'ለህትመት የተዘጋጀ',
 'permalink'         => 'ቋሚ መያያዣ',
 'print'             => 'ይታተም',
 'edit'              => 'አርም',
@@ -207,7 +231,7 @@ $messages = array(
 'deletethispage'    => 'ይህን ገጽ ሰርዝ',
 'undelete_short'    => '{{PLURAL:$1|አንድ ዕትም|$1 ዕትሞች}} ለመመልስ',
 'protect'           => 'ጠብቅ',
-'protect_change'    => 'የመቆለፍ ደረጃ ለመቀይር',
+'protect_change'    => 'የመቆለፍ ደረጃን ለመለወጥ',
 'protectthispage'   => 'ይህን ገጽ ለመቆለፍ',
 'unprotect'         => 'አለመቆለፍ',
 'unprotectthispage' => 'ይህን ገጽ ለመፍታት',
@@ -225,25 +249,28 @@ $messages = array(
 'projectpage'       => 'ግብራዊ ገጹን ለማየት',
 'imagepage'         => 'የፋይሉን ገጽ ለማየት',
 'mediawikipage'     => 'የመልእክቱን ገጽ ለማየት',
-'templatepage'      => 'የመልጠፊያውን ገጽ ለማየት',
+'templatepage'      => 'የመለጠፊያውን ገጽ ለማየት',
 'viewhelppage'      => 'የእርዳታ ገጽ ለማየት',
 'categorypage'      => 'የመደቡን ገጽ ለማየት',
 'viewtalkpage'      => 'ውይይቱን ለማየት',
 'otherlanguages'    => 'በሌሎች ቋንቋዎች',
 'redirectedfrom'    => '(ከ$1 የተዛወረ)',
 'redirectpagesub'   => 'መምሪያ መንገድ',
-'lastmodifiedat'    => 'ይህ ገጽ መጨረሻ የተቀየረው እ.ኣ.አ በ$2፣ $1 ዓ.ም. ነበር።', # $1 date, $2 time
+'lastmodifiedat'    => 'ይህ ገጽ መጨረሻ የተቀየረው እ.ኣ.አ በ$2፣ $1 ዓ.ም. ነበር።',
 'viewcount'         => 'ይህ ገጽ {{PLURAL:$1|አንዴ|$1 ጊዜ}} ታይቷል።',
 'protectedpage'     => 'የተቆለፈ ገጽ',
-'jumpto'            => 'ዘልለው ለመሐድ፦',
+'jumpto'            => 'ዘልለው ለመሔድ፦',
 'jumptonavigation'  => 'የማውጫ ቁልፎች',
 'jumptosearch'      => 'ፍለጋ',
+'view-pool-error'   => 'ይቅቅርታ፣ በአሁኑ ወቅት ብዙ ተጠቃሚዎች ገፁን ለማየት እየሞከሩ ስለሆነ ሰርቨሩ ላይ መጨናነቅ ተፈጥሯል
+ስለዚህ እባክዎን ትንሽ ቆይተው በድጋሚ ይዎክሩ።
+
+$1',
 
 # All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
-'aboutsite'            => 'ስለ {{SITENAME}} መርሃግብር',
+'aboutsite'            => 'ስለ {{SITENAME}}',
 'aboutpage'            => 'Project:ስለ',
 'copyright'            => 'ይዘቱ በ$1 ሥር ይገኛል።',
-'copyrightpagename'    => '{{SITENAME}} የቅጂ መብት',
 'copyrightpage'        => '{{ns:project}}:የማብዛት መብት ደንብ',
 'currentevents'        => 'ወቅታዊ ጉዳዮች',
 'currentevents-url'    => 'Project:ወቅታዊ ጉዳዮች',
@@ -251,26 +278,24 @@ $messages = array(
 'disclaimerpage'       => 'Project:አጠቃላይ የሕግ ነጥቦች',
 'edithelp'             => 'የማረም መመሪያ',
 'edithelppage'         => 'Help:የማዘጋጀት እርዳታ',
-'faq'                  => 'ብጊየጥ (ብዙ ጊዜ የሚጠየቁ ጥያቀዎች)',
-'faqpage'              => 'Project:ብጊየጥ',
 'helppage'             => 'Help:ይዞታ',
-'mainpage'             => 'ዋና ገጽ',
+'mainpage'             => 'ዋናው ገጽ',
 'mainpage-description' => 'ዋና ገጽ',
 'policy-url'           => 'Project:መርመርያዎች',
 'portal'               => 'የኅብረተሠቡ መረዳጃ',
 'portal-url'           => 'Project:የኅብረተሠብ መረዳጃ',
-'privacy'              => 'የሚስጥር ፖሊሲ',
-'privacypage'          => 'Project:የግልነት ድንጋጌ',
+'privacy'              => 'መተዳደሪያ ደንብ',
+'privacypage'          => 'Project:መተዳደሪያ ደንብ',
 
 'badaccess'        => 'ያልተፈቀደ - አይቻልም',
 'badaccess-group0' => 'የጠየቁት አድራጎት እንዲፈጸም ፈቃድ የለዎም።',
-'badaccess-groups' => 'የጠየቁት አድራጎት ለ$1 ማዕረጎች ላሏቸው አባላት ብቻ ይፈቀዳል።',
+'badaccess-groups' => ' ጥያቂዎት ለሚተሉት ተጥቃሚዎች የተገደበ ነው  {{PLURAL:$2|ማህበር|ከማህበራት ላንዱ}}: $1.',
 
 'versionrequired'     => 'የMediaWiki ዝርያ $1 ያስፈልጋል።',
 'versionrequiredtext' => 'ይህንን ገጽ ለመጠቀም የMediaWiki ዝርያ $1 ያስፈልጋል። [[Special:Version|የዝርያውን ገጽ]] ይዩ።',
 
 'ok'                      => 'እሺ',
-'retrievedfrom'           => 'ከ «$1» ተወሰደ',
+'retrievedfrom'           => 'ከ «$1» የተወሰደ',
 'youhavenewmessages'      => '$1 አሉዎት ($2)።',
 'newmessageslink'         => 'አዲስ መልእክቶች',
 'newmessagesdifflink'     => 'የመጨረሻ ለውጥ',
@@ -290,17 +315,17 @@ $messages = array(
 'feedlinks'               => 'ማጉረስ (feed)፦',
 'feed-invalid'            => 'የማይገባ የማጉረስ አይነት።',
 'feed-unavailable'        => 'ማጉረስ በ{{SITENAME}} የለም።',
-'site-rss-feed'           => '$1 R.S.S. Feed',
+'site-rss-feed'           => '$1 የድህረ ገፁ አጫጭር ምገባዎች',
 'site-atom-feed'          => '$1 አቶም Feed',
 'page-rss-feed'           => '"$1" R.S.S. Feed',
 'page-atom-feed'          => '"$1" አቶም Feed',
-'red-link-title'          => '$1 (ገና አልተጻፈም)',
+'red-link-title'          => '$1 (ገጹ ገና አልተጻፈም)',
 
 # Short words for each namespace, by default used in the namespace tab in monobook
 'nstab-main'      => 'ገጽ',
 'nstab-user'      => 'የአባል ገጽ',
 'nstab-media'     => 'ፋይል',
-'nstab-special'   => 'ልዩ',
+'nstab-special'   => 'ልዩ ገጾች',
 'nstab-project'   => 'የፕሮጀክት ገጽ',
 'nstab-image'     => 'ፋይል',
 'nstab-mediawiki' => 'መልዕክት',
@@ -312,19 +337,15 @@ $messages = array(
 'nosuchaction'      => 'የማይሆን ተግባር',
 'nosuchactiontext'  => 'በURL የተወሰነው ተግባር በዚህ ዊኪ አይታወቀም።',
 'nosuchspecialpage' => 'እንዲህ የተባለ ልዩ ገጽ የለም',
-'nospecialpagetext' => "<big>'''ለማይኖር ልዩ ገጽ ጠይቀዋል።'''</big>
+'nospecialpagetext' => '<strong>ለማይኖር ልዩ ገጽ ጠይቀዋል።</strong>
 
-የሚኖሩ ልዩ ገጾች ዝርዝር በ[[Special:SpecialPages|{{int:specialpages}}]] ሊገኝ ይችላል።",
+የሚኖሩ ልዩ ገጾች ዝርዝር በ[[Special:SpecialPages|{{int:specialpages}}]] ሊገኝ ይችላል።',
 
 # General errors
 'error'                => 'ስኅተት',
 'databaseerror'        => 'የመረጃ-ቤት ስህተት',
 'dberrortext'          => 'የመረጃ-ቤት ጥያቄ ስዋሰው ስህተት ሆኗል። ይህ ምናልባት በሶፍትዌሩ ወስጥ ያለ ተውሳክ ሊጠቆም ይችላል። መጨረሻ የተሞከረው መረጃ-ቤት ጥያቄ <blockquote><tt>$1</tt></blockquote> ከተግባሩ «<tt>$2</tt>» ውስጥ ነበረ። MySQL ስህተት «<tt>$3: $4</tt>» መለሰ።',
 'dberrortextcl'        => 'የመረጃ-ቤት ጥያቄ ስዋሰው ስህተት ሆኗል። መጨረሻ የተሞከረው መረጃ-ቤት ጥያቄ <blockquote><tt>$1</tt></blockquote> ከተግባሩ «<tt>$2</tt>» ውስጥ ነበረ። MySQL ስህተት «<tt>$3: $4</tt>» መለሰ።',
-'noconnect'            => 'ይቅርታ! ይህ ዊኪ አሁን የተግባር ችግር ስላጋጠመው የመረጃ-ቤቱን ሰርቨር ሊያገናኝ አይችልም። <br />
-$1',
-'nodb'                 => 'መረጃ-ቤት $1 ለመምረጥ አልተቻለም',
-'cachederror'          => 'የሚከተለው ለተጠየቀው ገጽ የቆጠበው ቅጂ ሆኖ ምናልባት የታደሠ አይሆንም።',
 'laggedslavemode'      => 'ማስጠንቀቂያ፦ ምናልባት የቅርብ ለውጦች በገጹ ላይ አይታዩም።',
 'readonly'             => 'መረጃ-ቤት ተቆልፏል',
 'enterlockreason'      => 'የመቆለፉን ምክንያትና የሚያልቅበትን ሰዓት (በግምት) ይጻፉ።',
@@ -374,14 +395,13 @@ $2",
 'virus-unknownscanner' => 'ያልታወቀ antivirus:',
 
 # Login and logout pages
-'logouttitle'                => 'የአባል መውጫ',
-'logouttext'                 => "'''አሁን ወጥተዋል።'''<br /> አሁንም በቁጥር መታወቂያዎ ማዘጋጀት ይቻላል። ወይም ደግሞ እንደገና በብዕር ስምዎ መግባት ይችላሉ።
-----
+'logouttext'                 => "'''አሁን ወጥተዋል።'''
+
+አሁንም በቁጥር መታወቂያዎ ማዘጋጀት ይቻላል። ወይም ደግሞ እንደገና በብዕር ስምዎ መግባት ይችላሉ።
 በጥቂት ሴኮንድ ውስጥ ወደሚከተለው ገጽ በቀጥታ ይመለሳል፦",
 'welcomecreation'            => '== ሰላምታ፣ $1! ==
 
 የብዕር ስምዎ ተፈጥሯል። ምርጫዎችዎን ለማስተካከል ይችላሉ።',
-'loginpagetitle'             => 'የአባል መግቢያ',
 'yourname'                   => 'Username / የብዕር ስም:',
 'yourpassword'               => 'Password / መግቢያ ቃል',
 'yourpasswordagain'          => 'መግቢያ ቃልዎን ዳግመኛ ይስጡ',
@@ -391,32 +411,19 @@ $2",
 'login'                      => 'ለመግባት',
 'nav-login-createaccount'    => 'መግቢያ',
 'loginprompt'                => '(You must have cookies enabled to log in to {{SITENAME}}.)',
-'userlogin'                  => 'መግቢያ',
+'userlogin'                  => 'ግባ / ተመዝገብ',
 'logout'                     => 'ከብዕር ስምዎ ለመውጣት',
 'userlogout'                 => 'መውጫ',
 'notloggedin'                => 'አልገቡም',
-'nologin'                    => 'የብዕር ስም ገና የለዎም? $1!',
+'nologin'                    => "የብዕር ስም ገና የለዎም? '''$1'''!",
 'nologinlink'                => 'አዲስ የብዕር ስም ያውጡ',
 'createaccount'              => 'አዲስ አባል ለመሆን',
-'gotaccount'                 => '(አባልነት አሁን ካለዎ፥ $1 ይግቡ)',
+'gotaccount'                 => "(አባልነት አሁን ካለዎ፥ '''$1''' ይግቡ)",
 'gotaccountlink'             => 'በዚህ',
 'createaccountmail'          => 'በኢ-ሜል',
 'badretype'                  => 'የጻፉት መግቢያ ቃሎች አይስማሙም።',
 'userexists'                 => 'ይህ ብዕር ስም አሁን ይኖራል። እባክዎ፣ ሌላ ብዕር ስም ይምረጡ።',
-'youremail'                  => 'ኢ-ሜል *',
-'username'                   => 'የብዕር ስም:',
-'uid'                        => 'የገባበት ቁ.: #',
-'prefs-memberingroups'       => 'ተጠቃሚው {{PLURAL:$1|ያለበት ስብስባ|ያለባቸው ስብስባዎች}}፦',
-'yourrealname'               => 'ዕውነተኛ ስም፦',
-'yourlanguage'               => 'የመልኩ ቋንቋ',
-'yournick'                   => 'ቁልምጫ ስም (ለፊርማ)',
-'badsig'                     => 'ትክክለኛ ያልሆነ ጥሬ ፊርማ፤ HTML ተመልከት።',
-'badsiglength'               => 'ያ ቁልምጫ ስም ከመጠን በላይ ይረዝማል፤ ከ$1 ፊደል በታች መሆን አለበት።',
-'email'                      => 'ኢ-ሜል',
-'prefs-help-realname'        => 'ዕውነተኛ ስምዎን መግለጽ አስፈላጊነት አይደለም። ለመግለጽ ከመረጡ ለሥራዎ ደራሲነቱን ለማስታወቅ ይጠቅማል።',
 'loginerror'                 => 'የመግባት ስኅተት',
-'prefs-help-email'           => 'ኢሜል አድራሻን ማቅረብዎ አስፈላጊ አይደለም። ቢያቅርቡት ሌሎች አባላት አድራሻውን ሳያውቁ በፕሮግራሙ አማካኝነት ሊገናኙዎት ተቻለ።',
-'prefs-help-email-required'  => 'የኢ-ሜል አድራሻ ያስፈልጋል።',
 'nocookiesnew'               => 'ብዕር ስም ተፈጠረ፣ እርስዎ ግን ገና አልገቡም። በ{{SITENAME}} ተጠቃሚዎች ለመግባት የቃኚ-ማስታወሻ (cookie) ይጠቀማል። በርስዎ ኮምፒውተር ግን የቃኚ-ማስታወሻ እንዳይሠራ ተደርጓል። እባክዎ እንዲሠራ ያድርጉና በአዲስ ብዕር ስምና መግቢያ ቃልዎ ይግቡ።።',
 'nocookieslogin'             => 'በ{{SITENAME}} ተጠቃሚዎች ለመግባት የቃኚ-ማስታወሻ (cookie) ይጠቀማል። በርስዎ ኮምፒውተር ግን የቃኚ-ማስታወሻ እንዳይሠራ ተደርጓል። እባክዎ እንዲሠራ ያድርጉና እንደገና ይሞክሩ።',
 'noname'                     => 'የተወሰነው ብዕር ስም ትክክለኛ አይደለም።',
@@ -428,7 +435,7 @@ $2",
 'wrongpassword'              => 'የተሰጠው መግቢያ ቃል ልክ አልነበረም። ዳግመኛ ይሞክሩ።',
 'wrongpasswordempty'         => 'ምንም መግቢያ ቃል አልተሰጠም። ዳግመኛ ይሞክሩ።',
 'passwordtooshort'           => 'የመረጡት መግቢያ ቃል ልክ አይሆንም። ቢያንስ $1 ፊደላትና ከብዕር ስምዎ የተለየ መሆን አለበት።',
-'mailmypassword'             => 'Mail me a new password / መግቢያ ቃሌን ረስቼ አዲስ በኔ email ይላክልኝ።',
+'mailmypassword'             => 'አዲስ የይለፍቃል በኢሜሌ ይላክልኝ።',
 'passwordremindertitle'      => 'አዲስ ግዜያዊ መግቢያ ቃል (PASSWORD) ለ{{SITENAME}}',
 'passwordremindertext'       => 'አንድ ሰው (ከቁጥር አድራሻ #$1 ሆኖ እርስዎ ይሆናሉ) አዲስ መግቢያ ቃል ለ{{SITENAME}} ጠይቋል ($4).
 ለ«$2» ይሆነው መግቢያ ቃል አሁን «$3» ነው። አሁን በዚህ መግቢያ ቃል ገብተው ወደ አዲስ መግቢያ ቃል መቀየር ይሻሎታል።
@@ -465,7 +472,6 @@ $2",
 'retypenew'                 => 'አዲስ መግቢያ ቃል ዳግመኛ',
 'resetpass_submit'          => 'መግቢያ ቃል ለመቀየርና ለመግባት',
 'resetpass_success'         => 'የመግቢያ ቃልዎ መቀየሩ ተከናወነ! አሁን መግባት ይደረግልዎታል......',
-'resetpass_bad_temporary'   => 'ትክክለኛ ያልሆነ ጊዜያዊ መግቢያ ቃል። ምናልባት ከዚህ በፊት መግቢያ ቃልዎን በመከናወን ቀየሩ፤ ወይም አዲስ ጊዜያዊ መግቢያ ቃል ጠይቀዋል።',
 'resetpass_forbidden'       => 'በ{{SITENAME}} የመግቢያ ቃል መቀየር አይቻልም።',
 'resetpass-no-info'         => 'ይህንን ገጽ በቀጥታ ለማግኘት አስቀድሞ መግባት ያስፈልጋል።',
 'resetpass-submit-loggedin' => 'ቃልዎ ይቀየር',
@@ -503,14 +509,15 @@ $2",
 'showpreview'                      => 'ቅድመ እይታ',
 'showlivepreview'                  => 'የቀጥታ ቅድመ-ዕይታ',
 'showdiff'                         => 'ማነጻጸሪያ',
-'anoneditwarning'                  => "'''ማስታወቂያ:''' እርስዎ አሁን በአባል ስምዎ ያልገቡ ነዎት። ማዘጋጀት ይቻሎታል፤ ነገር ግን ለውጦችዎ በአባል ስም ሳይሆን በቁጥር አድራሻዎ ይመዘገባሉ። ከፈለጉ፥ በአባልነት [[Special:UserLogin|መግባት]] ይችላሉ።",
+'anoneditwarning'                  => "'''ማስጠንቀቂያ:''' እርስዎ አሁን በአባል ስምዎ ያልገቡ ነዎት። 
+ይህን ገፅ ማዘጋጀት፣ ማረምና ማስተካከል ይችላሉ፤ ነገር ግን ያደረጉት ለውጥ በአባልነት ስምዎ ሳይሆን በድህረ ገፅ የመለያ ቁጥር አድራሻዎ (IP address) በገፁ የለውጥ ታሪክ ላይ ይመዘገባሉ።",
 'missingsummary'                   => "'''ማስታወሻ፦''' ማጠቃለያ ገና አላቀረቡም። እንደገና «ገጹን ለማቅረብ» ቢጫኑ፣ ያለ ማጠቃለያ ይላካል።",
 'missingcommenttext'               => 'እባክዎ አስተያየት ከዚህ በታች ያስግቡ።',
 'missingcommentheader'             => "'''ማስታወሻ፦''' ለዚሁ አስተያየት ምንም አርእስት አላቀረቡም። 'ለማቅረብ' እንደገና ቢጫኑ ለውጥዎ ያለ አርዕስት ይሆናል።",
 'summary-preview'                  => 'የማጠቃለያ ቅድመ እይታ:',
 'subject-preview'                  => 'የአርእስት ቅድመ-ዕይታ',
 'blockedtitle'                     => 'አባል ተከለክሏል',
-'blockedtext'                      => "<big>'''የርስዎ ብዕር ስም ወይም ቁጥር አድራሻ ከማዘጋጀት ተከለክሏል።'''</big>
+'blockedtext'                      => "'''የርስዎ ብዕር ስም ወይም ቁጥር አድራሻ ከማዘጋጀት ተከለክሏል።'''
 
 በእርስዎ ላይ ማገጃ የጣለው መጋቢ $1 ነበረ። ምክንያቱም፦ ''$2''
 
@@ -536,10 +543,9 @@ $1ን ወይም ማንም ሌላ [[{{MediaWiki:Grouppage-sysop}}|መጋቢ]] ስ
 'blockededitsource'                => "በ'''$1''' ላይ '''የእርስዎ ለውጦች''' ጽሕፈት ከዚህ ታች ይታያሉ፦",
 'whitelistedittitle'               => 'ለማዘጋጀት መግባት አስቀድሞ ያስፈልጋል',
 'whitelistedittext'                => 'ገጾችን ለማዘጋጀት $1 አስቀድሞ ያስፈልግዎታል።',
-'confirmedittitle'                 => 'ለማዘጋጀት የኢ-ሜል ማረጋገጫ ያስፈልጋል።',
 'confirmedittext'                  => 'ገጽ ማዘጋጀት ሳይችሉ፣ አስቀድመው የኢ-ሜል አድራሻዎን ማረጋገጥ አለብዎት። እባክዎ፣ በ[[Special:Preferences|ምርጫዎችዎ]] በኩል ኢ-ሜል አድራሻዎን ያረጋግጡ።',
 'nosuchsectiontitle'               => 'የማይኖር ክፍል',
-'nosuchsectiontext'                => 'የማይኖር ክፍል ለማዘጋጀት ሞክረዋል። ክፍሉ $1 ስለማይኖር፣ ለውጥዎን ለማስቀመጥ ምንም ሥፍራ የለም።',
+'nosuchsectiontext'                => 'የማይኖር ክፍል ለማዘጋጀት ሞክረዋል።',
 'loginreqtitle'                    => 'መግባት ያስፈልጋል።',
 'loginreqlink'                     => 'መግባት',
 'loginreqpagetext'                 => 'ሌሎች ገጾች ለመመልከት $1 ያስፈልግዎታል።',
@@ -550,15 +556,16 @@ $1ን ወይም ማንም ሌላ [[{{MediaWiki:Grouppage-sysop}}|መጋቢ]] ስ
 
 ወደዚህ በስሕተት ከሆነ የመጡት፣ የቃኝውን «Back» ቁልፍ ይጫኑ።',
 'anontalkpagetext'                 => "----''ይኸው ገጽ ገና ያልገባ ወይም ብዕር ስም የሌለው ተጠቃሚ ውይይት ገጽ ነው። መታወቂያው በ[[ቁጥር አድራሻ]] እንዲሆን ያስፈልጋል። አንዳንዴ ግን አንድ የቁጥር አድራሻ በሁለት ወይም በብዙ ተጠቃሚዎች የጋራ ሊሆን ይችላል። ስለዚህ ለርስዎ የማይገባ ውይይት እንዳይደርስልዎ፣ [[Special:UserLogin|«መግቢያ»]] በመጫን የብዕር ስም ለማውጣት ይችላሉ።''",
-'noarticletext'                    => 'በአሁኑ ወቅት በዚህ ገጽ ላይ ምንም ጽሑፍ የለም፤ በሌላ ገጾች [[Special:Search/{{PAGENAME}}|የዚህን ገጽ አርዕስት መፈለግ]] ወይም [{{fullurl:{{FULLPAGENAME}}|action=edit}} አዲስ ገፅ ማዘጋጀት ይችላሉ].',
+'noarticletext'                    => 'በአሁኑ ወቅት በዚህ ገጽ ላይ ጽሑፍ የለም፤ ነገር ግን በሌሎች ገጾች ላይ [[Special:Search/{{PAGENAME}}|ይህን አርዕስት መፈለግ]]፣ <span class="plainlinks">[{{fullurl:{{#Special:Log}}|page={{FULLPAGENAMEE}}}} ከርዕሱ ጋር የተዛመዱ መዝገቦችን መፈልግ]፣ ወይም [{{fullurl:{{FULLPAGENAME}}|action=edit}} አዲስ ገፅ ሊያዘጋጁ] ይችላሉ።',
 'userpage-userdoesnotexist'        => 'የብዕር ስም «$1» አልተመዘገበም። እባክዎ ይህን ገጽ ለመፍጠር/ ለማስተካከል የፈለጉ እንደ ሆነ ያረጋግጡ።',
-'usercssjsyoucanpreview'           => "'''ምክር፦''' ሳይቆጠብ አዲስ CSS/JSዎን ለመሞከር 'ቅድመ እይታ' የሚለውን ይጫኑ።",
+'usercssyoucanpreview'             => "'''ምክር፦''' ሳይቆጠብ አዲስ CSSዎን ለመሞከር 'ቅድመ እይታ' የሚለውን ይጫኑ።",
+'userjsyoucanpreview'              => "'''ምክር፦''' ሳይቆጠብ አዲስ JSዎን ለመሞከር 'ቅድመ እይታ' የሚለውን ይጫኑ።",
 'usercsspreview'                   => "'''ማስታወሻ፦ CSS-ዎን ለሙከራ ብቻ እያዩ ነው፤ ገና አልተቆጠበም!'''",
 'userjspreview'                    => "'''ማስታወሻ፦ JavaScriptዎን ለሙከራ ብቻ እያዩ ነው፤ ገና አልተቆጠበም!'''",
 'userinvalidcssjstitle'            => "'''ማስጠንቀቂያ፦''' «$1» የሚባል መልክ የለም። ልዩ .css እና .js ገጾች በትንንሽ እንግሊዝኛ ፊደል መጀመር እንዳለባቸው ያስታውሱ። ለምሳሌ፦  {{ns:user}}:Foo/monobook.css ልክ ነው እንጂ {{ns:user}}:Foo/Monobook.css አይደለም።",
 'updated'                          => '(የታደሰ)',
 'note'                             => "'''ማሳሰቢያ፦'''",
-'previewnote'                      => "ማስታወቂያ፦ '''<big>ይህ ለሙከራው ብቻ ነው የሚታየው -- ምንም ለውጦች ገና አልተላኩም!</big>'''",
+'previewnote'                      => "ማስታወቂያ፦ '''ይህ ለሙከራው ብቻ ነው የሚታየው -- ምንም ለውጦች ገና አልተላኩም!'''",
 'previewconflict'                  => 'ለማስቀምጥ የመረጡ እንደ ሆነ እንደሚታይ፣ ይህ ቅድመ-ዕይታ በላይኛ ጽሕፈት ማዘጋጀት ክፍል ያለውን ጽሕፈት ያንጸባርቃል።',
 'session_fail_preview'             => "'''ይቅርታ! ገጹን ለማቅረብ ስንሂድ፣ አንድ ትንሽ ችግር በመረቡ መረጃ ውስጥ ድንገት ገብቶበታል። እባክዎ፣ እንደገና ገጹን ለማቅረብ አንዴ ይሞክሩ። ከዚያ ገና ካልሠራ፣ ምናልባት ከአባል ስምዎ መውጣትና እንደገና መግባት ይሞክሩ።'''",
 'editing'                          => '«$1» ማዘጋጀት / ማስተካከል',
@@ -572,7 +579,10 @@ $1ን ወይም ማንም ሌላ [[{{MediaWiki:Grouppage-sysop}}|መጋቢ]] ስ
 ይህ እትም የአሁኑ አይደለም፣ ከዚህ ሁናቴ ታድሷል።
 ይህንን እንዳቀረቡ ከዚህ እትም በኋላ የተቀየረው ለውጥ ሁሉ ያልፋል።'''",
 'yourdiff'                         => 'ልዩነቶች',
-'copyrightwarning'                 => "*<big> '''መጣጥፎችን ለመፍጠርና ለማሻሻል አይፈሩ''!''''' — </big>ሥራዎ ትክክለኛ ካልሆነ፣ በሌሎቹ አዘጋጆች ሊታረም ይችላል።",
+'copyrightwarning'                 => 'ልብ በሉ ለ {{SITENAME}} ያደረጉት ሁሉም ተሳትፎዎች በ $2 ስር የተለቀቁ እና እሱንም ታሳቢ ያደረጉ መሆናችውን ያገናዝቡ (ለተጨማሪ መረጃ $1 ይመልከቱ)
+ምናልባት ስገቡትን የፅሁፍ አስተዋጽኦ በሌሎች ተጠቃሚዎች እንዲታረም፣ እንዲለወጥ ወይም እንዲባዛና እንዲሰራጭ ካልወደዱ እባክዎን ወደዚህ አይላኩት። <br /> 
+በተጨማሪም የሚያስገቡት ፅሁፍ በራስዎ የተፃፈ፣ ከሌሎች ነፃ እና የህዝብ ድህረ ገፆች የተገለበጡ ወይም ቀድቶ ማባዛትን ከፈቀዱ እና ነፃ ከሆኑ ምንጮች የተገለበጡ መሆናቸውን ቃል ይግቡልን።
+"ካለ ባሌቤቱ ፍቃድ ምንም አይነት ነገር አያስገቡ!"',
 'copyrightwarning2'                => "ወደ {{SITENAME}} የሚላከው አስተዋጽኦ ሁሉ በሌሎች ተጠቃሚዎች ሊታረም፣ ሊለወጥ፣ ወይም ሊጠፋ እንደሚቻል ያስታውሱ። ጽሕፈትዎ እንዲታረም ካልወደዱ፣ ወደዚህ አይልኩት።<br />
 ደግሞ ይህ የራስዎ ጽሕፈት ወይም ከነጻ ምንጭ የተቀዳ ጽሕፈት መሁኑን ያረጋግጣሉ። (ለዝርዝር $1 ይዩ)።
 '''አለፈቃድ፡ መብቱ የተጠበቀውን ሥራ አይልኩት!'''",
@@ -584,9 +594,9 @@ $1ን ወይም ማንም ሌላ [[{{MediaWiki:Grouppage-sysop}}|መጋቢ]] ስ
 'semiprotectedpagewarning'         => "'''ማስታወቂያ፦''' ይኸው ገጽ ከቋሚ አዛጋጆች በተቀር በማንም እንዳይለወጥ ተቆልፏል።",
 'cascadeprotectedwarning'          => "'''ማስጠንቀቂያ፦''' ይህ ገጽ በመጋቢ ብቻ እንዲታረም ተቆልፏል። ምክንያቱም {{PLURAL:$1|በሚከተለው በውስጡ የሚያቆልፍ ገጽ|በሚከተሉ በውስጡ ይሚያቆልፉ ገጾች}} ውስጥ ይገኛል።",
 'titleprotectedwarning'            => "'''ማስጠንቀቂያ፦ ይህ ገጽ አንዳንድ ተጠቃሚ ብቻ ሊፈጠር እንዲችል ተቆልፏል።'''",
-'templatesused'                    => 'በዚሁ ገጽ ላይ የሚገኙት መለጠፊያዎች እነዚህ ናቸው፦',
-'templatesusedpreview'             => 'በዚሁ ቅድመ-እይታ የሚገኙት መልጠፊያዎች እነዚህ ናቸው፦',
-'templatesusedsection'             => 'በዚሁ ክፍል የተጠቀሙት መልጠፊያዎች፦',
+'templatesused'                    => '{{PLURAL:$1|ምሳሌዎች|ምሳሌዎች}} used on this page:',
+'templatesusedpreview'             => 'ለዚህ ገፅ የሚሆኑ {{PLURAL:$1|ምሳሌ|ምሳሌዎች}} :',
+'templatesusedsection'             => 'በዚሁ ክፍል የተጠቀሙት መለጠፊያዎች፦',
 'template-protected'               => '(የተቆለፈ)',
 'template-semiprotected'           => '(በከፊል የተቆለፈ)',
 'hiddencategories'                 => 'ይህ ገጽ በ{{PLURAL:$1|1 የተደበቀ መደብ|$1 የተደበቁ መድቦች}} ውስጥ ይገኛል።',
@@ -596,14 +606,13 @@ $1ን ወይም ማንም ሌላ [[{{MediaWiki:Grouppage-sysop}}|መጋቢ]] ስ
 'permissionserrors'                => 'የፈቃድ ስሕተቶች',
 'permissionserrorstext'            => 'ያ አድራጎት አይቻልም - {{PLURAL:$1|ምክንያቱም|ምክንያቶቹም}}፦',
 'permissionserrorstext-withaction' => '$2 አልተፈቀዱም፤ {{PLURAL:$1|ምክንያቱም|ምክንያቱም}}:',
-'recreate-deleted-warn'            => ":<strong><big>'''ማስጠንቀቂያ፦ ይኸው አርእስት ከዚህ በፊት የጠፋ ገጽ ነው!'''</big></strong>
+'recreate-moveddeleted-warn'       => ":<strong>'''ማስጠንቀቂያ፦ ይኸው አርእስት ከዚህ በፊት የጠፋ ገጽ ነው!'''</strong>
 
 *እባክዎ፥ ገጹ እንደገና እንዲፈጠር የሚገባ መሆኑን ያረጋግጡ።
 
 *የገጹ መጥፋት ዝርዝር ከዚህ ታች ይታያል።",
-'deleted-notice'                   => 'ይኸው ገጽ ከዚህ በፊት የጠፋ ነው።
+'moveddeleted-notice'              => 'ይኸው ገጽ ከዚህ በፊት የጠፋ ነው።
 የገጹ መጥፋት ዝርዝር ከዚህ ታች ይታያል።',
-'deletelog-fulllog'                => 'ሙሉ መዝገብ ለማየት',
 'edit-hook-aborted'                => 'ለውጡ በሜንጦ ተቋረጠ።  
 ምንም ምክንያት አልሰጠም።',
 'edit-gone-missing'                => 'ገጹን ማሳደስ አልተቻለም።  እንደ ጠፋ ይመስላል።',
@@ -630,7 +639,7 @@ $1ን ወይም ማንም ሌላ [[{{MediaWiki:Grouppage-sysop}}|መጋቢ]] ስ
 'currentrev'             => 'የአሁኑ እትም',
 'currentrev-asof'        => 'በ$1 የታተመው ያሁኑኑ እትም',
 'revisionasof'           => 'እትም በ$1',
-'revision-info'          => 'የ$1 ዕትም (ከ$2 ተዘጋጅቶ)', # Additionally available: $3: revision id
+'revision-info'          => 'የ$1 ዕትም (ከ$2 ተዘጋጅቶ)',
 'previousrevision'       => '← የፊተኛው እትም',
 'nextrevision'           => 'የሚከተለው እትም →',
 'currentrevisionlink'    => '«የአሁኑን እትም ለመመልከት»',
@@ -641,7 +650,6 @@ $1ን ወይም ማንም ሌላ [[{{MediaWiki:Grouppage-sysop}}|መጋቢ]] ስ
 'page_last'              => 'ኋለኞች',
 'histlegend'             => "ከ2 እትሞች መካከል ልዩነቶቹን ለመናበብ፦ በ2 ክብ ነገሮች ውስጥ ምልክት አድርገው «የተመረጡትን እትሞች ለማነፃፀር» የሚለውን ተጭነው የዛኔ በቀጥታ ይሄዳሉ።<br /> መግለጫ፦ (ከአሁን) - ከአሁኑ እትም ያለው ልዩነት፤ (ካለፈው) - ቀጥሎ ከቀደመው እትም ያለው ልዩነት፤<br /> «'''ጥ'''» ማለት ጥቃቅን ለውጥ ነው።",
 'history-fieldset-title' => 'የቀደሙት ዕትሞች ፍለጋ',
-'deletedrev'             => '[የተደለዘ]',
 'histfirst'              => 'ቀድመኞች',
 'histlast'               => 'ኋለኞች',
 'historysize'            => '($1 byte)',
@@ -650,7 +658,7 @@ $1ን ወይም ማንም ሌላ [[{{MediaWiki:Grouppage-sysop}}|መጋቢ]] ስ
 # Revision feed
 'history-feed-title'          => 'የዕትሞች ታሪክ',
 'history-feed-description'    => 'በዊኪ ላይ የዕትሞች ታሪክ ለዚሁ ገጽ',
-'history-feed-item-nocomment' => '$1 በ$2', # user at time
+'history-feed-item-nocomment' => '$1 በ$2',
 'history-feed-empty'          => 'የተጠየቀው ገጽ አይኖርም። ምናልባት ከዊኪው ጠፍቷል፣ ወይም ወደ አዲስ ስም ተዛወረ። ለተመሳሳይ አዲስ ገጽ [[Special:Search|ፍለጋ]] ይሞክሩ።',
 
 # Revision deletion
@@ -663,13 +671,14 @@ $1ን ወይም ማንም ሌላ [[{{MediaWiki:Grouppage-sysop}}|መጋቢ]] ስ
 'revdelete-selected'      => "'''ከ [[:$1]] {{PLURAL:$2|የተመረጡ ዝርያዎች|የተመረጡ ዝርያዎች}}:'''",
 'logdelete-selected'      => "'''{{PLURAL:$1|የተመረጠ መዝገብ ድርጊት|የተመረጡ መዝገብ ድርጊቶች}}፦'''",
 'revdelete-hide-text'     => 'የእትሙ ጽሕፈት ይደበቅ',
+'revdelete-hide-image'    => 'የፋይሉ ይዞታ ይደበቅ',
 'revdelete-hide-name'     => 'ድርጊትና ግቡ ይደበቅ',
 'revdelete-hide-comment'  => 'ማጠቃለያ ይደበቅ',
 'revdelete-hide-user'     => 'የአዘጋጁ ብዕር ስም ወይም ቁ. አድርሻ ይደበቅ',
 'revdelete-suppress'      => 'መረጃ ከመጋቢዎችና ከሌሎች ይደበቅ።',
-'revdelete-hide-image'    => 'የፋይሉ ይዞታ ይደበቅ',
-'revdelete-log'           => 'የመዝገቡ ማጠቃለያ፦',
+'revdelete-log'           => 'ምክንያቱ፦',
 'revdelete-submit'        => 'በተመረጠው ዕትም ይደረግ',
+'revdel-restore'          => 'እይታን ለማስተካከል',
 'pagehist'                => 'የገጽ ታሪክ',
 'revdelete-content'       => 'ይዞታ',
 'revdelete-summary'       => 'ማጠቃለያ',
@@ -711,51 +720,28 @@ $1ን ወይም ማንም ሌላ [[{{MediaWiki:Grouppage-sysop}}|መጋቢ]] ስ
 'difference'              => '(በ2ቱ እትሞቹ ዘንድ ያለው ልዩነት)',
 'lineno'                  => 'መስመር፡ $1፦',
 'compareselectedversions' => 'የተመረጡትን እትሞች ለማነፃፀር',
-'wikicodecomparison'      => 'Wikitext ማነፃፀሪያ',
 'editundo'                => 'ለውጡ ይገለበጥ',
 'diff-multi'              => '(ከነዚህ 2 እትሞች መካከል {{PLURAL:$1|አንድ ለውጥ ነበር|$1 ለውጦች ነበሩ}}።)',
-'diff-movedto'            => 'ወደ $1 ተዛወረ',
-'diff-added'              => '$1 ጨመረ',
-'diff-changedto'          => 'ወደ $1 ተቀየረ',
-'diff-movedoutof'         => 'ከ$1 ተዛወረ',
-'diff-removed'            => '$1 አነሣ',
-'diff-changedfrom'        => 'ከ$1 ተቀየረ',
-'diff-with'               => '&#32;ከነ $1 $2',
-'diff-with-final'         => '&#32;እና $1 $2',
-'diff-width'              => 'ስፋት',
-'diff-height'             => 'ቁመት',
-'diff-blockquote'         => "'''ጥቅስ'''",
-'diff-table'              => "'''ሰንጠረዥ'''",
-'diff-tr'                 => "'''ተርታ'''",
-'diff-hr'                 => "'''አድማሳዊ መስመር'''",
-'diff-dd'                 => "'''ትርጒም'''",
-'diff-a'                  => "'''መያያዣ'''",
-'diff-b'                  => "'''ጉልህ ፊደላት'''",
-'diff-big'                => "'''ትልቅ'''",
-'diff-del'                => "'''ጠፋ'''",
 
 # Search results
 'searchresults'                    => 'የፍለጋ ውጤቶች',
 'searchresults-title'              => 'ለ"$1" የፍለጋ ውጤቶች',
 'searchresulttext'                 => 'በተጨማሪ ስለ ፍለጋዎች ለመረዳት፣ [[{{MediaWiki:Helppage}}]] ያንብቡ።',
-'searchsubtitle'                   => "'''ፍለጋ ለ[[:$1]]፦'''",
+'searchsubtitle'                   => 'እየፈለግህ/ሽ ያለሀው/ሽው \'\'\'[[:$1]]\'\'\' ([[Special:Prefixindex/$1|all pages starting with "$1"]]{{int:pipe-separator}}[[Special:WhatLinksHere/$1|all ከሱጋር የተያያዙ በሙላ "$1"]])',
 'searchsubtitleinvalid'            => "ለ'''$1''' ፈለጉ",
-'noexactmatch'                     => "በ«$1» አርዕስት የሚሰየም መጣጥፍ '''አልተገኘም'''፤ እርሶ ግን [[:$1|ሊፈጥሩት ይችላሉ]]... ።",
-'noexactmatch-nocreate'            => "'''«$1» የሚባል ገጽ የለም።'''",
 'toomanymatches'                   => 'ከመጠን በላይ ያሉ ስምምነቶች ተመለሱ፤ እባክዎ ሌላ ጥያቄ ይሞክሩ።',
 'titlematches'                     => 'የሚስማሙ አርዕስቶች',
 'notitlematches'                   => 'የሚስማሙ አርዕስቶች የሉም',
 'textmatches'                      => 'ጽሕፈት የሚስማማባቸው ገጾች',
 'notextmatches'                    => 'ጽሕፈት የሚስማማባቸው ገጾች የሉም',
-'prevn'                            => 'ፊተኛ $1',
-'nextn'                            => 'ቀጥሎ $1',
-'viewprevnext'                     => 'በቁጥር ለማየት፡ ($1) ($2) ($3).',
+'prevn'                            => 'ፊተኛ {{PLURAL:$1|$1}}',
+'nextn'                            => 'ቀጥሎ {{PLURAL:$1|$1}}',
+'viewprevnext'                     => 'በቁጥር ለማየት፡ ($1 {{int:pipe-separator}} $2) ($3).',
 'searchmenu-legend'                => 'የፍለጋ ምርጫዎች',
 'searchmenu-exists'                => "'''\"[[:\$1]]\" የሚባል መጣጥፍ በዚሁ ዊኪ ላይ አለ።'''",
 'searchmenu-new'                   => "'''\"[[:\$1]]\" የሚባል መጣጥፍ ይፈጠር?'''",
 'searchhelp-url'                   => 'Help:ይዞታ',
 'searchprofile-articles'           => 'ይዞታ ያላቸው መጣጥፎች',
-'searchprofile-articles-and-proj'  => 'የይዞታና የመርሃገብሩ ገጾች',
 'searchprofile-project'            => 'የመርሃግብሩ ገጾች',
 'searchprofile-images'             => 'ፋይሎች',
 'searchprofile-everything'         => 'ሁሉም',
@@ -764,54 +750,53 @@ $1ን ወይም ማንም ሌላ [[{{MediaWiki:Grouppage-sysop}}|መጋቢ]] ስ
 'searchprofile-images-tooltip'     => 'ለፋይሎች ለመፈለግ',
 'searchprofile-everything-tooltip' => 'ይዞታውን ሁሉ (ከነውይይት ገጾች) ለመፈለግ',
 'searchprofile-advanced-tooltip'   => 'በልዩ ክፍለ-ዊኪዎች ለመፈለግ',
-'prefs-search-nscustom'            => 'ልዩ ክፍለዊኪዎች ለመፈለግ፦',
 'search-result-size'               => '$1 ({{PLURAL:$2|1 ቃል|$2 ቃላት}})',
 'search-result-score'              => 'ተገቢነት፦ $1%',
 'search-redirect'                  => '(መምሪያ መንገድ $1)',
 'search-section'                   => '(ክፍል $1)',
 'search-suggest'                   => 'ምናልባት $1 የፈለጉት ይሆን',
+'search-interwiki-caption'         => 'ተዛማጅ ስራዎች',
 'search-interwiki-default'         => '$1 ውጤቶች፦',
 'search-interwiki-more'            => '(ተጨማሪ)',
+'search-mwsuggest-enabled'         => 'ከ አማራጮች ጋር',
+'search-mwsuggest-disabled'        => 'አማራጭ አልተገኘለትም',
 'search-relatedarticle'            => 'የተዛመደ',
 'searchrelated'                    => 'የተዛመደ',
 'searchall'                        => 'ሁሉ',
 'showingresults'                   => 'ከ ቁ.#<b>$2</b> ጀምሮ እስከ <b>$1</b> ውጤቶች ድረስ ከዚህ በታች ይታያሉ።',
 'showingresultsnum'                => "ከ#'''$2''' ጀምሮ {{PLURAL:$3|'''1''' ውጤት|'''$3''' ውጤቶች}} ከዚህ ታች ማየት ይቻላል።",
-'showingresultstotal'              => "ከዚህ ታች {{PLURAL:$4|ውጤት '''$1''' (ከ '''$3''') ይታያል።|ውጤቶች '''$1 - $2''' ከ '''$3''' ይታያሉ።}}",
+'nonefound'                        => "\"ማስገንዘቢያ\" የተወሰኑ ፍለጋዎች ብቻ በዋናው ስምምነት መሰረት ተፈልገው ይገኛሉ::
+ከምትፈልገው ነገር በፊት ''all:''ን በማስገባት ፍለጋህን ደግመህ ሞክር ይህም ሁሉንም የፍለጋ ቦታዎች እንድታዳርስ ይረዳሃል።",
 'search-nonefound'                 => 'ለጥያቄው ምንም የሚስማማ ውጤት አልተገኘም።',
 'powersearch'                      => 'ፍለጋ',
 'powersearch-legend'               => 'ተጨማሪ ፍለጋ',
 'powersearch-ns'                   => 'በነዚሁ ክፍለ-ዊኪዎች ይፈልግ:',
 'powersearch-redir'                => 'መምሪያ መንገዶቹም ይዘርዝሩ',
 'powersearch-field'                => 'ለዚሁ ጽሕፈት ይፈልግ፦',
+'powersearch-toggleall'            => ' ሁሉም',
+'powersearch-togglenone'           => ' ምንም',
 'search-external'                  => 'አፍአዊ ፍለጋ',
 'searchdisabled'                   => '{{SITENAME}} ፍለጋ አሁን እንዳይሠራ ተደርጓል። ለጊዜው ግን በGoogle ላይ መፈልግ ይችላሉ። የ{{SITENAME}} ይዞታ ማውጫ በዚያ እንዳልታደሰ ማቻሉ ያስታውሱ።',
+
+# Quickbar
+'qbsettings-none'          => ' ምንም',
+'qbsettings-fixedleft'     => 'በግራ የተለጠፈ',
+'qbsettings-fixedright'    => 'በቀኝ የተለጠፈ',
+'qbsettings-floatingleft'  => 'በግራ ተንሳፋፊ',
+'qbsettings-floatingright' => 'በቀኝ ተንሳፋፊ',
 
 # Preferences page
 'preferences'               => 'ምርጫዎች፤',
 'mypreferences'             => 'ምርጫዎች፤',
 'prefs-edits'               => 'የለውጦች ቁጥር:',
 'prefsnologin'              => 'ገና አልገቡም',
-'prefsnologintext'          => 'ምርጫዎችዎን ለማስተካከል አስቀድሞ <span class="plainlinks">[{{fullurl:Special:UserLogin|returnto=$1}} መግባት]</span>  ያስፈልግዎታል።',
-'prefsreset'                => 'ምርጫዎች ከመቆጠቢያ ታድሰዋል።',
-'qbsettings-none'           => 'የለም',
-'qbsettings-fixedleft'      => 'በግራ የተለጠፈ',
-'qbsettings-fixedright'     => 'በቀኝ የተለጠፈ',
-'qbsettings-floatingleft'   => 'በግራ ተንሳፋፊ',
-'qbsettings-floatingright'  => 'በቀኝ ተንሳፋፊ',
+'prefsnologintext'          => 'ምርጫዎችዎን ለማስተካከል አስቀድሞ <span class="plainlinks">[{{fullurl:{{#Special:UserLogin}}|returnto=$1}} መግባት]</span>  ያስፈልግዎታል።',
 'changepassword'            => 'መግቢያ ቃልዎን ለመቀየር',
-'skin'                      => 'የድህረ-ገጽ መልክ',
+'prefs-skin'                => 'የድህረ-ገጽ መልክ',
 'skin-preview'              => 'ቅድመ-ዕይታ',
-'math'                      => 'የሂሳብ መልክ',
-'dateformat'                => 'ያውሮፓ አቆጣጠር ዘመን ሥርዓት',
+'prefs-math'                => 'የሂሳብ መልክ',
 'datedefault'               => 'ግድ የለኝም',
-'datetime'                  => 'ዘመንና ሰዓት',
-'math_failure'              => 'ዘርዛሪው ተሳነው',
-'math_unknown_error'        => 'የማይታወቅ ስኅተት',
-'math_unknown_function'     => 'የማይታወቅ ተግባር',
-'math_lexing_error'         => 'የlexing ስህተት',
-'math_syntax_error'         => 'የሰዋሰው ስህተት',
-'math_bad_output'           => 'ወደ math ውጤት ዶሴ መጻፍ ወይም መፍጠር አይቻልም',
+'prefs-datetime'            => 'ዘመንና ሰዓት',
 'prefs-personal'            => 'ያባል ዶሴ',
 'prefs-rc'                  => 'የቅርቡ ለውጦች ዝርዝር',
 'prefs-watchlist'           => 'የሚከታተሉ ገጾች',
@@ -821,9 +806,10 @@ $1ን ወይም ማንም ሌላ [[{{MediaWiki:Grouppage-sysop}}|መጋቢ]] ስ
 'prefs-watchlist-edits-max' => '(ከ1,000 ለውጥ በላይ አይሆንም)',
 'prefs-misc'                => 'ልዩ ልዩ ምርጫዎች',
 'prefs-resetpass'           => 'መግቢያ ቃል ለመቀየር',
+'prefs-rendering'           => ' አቀራረብ',
 'saveprefs'                 => 'ይቆጠብ',
 'resetprefs'                => 'እንደ በፊቱ ይታደስ',
-'textboxsize'               => 'የማዘጋጀት ምርጫዎች',
+'prefs-editing'             => 'የማዘጋጀት ምርጫዎች',
 'prefs-edit-boxsize'        => 'ይህ የማዘጋጀት ሳጥን ስፋት ለመወሰን ነው።',
 'rows'                      => 'በማዘጋጀቱ ሰንጠረዥ ስንት ተርታዎች?',
 'columns'                   => 'ስንት ዓምዶችስ?',
@@ -836,24 +822,51 @@ $1ን ወይም ማንም ሌላ [[{{MediaWiki:Grouppage-sysop}}|መጋቢ]] ስ
 'recentchangescount'        => 'በዝርዝርዎ ላይ ስንት ለውጥ ይታይ? (እስከ 500)',
 'savedprefs'                => 'ምርጫዎችህ ተቆጥበዋል።',
 'timezonelegend'            => 'የሰዓት ክልል',
-'timezonetext'              => '¹ከ Server time (UTC) ያለው ልዩነት (በሰዓቶች ቁጥር) (እንደ ኢትዮጵያ ጊዜ ለማድረግ እንደገና ስድስት ሰዓት ይጨምሩ።)',
 'localtime'                 => 'የክልሉ ሰዓት (Local time)',
-'timezoneselect'            => 'የሰዓት ክልል፦',
 'timezoneuseoffset'         => 'ሌላ (ኦፍ ሴት ለመወሰን)',
 'timezoneoffset'            => 'ኦፍ ሰት¹',
 'servertime'                => 'የሰርቨሩ ሰዓት',
 'guesstimezone'             => 'ከኮምፒውተርዎ መዝገብ ልዩነቱ ይገኝ',
 'timezoneregion-africa'     => 'አፍሪካ',
+'timezoneregion-america'    => ' አሜሪካ',
+'timezoneregion-antarctica' => ' አንታርክቲካ',
+'timezoneregion-arctic'     => ' አርክቲክ',
+'timezoneregion-asia'       => ' እስያ',
+'timezoneregion-atlantic'   => ' አትላንቲክ ውቅያኖስ',
+'timezoneregion-australia'  => ' አውስትራሊያ',
 'timezoneregion-europe'     => 'አውሮፓ',
+'timezoneregion-indian'     => 'ህንድ ውቅያኖስ',
+'timezoneregion-pacific'    => ' ፓሲፊክ ውቅያኖስ',
 'allowemail'                => 'ኢሜል ከሌሎች ተጠቃሚዎች ለመፍቀድ',
 'prefs-searchoptions'       => 'የፍለጋ ምርጫዎች',
 'prefs-namespaces'          => 'ክፍለ-ዊኪዎች',
 'defaultns'                 => 'በመጀመርያው ፍለጋዎ በነዚህ ክፍለ-ዊኪዎች ብቻ ይደረግ:',
 'default'                   => 'ቀዳሚ',
-'files'                     => 'የስዕሎች መጠን',
+'prefs-files'               => 'የስዕሎች መጠን',
+'youremail'                 => 'ኢ-ሜል *',
+'username'                  => 'የብዕር ስም:',
+'uid'                       => 'የገባበት ቁ.: #',
+'prefs-memberingroups'      => 'ተጠቃሚው {{PLURAL:$1|ያለበት ስብስባ|ያለባቸው ስብስባዎች}}፦',
+'yourrealname'              => 'ዕውነተኛ ስም፦',
+'yourlanguage'              => 'ቋንቋ',
+'yournick'                  => 'ቁልምጫ ስም (ለፊርማ)',
+'badsig'                    => 'ትክክለኛ ያልሆነ ጥሬ ፊርማ፤ HTML ተመልከት።',
+'badsiglength'              => 'ያ ቁልምጫ ስም ከመጠን በላይ ይረዝማል፤ ከ$1 ፊደል በታች መሆን አለበት።',
+'yourgender'                => 'ሥርዓተ ጾታ',
+'gender-unknown'            => ' አታምር',
+'gender-male'               => 'ወንድ',
+'gender-female'             => ' ሴት',
+'email'                     => 'ኢ-ሜል',
+'prefs-help-realname'       => 'ዕውነተኛ ስምዎን መግለጽ አስፈላጊነት አይደለም። ለመግለጽ ከመረጡ ለሥራዎ ደራሲነቱን ለማስታወቅ ይጠቅማል።',
+'prefs-help-email'          => 'ኢሜል አድራሻን ማቅረብዎ አስፈላጊ አይደለም። ቢያቅርቡት ሌሎች አባላት አድራሻውን ሳያውቁ በፕሮግራሙ አማካኝነት ሊገናኙዎት ተቻለ።',
+'prefs-help-email-required' => 'የኢ-ሜል አድራሻ ያስፈልጋል።',
+'prefs-info'                => ' መሰረታዊ መረጃ',
+'prefs-signature'           => 'ፊርማ',
+'prefs-dateformat'          => ' የቀን  ቅርፀት',
+'prefs-display'             => 'የማሳያ አማራጮች',
 
 # User rights
-'userrights'                  => 'የአባል መብቶች ለማስተዳደር', # Not used as normal message but as header for the special page itself
+'userrights'                  => 'የአባል መብቶች ለማስተዳደር',
 'userrights-lookup-user'      => 'የ1 አባል ማዕረግ ለማስተዳደር',
 'userrights-user-editname'    => 'ለዚሁ ብዕር ስም፦',
 'editusergroup'               => 'የአባሉ ማዕረግ ለማስተካከል',
@@ -865,7 +878,7 @@ $1ን ወይም ማንም ሌላ [[{{MediaWiki:Grouppage-sysop}}|መጋቢ]] ስ
 *በሳጥኑ ምልክት ቢኖር፣ አባሉ በዚያ ስብስባ ውስጥ አለ ማለት ነው።
 *በሳጥኑ ምልክት ከሌላ፣ አባሉ በዚያው ስብስባ አይደለም ማለት ነው።
 *ምልክቱ * ቢኖር፣ ስብስባው ከተወገደ በኋላ ሁለተኛ ሊጨምሩት አይችሉም፤ ወይም ከተጨመረ በኋላ ሁለተኛ ሊያስወግዱት አይችሉም ያመለክታል።',
-'userrights-reason'           => 'የመቀየሩ ምክንያት፦',
+'userrights-reason'           => 'ምክንያቱ፦',
 'userrights-no-interwiki'     => 'ማዕረጎችን በሌላ ዊኪ ላይ ለማስተካከል ፈቃድ የለዎም።',
 'userrights-nodatabase'       => 'መረጃ-ቤቱ $1 አይኖርም ወይም የቅርብ አካባቢ አይደለም።',
 'userrights-nologin'          => 'የአባል መብቶች ለመወሰን መጋቢ ሆነው [[Special:UserLogin|መግባት]] ያስፈልግዎታል።',
@@ -958,8 +971,12 @@ $1ን ወይም ማንም ሌላ [[{{MediaWiki:Grouppage-sysop}}|መጋቢ]] ስ
 'nchanges'                          => '$1 {{PLURAL:$1|ለውጥ|ለውጦች}}',
 'recentchanges'                     => 'በቅርብ ጊዜ የተለወጡ',
 'recentchanges-legend'              => 'የቅርብ ለውጥ አማራጮች፦',
-'recentchangestext'                 => "በዚሁ ገጽ ላይ በቅርብ ጊዜ የወጡ አዳዲስ ለውጦች ለመከታተል ይችላሉ። <br /> ('''ጥ'''፦ ጥቃቅን ለውጥ፤ '''አ'''፦ አዲስ ገጽ)",
+'recentchangestext'                 => 'በዚሁ ገጽ ላይ በቅርብ ጊዜ የወጡ አዳዲስ ለውጦች ለመከታተል ይችላሉ።',
 'recentchanges-feed-description'    => 'በዚህ ዊኪ ላይ በቅርብ ግዜ የተለወጠውን በዚሁ feed መከታተል ይችላሉ',
+'recentchanges-label-legend'        => 'መግለጫ፦ $1።',
+'recentchanges-legend-newpage'      => '$1 - አዲስ ገጽ',
+'recentchanges-legend-minor'        => '$1 - ጥቃቅን ለውጥ',
+'recentchanges-legend-bot'          => '$1 - የቦት (ሎሌ) ለውጥ',
 'rcnote'                            => "ከ$5 $4 እ.ኤ.አ. {{PLURAL:$2|ባለፈው 1 ቀን|ባለፉት '''$2''' ቀኖች}} {{PLURAL:$1|የተደረገው '''1''' ለውጥ እታች ይገኛል|የተደረጉት '''$1''' መጨረሻ ለውጦች እታች ይገኛሉ}}።",
 'rcnotefrom'                        => "ከ'''$2''' ጀምሮ የተቀየሩት ገጾች (እስከ '''$1''' ድረስ) ክዚህ በታች ይታያሉ።",
 'rclistfrom'                        => '(ከ $1 ጀምሮ አዲስ ለውጦቹን ለማየት)',
@@ -985,6 +1002,8 @@ $1ን ወይም ማንም ሌላ [[{{MediaWiki:Grouppage-sysop}}|መጋቢ]] ስ
 
 # Recent changes linked
 'recentchangeslinked'          => 'የተዛመዱ ለውጦች',
+'recentchangeslinked-feed'     => 'የተዛመዱ ለውጦች',
+'recentchangeslinked-toolbox'  => 'የተዛመዱ ለውጦች',
 'recentchangeslinked-title'    => 'በ«$1» በተዛመዱ ገጾች ቅርብ ለውጦች',
 'recentchangeslinked-noresult' => 'በተመለከተው ጊዜ ውስጥ ከዚህ በተያየዙት ገጾች ላይ ምንም ለውጥ አልነበረም።',
 'recentchangeslinked-summary'  => "ከዚሁ ገጽ የተያየዙት ሌሎች ጽሑፎች ቅርብ ለውጦች ከታች ይዘረዝራሉ።
@@ -996,7 +1015,6 @@ $1ን ወይም ማንም ሌላ [[{{MediaWiki:Grouppage-sysop}}|መጋቢ]] ስ
 # Upload
 'upload'                      => 'ፋይል / ሥዕል ለመላክ',
 'uploadbtn'                   => 'ፋይሉ ይላክ',
-'reupload'                    => 'እንደገና ለመላክ',
 'reuploaddesc'                => 'ለመሰረዝና ወደ መላኪያ ማመልከቻ ለመመለስ',
 'uploadnologin'               => 'ገና አልገቡም',
 'uploadnologintext'           => 'ፋይል ለመላክ አስቀድሞ [[Special:UserLogin|መግባት]] ያስፈልግዎታል።',
@@ -1030,14 +1048,16 @@ $1ን ወይም ማንም ሌላ [[{{MediaWiki:Grouppage-sysop}}|መጋቢ]] ስ
 'large-file'                  => 'የፋይል መጠን ከ$1 በላይ እንዳይሆን ይመከራል፤ የዚህ ፋይል መጠን $2 ነው።',
 'largefileserver'             => 'ይህ ፋይል ሰርቨሩ ከሚችለው መጠን በላይ ነው።',
 'emptyfile'                   => 'የላኩት ፋይል ባዶ እንደ ሆነ ይመስላል። ይህ ምናልባት በፋይሉ ስም አንድ ግድፋት ስላለ ይሆናል። እባክዎ ይህን ፋይል በውኑ መላክ እንደ ፈለጉ ያረጋግጡ።',
-'fileexists'                  => "ይህ ስም ያለው ፋይል አሁን ይኖራል፤ እባክዎ እሱም ለመቀየር እንደፈለጉ እርግጥኛ ካልሆኑ '''<tt>$1</tt>''' ይመለከቱ።",
-'filepageexists'              => "የዚሁ ፋኡል መግለጫ ገጽ ከዚህ በፊት በ'''<tt>$1</tt>''' ተፈጥሯል፤ ነገር ግን ይህ ስም ያለበት ፋይል አሁን አይኖርም። ስለዚህ ያቀረቡት ማጠቃለያ በመግለጫው ገጽ አይታይም። መግለጫዎ በዚያ እንዲታይ በእጅ ማስገባት ይኖርብዎታል።",
-'fileexists-extension'        => "ተመሳሳይ ስም ያለበት ፋይል ይኖራል፦<br />
-የሚላክ ፋይል ስም፦ '''<tt>$1</tt>'''<br />
-የሚኖር (የቆየው) ፋይል ስም፦ '''<tt>$2</tt>'''<br />
+'fileexists'                  => "ይህ ስም ያለው ፋይል አሁን ይኖራል፤ እባክዎ እሱም ለመቀየር እንደፈለጉ እርግጥኛ ካልሆኑ '''<tt>[[:$1]]</tt>''' ይመለከቱ።
+[[$1|thumb]]",
+'filepageexists'              => "የዚሁ ፋኡል መግለጫ ገጽ ከዚህ በፊት በ'''<tt>[[:$1]]</tt>''' ተፈጥሯል፤ ነገር ግን ይህ ስም ያለበት ፋይል አሁን አይኖርም። ስለዚህ ያቀረቡት ማጠቃለያ በመግለጫው ገጽ አይታይም። መግለጫዎ በዚያ እንዲታይ በእጅ ማስገባት ይኖርብዎታል።",
+'fileexists-extension'        => "ተመሳሳይ ስም ያለበት ፋይል ይኖራል፦[[$2|thumb]]
+* የሚላክ ፋይል ስም፦ '''<tt>[[:$1]]</tt>'''
+* የሚኖር (የቆየው) ፋይል ስም፦ '''<tt>[[:$2]]</tt>'''
 እባክዎ ሌላ ስም ይምረጡ።",
-'fileexists-thumb'            => "<center>'''የሚኖር ፋይል'''</center>",
-'fileexists-thumbnail-yes'    => "ፋይሉ የተቀነሰ መጠን ያለበት ስዕል ''(ናሙና)'' እንደ ሆነ ይመስላል። እባክዎ ፋይሉን '''<tt>$1</tt>''' ይመለከቱ።<br /> ያው ፋይል ለዚሁ ፋይል አንድ አይነት በኦሪጂናሉ መጠን ቢሆን ኖሮ፣ ተጨማሪ ናሙና መላክ አያስፈልግም።",
+'fileexists-thumbnail-yes'    => "ፋይሉ የተቀነሰ መጠን ያለበት ስዕል ''(ናሙና)'' እንደ ሆነ ይመስላል። [[$1|thumb]]
+እባክዎ ፋይሉን '''<tt>[[:$1]]</tt>''' ይመለከቱ።
+ያው ፋይል ለዚሁ ፋይል አንድ አይነት በኦሪጂናሉ መጠን ቢሆን ኖሮ፣ ተጨማሪ ናሙና መላክ አያስፈልግም።",
 'file-thumbnail-no'           => "የፋይሉ ስም በ'''<tt>$1</tt>''' ይጀመራል። የተቀነሰ መጠን ያለበት ስዕል ''(ናሙና)'' እንደ ሆነ ይመስላል። ይህን ስዕል በሙሉ ማጉላት ካለዎ፣ ይህን ይላኩ፤ አለዚያ እባክዎ የፋይሉን ስም ይቀይሩ።",
 'fileexists-forbidden'        => 'በዚህ ስም የሚኖር ፋይል ገና አለ፤ እባክዎ ተመልሰው ይህን ፋይል በአዲስ ስም ስር ይልኩት። [[File:$1|thumb|center|$1]]',
 'fileexists-shared-forbidden' => 'ይህ ስም ያለበት ፋይል አሁን በጋራ ፋይል ምንጭ ይኖራል፤ እባክዎ ተመልሰው ፋይሉን በሌላ ስም ስር ይላኩት። [[File:$1|thumb|center|$1]]',
@@ -1050,7 +1070,6 @@ $1ን ወይም ማንም ሌላ [[{{MediaWiki:Grouppage-sysop}}|መጋቢ]] ስ
 'overwroteimage'              => 'የ«[[$1]]» አዲስ ዕትም ላከ',
 'uploaddisabled'              => 'ፋይል መላክ አይቻልም',
 'uploaddisabledtext'          => 'ፋይል መላክ በዚህ ዊኪ አይቻልም።',
-'uploadcorrupt'               => 'ይህ ፋይል ብልሹ ነው፤ ወይም ትክክለኛ ያልሆነ ቅጥያ አለው። እባክዎ ፋይሉን ተመልክተው እንደገና ይላኩት።',
 'uploadvirus'                 => 'ፋይሉ ቫይረስ አለበት! ዝርዝር፦ $1',
 'sourcefilename'              => 'የቆየው የፋይሉ ስም፦',
 'destfilename'                => 'የፋይሉ አዲስ ስም፦',
@@ -1078,6 +1097,7 @@ $1ን ወይም ማንም ሌላ [[{{MediaWiki:Grouppage-sysop}}|መጋቢ]] ስ
 ምናልባትም በሌላ ጊዜ ትራፊኩ ይቀነሳል።',
 
 'license'            => 'የፈቃድ አይነት፦',
+'license-header'     => 'የፈቃድ አይነት፦',
 'nolicense'          => 'ምንም አልተመረጠም',
 'license-nopreview'  => '(ቅድመ-ዕይታ አይገኝም)',
 'upload_source_url'  => ' (ትክክለኛ፣ በግልጽ የሚገኝ URL)',
@@ -1094,6 +1114,7 @@ $1ን ወይም ማንም ሌላ [[{{MediaWiki:Grouppage-sysop}}|መጋቢ]] ስ
 'listfiles_description' => 'ማጠቃለያ',
 
 # File description page
+'file-anchor-link'          => 'ፋይል',
 'filehist'                  => 'የፋይሉ ታሪክ',
 'filehist-help'             => 'የቀድሞው ዕትም ካለ ቀን/ሰዓቱን በመጫን መመልከት ይቻላል።',
 'filehist-deleteall'        => 'ሁሉን ለማጥፋት',
@@ -1108,18 +1129,13 @@ $1ን ወይም ማንም ሌላ [[{{MediaWiki:Grouppage-sysop}}|መጋቢ]] ስ
 'filehist-dimensions'       => 'ክልሉ (በpixel)',
 'filehist-filesize'         => 'መጠን',
 'filehist-comment'          => 'ማጠቃለያ',
-'imagelinks'                => 'መያያዣዎች',
+'imagelinks'                => 'ፋይል መያያዣዎች',
 'linkstoimage'              => '{{PLURAL:$1|የሚከተለው ገጽ ወደዚሁ ፋይል ተያይዟል|የሚከተሉ $1 ገጾች ወደዚሁ ፋይል ተያይዘዋል}}፦',
 'nolinkstoimage'            => 'ወዲህ ፋይል የተያያዘ ገጽ የለም።',
 'morelinkstoimage'          => 'ለዚህ ፋይል [[Special:WhatLinksHere/$1|ተጨማሪ መያያዣዎችን]] ለማየት።',
 'redirectstofile'           => 'ለዚህ ፋይል {{PLURAL:$1|የሚከተለው ፋይል መምሪያ መንገድ አለ|የሚከተሉት $1 ፋይሎች መምሪያ መንገዶች አሉ}}፦',
 'duplicatesoffile'          => '{{PLURAL:$1|የሚከተለው ፋይል የዚህ ፋይል ቅጂ ነው|የሚከተሉት $1 ፋይሎች የዚሁ ፋይል ቅጂዎች ናቸው}}፦',
-'sharedupload'              => 'ይህ ፋይል ከጋራ ምንጭ ($1) የተቀሰመ ነው። በማንኛውም ዊኪ ላይ ሊጠቅም ይቻላል።', # $1 is the repo name, $2 is shareduploadwiki(-desc)
-'shareduploadwiki'          => 'በተጨማሪ ለመረዳት $1 ይዩ።',
-'shareduploadwiki-desc'     => 'በዚያ በ$1 የሚታየው መግለጫ እንዲህ ይላል፦',
-'shareduploadwiki-linktext' => 'ፋይል መግለጫ ገጹ',
-'noimage'                   => 'በዚህ ስም የሚታወቅ ፋይል የለም፤ እርስዎ ግን $1 ይችላሉ።',
-'noimage-linktext'          => 'ሊልኩት',
+'sharedupload'              => 'ይህ ፋይል ከጋራ ምንጭ ($1) የተቀሰመ ነው። በማንኛውም ዊኪ ላይ ሊጠቅም ይቻላል።',
 'uploadnewversion-linktext' => 'ለዚሁ ፋይል አዲስ ዕትም ለመላክ',
 
 # File reversion
@@ -1135,7 +1151,7 @@ $1ን ወይም ማንም ሌላ [[{{MediaWiki:Grouppage-sysop}}|መጋቢ]] ስ
 'filedelete-legend'           => 'ፋይልን ለማጥፋት',
 'filedelete-intro'            => "'''[[Media:$1|$1]]''' ሊያጥፉ ነው።",
 'filedelete-intro-old'        => "በ[$4 $3፣ $2] እ.ኤ.አ. የነበረው የ'''[[Media:$1|$1]]''' እትም ሊያጥፉ ነው።",
-'filedelete-comment'          => 'የማጥፋቱ ምክንያት፦',
+'filedelete-comment'          => 'ምክንያቱ፦',
 'filedelete-submit'           => 'ይጥፋ',
 'filedelete-success'          => "'''$1''' ጠፍቷል።",
 'filedelete-success-old'      => '<span class="plainlinks">በ$3፣ $2 የነበረው የ\'\'\'[[Media:$1|$1]]\'\'\' ዕትም ጠፍቷል።</span>',
@@ -1159,8 +1175,8 @@ $1ን ወይም ማንም ሌላ [[{{MediaWiki:Grouppage-sysop}}|መጋቢ]] ስ
 'listredirects' => 'መምሪያ መንገዶች ሁሉ',
 
 # Unused templates
-'unusedtemplates'     => 'ያልተለጠፉ መልጠፊያዎች',
-'unusedtemplatestext' => 'እነኚህ መልጠፊያዎች አሁን ባንዳችም ገጽ ላይ አልተለጠፉም።',
+'unusedtemplates'     => 'ያልተለጠፉ መለጠፊያዎች',
+'unusedtemplatestext' => 'በ{{ns:template}} ክፍለ-ዊኪ ያሉት መለጠፊያዎች በአንዳችም ገጽ ላይ ካልተለጠፉ፣ በዚህ ገጽ ይዘረዝራሉ። መጋቢዎች ሳያጥፉዋቸው ግን ወደነሱ ሌላ መያያዣ አለመኖሩን ያረጋግጡ።',
 'unusedtemplateswlh'  => 'ሌሎች መያያዣዎች',
 
 # Random page
@@ -1189,7 +1205,7 @@ $1ን ወይም ማንም ሌላ [[{{MediaWiki:Grouppage-sysop}}|መጋቢ]] ስ
 'disambiguations'      => 'ወደ መንታ መንገድ የሚያያይዝ',
 'disambiguationspage'  => 'Template:መንታ',
 'disambiguations-text' => "የሚከተሉት ጽሑፎች ወደ '''መንታ መንገድ''' እየተያያዙ ነውና ብዙ ጊዜ እንዲህ ሳይሆን ወደሚገባው ርዕስ ቢወስዱ ይሻላል። <br />
-መንታ መንገድ ማለት የመንታ መልጠፊያ ([[MediaWiki:Disambiguationspage]]) ሲኖርበት ነው።",
+መንታ መንገድ ማለት የመንታ መለጠፊያ ([[MediaWiki:Disambiguationspage]]) ሲኖርበት ነው።",
 
 'doubleredirects'            => 'ድርብ መምሪያ መንገዶች',
 'doubleredirectstext'        => 'ይህ ድርብ መምሪያ መንገዶች ይዘርዘራል።
@@ -1200,8 +1216,8 @@ $1ን ወይም ማንም ሌላ [[{{MediaWiki:Grouppage-sysop}}|መጋቢ]] ስ
 
 'brokenredirects'        => 'ሰባራ መምሪያ መንገዶች',
 'brokenredirectstext'    => 'እነዚህ መምሪያ መንገዶች ወደማይኖር ጽሑፍ ይመራሉ።',
-'brokenredirects-edit'   => '(ለማስተካከል)',
-'brokenredirects-delete' => '(ለማጥፋት)',
+'brokenredirects-edit'   => 'ለማስተካከል',
+'brokenredirects-delete' => 'ለማጥፋት',
 
 'withoutinterwiki'         => 'በሌሎች ቋንቋዎች ያልተያያዙ',
 'withoutinterwiki-summary' => 'እነዚህ ጽሑፎች «በሌሎች ቋንቋዎች» ሥር ወደሆኑት ሌሎች ትርጉሞች ገና አልተያያዙም።',
@@ -1211,7 +1227,7 @@ $1ን ወይም ማንም ሌላ [[{{MediaWiki:Grouppage-sysop}}|መጋቢ]] ስ
 'fewestrevisions' => 'ለውጦች ያነሱላቸው መጣጥፎች',
 
 # Miscellaneous special pages
-'nbytes'                  => '$1 byte',
+'nbytes'                  => '$1 {{PLURAL:$1|byte|bytes}}',
 'ncategories'             => '$1 {{PLURAL:$1|መደብ|መደቦች}}',
 'nlinks'                  => '$1 መያያዣዎች',
 'nmembers'                => '$1 {{PLURAL:$1|መጣጥፍ|መጣጥፎች}}',
@@ -1223,21 +1239,21 @@ $1ን ወይም ማንም ሌላ [[{{MediaWiki:Grouppage-sysop}}|መጋቢ]] ስ
 'uncategorizedpages'      => 'ገና ያልተመደቡ ጽሑፎች',
 'uncategorizedcategories' => 'ያልተመደቡ መደቦች (ንዑስ ያልሆኑ)',
 'uncategorizedimages'     => 'ያልተመደቡ ፋይሎች',
-'uncategorizedtemplates'  => 'ያልተመደቡ መልጠፊያዎች',
+'uncategorizedtemplates'  => 'ያልተመደቡ መለጠፊያዎች',
 'unusedcategories'        => 'ባዶ መደቦች',
 'unusedimages'            => 'ያልተያያዙ ፋይሎች',
 'popularpages'            => 'የሚወደዱ ገጾች',
 'wantedcategories'        => 'ቀይ መያያዣዎች የበዙላቸው መደቦች',
 'wantedpages'             => 'ቀይ መያያዣዎች የበዙላቸው አርእስቶች',
 'wantedfiles'             => 'የተፈለጉ ፋይሎች',
-'wantedtemplates'         => 'የተፈለጉ መልጠፊያዎች',
+'wantedtemplates'         => 'የተፈለጉ መለጠፊያዎች',
 'mostlinked'              => 'መያያዣዎች የበዙላቸው ገጾች',
 'mostlinkedcategories'    => 'መያያዣዎች የበዙላቸው መደቦች',
-'mostlinkedtemplates'     => 'መያያዣዎች የበዙላቸው መልጠፊያዎች',
+'mostlinkedtemplates'     => 'መያያዣዎች የበዙላቸው መለጠፊያዎች',
 'mostcategories'          => 'መደቦች የበዙላቸው መጣጥፎች',
 'mostimages'              => 'መያያዣዎች የበዙላቸው ስዕሎች',
 'mostrevisions'           => 'ለውጦች የበዙላቸው መጣጥፎች',
-'prefixindex'             => 'ገጾች በፊደል ለመፈልግ',
+'prefixindex'             => 'ሁሉንም ገፆች ከነ ቅድም ቅጥያቸው',
 'shortpages'              => 'ጽሁፎች ካጭሩ ተደርድረው',
 'longpages'               => 'ጽሁፎች ከረጅሙ ተደርድረው',
 'deadendpages'            => 'መያያዣ የሌለባቸው ፅሑፎች',
@@ -1289,6 +1305,7 @@ $1ን ወይም ማንም ሌላ [[{{MediaWiki:Grouppage-sysop}}|መጋቢ]] ስ
 'nextpage'          => 'የሚቀጥለው ገጽ (ከ$1 ጀምሮ)',
 'prevpage'          => 'ፊተኛው ገጽ (ከ$1 ጀምሮ)',
 'allpagesfrom'      => 'ገጾች ከዚሁ ፊደል ጀምሮ ይታዩ፦',
+'allpagesto'        => 'የሚጨርሱ ገፆችን በሙሉ አያየኝ፦ በ:',
 'allarticles'       => 'የመጣጥፎች ማውጫ በሙሉ፣',
 'allinnamespace'    => 'ገጾች ሁሉ (ክፍለ-ዊኪ፡$1)',
 'allnotinnamespace' => 'ገጾች ሁሉ (በክፍለ-ዊኪ፡$1 ያልሆኑት)',
@@ -1304,7 +1321,7 @@ $1ን ወይም ማንም ሌላ [[{{MediaWiki:Grouppage-sysop}}|መጋቢ]] ስ
 'special-categories-sort-abc' => 'በፊደል ተራ ይደርደሩ',
 
 # Special:LinkSearch
-'linksearch'    => 'የድረ-ገጽ መያያዣ ለመፈልግ',
+'linksearch'    => 'የውጭ ማያያዛዎች',
 'linksearch-ns' => 'ክፍለ-ዊኪ፦',
 'linksearch-ok' => 'ፍለጋ',
 
@@ -1321,9 +1338,10 @@ $1ን ወይም ማንም ሌላ [[{{MediaWiki:Grouppage-sysop}}|መጋቢ]] ስ
 'newuserlog-create2-entry' => 'ለ$1 አባልነት ተፈጥሯል',
 
 # Special:ListGroupRights
-'listgrouprights'        => 'የተጠቃሚ ስብስባ መብቶች',
-'listgrouprights-group'  => 'ስብስባ',
-'listgrouprights-rights' => 'መብቶች',
+'listgrouprights'         => 'የተጠቃሚ ስብስባ መብቶች',
+'listgrouprights-group'   => 'ስብስባ',
+'listgrouprights-rights'  => 'መብቶች',
+'listgrouprights-members' => '(የአባላት ዝርዝር)',
 
 # E-mail user
 'mailnologin'     => 'ምንም መነሻ አድራሻ የለም',
@@ -1360,7 +1378,7 @@ $1ን ወይም ማንም ሌላ [[{{MediaWiki:Grouppage-sysop}}|መጋቢ]] ስ
 
 በኋላ ጊዜ ገጹን ከሚከታተሉት ገጾች ለማስወግድ የፈለጉ እንደሆነ፣ በጫፉ ዳርቻ «አለመከታተል» የሚለውን ይጫኑ።",
 'removedwatch'         => 'ከሚከታተሉት ገጾች ተወገደ',
-'removedwatchtext'     => '«<nowiki>$1</nowiki>» የሚለው ከሚከታተሉት ገጾች ዝርዝር ጠፍቷል።',
+'removedwatchtext'     => 'ይህ ገፅ "[[:$1]]" ከ [[Special:Watchlist|your watchlist]] ተወግዷል።',
 'watch'                => 'ለመከታተል',
 'watchthispage'        => 'ይህንን ገጽ ለመከታተል',
 'unwatch'              => 'አለመከታተል',
@@ -1368,7 +1386,7 @@ $1ን ወይም ማንም ሌላ [[{{MediaWiki:Grouppage-sysop}}|መጋቢ]] ስ
 'notanarticle'         => 'መጣጥፍ አይደለም',
 'notvisiblerev'        => 'ዕትሙ ጠፍቷል',
 'watchnochange'        => 'ከተካከሉት ገጾች አንዳችም በተወሰነው ጊዜ ውስጥ አልተለወጠም።',
-'watchlist-details'    => 'አሁን በሙሉ {{PLURAL:$1|$1 ገጽ|$1 ገጾች}} እየተከታተሉ ነው።',
+'watchlist-details'    => '{{PLURAL:$1|$1 ገፅ|$1 ገፆች}} በ ምትከተላቸው ገፆች ላይ ፤ የውይይት ገፁን ሳይጨምር።',
 'wlheader-enotif'      => '* የ-ኢሜል ማስታወቂያ እንዲሠራ ተደርጓል።',
 'wlheader-showupdated' => "* መጨረሻ ከጎበኟቸው ጀምሮ የተቀየሩት ገጾች በ'''ጉልህ ፊደላት''' ይታያሉ",
 'watchmethod-recent'   => 'የቅርብ ለውጦችን ለሚከታተሉት ገጾች በመፈለግ',
@@ -1410,7 +1428,7 @@ $NEWPAGE
              ከክብር ጋር፣ የ{{SITENAME}} ኢሜል-ማስታወቂያ መርሃግብር።
 
 --
-የሚከታተሉት ገጾች ዝርዝር ለመቀየር፣ {{fullurl:{{ns:special}}:Watchlist/edit}} ይጎበኙ።
+የሚከታተሉት ገጾች ዝርዝር ለመቀየር፣ {{fullurl:{{#special:Watchlist}}/edit}} ይጎበኙ።
 
 በተጨማሪ ለመረዳት፦
 {{fullurl:{{MediaWiki:Helppage}}}}',
@@ -1425,7 +1443,8 @@ $NEWPAGE
 'delete-confirm'         => '«$1» ለማጥፋት',
 'delete-legend'          => 'ለማጥፋት',
 'historywarning'         => 'ማስጠንቀቂያ፦ ለዚሁ ገጽ የዕትም ታሪክ ደግሞ ሊጠፋ ነው! :',
-'confirmdeletetext'      => 'አንድ ገጽ ወይም ስዕል ከነለውጦቹ በሙሉ ከዚሁ {{SITENAME}} ሊጠፋ ነው! ይህን ማድረግዎ ያሠቡበት መሆኑንና ማጥፋቱ በፖሊሲ ተገቢ እንደሆነ እባክዎ ያረጋግጡ፦',
+'confirmdeletetext'      => 'ይህን ገጽ ከነ ሙሉ የለውጥ ታሪኩ ሊያጠፉት ነው::
+እባክዎን ይህን የሚያደርጉት አስበውበትና አምነውበት መሆኑን፣ እናም በ[[{{MediaWiki:Policy-url}}|መተዳደሪያ ደንብ]] መሰረት መሆኑን ያደጋግጡልን።',
 'actioncomplete'         => 'ተፈጽሟል',
 'deletedtext'            => '«<nowiki>$1</nowiki>» ጠፍቷል።
 
@@ -1436,7 +1455,7 @@ $NEWPAGE
 'dellogpagetext'         => 'በቅርቡ የጠፉት ገጾች ከዚህ ታች የዘረዝራሉ።',
 'deletionlog'            => 'የማጥፋት መዝገብ',
 'reverted'               => 'ወደ ቀድመኛ ዕትም ገለበጠው።',
-'deletecomment'          => 'የማጥፋቱ ምክንያት፦',
+'deletecomment'          => 'ምክንያት:',
 'deleteotherreason'      => 'ሌላ /ተጨማሪ ምክንያት',
 'deletereasonotherlist'  => 'ሌላ ምክንያት',
 'deletereason-dropdown'  => '*ተራ የማጥፋት ምክንያቶች
@@ -1454,8 +1473,8 @@ $NEWPAGE
 'alreadyrolled'    => 'የ[[:$1]] መጨረሻ ለውጥ በ[[User:$2|$2]] ([[User talk:$2|ውይይት]]) መገልበት አይቻልም፤ ሌላ ሰው አሁን ገጹን መልሶታል።
 
 መጨረሻው ለውጥ በ[[User:$3|$3]] ([[User talk:$3|ውይይት]]) ነበረ።',
-'editcomment'      => "ማጠቃለያው፦ «''$1''» ነበረ።", # only shown if there is an edit comment
-'revertpage'       => 'የ$2ን ለውጦች ወደ $1 እትም መለሰ።', # Additionally available: $3: revid of the revision reverted to, $4: timestamp of the revision reverted to, $5: revid of the revision reverted from, $6: timestamp of the revision reverted from
+'editcomment'      => "ማጠቃለያው፦ «''$1''» ነበረ።",
+'revertpage'       => 'የ$2ን ለውጦች ወደ $1 እትም መለሰ።',
 'rollback-success' => 'የ$1 ለውጦች ተገለበጡ፣ ወደ $2 ዕትም ተመልሷል።',
 
 # Protect
@@ -1468,19 +1487,19 @@ $NEWPAGE
 'protect-title'               => 'ለ«$1» የመቆለፍ ደረጃ ለማስተካከል',
 'prot_1movedto2'              => '«$1» ወደ «[[$2]]» አዛወረ',
 'protect-legend'              => 'የመቆለፍ ማረጋገጫ',
-'protectcomment'              => 'ማጠቃለያ፦',
+'protectcomment'              => 'ምክንያት:',
 'protectexpiry'               => 'የሚያልቅበት ግዜ፦',
 'protect_expiry_invalid'      => "የተሰጠው 'የሚያልቅበት ጊዜ' ልክ አይደለም።",
 'protect_expiry_old'          => "የተሰጠው 'የሚያልቅበት ጊዜ' ባለፈው ግዜ ነበር።",
-'protect-unchain'             => 'ገጹን የማዛወር ፈቃዶች ለመፍታት',
 'protect-text'                => "እዚህ ለገጹ «'''<nowiki>$1</nowiki>'''» የመቆለፍ ደረጃ መመልከት ወይም መቀይር ይችላሉ።",
 'protect-locked-blocked'      => "ማገጃ እያለብዎት የመቆለፍ ደረጃ ለመቀየር አይችሉም። ለገጹ '''$1''' የአሁኑኑ ደረጃ እንዲህ ነው፦",
 'protect-locked-dblock'       => "መረጃ-ቤቱ እራሱ አሁን ስለሚቆለፍ፣ የገጽ መቆለፍ ደረጃ ሊቀየር አይችልም። ለገጹ '''$1''' የአሁኑኑ ደረጃ እንዲህ ነው፦",
 'protect-locked-access'       => "እርስዎ ገጽ የመቆለፍ ወይም የመፍታት ፈቃድ የለዎም።<br />አሁኑ የዚሁ ገጽ መቆለፍ ደረጃ እንዲህ ነው፦ '''$1''':",
-'protect-cascadeon'           => 'ይህ ገጽ ወደ ተከለከሉት አርእስቶች ተጨምሯል። የመቆለፍ ደረጃ እዚህ መቀየር ቢቻልዎም ገጹ ግን በሚከተለው ድርብ የተቆለፈ ገጽ ውስጥ ይጨመራል።',
-'protect-default'             => '(እንደ ወትሮ)',
+'protect-cascadeon'           => 'በአሁኑ ሰአት ይህ ገፅ በጥበቃ ላይ ነው ምክንያቱም የሚከተሉትን {{PLURAL:$1|ገፅ, የያዘ|ገፆችን, ያከተተ}} 
+የጥበቃውን መጠን ማስተካከል ይቻላል, ነገር ግን እንብዛም ጥበቃ ላይ ተፅእኖ አይፈጥርም.',
+'protect-default'             => 'ለሁሉም ተጠቃሚዎች ፍቀድ',
 'protect-fallback'            => 'የ$1 ፈቃደ ለማስፈልግ',
-'protect-level-autoconfirmed' => 'ባልገቡትና በአዲስ አባላት ብቻ',
+'protect-level-autoconfirmed' => 'ያልተመዘገቡና አዲስ ተጠቃሚዎችን አግድ።',
 'protect-level-sysop'         => 'መጋቢዎች ብቻ',
 'protect-summary-cascade'     => 'በውስጡም ያለውን የሚያቆልፍ አይነት',
 'protect-expiring'            => 'በ$1 (UTC) ያልቃል',
@@ -1492,7 +1511,7 @@ $NEWPAGE
 'protect-otherreason'         => 'ሌላ/ተጨማሪ ምክንያት፦',
 'protect-otherreason-op'      => 'ሌላ/ተጨማሪ ምክንያት',
 'protect-edit-reasonlist'     => "'ተራ የመቆለፍ ምክንያቶች' ለማዘጋጀት",
-'protect-expiry-options'      => '2 ሰዓቶች:2 hours,1 ቀን:1 day,3 ቀን:3 days,1 ሳምንት:1 week,2 ሳምንት:2 weeks,1 ወር:1 month,3 ወር:3 months,6 ወር:6 months,1 አመት:1 year,ዘላለም:infinite', # display1:time1,display2:time2,...
+'protect-expiry-options'      => '2 ሰዓቶች:2 hours,1 ቀን:1 day,1 ሳምንት:1 week,2 ሳምንት:2 weeks,1 ወር:1 month,3 ወር:3 months,6 ወር:6 months,1 አመት:1 year,ዘላለም:infinite',
 'restriction-type'            => 'ፈቃድ፦',
 'restriction-level'           => 'የመቆለፍ ደረጃ፦',
 'minimum-size'                => 'ቢያንስ',
@@ -1521,7 +1540,7 @@ $NEWPAGE
 'undelete-revision'          => 'የ$1 የተደለዘ ዕትም በ$2 በ$3፦',
 'undelete-nodiff'            => 'ቀድመኛ ዕትም አልተገኘም።',
 'undeletebtn'                => 'ይመለስ',
-'undeletelink'               => 'ይመለስ',
+'undeletelink'               => 'አሳይ/ወደ ነበረበት መልስ',
 'undeletereset'              => 'ባዶ ይደረግ',
 'undeletecomment'            => 'ማጠቃልያ፦',
 'undeletedarticle'           => '«[[$1]]»ን መለሰ',
@@ -1529,7 +1548,7 @@ $NEWPAGE
 'undeletedrevisions-files'   => '{{PLURAL:$1|1 ዕትም|$1 ዕትሞች}} እና {{PLURAL:$2|1 ፋይል|$2 ፋይሎች}} መለሰ',
 'undeletedfiles'             => '{{PLURAL:$1|1 ፋይል|$1 ፋይሎች}} መለሰ',
 'cannotundelete'             => 'መመለሱ አልተከናወነም፤ ምናልባት ሌላ ሰው ገጹን አስቀድሞ መልሶታል።',
-'undeletedpage'              => "<big>'''$1 ተመልሷል'''</big>
+'undeletedpage'              => "'''$1 ተመልሷል'''
 
 በቅርብ የጠፉና የተመለሱ ገጾች ለማመልከት [[Special:Log/delete|የማጥፋቱን መዝገብ]] ይዩ።",
 'undelete-header'            => 'በቅርብ ግዜ የተደለዙትን ገጾች ለማመልከት [[Special:Log/delete|የማጥፋቱን መዝገብ]] ይዩ።',
@@ -1554,7 +1573,7 @@ $1',
 'contributions-title' => 'የ$1 አስተዋጽኦች',
 'mycontris'           => 'የኔ አስተዋጽኦች፤',
 'contribsub2'         => 'ለ $1 ($2)',
-'nocontribs'          => 'ምንም አልተገኘም።', # Optional parameter: $1 is the user name
+'nocontribs'          => 'ምንም አልተገኘም።',
 'uctop'               => '(ላይኛ)',
 'month'               => 'እስከዚህ ወር ድረስ፦',
 'year'                => 'እስከዚህ አመት (እ.ኤ.አ.) ድረስ፡-',
@@ -1563,24 +1582,29 @@ $1',
 'sp-contributions-newbies-sub'   => '(ለአዳዲስ ተጠቃሚዎች)',
 'sp-contributions-newbies-title' => 'የአዳዲስ ተጠቃሚዎች አስተዋጽኦች',
 'sp-contributions-blocklog'      => 'የማገጃ መዝገብ',
+'sp-contributions-talk'          => 'ውይይት',
+'sp-contributions-userrights'    => 'የአባል መብቶች ለማስተዳደር',
 'sp-contributions-search'        => 'የሰውን አስተዋጽኦች ለመፈለግ፦',
 'sp-contributions-username'      => 'ብዕር ስም ወይም የቁ. አድራሻ፦',
 'sp-contributions-submit'        => 'ፍለጋ',
 
 # What links here
 'whatlinkshere'            => 'ወዲህ የሚያያዝ',
-'whatlinkshere-title'      => 'ወደ «$1» የሚያያዙት ገጾች',
+'whatlinkshere-title'      => 'ከ «$1» ጋር የሚያያዙ ገጾች',
 'whatlinkshere-page'       => 'ለገጽ (አርዕስት)፦',
 'linkshere'                => "የሚከተሉት ገጾች ወደ '''[[:$1]]''' ተያይዘዋል።",
 'nolinkshere'              => "ወደ '''[[:$1]]''' የተያያዘ ገጽ የለም።",
 'nolinkshere-ns'           => "ባመለከቱት ክፍለ-ዊኪ ወደ '''[[:$1]]''' የተያያዘ ገጽ የለም።",
 'isredirect'               => 'መምሪያ መንገድ',
 'istemplate'               => 'የተሰካ',
-'whatlinkshere-prev'       => 'ፊተኛ $1',
-'whatlinkshere-next'       => 'ቀጥሎ $1',
+'isimage'                  => 'የምስል ማያያዣ',
+'whatlinkshere-prev'       => '{{PLURAL:$1|የቀድሞው|የቀድሞው $1}}',
+'whatlinkshere-next'       => '{{PLURAL:$1|ቀጥል|ቀጥል $1}}',
 'whatlinkshere-links'      => '← ወዲህም የሚያያዝ',
 'whatlinkshere-hideredirs' => 'መምሪያ መንገዶች $1',
+'whatlinkshere-hidetrans'  => '$1 ሰነዱን(ዶክመንት) ከሌላ ሰነድ ጋር ባማጣቀስ አያይዝ',
 'whatlinkshere-hidelinks'  => 'መያያዣዎች $1',
+'whatlinkshere-filters'    => 'መለያዎች',
 
 # Block/unblock
 'blockip'                     => 'ተጠቃሚውን ለማገድ',
@@ -1605,7 +1629,7 @@ $1',
 'ipbenableautoblock'          => 'በተጠቃሚው መጨረሻ ቁ.# እና ካሁን ወዲያ በሚጠቀመው አድራሻ ላይ ማገጃ ይጣል።',
 'ipbsubmit'                   => 'ማገጃ ለመጣል',
 'ipbother'                    => 'ሌላ የተወሰነ ግዜ፦',
-'ipboptions'                  => '2 ሰዓቶች:2 hours,1 ቀን:1 day,3 ቀን:3 days,1 ሳምንት:1 week,2 ሳምንት:2 weeks,1 ወር:1 month,3 ወር:3 months,6 ወር:6 months,1 አመት:1 year,ዘላለም:infinite', # display1:time1,display2:time2,...
+'ipboptions'                  => '2 ሰዓቶች:2 hours,1 ቀን:1 day,3 ቀን:3 days,1 ሳምንት:1 week,2 ሳምንት:2 weeks,1 ወር:1 month,3 ወር:3 months,6 ወር:6 months,1 አመት:1 year,ዘላለም:infinite',
 'ipbotheroption'              => 'ሌላ',
 'ipbotherreason'              => 'ሌላ/ተጨማሪ ምክንያት፦',
 'badipaddress'                => 'የማይሆን የቁ. አድራሻ',
@@ -1623,13 +1647,13 @@ $1',
 'ipusubmit'                   => 'ማገጃውን ለማንሣት',
 'unblocked'                   => 'ማገጃ ከ[[User:$1|$1]] ተነሣ',
 'unblocked-id'                => 'ማገጃ $1 ተነሣ',
-'ipblocklist'                 => 'የአሁኑ ማገጃዎች ዝርዝር',
+'ipblocklist'                 => 'የድህረ ገፅ መለያዎችንና (IP addresses) እና የተጠቃሚዎችን የብዕር ስም አግድ።',
 'ipblocklist-legend'          => 'አንድ የታገደውን ተጠቃሚ ለመፈለግ፦',
 'ipblocklist-username'        => 'ይህ ብዕር ስም ወይም የቁጥር አድራሻ #፡',
 'ipblocklist-submit'          => 'ይፈለግ',
 'blocklistline'               => '$1 (እ.ኤ.አ.)፦ $2 በ$3 ላይ ማገጃ ጣለ ($4)',
 'infiniteblock'               => 'መቸም ይማያልቅ',
-'expiringblock'               => 'በ$1 እ.ኤ.አ. ያልቃል',
+'expiringblock'               => 'በ$1 $2 እ.ኤ.አ. ያልቃል',
 'anononlyblock'               => 'ያልገቡት የቁ.# ብቻ',
 'noautoblockblock'            => 'የቀጥታ ማገጃ እንዳይሠራ ተደረገ',
 'createaccountblock'          => 'ስም ከማውጣት ተከለከለ',
@@ -1639,9 +1663,9 @@ $1',
 'ipblocklist-no-results'      => 'የተጠየቀው ተጠቃሚ አሁን የታገደ አይደለም።',
 'blocklink'                   => 'ማገጃ',
 'unblocklink'                 => 'ማገጃ ለማንሣት',
+'change-blocklink'            => 'እገዳውን ቀይር',
 'contribslink'                => 'አስተዋጽኦች',
 'blocklogpage'                => 'የማገጃ መዝገብ',
-'blocklog-fulllog'            => 'ሙሉ የማገጃ መዝገብ',
 'blocklogentry'               => 'እስከ $2 ድረስ [[$1]] አገዳ $3',
 'blocklogtext'                => 'ይህ መዝገብ ተጠቃሚዎች መቸም ሲታገዱ ወይም ማገጃ ሲነሣ የሚዘረዝር ነው። ለአሁኑ የታገዱት ሰዎች [[Special:IPBlockList|በአሁኑ ማገጃዎች ዝርዝር]] ይታያሉ።',
 'unblocklogentry'             => 'የ$1 ማገጃ አነሣ',
@@ -1677,17 +1701,18 @@ $1 አሁን ገና ታግዷል። ዝርዝሩን ማስተካከል ፈለጉ
 # Move page
 'move-page'                 => '«$1»ን ለማዛወር',
 'move-page-legend'          => 'የሚዛወር ገጽ',
-'movepagetext'              => "ከታች የሚገኘው ማመልከቻ ለገጹ ይዞታ አዲስ አርእስት ያወጣል።
-ከይዞታው ጋራ የእትሞች ታሪክ ደግሞ ወደ አዲሱ ገጽ ይዛወራል።
-የቆየው አርእስት እንደ መምሪያ መንገድ ለአዲሱ ገጽ ይሆናል።
-ይህ ማለት ወደዚያ የሚያያዝ መያያዣ ሁሉ በቀጥታ ወደ አዲሱ ሥፍራ ይወስዳል።
-ነገር ግን ገጹን እርስዎ ካዛወሩ፣ መያያዣዎቹ ድርብ ወይም ሰባራ እንዳይሆኑ ለማረጋገጥ ኃላፊነትዎ ነው።
+'movepagetext'              => "ከታች የሚገኘው ማመልከቻ ተጠቅመው የገጹ ስም መለወጥ ይችላሉ፤ የቀድሞው ገፅ ታሪክ ደግሞ ሙሉ በሙሉ ወደ አዲሱ ይዘዋወራል።
+የቀድሞው ርዕስ ለአዲሱ ገፅ እንደ መምሪያ ወይም መጠቆሚያ ገፅ በመሆን ያገለግላይ።
+እርስዎ ከትክክለኛውንና ከዋናው ገፅ ጋር በቀጥታ እንዲገናኝ ማድረግና ማስተካከል ይችላሉ 
+ይህ አንዳይሆን ከመረጡ ደግሞ ወይ [[Special:DoubleRedirects|double]] አልያም [[Special:BrokenRedirects|broken redirects]] መምረጥዎን እርግጠኛ ይሁኑ። 
+ነገር ግን በስርአት መቆራኘታቸውን ማረጋገጥና እርግጠኛ የመሆን አላፊነትና ግዴታ አለብዎት። 
 
-ባዲሱ አርእስት ሥፍራ ሌላ ገጽ ቀድሞ ካለ፤ ሌላው ገጽ ታሪክ የሌለው፣ ባዶ ወይም መምሪያ መንገድ ካልሆነ በስተቀር፣
-ይህ ገጽ ወደዚያ ለማዛወር '''የማይቻል''' ነው።  ስለዚህ ስሕተት ካደረጉ ወደ ቆየው አርእስት ገጹን መመለስ ይችላሉ፤ የኖረውን ገጽ በስሕተት ለመደምሰስ አይቻልም ማለት ነው።
+ልብ ይበሉ፦ አዲስ ለሰጡት ርዕስ ተመሳሳይ ርዕስ ያለው ሌላ ገጽ ቀድሞ ካለ እናም ገፁ ባዶ ካልሆነ መይም ለሌላ ገፅ መምሪያ ካልሆነ አልያም ምንም ታሪክ የሌለው 
+ካልሆነ በስተቀር ገጽን ወደዚያ ለማዛወር '''የማይቻል''' ነው። 
+ይህ ማለት ደግሞ ገፅ ቀድሞ ይጠራበት ወደነበረበት ቦታ መመልስ ይችላሉ ነገር ግን ቀድሞ በነበረ ገፅ ላይ ደርበው መፃፍ ግን አይችሉም 
 
 '''ማስጠንቀቂያ፦'''
-በጣም ለተወደደ ወይም ብዙ ጊዜ ለሚነበብ ገጽ፣ እንዲህ ያለ ለውጥ በፍጹም ያልተጠበቀ ወይም ከባድ ውጤት ያለው ሊሆን ይችላል።  ስለዚህ እባክዎ የሚገባ መደምደሚያ መሆኑን አስቀድመው ያረጋግጡ።",
+በጣም ለተወደደ ወይም ብዙ ጊዜ ለሚነበብ ገጽ እንዲህ ያለ ለውጥ ማድረግ አደገኛና ከፍተኛ ጥንቃቄን የሚጠይቅ ነው። ስለዚህ እባክዎ ለውጥ ከማድረግዎ በፊት ሂደቱን መሚገባ እንደተረዱት እንግጠኛ ይሁኑ።",
 'movepagetalktext'          => "አብዛኛው ጊዜ፣ ከዚሁ ገጽ ጋራ የሚገናኘው የውይይት ገጽ አንድላይ ይዛወራል፤ '''ነገር ግን፦'''
 
 * ገጹን ወደማይመሳስል ክፍለ-ዊኪ (ለምሳሌ Mediawiki:) ቢያዛውሩት፤
@@ -1705,7 +1730,7 @@ $1 አሁን ገና ታግዷል። ዝርዝሩን ማስተካከል ፈለጉ
 'move-watch'                => 'ይህ ገጽ በተከታተሉት ገጾች ይጨመር',
 'movepagebtn'               => 'ገጹ ይዛወር',
 'pagemovedsub'              => 'መዛወሩ ተከናወነ',
-'movepage-moved'            => "<big>'''«$1» ወደ «$2» ተዛውሯል'''</big>", # The two titles are passed in plain text as $3 and $4 to allow additional goodies in the message.
+'movepage-moved'            => "'''«$1» ወደ «$2» ተዛውሯል'''",
 'articleexists'             => 'በዚያ አርዕሥት ሌላ ገጽ አሁን አለ። አለበለዚያ የመረጡት ስም ልክ አይደለም - ሌላ አርእስት ይምረጡ።',
 'cantmove-titleprotected'   => 'አዲሱ አርዕስት ከመፈጠር ስለተጠበቀ፣ ገጽ ወደዚያው ሥፍራ ለማዛወር አይችሉም።',
 'talkexists'                => "'''ገጹ ወደ አዲሱ አርዕስት ተዛወረ፤ እንጂ በአዲሱ አርዕስት የቆየ ውይይት ገጽ አስቀድሞ ስለ ኖረ የዚህ ውይይት ገጽ ሊዛወር አልተቻለም። እባክዎ፣ በእጅ ያጋጥሙአቸው።'''",
@@ -1716,11 +1741,11 @@ $1 አሁን ገና ታግዷል። ዝርዝሩን ማስተካከል ፈለጉ
 'movepage-page-moved'       => 'ገጹ $1 ወደ $2 ተዛውሯል።',
 'movepage-page-unmoved'     => 'ገጹ $1 ወደ $2 ሊዛወር አልተቻለም።',
 '1movedto2'                 => '«$1» ወደ «[[$2]]» አዛወረ',
-'1movedto2_redir'           => '«$1» ወደ «[[$2]]» አዛወረ -- በመምሪያ መንገድ ፈንታ',
+'1movedto2_redir'           => '«[[$1]]» ወደ «[[$2]]» አዛወረ -- በመምሪያ መንገድ ፈንታ',
 'move-redirect-suppressed'  => 'መምሪያ መንገድ ተከለከለ',
 'movelogpage'               => 'የማዛወር መዝገብ',
 'movelogpagetext'           => 'ይህ መዝገብ ገጽ ሲዛወር ይመዝገባል። <ይመለስ> ቢጫኑ ኖሮ መዛወሩን ይገለብጣል!',
-'movereason'                => 'ምክንያት',
+'movereason'                => 'ምክንያት:',
 'revertmove'                => 'ይመለስ',
 'delete_and_move'           => 'ማጥፋትና ማዛወር',
 'delete_and_move_text'      => '==ማጥፋት ያስፈልጋል==
@@ -1745,7 +1770,7 @@ $1 አሁን ገና ታግዷል። ዝርዝሩን ማስተካከል ፈለጉ
 'export-addcattext' => 'ከዚሁ መደብ ገጾች ይጨመሩ፦',
 'export-addcat'     => 'ለመጨምር',
 'export-download'   => 'እንደ ፋይል ለመቆጠብ',
-'export-templates'  => 'ከነመልጠፊያዎቹ',
+'export-templates'  => 'ከነመለጠፊያዎቹ',
 
 # Namespace 8 related
 'allmessages'               => 'የድረገጽ መልክ መልእክቶች',
@@ -1755,8 +1780,6 @@ $1 አሁን ገና ታግዷል። ዝርዝሩን ማስተካከል ፈለጉ
 'allmessagestext'           => 'በ«MediaWiki» ክፍለ-ዊኪ ያሉት የድረገጽ መልክ መልእክቶች ሙሉ ዝርዝር ይህ ነው።
 Please visit [http://www.mediawiki.org/wiki/Localisation MediaWiki Localisation] and [http://translatewiki.net translatewiki.net] if you wish to contribute to the generic MediaWiki localisation.',
 'allmessagesnotsupportedDB' => "'''\$wgUseDatabaseMessages''' ስለ ተዘጋ '''{{ns:special}}:Allmessages''' ሊጠቀም አይችልም።",
-'allmessagesfilter'         => 'የመልዕክት ስም ማጣሪያ፦',
-'allmessagesmodified'       => 'የተቀየሩ ብቻ ይታዩ',
 
 # Thumbnails
 'thumbnail-more'           => 'አጎላ',
@@ -1790,19 +1813,19 @@ Please visit [http://www.mediawiki.org/wiki/Localisation MediaWiki Localisation]
 'import-logentry-interwiki-detail' => '$1 {{PLURAL:$1|ዕትም|ዕትሞች}} ከ$2',
 
 # Tooltip help for the actions
-'tooltip-pt-userpage'             => 'የርስዎ መኖርያ ገጽ',
+'tooltip-pt-userpage'             => 'መደነኛው ገጽህ/ሽ',
 'tooltip-pt-anonuserpage'         => 'ለቁ. አድራሻዎ የመኖርያ ገጽ',
-'tooltip-pt-mytalk'               => 'የርስዎ መወያያ ገጽ',
+'tooltip-pt-mytalk'               => 'የመወያያ ገፅህ/ሽ',
 'tooltip-pt-anontalk'             => 'ለቁ. አድራሻዎ የውይይት ገጽ',
 'tooltip-pt-preferences'          => 'የድረግጹን መልክ ለመምረጥ',
 'tooltip-pt-watchlist'            => 'እርስዎ ስለ ለውጦች የሚከታተሏቸው ገጾች',
-'tooltip-pt-mycontris'            => 'እርስዎ ያደረጓቸው ለውጦች በሙሉ',
+'tooltip-pt-mycontris'            => 'የተሳተፍክባቸው/ሽባቸው ቦታዎች ዝርዝር',
 'tooltip-pt-login'                => 'በብዕር ስም መግባትዎ ጠቃሚ ቢሆንም አስፈላጊነት አይደለም',
 'tooltip-pt-anonlogin'            => 'በብዕር ስም መግባትዎ ጠቃሚ ቢሆንም አስፈላጊነት አይደለም',
 'tooltip-pt-logout'               => 'ከብዕር ስምዎ ለመውጣት',
 'tooltip-ca-talk'                 => 'ስለ ገጹ ለመወያየት',
 'tooltip-ca-edit'                 => 'ይህን ገጽ ለማዘጋጀት ይችላሉ!',
-'tooltip-ca-addsection'           => 'ለዚሁ ውይይት ገጽ አዲስ አርዕስት ለመጨምር',
+'tooltip-ca-addsection'           => 'ለዚሁ የውይይት ገጽ አዲስ አርዕስት ለመጨምር',
 'tooltip-ca-viewsource'           => 'ይህ ገጽ ተቆልፏል ~ ጥሬ ምንጩን መመልከት ይችላሉ...',
 'tooltip-ca-history'              => 'ለዚሁ ገጽ ያለፉትን እትሞች ለማየት',
 'tooltip-ca-protect'              => 'ይህንን ገጽ ለመቆለፍ',
@@ -1816,6 +1839,7 @@ Please visit [http://www.mediawiki.org/wiki/Localisation MediaWiki Localisation]
 'tooltip-search-fulltext'         => 'ይህ ጽሕፈት የሚገኝባቸውን ገጾች ለመፈልግ',
 'tooltip-p-logo'                  => 'ዋና ገጽ',
 'tooltip-n-mainpage'              => 'ወደ ዋናው ገጽ ለመሔድ',
+'tooltip-n-mainpage-description'  => 'ዋናውን ገጽ ተመልከት',
 'tooltip-n-portal'                => 'ስለ መርሃገብሩ አጠቃቀም አለመረዳት',
 'tooltip-n-currentevents'         => 'ስለ ወቅታዊ ጉዳዮች / ዜና መረጃ ለማግኘት',
 'tooltip-n-recentchanges'         => 'በዚሁ ዊኪ ላይ በቅርቡ የተደረጉ ለውጦች',
@@ -1838,7 +1862,7 @@ Please visit [http://www.mediawiki.org/wiki/Localisation MediaWiki Localisation]
 'tooltip-ca-nstab-project'        => 'ግብራዊ ገጹን ለማየት',
 'tooltip-ca-nstab-image'          => 'የፋይሉን ገጽ ለማየት',
 'tooltip-ca-nstab-mediawiki'      => 'መልእክቱን ለማየት',
-'tooltip-ca-nstab-template'       => 'የመልጠፊያውን ገጽ ለመመልከት',
+'tooltip-ca-nstab-template'       => 'የመለጠፊያውን ገጽ ለመመልከት',
 'tooltip-ca-nstab-help'           => 'የእርዳታ ገጽ ለማየት',
 'tooltip-ca-nstab-category'       => 'የመደቡን ገጽ ለማየት',
 'tooltip-minoredit'               => 'እንደ ጥቃቅን ለውጥ (ጥ) ለማመልከት',
@@ -1850,6 +1874,7 @@ Please visit [http://www.mediawiki.org/wiki/Localisation MediaWiki Localisation]
 'tooltip-recreate'                => 'ገጹ የጠፋ ሆኖም እንደገና ለመፍጠር',
 'tooltip-upload'                  => 'ለመጀመር ይጫኑ',
 'tooltip-rollback'                => 'ROLLBACK የመጨረሻውን አዛጋጅ ለውጦች በፍጥነት ይገልበጣል።',
+'tooltip-undo'                    => '"መልስ" ይህን ቅድመ እይታ ወደ ቀድሞው የእርማት ቦታው መልስ። ማጠቃለያው ላይ ምክንያታችንን ለማስገባት ይፈቅድልናል።',
 
 # Metadata
 'nodublincore'      => 'Dublin Core RDF metadata ለዚህ ሰርቨር እንደማይሠራ ተደርጓል።',
@@ -1858,7 +1883,7 @@ Please visit [http://www.mediawiki.org/wiki/Localisation MediaWiki Localisation]
 # Attribution
 'anonymous'        => 'የ{{SITENAME}} ቁ. አድራሻ ተጠቃሚ(ዎች)',
 'siteuser'         => '{{SITENAME}} ተጠቃሚ $1',
-'lastmodifiedatby' => 'ይህ ገጽ መጨረሻ የተቀየረው $2፣ $1 በ$3 ነበር።', # $1 date, $2 time, $3 user
+'lastmodifiedatby' => 'ይህ ገጽ መጨረሻ የተቀየረው $2፣ $1 በ$3 ነበር።',
 'others'           => 'ሌሎች',
 'siteusers'        => '{{SITENAME}} ተጠቃሚ(ዎች) $1',
 
@@ -1881,6 +1906,14 @@ Please visit [http://www.mediawiki.org/wiki/Localisation MediaWiki Localisation]
 'mw_math_html'   => 'HTML ከተቻለ አለዚያ PNG',
 'mw_math_modern' => 'ለዘመናዊ ብራውዘር የተሻለ',
 'mw_math_mathml' => 'MathML ከተቻለ (የሙከራ)',
+
+# Math errors
+'math_failure'          => 'ዘርዛሪው ተሳነው',
+'math_unknown_error'    => 'የማይታወቅ ስኅተት',
+'math_unknown_function' => 'የማይታወቅ ተግባር',
+'math_lexing_error'     => 'የlexing ስህተት',
+'math_syntax_error'     => 'የሰዋሰው ስህተት',
+'math_bad_output'       => 'ወደ math ውጤት ዶሴ መጻፍ ወይም መፍጠር አይቻልም',
 
 # Patrolling
 'markaspatrolleddiff'                 => 'የተሳለፈ ሆኖ ማመልከት',
@@ -1909,7 +1942,7 @@ $1',
 'filedelete-current-unregistered' => 'የተወሰነው ፋይል «$1» በመረጃ-ቤቱ የለም።',
 
 # Browsing diffs
-'previousdiff' => '← የፊተኛው ለውጥ',
+'previousdiff' => 'የፊተኛው ለውጥ',
 'nextdiff'     => 'የሚቀጥለው ለውጥ →',
 
 # Media information
@@ -1949,7 +1982,7 @@ $1',
 * exposuretime
 * fnumber
 * isospeedratings
-* focallength", # Do not translate list items
+* focallength",
 
 # EXIF tags
 'exif-imagewidth'                  => 'ስፋት',
@@ -2052,10 +2085,10 @@ $1',
 
 'exif-unknowndate' => 'ያልታወቀ ቀን',
 
-'exif-orientation-1' => 'መደበኛ', # 0th row: top; 0th column: left
-'exif-orientation-2' => 'በአድማሱ ላይ ተገለበጠ', # 0th row: top; 0th column: right
-'exif-orientation-3' => '180° የዞረ', # 0th row: bottom; 0th column: right
-'exif-orientation-4' => 'በዋልታው ላይ ተገለበጠ', # 0th row: bottom; 0th column: left
+'exif-orientation-1' => 'መደበኛ',
+'exif-orientation-2' => 'በአድማሱ ላይ ተገለበጠ',
+'exif-orientation-3' => '180° የዞረ',
+'exif-orientation-4' => 'በዋልታው ላይ ተገለበጠ',
 
 'exif-componentsconfiguration-0' => 'አይኖርም',
 
@@ -2143,7 +2176,7 @@ $1',
 'exif-gpsmeasuremode-2' => '2 አቅጣቻ ያለው መለኪያ',
 'exif-gpsmeasuremode-3' => '3 አቅጣቻ ያለው መለኪያ',
 
-# Pseudotags used for GPSSpeedRef and GPSDestDistanceRef
+# Pseudotags used for GPSSpeedRef
 'exif-gpsspeed-k' => 'ኪሎሜትር በየሰዓቱ',
 'exif-gpsspeed-m' => 'ማይል (mile) በየሰዓቱ',
 'exif-gpsspeed-n' => 'Knot (የመርከብ ፍጥነት መለኪያ)',
@@ -2154,7 +2187,7 @@ $1',
 
 # External editor support
 'edit-externally'      => 'ይህንን ፋይል በአፍአዊ ሶፍትዌር ለማዘጋጀት',
-'edit-externally-help' => 'ስለ አፍአዊ የስዕል ማዘጋጀት ሶፍትዌር በተጨማሪ ለመረዳት [http://www.mediawiki.org/wiki/Manual:External_editors የመመስረት ትዕዛዝ] ያንብቡ።',
+'edit-externally-help' => '(ለተጨማሪ መረጃ ይህን ገፅ ተመልከቱ [http://www.mediawiki.org/wiki/Manual:External_editors setup instructions])',
 
 # 'all' in various places, this might be different for inflected languages
 'recentchangesall' => 'ሁሉ',
@@ -2270,7 +2303,7 @@ $3
 'unknown_extension_tag' => 'ያልታወቀ የቅጥያ ምልክት «$1»',
 
 # Special:Version
-'version'                          => 'ዝርያ', # Not used as normal message but as header for the special page itself
+'version'                          => 'ዝርያ',
 'version-extensions'               => 'የተሳኩ ቅጥያዎች',
 'version-specialpages'             => 'ልዩ ገጾች',
 'version-parserhooks'              => 'የዘርዛሪ ሜንጦዎች',
@@ -2283,7 +2316,7 @@ $3
 'version-skin-extension-functions' => 'የመልክ ቅጥያ ተግባሮች',
 'version-hook-name'                => 'የሜንጦ ስም',
 'version-hook-subscribedby'        => 'የተጨመረበት',
-'version-version'                  => 'ዝርያ',
+'version-version'                  => '(ዝርያ $1)',
 'version-license'                  => 'ፈቃድ',
 'version-software'                 => 'የተሳካ ሶፍትዌር',
 'version-software-product'         => 'ሶፍትዌር',

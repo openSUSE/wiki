@@ -129,11 +129,11 @@ END;
 	$text .= <<<END
 	<div id="default_form_div" style="padding: 5px 0 5px 0; margin: 7px 0 7px 0;">
 	<p>$default_form_input
-	<input size="20" name="default_form" value=""></p>
+	<input size="20" name="default_form" value="" /></p>
 	</div>
 	<div id="allowed_values" style="margin-bottom: 15px;">
 	<p>$values_input</p>
-	<p><input size="80" name="values" value=""></p>
+	<p><input size="80" name="values" value="" /></p>
 	</div>
 
 END;
@@ -142,12 +142,7 @@ END;
 	$text .= '	' . Xml::tags( 'div', array( 'class' => 'editButtons' ), $edit_buttons ) . "\n";
 	$text .= "	</form>\n";
 
-	$wgOut->addLink( array(
-		'rel' => 'stylesheet',
-		'type' => 'text/css',
-		'media' => "screen",
-		'href' => $sfgScriptPath . "/skins/SF_main.css"
-	) );
+	$wgOut->addExtensionStyle( $sfgScriptPath . "/skins/SemanticForms.css" );
 	$wgOut->addScript( '<script type="text/javascript">' . $javascript_text . '</script>' );
 	$wgOut->addHTML( $text );
 }

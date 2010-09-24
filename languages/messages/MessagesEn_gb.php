@@ -8,6 +8,7 @@
  * @file
  *
  * @author Jon Harald Søby
+ * @author Reedy
  */
 
 $specialPageAliases = array(
@@ -44,6 +45,7 @@ If the file has been modified from its original state, some details may not full
 # EXIF tags
 'exif-ycbcrcoefficients'   => 'Colour space transformation matrix coefficients',
 'exif-colorspace'          => 'Colour space',
+'exif-datetimedigitized'   => 'Date and time of digitising',
 'exif-subsectimedigitized' => 'DateTimeDigitised subseconds',
 'exif-exposureprogram'     => 'Exposure programme',
 
@@ -59,7 +61,7 @@ If the file has been modified from its original state, some details may not full
 'exif-sensingmethod-5' => 'Colour sequential area sensor',
 'exif-sensingmethod-8' => 'Colour sequential linear sensor',
 
-# Pseudotags used for GPSSpeedRef and GPSDestDistanceRef
+# Pseudotags used for GPSSpeedRef
 'exif-gpsspeed-k' => 'Kilometres per hour',
 
 # E-mail address confirmation

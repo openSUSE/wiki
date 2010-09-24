@@ -26,6 +26,8 @@ class MapsDistanceParser {
 	
 	private static $validatedDistanceUnit = false;
 	
+	private static $unitRegex = false;
+	
 	/**
 	 * Parses a distance optionaly containing a unit to a float value in meters.
 	 * 
@@ -40,11 +42,15 @@ class MapsDistanceParser {
 			return false;
 		}
 		
-		$matches = array();
-		preg_match( '/^(\d+)((\.|,)(\d+))?\s*(.*)?$/', $distance, $matches );
+		$distance = self::normalizeDistance( $distance );
 		
-		$value = (float)( $matches[1] . $matches[2] );
-		$value *= self::getUnitRatio( $matches[5] );
+		self::initUnitRegex();
+		
+		$matches = array();
+		preg_match( '/^\d+(\.\d+)?\s?(' . self::$unitRegex . ')?$/', $distance, $matches );
+
+		$value = (float)( $matches[0] . $matches[1] );
+		$value *= self::getUnitRatio( $matches[2] );
 		
 		return $value;
 	}
@@ -90,7 +96,11 @@ class MapsDistanceParser {
 	 * @return boolean
 	 */
 	public static function isDistance( $distance ) {
-		return preg_match( '/^(\d+)((\.|,)(\d+))?\s*(.*)?$/', $distance );
+		$distance = self::normalizeDistance( $distance );
+		
+		self::initUnitRegex();
+
+		return (bool)preg_match( '/^\d+(\.\d+)?\s?(' . self::$unitRegex . ')?$/', $distance );
 	}
 	
 	/**
@@ -120,9 +130,10 @@ class MapsDistanceParser {
 		global $egMapsDistanceUnit, $egMapsDistanceUnits;
 		
 		// This ensures the value for $egMapsDistanceUnit is correct, and caches the result.
-		if ( !self::$validatedDistanceUnit ) {
+		if ( self::$validatedDistanceUnit === false ) {
 			if ( !array_key_exists( $egMapsDistanceUnit, $egMapsDistanceUnits ) ) {
-				$egMapsDistanceUnit = $egMapsDistanceUnits[0];
+				$units = array_keys( $egMapsDistanceUnits );
+				$egMapsDistanceUnit = $units[0];
 			}
 			
 			self::$validatedDistanceUnit = true;
@@ -131,7 +142,7 @@ class MapsDistanceParser {
 		if ( $unit == null || !array_key_exists( $unit, $egMapsDistanceUnits ) ) {
 			$unit = $egMapsDistanceUnit;
 		}
-		
+
 		return $unit;
 	}
 	
@@ -145,6 +156,43 @@ class MapsDistanceParser {
 	public static function getUnits() {
 		global $egMapsDistanceUnits;
 		return array_keys( $egMapsDistanceUnits );
+	}
+	
+	/**
+	 * Normalizes a potential distance by removing spaces and truning comma's into dots.
+	 * 
+	 * @since 0.6.5
+	 * 
+	 * @param $distance String
+	 * 
+	 * @return string
+	 */
+	protected static function normalizeDistance( $distance ) {
+		$distance = trim( (string)$distance );
+		$strlen = strlen( $distance );
+		
+		for ( $i = 0; $i < $strlen; $i++ ) {
+			if ( !ctype_digit( $distance{$i} ) && !in_array( $distance{$i}, array( ',', '.' ) ) ) {
+				$value = substr( $distance, 0, $i );
+				$unit = substr( $distance, $i );
+				break;
+			}
+		}
+		
+		$value = str_replace( ',', '.', isset( $value ) ? $value : $distance );
+		
+		if ( isset( $unit ) ) {
+			$value .= ' ' . str_replace( array( ' ', "\t" ), '', $unit );
+		}
+
+		return $value;
+	}
+	
+	private static function initUnitRegex() {
+		if ( self::$unitRegex === false ) {
+			global $egMapsDistanceUnits;
+			self::$unitRegex = implode( '|', array_keys( $egMapsDistanceUnits ) ) . '|';
+		}		
 	}
 	
 }

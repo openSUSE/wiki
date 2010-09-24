@@ -1,21 +1,12 @@
 <?php
-/**
- * A class that holds static helper functions for common functionality that is not map-specific.
- *
- * @file Maps_Mapper.php
- * @ingroup Maps
- *
- * @author Jeroen De Dauw
- */
-
-if ( !defined( 'MEDIAWIKI' ) ) {
-	die( 'Not an entry point.' );
-}
 
 /**
- * Class with generic mapping methods.
+ * A class that holds static helper functions for generic mapping-related functions.
  * 
  * @since 0.1
+ * 
+ * @file Maps_Mapper.php
+ * @ingroup Maps
  * 
  * @author Jeroen De Dauw
  */
@@ -23,7 +14,7 @@ final class MapsMapper {
 	
 	/**
 	 * Initialization function. Needs to be called before parameters using Maps defined validation
-	 * or formatting functions are handled. 
+	 * or formatting functions are handled.
 	 */
 	public static function initialize() {
 		Validator::addValidationFunction( 'is_map_dimension', array( __CLASS__, 'isMapDimension' ) );
@@ -36,6 +27,8 @@ final class MapsMapper {
 	
 	/**
 	 * Returns if the value is a location.
+	 * 
+	 * @since 0.6
 	 * 
 	 * @param string $location
 	 * @param string $name The name of the parameter.
@@ -50,7 +43,7 @@ final class MapsMapper {
 		}
 		
 		if ( self::geocoderIsAvailable() ) {
-			return MapsGeocoder::isLocation( $location, $parameters['geoservice']['value'], $parameters['service']['value'] );
+			return MapsGeocoder::isLocation( $location, $parameters['geoservice']['value'], $parameters['mappingservice']['value'] );
 		} else {
 			return MapsCoordinateParser::areCoordinates( $location );
 		}
@@ -67,16 +60,20 @@ final class MapsMapper {
 	 */	
 	public static function areLocations( $locations, $name, array $parameters, $metaDataSeparator = false ) {
 		$locations = (array)$locations;
+		
 		foreach ( $locations as $location ) {
 			if ( !self::isLocation( $location, $name, $parameters, $metaDataSeparator ) ) {
 				return false;
 			}
 		}
+		
 		return true;
 	}
 
 	/**
 	 * Formats a location to a coordinate set in a certain representation.
+	 * 
+	 * @since 0.6
 	 * 
 	 * @param string $locations
 	 * @param string $name The name of the parameter.
@@ -84,75 +81,23 @@ final class MapsMapper {
 	 */		
 	public static function formatLocation( &$location, $name, array $parameters ) {
 		if ( self::geocoderIsAvailable() ) {
-			$location = MapsGeocoder::attemptToGeocodeToString( $location, $parameters['geoservice']['value'], $parameters['service']['value'] );
+			$location = MapsGeocoder::attemptToGeocodeToString( $location, $parameters['geoservice']['value'], $parameters['mappingservice']['value'] );
 		} else {
 			$location = MapsCoordinateParser::parseAndFormat( $location );
 		}
 	}
-
+	
 	/**
-	 * Returns a valid service. When an invalid service is provided, the default one will be returned.
-	 * Aliases are also chancged into the main service names @see MapsMapper::getMainServiceName().
-	 *
-	 * @param string $service
-	 * @param string $feature
-	 *
-	 * @return string
+	 * @deprecated Method moved to MapsMappingServices. Will be removed in 0.7.
 	 */
 	public static function getValidService( $service, $feature ) {
-		global $egMapsServices, $egMapsDefaultService, $egMapsDefaultServices, $shouldChange;
-
-		// Get rid of any aliases.
-		$service = self::getMainServiceName( $service );
-		
-		// If the service is not loaded into maps, it should be changed.
-		$shouldChange = !array_key_exists( $service, $egMapsServices );
-
-		// If it should not be changed, ensure the service supports this feature.
-		if ( ! $shouldChange ) {
-			$shouldChange = $egMapsServices[$service]->getFeature( $feature ) === false;
-		}
-
-		// Change the service to the most specific default value available.
-		// Note: the default services should support their corresponding features.
-		// If they don't, a fatal error will occur later on.
-		if ( $shouldChange ) {
-			if ( array_key_exists( $feature, $egMapsDefaultServices ) ) {
-				$service = $egMapsDefaultServices[$feature];
-			}
-			else {
-				$service = $egMapsDefaultService;
-			}
-		}
-
-		return $service;
-	}
-
-	/**
-	 * Checks if the service name is an alias for an actual service,
-	 * and changes it into the main service name if this is the case.
-	 *
-	 * @param string $service
-	 * 
-	 * @return string
-	 */
-	private static function getMainServiceName( $service ) {
-		global $egMapsServices;
-
-		if ( !array_key_exists( $service, $egMapsServices ) ) {
-			foreach ( $egMapsServices as $serviceObject ) {
-				if ( $serviceObject->hasAlias( $service ) ) {
-					 $service = $serviceObject->getName();
-					 break;
-				}
-			}
-		}
-
-		return $service;
+		MapsMappingServices::getValidServiceInstance( $service, $feature );
 	}
 
 	/**
 	 * Determines if a value is a valid map dimension, and optionally corrects it.
+	 *
+	 * @since 0.6
 	 *
 	 * @param string or number $value The value as it was entered by the user.
 	 * @param string $dimension Must be width or height.
@@ -217,6 +162,8 @@ final class MapsMapper {
 	/**
 	 * Corrects the provided map demension value when not valid.
 	 *
+	 * @since 0.6
+	 *
 	 * @param string or number $value The value as it was entered by the user.
 	 * @param string $dimension Must be width or height.
 	 * @param number $default The default value for this dimension.
@@ -233,24 +180,6 @@ final class MapsMapper {
 	public static function geocoderIsAvailable() {
 		global $wgAutoloadClasses;
 		return array_key_exists( 'MapsGeocoder', $wgAutoloadClasses );
-	}
-
-	/**
-	 * Returns an array containing all the possible values for the service parameter, including aliases.
-	 *
-	 * @return array
-	 */
-	public static function getAllServiceValues() {
-		global $egMapsAvailableServices, $egMapsServices;
-
-		$allServiceValues = array();
-
-		foreach ( $egMapsAvailableServices as $availableService ) {
-			$allServiceValues[] = $availableService;
-			$allServiceValues = array_merge( $allServiceValues, $egMapsServices[$availableService]->getAliases() );
-		}
-
-		return $allServiceValues;
 	}
 	
 	/**
@@ -281,16 +210,17 @@ final class MapsMapper {
 		global $egMapsAvailableServices, $egMapsAvailableGeoServices, $egMapsDefaultGeoService, $egMapsMapWidth, $egMapsMapHeight;
 
 		return array(
-			'service' => array(
+			'mappingservice' => array(
 				'criteria' => array(
-					'in_array' => self::getAllServiceValues()
+					'in_array' => MapsMappingServices::getAllServiceValues()
 				),
+				'aliases' => array( 'service' )
 			),
 			'geoservice' => array(
 				'criteria' => array(
 					'in_array' => $egMapsAvailableGeoServices
 				),
-				'dependencies' => array( 'service' ),
+				'dependencies' => array( 'mappingservice' ),
 			),
 			'zoom' => array(
 				'type' => 'integer',
@@ -313,4 +243,5 @@ final class MapsMapper {
 			),
 		);
 	}
+	
 }

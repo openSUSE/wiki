@@ -13,7 +13,7 @@
  *
  * ----------
  *
- * Copyright (C) 2001-2009 Magnus Manske, Brion Vibber, Lee Daniel Crocker,
+ * Copyright (C) 2001-2010 Magnus Manske, Brion Vibber, Lee Daniel Crocker,
  * Tim Starling, Erik Möller, Gabriel Wicke, Ævar Arnfjörð Bjarmason,
  * Niklas Laxström, Domas Mituzas, Rob Church, Yuri Astrakhan, Aryeh Gregor,
  * Aaron Schulz and others.
@@ -48,6 +48,8 @@ $mediaWiki = new MediaWiki();
 wfProfileIn( 'main-misc-setup' );
 OutputPage::setEncodings(); # Not really used yet
 
+require( $IP . '/extensions/iChainLoginFix.php' );
+
 $maxLag = $wgRequest->getVal( 'maxlag' );
 if( !is_null( $maxLag ) && !$mediaWiki->checkMaxLag( $maxLag ) ) {
 	exit;
@@ -57,13 +59,13 @@ if( !is_null( $maxLag ) && !$mediaWiki->checkMaxLag( $maxLag ) ) {
 $action = $wgRequest->getVal( 'action', 'view' );
 $title = $wgRequest->getVal( 'title' );
 
+# Set title from request parameters
 $wgTitle = $mediaWiki->checkInitialQueries( $title, $action );
-if( $wgTitle === NULL ) {
+if( $wgTitle === null ) {
 	unset( $wgTitle );
 }
 
 wfProfileOut( 'main-misc-setup' );
-require( $IP . '/extensions/iChainLoginFix.php' );
 
 #
 # Send Ajax requests to the Ajax dispatcher.
@@ -114,7 +116,7 @@ $mediaWiki->setVal( 'SquidMaxage', $wgSquidMaxage );
 $mediaWiki->setVal( 'UseExternalEditor', $wgUseExternalEditor );
 $mediaWiki->setVal( 'UsePathInfo', $wgUsePathInfo );
 
-$mediaWiki->initialize( $wgTitle, $wgArticle, $wgOut, $wgUser, $wgRequest );
+$mediaWiki->performRequestForTitle( $wgTitle, $wgArticle, $wgOut, $wgUser, $wgRequest );
 $mediaWiki->finalCleanup( $wgDeferredUpdateList, $wgOut );
 
 # Not sure when $wgPostCommitUpdateList gets set, so I keep this separate from finalCleanup

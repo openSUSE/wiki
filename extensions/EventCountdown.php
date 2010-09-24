@@ -44,7 +44,7 @@
 # with: require_once("extensions/EventCountdown.php");
 
 $wgExtensionFunctions[] = "wfEventCountdownExtension";
-
+ 
 $wgExtensionCredits['parserhook'][] = array(
         'name' => 'EventCountdown',
         'description' => 'Makes it easy to display upcoming events.',
@@ -52,7 +52,7 @@ $wgExtensionCredits['parserhook'][] = array(
         'author' => 'Matt Curtis',
         'url' => 'http://www.mediawiki.org/wiki/Extension:EventCountdown',
 );
-
+ 
 function wfEventCountdownExtension() {
         global $wgParser;
         # register the extension with the WikiText parser
@@ -63,11 +63,11 @@ function wfEventCountdownExtension() {
         $wgParser->setHook( "daysuntil", "runDaysUntil" );
         $wgParser->setHook( "eventcountdown", "runShowEventCountdown" );
 }
-
+ 
 function runDaysUntil( $input, $argv ) {
         $now = time();
         $then = strtotime($input);
-
+ 
         $daysUntil = getDaysBetween($now, $then);
         $output = $daysUntil;
         if (!array_key_exists("in",$argv)) return $output;
@@ -80,33 +80,31 @@ function runDaysUntil( $input, $argv ) {
                         $output .= " days";
                 }
                 break;
-
+ 
         default:
         }
-
+ 
         return $output;
 }
-
+ 
 function runShowEventCountdown( $input, $argv ) {
         $now = time();
         if (!array_key_exists("date",$argv)) return "";
         $then = strtotime($argv["date"]);
         $daysUntil = getDaysBetween($now, $then);
-
+ 
         $output = "";
-
+ 
         if ($daysUntil > 0) {
                 global $wgOut;
                 $output = $wgOut->parse($input, false);
         }
-
+ 
         return $output;
 }
-
+ 
 function getDaysBetween($date1, $date2) {
         $deltaSeconds = $date2 - $date1;
         $deltaDays = $deltaSeconds / (60 * 60 * 24);
         return ceil($deltaDays);
 }
-
-?>

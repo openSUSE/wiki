@@ -17,17 +17,17 @@ class SFCreateTemplate extends SpecialPage {
 	/**
 	 * Constructor
 	 */
-	function SFCreateTemplate() {
+	public function SFCreateTemplate() {
 		SpecialPage::SpecialPage( 'CreateTemplate' );
 		wfLoadExtensionMessages( 'SemanticForms' );
 	}
 
-	function execute( $query ) {
+	public function execute( $query ) {
 		$this->setHeaders();
 		doSpecialCreateTemplate();
 	}
 
-	static function getAllPropertyNames() {
+	public static function getAllPropertyNames() {
 		$all_properties = array();
 
 		// set limit on results - a temporary fix until SMW's
@@ -35,10 +35,13 @@ class SFCreateTemplate extends SpecialPage {
 		$options = new SMWRequestOptions();
 		$options->limit = 10000;
 		$used_properties = smwfGetStore()->getPropertiesSpecial( $options );
+		
 		foreach ( $used_properties as $property ) {
 			$all_properties[] = $property[0]->getWikiValue();
 		}
+		
 		$unused_properties = smwfGetStore()->getUnusedPropertiesSpecial( $options );
+		
 		foreach ( $unused_properties as $property ) {
 			$all_properties[] = $property->getWikiValue();
 		}
@@ -48,20 +51,24 @@ class SFCreateTemplate extends SpecialPage {
 		return $all_properties;
 	}
 
-	function printPropertiesDropdown( $all_properties, $id, $selected_property ) {
+	public static function printPropertiesDropdown( $all_properties, $id, $selected_property ) {
 		$dropdown_str = "<select name=\"semantic_property_$id\">\n";
 		$dropdown_str .= "<option value=\"\"></option>\n";
+		
 		foreach ( $all_properties as $prop_name ) {
 			$selected = ( $selected_property == $prop_name ) ? "selected" : "";
 			$dropdown_str .= "<option value=\"$prop_name\" $selected>$prop_name</option>\n";
 		}
+		
 		$dropdown_str .= "</select>\n";
+		
 		return $dropdown_str;
 	}
 
-	function printFieldEntryBox( $id, $f, $all_properties ) {
+	public static function printFieldEntryBox( $id, $f, $all_properties ) {
 		wfLoadExtensionMessages( 'SemanticForms' );
 		$dropdown_html = SFCreateTemplate::printPropertiesDropdown( $all_properties, $id, $f->semantic_property );
+		
 		$text = '	<div class="fieldBox">' . "\n";
 		$text .= '	<p>' . wfMsg( 'sf_createtemplate_fieldname' ) . ' <input size="15" name="name_' . $id . '" value="' . $f->field_name . '">' . "\n";
 		$text .= '	' . wfMsg( 'sf_createtemplate_displaylabel' ) . ' <input size="15" name="label_' . $id . '" value="' . $f->label . '">' . "\n";
@@ -72,6 +79,7 @@ class SFCreateTemplate extends SpecialPage {
 		if ( $id != "new" ) {
 			$text .= '	&#160;&#160;<input name="del_' . $id . '" type="submit" value="' . wfMsg( 'sf_createtemplate_deletefield' ) . '">' . "\n";
 		}
+		
 		$text .= <<<END
 </p>
 </div>
@@ -79,6 +87,7 @@ class SFCreateTemplate extends SpecialPage {
 END;
 		return $text;
 	}
+	
 }
 
 function doSpecialCreateTemplate() {
@@ -163,12 +172,12 @@ function doSpecialCreateTemplate() {
 	$text .= '	<p>' . wfMsg( 'sf_createtemplate_aggregationlabel' ) . ' <input size="25" name="aggregation_label" value="' . $aggregation_label . '"></p>' . "\n";
 	$text .= "	</fieldset>\n";
 	$text .= '	<p>' . wfMsg( 'sf_createtemplate_outputformat' ) . "\n";
-	$text .= '	<input type="radio" name="template_format" checked value="standard">' . wfMsg( 'sf_createtemplate_standardformat' ) . "\n";
-	$text .= '	<input type="radio" name="template_format" value="infobox">' . wfMsg( 'sf_createtemplate_infoboxformat' ) . "</p>\n";
+	$text .= '	<input type="radio" name="template_format" checked value="standard" />' . wfMsg( 'sf_createtemplate_standardformat' ) . "\n";
+	$text .= '	<input type="radio" name="template_format" value="infobox" />' . wfMsg( 'sf_createtemplate_infoboxformat' ) . "</p>\n";
 	$text .= <<<END
 	<div class="editButtons">
-	<input type="submit" id="wpSave" name="wpSave" value="$save_button_text">
-	<input type="submit" id="wpPreview" name="wpPreview" value="$preview_button_text">
+	<input type="submit" id="wpSave" name="wpSave" value="$save_button_text" />
+	<input type="submit" id="wpPreview" name="wpPreview" value="$preview_button_text" />
 	</div>
 	</form>
 
@@ -179,11 +188,6 @@ END;
 	$text .= "	<br /><hr /><br />\n";
 	$text .= "	" . Xml::tags( 'p', null, $create_property_link . '.' ) . "\n";
 
-	$wgOut->addLink( array(
-		'rel' => 'stylesheet',
-		'type' => 'text/css',
-		'media' => "screen",
-		'href' => $sfgScriptPath . "/skins/SF_main.css"
-		) );
+	$wgOut->addExtensionStyle( $sfgScriptPath . "/skins/SemanticForms.css" );
 	$wgOut->addHTML( $text );
 }

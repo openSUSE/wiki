@@ -6,15 +6,15 @@
  * @author Jeffrey Stuckman
  * @author Matt Williamson
  * @author Patrick Nagel
+ * @author Sanyam Goyal
  */
 
 class SFFormInputs {
-
   /**
-   * Create a comma-delimited string of values that match the specified
-   * source name and type, for use by Javascript autocompletion.
+   * Creates an array of values that match the specified source name and type,
+   * for use by both Javascript autocompletion and comboboxes.
    */
-  static function createAutocompleteValuesString( $source_name, $source_type ) {
+  static function createAutocompleteValuesArray( $source_name, $source_type ) {
     $names_array = array();
     // the query depends on whether this is a property, category, concept
     // or namespace
@@ -30,9 +30,19 @@ class SFFormInputs {
         $source_name = "";
       $names_array = SFUtils::getAllPagesForNamespace( $source_name );
     }
+    return $names_array;
+  }
+
+
+  /**
+   * Creates a comma-delimited string of values that match the specified
+   * source name and type, for use by Javascript autocompletion.
+   */
+  static function createAutocompleteValuesString( $source_name, $source_type ) {
+    $names_array = self::createAutocompleteValuesArray( $source_name, $source_type );
     // escape quotes, to avoid Javascript errors
     $names_array = array_map( 'addslashes', $names_array );
-    $autocomplete_string = "[['" . implode( "'], ['", $names_array ) . "']]";
+    $autocomplete_string = "['" . implode( "', '", $names_array ) . "']";
     // replace any newlines in the string, just to avoid breaking the Javascript
     $autocomplete_string = str_replace( "\n", ' ', $autocomplete_string );
     $autocomplete_string = str_replace( "\r", ' ', $autocomplete_string );
@@ -40,8 +50,11 @@ class SFFormInputs {
   }
 
   static function uploadLinkHTML( $input_id, $delimiter = null, $default_filename = null ) {
+    global $wgOut, $sfgScriptPath, $sfgFancyBoxIncluded;
+
     $upload_window_page = SpecialPage::getPage( 'UploadWindow' );
     $query_string = "sfInputID=$input_id";
+    $fancybox_id = "fancybox_$input_id";
     if ( $delimiter != null )
       $query_string .= "&sfDelimiter=$delimiter";
     if ( $default_filename != null )
@@ -53,7 +66,31 @@ class SFFormInputs {
       $style = "width:650 height:500";
     else
       $style = '';
-    $text = " <a href=\"$upload_window_url\" title=\"$upload_label\" rel=\"iframe\" rev=\"$style\">$upload_label</a>";
+
+    if ( !$sfgFancyBoxIncluded ) {
+      $sfgFancyBoxIncluded = true;
+      $wgOut->addScriptFile( "$sfgScriptPath/libs/jquery.fancybox-1.3.1.js" );
+    }
+
+    $fancybox_js =<<<END
+<script type="text/javascript">
+jQuery(document).ready(function() {
+	jQuery("#$fancybox_id").fancybox({
+		'width'		: '75%',
+		'height'	: '75%',
+		'autoScale'	: false,
+		'transitionIn'	: 'none',
+		'transitionOut'	: 'none',
+		'type'		: 'iframe',
+		'overlayColor'  : '#222',
+		'overlayOpacity' : '0.8',
+	});
+});
+</script>
+END;
+    $wgOut->addScript($fancybox_js);     
+
+    $text = " <a id = \"$fancybox_id\"  href=\"$upload_window_url\" title=\"$upload_label\" rev=\"$style\">$upload_label</a>";    
     return $text;
   }
 
@@ -273,9 +310,7 @@ END;
     if ( array_key_exists( 'class', $other_args ) )
       $span_class .= " " . $other_args['class'];
     $input_id = "input_$sfgFieldNum";
-    $info_id = "info_$sfgFieldNum";
     $hidden_input_name = $input_name . "[is_list]";
-    $disabled_text = ( $is_disabled ) ? "disabled" : "";
     // get list delimiter - default is comma
     if ( array_key_exists( 'delimiter', $other_args ) ) {
       $delimiter = $other_args['delimiter'];
@@ -289,32 +324,50 @@ END;
     $text = "";
     $return_js_text = "";
     $enum_input_ids = array();
-    // if it's mandatory, add a span around all the checkboxes, since
-    // some browsers don't support formatting of checkboxes
-    if ( $is_mandatory )
-      $text .= '	<span class="mandatoryFieldsSpan">' . "\n";
     foreach ( $possible_values as $key => $possible_value ) {
       // create array $enum_input_ids to associate values with their input IDs,
       // for use in creating the 'show on select' Javascript later
       $enum_input_ids[$possible_value] = $input_id;
       $cur_input_name = $input_name . "[" . $key . "]";
-      $checked_text = ( in_array( $possible_value, $cur_values ) ) ? 'checked="checked"' : "";
 
       if ( array_key_exists( 'value_labels', $other_args ) && is_array( $other_args['value_labels'] ) && array_key_exists( $possible_value, $other_args['value_labels'] ) )
       	$label = htmlspecialchars( $other_args['value_labels'][$possible_value] );
       else
       	$label = $possible_value;
-      $text .= <<<END
-	<span class="$span_class"><input type="checkbox" id="$input_id" tabindex="$sfgTabIndex" name="$cur_input_name" value="$possible_value" class="$checkbox_class" $checked_text $disabled_text/> $label</span>
 
-END;
+      $checkbox_attrs = array(
+        'type' => 'checkbox',
+        'id' => $input_id,
+        'tabindex' => $sfgTabIndex,
+        'name' => $cur_input_name,
+        'value' => $possible_value,
+        'class' => $checkbox_class,
+      );
+      if ( in_array( $possible_value, $cur_values ) ) {
+        $checkbox_attrs['checked'] = 'checked';
+      }
+      if ( $is_disabled ) {
+        $checkbox_attrs['disabled'] = 'disabled';
+      }
+      $checkbox_input = Xml::element( 'input', $checkbox_attrs );
+      $text .= '	' . Xml::tags( 'span',
+        array( 'class' => $span_class ),
+        $checkbox_input . ' ' . $label
+      ) . "\n";
       $sfgTabIndex++;
       $sfgFieldNum++;
       $input_id = "input_$sfgFieldNum";
     }
-    // close span
-    if ( $is_mandatory )
-      $text .= "	</span>";
+    // if it's mandatory, add a span around all the checkboxes, since
+    // some browsers don't support formatting of checkboxes
+    if ( $is_mandatory ) {
+      $text = '	' . Xml::tags( 'span',
+        array(
+          'id' => $input_id,
+          'class' => 'mandatoryFieldsSpan',
+        ), $text ) . "\n";
+    }
+    $info_id = "info_$sfgFieldNum";
     $text .= <<<END
 	<span id="$info_id" class="errorMessage"></span>
 	<input type="hidden" name="$hidden_input_name" value="1" />
@@ -358,6 +411,81 @@ END;
     return array( $text, $return_js_text );
   }
 
+  static function comboboxHTML( $cur_value, $input_name, $is_mandatory, $is_disabled, $other_args ) {
+        if ( array_key_exists( 'no autocomplete', $other_args ) &&
+        $other_args['no autocomplete'] == true ) {
+      unset( $other_args['autocompletion source'] );
+      return SFFormInputs::textEntryHTML( $cur_value, $input_name, $is_mandatory, $is_disabled, $other_args );
+    }
+    // if a set of values was specified, print a dropdown instead
+    if ( array_key_exists( 'possible_values', $other_args ) && $other_args['possible_values'] != null )
+      return SFFormInputs::dropdownHTML( $cur_value, $input_name, $is_mandatory, $is_disabled, $other_args );
+
+    global $sfgTabIndex, $sfgFieldNum,$wgOut, $sfgScriptPath,$wgJsMimeType, $smwgScriptPath,$smwgJqUIAutoIncluded;
+
+    $autocomplete_field_type = "";
+    $autocompletion_source = "";
+
+    $className = ( $is_mandatory ) ? "autocompleteInput mandatoryField" : "autocompleteInput createboxInput";
+    if ( array_key_exists( 'class', $other_args ) )
+      $className .= " " . $other_args['class'];
+    $disabled_text = ( $is_disabled ) ? "disabled" : "";
+    if ( array_key_exists( 'autocomplete field type', $other_args ) ) {
+      $autocomplete_field_type = $other_args['autocomplete field type'];
+      $autocompletion_source = $other_args['autocompletion source'];
+      if ( $autocomplete_field_type != 'external_url' ) {
+        global $wgContLang;
+        $autocompletion_source = $wgContLang->ucfirst( $autocompletion_source );
+      }
+    }
+    if ( array_key_exists( 'size', $other_args ) )
+      $size = $other_args['size'];
+    else
+      $size = "35";
+
+    $input_id = "input_" . $sfgFieldNum;
+    $info_id = "info_" . $sfgFieldNum;
+    $div_name = "div_" . $sfgFieldNum;
+       
+    $options_str_key = $autocompletion_source;
+    $javascript_text = "autocompletemappings[$sfgFieldNum] = '$options_str_key';\n";
+    
+    $values = array();
+    $values = self::createAutocompleteValuesArray($autocompletion_source, $autocomplete_field_type );
+   
+
+    /*adding code for displaying dropdown of autocomplete values*/
+
+    $text =<<<END
+<div class="ui-widget">
+	<select id="input_$sfgFieldNum" name="$input_name">
+		<option value="$cur_value"></option>
+
+END;
+    foreach ($values as $value) {
+      $text .= "		<option value=\"$value\">$value</option>\n";
+    }
+    $text .= <<<END
+	</select>
+	<span id="$info_id" class="errorMessage"></span>
+</div>
+<script type="text/javascript" >
+jQuery(function() {jQuery("#input_$sfgFieldNum").combobox();});
+</script>
+END;
+    // there's no direct correspondence between the 'size=' attribute for
+    // text inputs and the number of pixels, but multiplying by 6 seems to
+    // be about right for the major browsers
+    $pixel_width = $size * 6;
+    $combobox_css =<<<END
+<style type="text/css">
+input#input_$sfgFieldNum { width: {$pixel_width}px; }
+</style>
+END;
+    $wgOut->addScript($combobox_css);
+    return array( $text, $javascript_text );
+  }
+
   static function textInputWithAutocompleteHTML( $cur_value, $input_name, $is_mandatory, $is_disabled, $other_args ) {
     // if 'no autocomplete' was specified, print a regular text entry instead
     if ( array_key_exists( 'no autocomplete', $other_args ) &&
@@ -369,7 +497,7 @@ END;
     if ( array_key_exists( 'possible_values', $other_args ) && $other_args['possible_values'] != null )
       return SFFormInputs::dropdownHTML( $cur_value, $input_name, $is_mandatory, $is_disabled, $other_args );
 
-    global $sfgTabIndex, $sfgFieldNum;
+    global $sfgTabIndex, $sfgFieldNum, $wgOut, $sfgScriptPath,$wgJsMimeType, $smwgScriptPath,$smwgJqUIAutoIncluded;
 
     $className = ( $is_mandatory ) ? "autocompleteInput mandatoryField" : "autocompleteInput createboxInput";
     if ( array_key_exists( 'class', $other_args ) )
@@ -387,6 +515,7 @@ END;
     $info_id = "info_" . $sfgFieldNum;
     $div_name = "div_" . $sfgFieldNum;
     if ( array_key_exists( 'input_type', $other_args ) && $other_args['input_type'] == "textarea" ) {
+       
       $rows = $other_args['rows'];
       $cols = $other_args['cols'];
       if ( array_key_exists( 'maxlength', $other_args ) ) {
@@ -398,9 +527,22 @@ END;
       } else {
         $js_call = "";
       }
-      $text = <<<END
-	<textarea tabindex="$sfgTabIndex" id="$input_id" name="$input_name" rows="$rows" cols="$cols" class="$className" $disabled_text $js_call></textarea>
+      $text = "";
+      if ( array_key_exists( 'autogrow', $other_args ) ) {
+        $text .= <<<END
+<script type="text/javascript">
+	jQuery.noConflict();
+	jQuery(document).ready(function() {
+		jQuery("#$input_id").autoGrow();
+	});
+</script>
 
+END;
+	$className .= ' autoGrow';
+      }
+
+      $text .= <<<END
+	<textarea tabindex="$sfgTabIndex" id="$input_id" name="$input_name" rows="$rows" cols="$cols" class="$className" $disabled_text $js_call></textarea>            
 END;
     } else {
       if ( array_key_exists( 'size', $other_args ) )
@@ -410,6 +552,7 @@ END;
 
       $text = <<<END
         <input tabindex="$sfgTabIndex" id="$input_id" name="$input_name" type="text" value="" size="$size" class="$className"
+
 END;
     if ( $is_disabled )
       $text .= " disabled";
@@ -442,7 +585,8 @@ END;
 <script type="text/javascript">/* <![CDATA[ */
 
 END;
-    $options_str_key = str_replace( "'", "\'", $autocompletion_source );
+    
+    $options_str_key = $autocompletion_source;
     if ( $is_list ) {
       $options_str_key .= ",list";
       if ( $delimiter != "," ) {
@@ -464,12 +608,13 @@ END;
       $cur_value = str_replace( "\r", '\r', $cur_value );
       $text .= "document.getElementById('$input_id').value = \"$cur_value\"\n";
     }
-    $text .= "/* ]]> */</script>\n";
+    $text .= '/* ]]> */</script>';
     return array( $text, $javascript_text );
   }
 
   static function textAreaHTML( $cur_value, $input_name, $is_mandatory, $is_disabled, $other_args ) {
     // set size values
+      
     if ( ! array_key_exists( 'rows', $other_args ) )
       $other_args['rows'] = 5;
     if ( ! array_key_exists( 'cols', $other_args ) )
@@ -481,7 +626,7 @@ END;
         return SFFormInputs::textInputWithAutocompleteHTML( $cur_value, $input_name, $is_mandatory, $is_disabled, $other_args );
     }
 
-    global $sfgTabIndex, $sfgFieldNum;
+    global $sfgTabIndex, $sfgFieldNum, $smwgScriptPath, $sfgScriptPath,$wgOut;
 
     $className = ( $is_mandatory ) ? "mandatoryField" : "createboxInput";
     if ( array_key_exists( 'class', $other_args ) )
@@ -504,7 +649,23 @@ END;
     }
 
     $cur_value = htmlspecialchars( $cur_value );
-    $text = <<<END
+    $text = "";
+    if ( array_key_exists( 'autogrow', $other_args ) ) {
+      $wgOut->addScriptFile( "$sfgScriptPath/libs/SF_autogrow.js" );
+      $text .= <<<END
+<script type="text/javascript">
+	jQuery.noConflict();
+	jQuery(document).ready(function(){
+		jQuery("#$input_id").autoGrow();
+	});
+</script>
+
+END;
+      $className .= ' autoGrow';
+    }
+
+    $text .= <<<END
+
 	<textarea tabindex="$sfgTabIndex" id="$input_id" name="$input_name" rows="$rows" cols="$cols" class="$className" $disabled_text $js_call>$cur_value</textarea>
 	<span id="$info_id" class="errorMessage"></span>
 
@@ -652,61 +813,132 @@ END;
   static function radioButtonHTML( $cur_value, $input_name, $is_mandatory, $is_disabled, $other_args ) {
     global $sfgTabIndex, $sfgFieldNum;
 
-    $input_id = "input_$sfgFieldNum";
-    $info_id = "info_$sfgFieldNum";
-    $disabled_text = ( $is_disabled ) ? "disabled" : "";
+    $span_class = "checkboxSpan";
+    if ( array_key_exists( 'class', $other_args ) )
+      $span_class .= " " . $other_args['class'];
+
     $check_set = false;
-    $javascript_text = '';
-    $return_js_text = '';
-    if ( array_key_exists( 'show on select', $other_args ) ) {
-      $javascript_text = 'onClick="';
-      foreach ( $other_args['show on select'] as $div_id => $options ) {
-        $options_str = implode( "', '", $options );
-          $this_js_text = "showIfSelected('$input_id', ['$options_str'], '$div_id'); ";
-          $javascript_text .= $this_js_text;
-          $return_js_text .= $this_js_text . "\n";
-      }
-      $javascript_text .= '"';
-    }
     $text = "";
     // if it's mandatory, add a span around all the radiobuttons, since
     // some browsers don't support formatting of radiobuttons
     if ( $is_mandatory )
       $text .= '	<span class="mandatoryFieldsSpan">' . "\n";
 
-    // start with an initial "None" value, unless this is a mandatory field
-    // and there's a current value in place (either through a default value
-    // or because we're editing an existing page)
-    if ( ! $is_mandatory || $cur_value == '' ) {
-      $text .= '	<input type="radio" id="' . $input_id . '" tabindex="' . $sfgTabIndex . '" name="' . $input_name . '" value=""';
-      if ( ! $cur_value ) {
-        $text .= ' checked="checked"';
-        $check_set = true;
-      }
-      $text .= " $disabled_text $javascript_text/> " . wfMsg( 'sf_formedit_none' ) . "\n";
-    }
-
     if ( ( $possible_values = $other_args['possible_values'] ) == null )
       $possible_values = array();
+
+    // Add a "None" value, unless this is a mandatory field and there's a
+    // current value in place (either through a default value or because
+    // we're editing an existing page).
+    // We place it at the end of the array, instead of the beginning (even
+    // though it gets displayed at the beginning) so that the "None" value's
+    // ID will match that of the "error message" span, which is created at
+    // the end of the process - the validation Javascript requires that the
+    // two be matching
+    if ( ! $is_mandatory || $cur_value == '' ) {
+      $possible_values[] = '';
+    }
+
+    // Set $cur_value to be one of the allowed options, if it isn't already -
+    // that makes it easier to automatically have one of the radiobuttons
+    // be checked at the beginning.
+    if ( ! in_array( $cur_value, $possible_values ) ) {
+      if ( in_array( '', $possible_values ) )
+        $cur_value = '';
+      else
+        $cur_value = $possible_values[0];
+    }
+
+    $enum_input_ids = array();
+    $radiobuttons_text = '';
+    $none_radiobutton_text = '';
     foreach ( $possible_values as $i => $possible_value ) {
-      $text .= '	<input type="radio" tabindex="' . $sfgTabIndex . '" name="' . $input_name . '" value="' . $possible_value . '"';
-      if ( $cur_value == $possible_value || ( ! $cur_value && ! $check_set ) ) {
-        $text .= ' checked="checked"';
-        $check_set = true;
+      $sfgTabIndex++;
+      $sfgFieldNum++;
+      $input_id = "input_$sfgFieldNum";
+
+      // create array $enum_input_ids to associate values with their input IDs,
+      // for use in creating the 'show on select' Javascript later
+      $enum_input_ids[$possible_value] = $input_id;
+
+      $radiobutton_attrs = array(
+        'type' => 'radio',
+        'id' => $input_id,
+        'tabindex' => $sfgTabIndex,
+        'name' => $input_name,
+        'value' => $possible_value,
+      );
+      if ( $cur_value == $possible_value ) {
+        $radiobutton_attrs['checked'] = 'checked';
       }
-      if ( array_key_exists( 'value_labels', $other_args ) && is_array( $other_args['value_labels'] ) && array_key_exists( $possible_value, $other_args['value_labels'] ) )
+      if ( $is_disabled ) {
+        $radiobutton_attrs['disabled'] = 'disabled';
+      }
+      if ( $possible_value == '' ) // blank/"None" value
+        $label = wfMsg( 'sf_formedit_none' );
+      elseif ( array_key_exists( 'value_labels', $other_args ) && is_array( $other_args['value_labels'] ) && array_key_exists( $possible_value, $other_args['value_labels'] ) )
       	$label = htmlspecialchars( $other_args['value_labels'][$possible_value] );
       else
       	$label = $possible_value;
-      $text .= " $disabled_text $javascript_text/> $label\n";
+
+      $radiobutton_text = '	' .
+	      Xml::element ( 'input', $radiobutton_attrs ) . " $label\n";
+
+      // There's special handling for the "None" radiobutton, if it exists,
+      // because it's created last but displayed first - see above.
+      if ( $possible_value == '' ) {
+        $none_radiobutton_text = $radiobutton_text;
+      } else {
+        $radiobuttons_text .= $radiobutton_text;
+      }
     }
+    $text = $none_radiobutton_text . $radiobuttons_text;
+
     // close span
     if ( $is_mandatory )
       $text .= "	</span>";
+    $info_id = "info_$sfgFieldNum";
     $text .= <<<END
 	<span id="$info_id" class="errorMessage"></span>
 
 END;
+
+    // Finally, we do the 'show on select' handling.
+    $return_js_text = '';
+    if ( array_key_exists( 'show on select', $other_args ) ) {
+      foreach ( $other_args['show on select'] as $div_id => $options ) {
+        $cur_input_ids = array();
+        foreach ( $options as $option ) {
+          if ( array_key_exists( $option, $enum_input_ids ) ) {
+            $cur_input_ids[] = $enum_input_ids[$option];
+          }
+        }
+        $options_str = "['" . implode( "', '", $cur_input_ids ) . "']";
+        $cur_js_text = "showIfChecked($options_str, '$div_id'); ";
+        $return_js_text .= $cur_js_text . "\n";
+        foreach ( $possible_values as $key => $possible_value ) {
+          // We need to add each click handler to each radiobutton,
+          // because there doesn't seem to be any way for a radiobutton
+	  // to know that it was unchecked - rather, the newly-checked
+	  // radiobutton has to handle the change.
+	  foreach ( $enum_input_ids as $cur_input_id ) {
+            // we use addClickHandler(), instead of adding the Javascript via
+            // onClick="", because MediaWiki's wikibits.js does its own handling
+            // of checkboxes, which impacts their behavior in IE
+            if ( in_array( $possible_value, $options ) ) {
+              $return_js_text .= <<<END
+addClickHandler(
+	document.getElementById('$cur_input_id'),
+	function() { $cur_js_text }
+);
+
+END;
+            }
+          }
+        }
+      }
+    }
+
     return array( $text, $return_js_text );
   }
 
@@ -800,7 +1032,6 @@ END;
       $text .= '	<input type="radio" id="' . $input_id . '" tabindex="' . $sfgTabIndex . '" name="' . $input_name . '" value=""';
       if ( ! $cur_value ) {
         $text .= ' checked="checked"';
-        $check_set = true;
       }
       $disabled_text = ( $is_disabled ) ? "disabled" : "";
       $text .= " $disabled_text/> <em>" . wfMsg( 'sf_formedit_none' ) . "</em>\n";
@@ -809,6 +1040,14 @@ END;
     global $wgCategoryTreeMaxDepth;
     $wgCategoryTreeMaxDepth = 10;
     $tree = efCategoryTreeParserHook( $top_category, array( 'mode' => 'categories', 'depth' => 10 ) );
+
+    // capitalize the first letter, if first letters always get capitalized
+    global $wgCapitalLinks;
+    if ( $wgCapitalLinks ) {
+      global $wgContLang;
+      $cur_value = $wgContLang->ucfirst( $cur_value );
+    }
+
     $tree = preg_replace( '/(<a class="CategoryTreeLabel.*>)(.*)(<\/a>)/', '<input id="' . $input_id . '" tabindex="' . $sfgTabIndex . '" name="' . $input_name . '" value="$2" type="radio"> $1$2$3', $tree );
     $tree = str_replace( "value=\"$cur_value\"", "value=\"$cur_value\" checked=\"checked\"", $tree );
     // if it's disabled, set all to disabled
@@ -830,7 +1069,7 @@ END;
     if ( ! function_exists( 'efCategoryTreeParserHook' ) )
       return array( null, null );
 
-    global $sfgTabIndex, $sfgFieldNum;
+    global $sfgTabIndex, $sfgFieldNum, $wgCapitalLinks;
 
     $className = ( $is_mandatory ) ? "mandatoryField" : "createboxInput";
     if ( array_key_exists( 'class', $other_args ) )
@@ -877,6 +1116,12 @@ END;
     }
     // set all checkboxes matching $cur_values to checked
     foreach ( $cur_values as $value ) {
+      // capitalize the first letter, if first letters always get capitalized
+      if ( $wgCapitalLinks ) {
+        global $wgContLang;
+        $value = $wgContLang->ucfirst( $value );
+      }
+
       $tree = str_replace( "value=\"$value\"", "value=\"$value\" checked=\"checked\"", $tree );
     }
     // if it's disabled, set all to disabled

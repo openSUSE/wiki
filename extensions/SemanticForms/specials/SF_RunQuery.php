@@ -27,7 +27,7 @@ class SFRunQuery extends IncludableSpecialPage {
 	}
 
 	static function printQueryForm( $form_name, $embedded = false ) {
-		global $wgOut, $wgRequest, $wgScriptPath, $sfgScriptPath, $sfgFormPrinter, $sfgYUIBase, $wgParser;
+		global $wgOut, $wgRequest, $wgScriptPath, $sfgScriptPath, $sfgFormPrinter, $wgParser;
 
 		// get contents of form definition file
 		$form_title = Title::makeTitleSafe( SF_NS_FORM, $form_name );
@@ -78,10 +78,20 @@ class SFRunQuery extends IncludableSpecialPage {
 				$wgOut->setPageTitle( $form_page_title );
 			}
 			if ( $form_submitted ) {
-				global $wgUser, $wgTitle;
+				global $wgUser, $wgTitle, $wgOut;
 				$wgParser->mOptions = new ParserOptions();
 				$wgParser->mOptions->initialiseFromUser( $wgUser );
 				$text = $wgParser->parse( $data_text, $wgTitle, $wgParser->mOptions )->getText();
+				// method was added in MW 1.16
+				if ( method_exists( 'getHeadItems', $wgParser->getOutput() ) ) {
+					$headItems = $wgParser->getOutput()->getHeadItems();
+				} else {
+					$headItems = $wgParser->getOutput()->mHeadItems;
+				}
+				foreach ( $headItems as $key => $item ) {
+					$wgOut->addHeadItem( $key, "\t\t" . $item . "\n" );
+				}
+
 				$additional_query = wfMsg( 'sf_runquery_additionalquery' );
 				if ( !$raw )
 					$text .= "\n<h2>$additional_query</h2>\n";

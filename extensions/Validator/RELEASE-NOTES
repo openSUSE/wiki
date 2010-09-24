@@ -6,10 +6,20 @@ This change log contains a list of completed to-do's (new features, bug fixes, r
 
 == Validator change log ==
 
+=== Validator 0.3.6 ===
+(2010-08-26)
+
+* Added support for 'tolower' argument in parameter info definitions.
+
+=== Validator 0.3.5 ===
+(2010-07-26)
+
+* Fixed issue with the original parameter name (and in some cases also value) in error messages.
+
 === Validator 0.3.4 ===
 (2010-07-07)
 
-* Fixed issue with parameter reference that occured in php 5.3 and later. 
+* Fixed issue with parameter reference that occurred in php 5.3 and later. 
 
 * Fixed escaping issue that caused parameter names in error messages to be shown incorrectly.
 

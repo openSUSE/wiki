@@ -28,13 +28,38 @@ class MapsOSM extends MapsMappingService {
 	/**
 	 * Constructor.
 	 * 
-	 * @since 0.6.4
+	 * @since 0.6.6
 	 */
-	function __construct() {
+	function __construct( $serviceName ) {
 		parent::__construct(
-			'osm',
+			$serviceName,
 			array( 'openstreetmap' )
 		);
 	}
+	
+	/**
+	 * @see iMappingService::getDefaultZoom
+	 * 
+	 * @since 0.6.5
+	 */	
+	public function getDefaultZoom() {
+		global $egMapsOSMZoom;
+		return $egMapsOSMZoom;
+	}
+
+	/**
+	 * @see MapsMappingService::getMapId
+	 * 
+	 * @since 0.6.5
+	 */
+	public function getMapId( $increment = true ) {
+		global $egMapsOSMPrefix, $egOSMOnThisPage;
+		
+		if ( $increment ) {
+			$egOSMOnThisPage++;
+		}
+		
+		return $egMapsOSMPrefix . '_' . $egOSMOnThisPage;
+	}		
 	
 }

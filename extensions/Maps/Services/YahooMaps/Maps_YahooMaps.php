@@ -32,17 +32,27 @@ class MapsYahooMaps extends MapsMappingService {
 		'normal' => 'YAHOO_MAP_REG',
 		'satellite' => 'YAHOO_MAP_SAT',
 		'hybrid' => 'YAHOO_MAP_HYB',
-	);	
+	);
 	
-	function __construct() {
+	/**
+	 * Constructor.
+	 * 
+	 * @since 0.6.6
+	 */
+	function __construct( $serviceName ) {
 		parent::__construct(
-			'yahoomaps',
+			$serviceName,
 			array( 'yahoo', 'yahoomap', 'ymap', 'ymaps' )
 		);
 	}		
 	
+	/**
+	 * @see MapsMappingService::initParameterInfo
+	 * 
+	 * @since 0.5
+	 */		
 	protected function initParameterInfo( array &$parameters ) {
-		global $egMapsServices, $egMapsYahooAutozoom, $egMapsYahooMapsType, $egMapsYahooMapsTypes, $egMapsYahooMapsZoom, $egMapsYMapControls;
+		global $egMapsYahooAutozoom, $egMapsYahooMapsType, $egMapsYahooMapsTypes, $egMapsYahooMapsZoom, $egMapsYMapControls;
 		
 		Validator::addOutputFormat( 'ymaptype', array( __CLASS__, 'setYMapType' ) );
 		Validator::addOutputFormat( 'ymaptypes', array( __CLASS__, 'setYMapTypes' ) );		
@@ -86,6 +96,53 @@ class MapsYahooMaps extends MapsMappingService {
 		
 		$parameters['zoom']['criteria']['in_range'] = array( 1, 13 );
 	}
+	
+	/**
+	 * @see iMappingService::getDefaultZoom
+	 * 
+	 * @since 0.6.5
+	 */	
+	public function getDefaultZoom() {
+		global $egMapsYahooMapsTypes;
+		return $egMapsYahooMapsTypes;
+	}
+
+	/**
+	 * @see MapsMappingService::getMapId
+	 * 
+	 * @since 0.6.5
+	 */
+	public function getMapId( $increment = true ) {
+		global $egMapsYahooMapsPrefix, $egYahooMapsOnThisPage;
+		
+		if ( $increment ) {
+			$egYahooMapsOnThisPage++;
+		}
+		
+		return $egMapsYahooMapsPrefix . '_' . $egYahooMapsOnThisPage;
+	}		
+	
+	/**
+	 * @see MapsMappingService::createMarkersJs
+	 * 
+	 * @since 0.6.5
+	 */
+	public function createMarkersJs( array $markers ) {
+		$markerItems = array();
+		
+		foreach ( $markers as $marker ) {
+			$markerItems[] = Xml::encodeJsVar( (object)array(
+				'lat' => $marker[0],
+				'lon' => $marker[1],
+				'title' => $marker[2],
+				'label' =>$marker[3],
+				'icon' => $marker[4]
+			) );
+		}
+		
+		// Create a string containing the marker JS.
+		return '[' . implode( ',', $markerItems ) . ']';
+	}	
 	
 	/**
 	 * @see MapsMappingService::getDependencies

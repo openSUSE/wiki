@@ -4,6 +4,7 @@
  * property.
  *
  * @author Yaron Koren
+ * @author Sanyam Goyal
  */
 
 if ( !defined( 'MEDIAWIKI' ) ) die();
@@ -29,11 +30,14 @@ class SFCreateClass extends SpecialPage {
                 }
 
 		$this->setHeaders();
+		$wgOut->addExtensionStyle( $sfgScriptPath . "/skins/SemanticForms.css" );
+
+		$numStartingRows = 10;
 
 		$create_button_text = wfMsg( 'create' );
 
 		$property_name_error_str = '';
-		$save_page = $wgRequest->getCheck( 'wpSave' );
+		$save_page = $wgRequest->getCheck( 'save' );
 		if ( $save_page ) {
 			$template_name = trim( $wgRequest->getVal( "template_name" ) );
 			$form_name = trim( $wgRequest->getVal( "form_name" ) );
@@ -133,60 +137,120 @@ class SFCreateClass extends SpecialPage {
 		$type_label = wfMsg( 'sf_createproperty_proptype' );
 		$allowed_values_label = wfMsg( 'sf_createclass_allowedvalues' ) . wfMsg( 'colon-separator' );
 		$list_of_values_label = wfMsg( 'sf_createclass_listofvalues' ) . '?';
+
 		$text = <<<END
-	<form action="" method="post">
+                <script>
+        
+var NumOfRow = $numStartingRows;
+function addRowDynamic(options) {
+	NumOfRow++;
+	// get the reference of the main div
+	var mainDiv = document.getElementById('addrows');
+
+	// create new div that will work as a container
+	var newDiv = document.createElement('div');
+	newDiv.setAttribute('id','innerDiv' + NumOfRow);
+
+	//create span to contain the text
+	var newtable = document.createElement('table');
+	var newRow = document.createElement('tr');
+	var newCol1 = document.createElement('td');
+	newCol1.innerHTML="<input type=\"text\" size=\"25\" name=\"property_name_" + NumOfRow + "\" />";
+	var newCol2 = document.createElement('td');
+	newCol2.innerHTML="<input type=\"text\" size=\"25\" name=\"field_name_" + NumOfRow + "\" />";
+	var newCol3 = document.createElement('td');
+	newCol3.innerHTML = "<input type=\"text\" size=\"25\" name=\"allowed_values_" + NumOfRow + "\" />";
+	var newCol4 = document.createElement('td');
+	newCol4.innerHTML = "<input type=\"checkbox\"  name=\"is_list_" + NumOfRow + "\" />";
+
+	var selectCol = document.createElement('td');
+	var s = "<select id=\"property_dropdown_" + NumOfRow + "\"  name=\"property_type_" + NumOfRow + "\">" + options + "</select>";
+	var optionString = "";
+	var myArray = options.split(',');
+ 
+	for (i=0; i<myArray.length-1; i++) {
+		optionString += "<option>" + myArray[i] + "</option>";
+	}
+	selectCol.innerHTML = "<select id=\"property_dropdown_" + NumOfRow + "\"  name=\"property_type_" + NumOfRow + "\">" + optionString + "</select>";
+
+	newRow.innerHTML = newCol1.innerHTML+newCol2.innerHTML + newCol3.innerHTML;
+	newtable.innerHTML = "<tr>" + "<td>" + NumOfRow + ". " + newCol1.innerHTML + "</td>" + "<td>" + newCol2.innerHTML + "</td>" + "<td>" + selectCol.innerHTML + "</td>" + "<td>" + newCol3.innerHTML + "</td>" + "<td>" + newCol4.innerHTML + "</td></tr>";
+	newDiv.appendChild(newtable);
+
+	// finally append the new div to the main div
+	mainDiv.appendChild(newDiv);
+}
+</script>
+
+<form action="" method="post">
 	<p>$create_class_docu</p>
 	<p>$leave_field_blank</p>
 	<p>$template_name_label <input type="text" size="30" name="template_name"></p>
 	<p>$form_name_label: <input type="text" size="30" name="form_name"></p>
 	<p>$category_name_label <input type="text" size="30" name="category_name"></p>
-	<table>
-	<tr>
-	<th>$property_name_label</th>
-	<th>$field_name_label</th>
-	<th>$type_label</th>
-	<th>$allowed_values_label</th>
-	<th>$list_of_values_label</th>
-	</tr>
+	<div id="addrows">
+                <table>
+		<tr>
+			<th colspan="2">$property_name_label</th>
+			<th>$field_name_label</th>
+			<th>$type_label</th>
+			<th>$allowed_values_label</th>
+			<th>$list_of_values_label</th>
+		</tr>
 
 END;
-		for ( $i = 1; $i <= 25; $i++ ) {
+		for ( $i = 1; $i <= $numStartingRows; $i++ ) {
 			$text .= <<<END
-	<tr>
-	<td>$i. <input type="text" size="25" name="property_name_$i" /></td>
-	<td><input type="text" size="25" name="field_name_$i" /></td>
-	<td>
-	<select id="property_dropdown_$i" name="property_type_$i">
+		<tr>
+			<td>$i.</td>
+			<td><input type="text" size="25" name="property_name_$i" /></td>
+			<td><input type="text" size="25" name="field_name_$i" /></td>
+			<td>
+			<select id="property_dropdown_$i" name="property_type_$i">
 
 END;
+                        $optionsStr ="";                       
 			foreach ( $datatype_labels as $label ) {
-				$text .= "	<option>$label</option>\n";
+				$text .= "				<option>$label</option>\n";                                
+                                $optionsStr .= $label . ",";
 			}
 			$text .= <<<END
-	</select>
-	</td>
-	<td><input type="text" size="25" name="allowed_values_$i" /></td>
-	<td><input type="checkbox" name="is_list_$i" /></td>
+			</select>
+			</td>
+			<td><input type="text" size="25" name="allowed_values_$i" /></td>
+			<td><input type="checkbox" name="is_list_$i" /></td>
 
 END;
 		}
 		$text .= <<<END
-	</tr>
-	</table>
-	<br />
-	<input type="hidden" name="title" value="$special_namespace:CreateClass">
-	<div class="editButtons">
-	<input id="wpSave" type="submit" name="wpSave" value="$create_button_text">
+		</tr>
+		</table>
 	</div>
-	</form>
 
 END;
-		$wgOut->addLink( array(
-			'rel' => 'stylesheet',
-			'type' => 'text/css',
-			'media' => "screen",
-			'href' => $sfgScriptPath . "/skins/SF_main.css"
-		) );
+		$add_another_button = Xml::element( 'input',
+			array(
+				'type' => 'button',
+				'value' => wfMsg( 'sf_formedit_addanother' ),
+				'onclick' => "addRowDynamic('$optionsStr')"
+			)
+		);
+		$text .= Xml::tags( 'p', null, $add_another_button );
+		$text .= Xml::element( 'input',
+			array(
+				'type' => 'hidden',
+				'name' => 'title',
+				'value' => "$special_namespace:CreateClass",
+			)
+		);
+		$text .= Xml::element( 'input',
+			array(
+				'type' => 'submit',
+				'name' => 'save',
+				'value' => $create_button_text
+			)
+		);
+		$text .= "</form>\n";
 		$wgOut->addHTML( $text );
 	}
 }

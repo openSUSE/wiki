@@ -35,7 +35,7 @@ if ( ! defined( 'SMW_VERSION' ) ) {
 
 // Only initialize the extension when all dependencies are present.
 if ( defined( 'Maps_VERSION' ) && defined( 'SMW_VERSION' ) ) {
-	define( 'SM_VERSION', '0.6.4' );
+	define( 'SM_VERSION', '0.6.6' );
 
 	$useExtensionPath = version_compare( $wgVersion, '1.16', '>=' ) && isset( $wgExtensionAssetsPath ) && $wgExtensionAssetsPath;
 	$smgScriptPath 	= ( $useExtensionPath ? $wgExtensionAssetsPath : $wgScriptPath . '/extensions' ) . '/SemanticMaps';	
@@ -67,12 +67,12 @@ if ( defined( 'Maps_VERSION' ) && defined( 'SMW_VERSION' ) ) {
  * @return true
  */
 function smfSetup() {
-	global $wgExtensionCredits, $wgLang, $wgOut, $egMapsServices, $smgScriptPath;
+	global $wgExtensionCredits, $wgLang, $wgOut, $smgScriptPath;
 
 	// Creation of a list of internationalized service names.
 	$services = array();
-	foreach ( array_keys( $egMapsServices ) as $name ) $services[] = wfMsg( 'maps_' . $name );
-	$services_list = $wgLang->listToText( $services );
+	foreach ( MapsMappingServices::getServiceIdentifiers() as $identifier ) $services[] = wfMsg( 'maps_' . $identifier );
+	$servicesList = $wgLang->listToText( $services );
 
 	// This function has been deprecated in 1.16, but needed for earlier versions.
 	// It's present in 1.16 as a stub, but lets check if it exists in case it gets removed at some point.
@@ -80,17 +80,16 @@ function smfSetup() {
 		wfLoadExtensionMessages( 'SemanticMaps' );
 	}
 
-	$wgExtensionCredits['other'][] = array(
+	$wgExtensionCredits[defined( 'SEMANTIC_EXTENSION_TYPE' ) ? 'semantic' : 'other'][] = array(
 		'path' => __FILE__,
 		'name' => wfMsg( 'semanticmaps_name' ),
 		'version' => SM_VERSION,
 		'author' => array(
 			'[http://www.mediawiki.org/wiki/User:Jeroen_De_Dauw Jeroen De Dauw]',
-			'[http://www.mediawiki.org/wiki/User:Yaron_Koren Yaron Koren]',
-			'[http://www.ohloh.net/p/semanticmaps/contributors others]'
+			'[http://www.mediawiki.org/wiki/Extension:Semantic_Maps/Credits others]'
 		),
 		'url' => 'http://www.mediawiki.org/wiki/Extension:Semantic_Maps',
-		'description' => wfMsgExt( 'semanticmaps_desc', 'parsemag', $services_list ),
+		'description' => wfMsgExt( 'semanticmaps_desc', 'parsemag', $servicesList ),
 	);
 
 	return true;
@@ -112,7 +111,7 @@ function smfAddToAdminLinks( &$admin_links_tree ) {
     $smw_docu_row = $displaying_data_section->getRow( 'smw' );
 
     $sm_docu_label = wfMsg( 'adminlinks_documentation', wfMsg( 'semanticmaps_name' ) );
-    $smw_docu_row->addItem( AlItem::newFromExternalLink( "http://www.mediawiki.org/wiki/Extension:Semantic_Maps", $sm_docu_label ) );
+    $smw_docu_row->addItem( AlItem::newFromExternalLink( 'http://mapping.referata.com/wiki/Semantic_Maps', $sm_docu_label ) );
 
     return true;
 }

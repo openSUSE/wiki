@@ -71,10 +71,10 @@ $wgMemCachedServers = array( 0 => '127.0.0.1:11211' );
 $wgMainCacheType      = CACHE_MEMCACHED;
 $wgMessageCacheType = CACHE_ANYTHING;
 $wgParserCacheType = CACHE_MEMCACHED;
-
 $configdate = gmdate( 'YmdHis', @filemtime( __FILE__ ) );
 $wgCacheEpoch = max( $wgCacheEpoch, $configdate );
 $wgEnableSidebarCache = true;
+$wgCacheDirectory = "/srv/www/cache";
 
 ## To enable image uploads, make sure the 'images' directory
 ## is writable, then uncomment this:
@@ -251,7 +251,7 @@ $wgMultiBoilerplatePerNamespace = true;
 require_once("$IP/extensions/HermesNotification/HermesNotify.php");
 
 # Interwiki links management ----------------------------------
-require_once("$IP/extensions/Interwiki/Interwiki.php");
+require_once("$IP/extensions/Interwiki/SpecialInterwiki.php");
 $wgInterwikiMagic=true;
 $wgHideInterlanguageLinks=false;
 $wgGroupPermissions['*']['interwiki'] = false;
@@ -274,7 +274,7 @@ require_once("$IP/extensions/CategoryWatch/CategoryWatch.php");
 //$wgSelectCategoryNamespaces[106] = true;
 //$wgSelectCategoryNamespaces[108] = true;
 
-require_once("$IP/extensions/CrossNamespaceLinks/CrossNamespaceLinks.php");
+require_once("$IP/extensions/CrossNamespaceLinks/SpecialCrossNamespaceLinks.php");
 require_once("$IP/extensions/notitle.php");
 
 // Semantic Maps: 
@@ -295,7 +295,7 @@ $wgOnlyUserEditUserPage = true; /* Set this to true to turn on user page protect
 $wgGroupPermissions['sysop']['editalluserpages'] = true; /* Set this to allow sysops to edit all user pages */
 
 // Multiple Uploads
-require_once("$IP/extensions/MultiUpload/MultiUpload.php");
+require_once("$IP/extensions/MultiUpload/SpecialMultipleUpload.php");
 //Uncomment this to make it the default uploader
 //$wgUploadNavigationUrl = '/index.php?title=Special:MultipleUpload';
 $wgMaxUploadFiles = 5;

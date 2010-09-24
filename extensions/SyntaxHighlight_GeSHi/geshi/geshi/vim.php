@@ -1,4 +1,5 @@
 <?php
+
 /*************************************************************************************
  * vim.php
  * ----------------
@@ -6,7 +7,7 @@
  * Contributors:
  *  - Laurent Peuch (psycojoker@gmail.com)
  * Copyright: (c) 2008 Swaroop C H (http://www.swaroopch.com)
- * Release Version: 1.0.8.7
+ * Release Version: 1.0.8.6
  * Date Started: 2008/10/19
  *
  * Vim scripting language file for GeSHi.
@@ -54,9 +55,7 @@ $language_data = array(
     'LANG_NAME' => 'Vim Script',
     'COMMENT_SINGLE' => array(),
     'COMMENT_REGEXP' => array(
-        1 => "/\s*\"[^\"]*?$/m",
-        //Regular expressions (Ported from perl.php)
-//        2 => "/(?<=[\\s^])(s|tr|y)\\/(?:\\\\.|(?!\n)[^\\/\\\\])+\\/(?:\\\\.|(?!\n)[^\\/\\\\])*\\/[msixpogcde]*(?=[\\s$\\.\\;])|(?<=[\\s^(=])(m|q[qrwx]?)?\\/(?:\\\\.|(?!\n)[^\\/\\\\])+\\/[msixpogc]*(?=[\\s$\\.\\,\\;\\)])/iU",
+        1 => "/^\s*\"[^\"]*?$/m"
         ),
     'COMMENT_MULTI' => array(),
     'CASE_KEYWORDS' => GESHI_CAPS_NO_CHANGE,
@@ -139,7 +138,7 @@ $language_data = array(
             'diffopt', 'digraph', 'dip', 'dir', 'directory', 'display',
             'dlcomma', 'dy', 'ea', 'ead', 'eadirection',
             'eb', 'ed', 'edcompatible', 'ef', 'efm',
-            'ei', 'ek', 'enc', 'encoding', 'endfun', 'endofline',
+            'ei', 'ek', 'enc', 'encoding', 'endofline',
             'eol', 'ep', 'equalalways', 'equalprg', 'errorbells',
             'errorfile', 'errorformat', 'esckeys', 'et',
             'eventignore', 'ex', 'expandtab', 'exrc', 'fcl',
@@ -376,8 +375,7 @@ $language_data = array(
             0 => 'color: #000000;'
             ),
         'COMMENTS' => array(
-            1 => 'color: #adadad; font-style: italic;',
-//            2 => 'color: #009966; font-style: italic;'
+            1 => 'color: #adadad; font-style: italic;'
             ),
         'ESCAPE_CHAR' => array(
             0 => ''

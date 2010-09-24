@@ -33,7 +33,7 @@ if ( ! defined( 'Validator_VERSION' ) ) {
 	echo '<b>Warning:</b> You need to have <a href="http://www.mediawiki.org/wiki/Extension:Validator">Validator</a> installed in order to use <a href="http://www.mediawiki.org/wiki/Extension:Maps">Maps</a>.';
 }
 else {
-	define( 'Maps_VERSION', '0.6.4' );
+	define( 'Maps_VERSION', '0.6.6' );
 
 	// The different coordinate notations.
 	define( 'Maps_COORDS_FLOAT', 'float' );
@@ -59,7 +59,6 @@ else {
 	$egMapsStyleVersion = $wgStyleVersion . '-' . Maps_VERSION;
 
 	$egMapsFeatures = array();
-	$egMapsServices = array();
 
 	// Include the settings file.
 	require_once $egMapsDir . 'Maps_Settings.php';
@@ -74,6 +73,8 @@ else {
 	$wgExtensionFunctions[] = 'efMapsSetup';
 
 	$wgHooks['AdminLinks'][] = 'efMapsAddToAdminLinks';
+	
+	$wgHooks['UnitTestsList'][] = 'efMapsUnitTests';
 }
 
 /**
@@ -85,10 +86,10 @@ else {
  */
 function efMapsSetup() {
 	global $wgExtensionCredits, $wgLang, $wgAutoloadClasses;
-	global $egMapsDefaultService, $egMapsAvailableServices, $egMapsServices;
+	global $egMapsDefaultService, $egMapsAvailableServices;
 	global $egMapsDir, $egMapsUseMinJs, $egMapsJsExt;
 
-	// Autoload the includes/ classes.
+	// Autoload the "includes/" classes.
 	$wgAutoloadClasses['MapsMapper'] 				= $egMapsDir . 'Includes/Maps_Mapper.php';
 	$wgAutoloadClasses['MapsCoordinateParser'] 		= $egMapsDir . 'Includes/Maps_CoordinateParser.php';
 	$wgAutoloadClasses['MapsDistanceParser'] 		= $egMapsDir . 'Includes/Maps_DistanceParser.php';
@@ -99,27 +100,22 @@ function efMapsSetup() {
 		wfLoadExtensionMessages( 'Maps' );
 	}
 
-	// Load the service/ classes and interfaces.
-	require_once $egMapsDir . 'Services/Maps_iMappingService.php';
+	// Load the "service/" classes and interfaces.
+	require_once $egMapsDir . 'Services/iMappingService.php';
+	$wgAutoloadClasses['MapsMappingServices'] = $egMapsDir . 'Services/Maps_MappingServices.php';
 	$wgAutoloadClasses['MapsMappingService'] = $egMapsDir . 'Services/Maps_MappingService.php';
 	
 	wfRunHooks( 'MappingServiceLoad' );
 	
+	// Load the "feature/" classes and interfaces.
+	require_once $egMapsDir . 'Features/iMappingFeature.php';
+	
 	wfRunHooks( 'MappingFeatureLoad' );
-
-	// Remove all hooked in services that should not be available.
-	foreach ( $egMapsServices as $service => $data ) {
-		if ( !in_array( $service, $egMapsAvailableServices ) ) unset( $egMapsServices[$service] );
-	}
-	$egMapsAvailableServices = array_keys( $egMapsServices );
-
-	// Enure that the default service is one of the enabled ones.
-	$egMapsDefaultService = in_array( $egMapsDefaultService, $egMapsAvailableServices ) ? $egMapsDefaultService : $egMapsAvailableServices[0];
 
 	// Creation of a list of internationalized service names.
 	$services = array();
-	foreach ( array_keys( $egMapsServices ) as $name ) $services[] = wfMsg( 'maps_' . $name );
-	$services_list = $wgLang->listToText( $services );
+	foreach ( MapsMappingServices::getServiceIdentifiers() as $identifier ) $services[] = wfMsg( 'maps_' . $identifier );
+	$servicesList = $wgLang->listToText( $services );
 
 	$wgExtensionCredits['parserhook'][] = array(
 		'path' => __FILE__,
@@ -127,11 +123,10 @@ function efMapsSetup() {
 		'version' => Maps_VERSION,
 		'author' => array(
 			'[http://www.mediawiki.org/wiki/User:Jeroen_De_Dauw Jeroen De Dauw]',
-			'[http://www.mediawiki.org/wiki/User:Yaron_Koren Yaron Koren]',
-			'[http://www.ohloh.net/p/maps/contributors others]'
+			'[http://www.mediawiki.org/wiki/Extension:Maps/Credits others]'
 		),
 		'url' => 'http://www.mediawiki.org/wiki/Extension:Maps',
-		'description' => wfMsgExt( 'maps_desc', 'parsemag', $services_list ),
+		'description' => wfMsgExt( 'maps_desc', 'parsemag', $servicesList ),
 	);
 
 	MapsMapper::initialize();
@@ -156,7 +151,20 @@ function efMapsAddToAdminLinks( &$admin_links_tree ) {
     $smw_docu_row = $displaying_data_section->getRow( 'smw' );
 
     $maps_docu_label = wfMsg( 'adminlinks_documentation', wfMsg( 'maps_name' ) );
-    $smw_docu_row->addItem( AlItem::newFromExternalLink( 'http://www.mediawiki.org/wiki/Extension:Maps', $maps_docu_label ) );
+    $smw_docu_row->addItem( AlItem::newFromExternalLink( 'http://mapping.referata.com/wiki/Maps', $maps_docu_label ) );
 
     return true;
+}
+
+/**
+ * Hook to add PHPUnit test cases.
+ * 
+ * @since 0.6.5
+ * 
+ * @param array $files
+ */
+function efMapsUnitTests( array &$files ) {
+	$testDir = dirname( __FILE__ ) . '/test/';
+	//$files[] = $testDir . 'MapsCoordinateParserTest.php';
+	return true;
 }

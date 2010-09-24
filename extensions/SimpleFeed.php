@@ -74,8 +74,6 @@ function parseFeed($input, $args, &$parser)
 
 	$feed = new SimplePie();
 	$feed->set_cache_location($simplepie_cache_folder);
-        $feed->set_autodiscovery_cache_duration(1800);
-        $feed->set_cache_duration(1800);
 
 	$feed->set_feed_url($args['url']);
 

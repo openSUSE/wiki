@@ -26,13 +26,13 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 class MapsGoogleMaps extends MapsMappingService {
 	
 	/**
-	 * Constructor
+	 * Constructor.
 	 * 
-	 * @since 0.6.3
+	 * @since 0.6.6
 	 */
-	function __construct() {
+	function __construct( $serviceName ) {
 		parent::__construct(
-			'googlemaps2',
+			$serviceName,
 			array( 'googlemaps', 'google', 'googlemap', 'gmap', 'gmaps' )
 		);
 	}
@@ -43,7 +43,7 @@ class MapsGoogleMaps extends MapsMappingService {
 	 * @since 0.5
 	 */
 	protected function initParameterInfo( array &$parameters ) {
-		global $egMapsServices, $egMapsGoogleMapsType, $egMapsGoogleMapsTypes, $egMapsGoogleAutozoom, $egMapsGMapControls;
+		global $egMapsGoogleMapsType, $egMapsGoogleMapsTypes, $egMapsGoogleAutozoom, $egMapsGMapControls;
 		
 		Validator::addOutputFormat( 'gmaptype', array( __CLASS__, 'setGMapType' ) );
 		Validator::addOutputFormat( 'gmaptypes', array( __CLASS__, 'setGMapTypes' ) );
@@ -93,8 +93,61 @@ class MapsGoogleMaps extends MapsMappingService {
 		
 		$parameters['zoom']['criteria']['in_range'] = array( 0, 20 );
 	}
+	
+	/**
+	 * @see iMappingService::getDefaultZoom
+	 * 
+	 * @since 0.6.5
+	 */
+	public function getDefaultZoom() {
+		global $egMapsGoogleMapsZoom;
+		return $egMapsGoogleMapsZoom;
+	}
 
-	// http://code.google.com/apis/maps/documentation/reference.html#GMapType.G_NORMAL_MAP
+	/**
+	 * @see MapsMappingService::getMapId
+	 * 
+	 * @since 0.6.5
+	 */
+	public function getMapId( $increment = true ) {
+		global $egMapsGoogleMapsPrefix, $egGoogleMapsOnThisPage;
+		
+		if ( $increment ) {
+			$egGoogleMapsOnThisPage++;
+		}
+		
+		return $egMapsGoogleMapsPrefix . '_' . $egGoogleMapsOnThisPage;
+	}
+
+	/**
+	 * @see MapsMappingService::createMarkersJs
+	 * 
+	 * @since 0.6.5
+	 */
+	public function createMarkersJs( array $markers ) {
+		$markerItems = array();
+
+		foreach ( $markers as $marker ) {
+			$markerItems[] = Xml::encodeJsVar( (object)array(
+				'lat' => $marker[0],
+				'lon' => $marker[1],
+				'title' => $marker[2],
+				'label' =>$marker[3],
+				'icon' => $marker[4]
+			) );
+		}
+		
+		// Create a string containing the marker JS.
+		return '[' . implode( ',', $markerItems ) . ']';
+	}
+	
+	/**
+	 * A list of mappings between supported map type values and their corresponding JS variable.
+	 * 
+	 * http://code.google.com/apis/maps/documentation/reference.html#GMapType.G_NORMAL_MAP
+	 * 
+	 * @var array
+	 */ 
 	protected static $mapTypes = array(
 		'normal' => 'G_NORMAL_MAP',
 		'satellite' => 'G_SATELLITE_MAP',
@@ -110,6 +163,11 @@ class MapsGoogleMaps extends MapsMappingService {
 		'mars-infrared' => 'G_MARS_INFRARED_MAP'
 	);
 
+	/**
+	 * A list of supported overlays.
+	 * 
+	 * @var array
+	 */
 	protected static $overlayData = array(
 		'photos' => '0',
 		'videos' => '1',
@@ -135,8 +193,21 @@ class MapsGoogleMaps extends MapsMappingService {
 	 */
 	public static function getControlNames() {
 		return array(
-			'auto', 'large', 'small', 'large-original', 'small-original', 'zoom', 'type', 'type-menu',
-			'overlays', 'overview', 'overview-map', 'scale', 'nav-label', 'nav', 'searchbar'
+			'auto',
+			'large',
+			'small',
+			'large-original',
+			'small-original',
+			'zoom',
+			'type',
+			'type-menu',
+			'overlays',
+			'overview',
+			'overview-map',
+			'scale',
+			'nav-label',
+			'nav',
+			'searchbar'
 		);
 	}
 
@@ -171,7 +242,7 @@ class MapsGoogleMaps extends MapsMappingService {
 	 * @return string
 	 */
 	public static function setGMapType( &$type, $name, array $parameters ) {
-		$type = self::$mapTypes[ $type ];
+		$type = self::$mapTypes[$type];
 	}
 	
 	/**
@@ -234,8 +305,8 @@ class MapsGoogleMaps extends MapsMappingService {
 	public static function validateGoogleMapsKey() {
 		global $egGoogleMapsKey, $wgGoogleMapsKey;
 		
-		if ( isset( $wgGoogleMapsKey ) ) {
-			if ( strlen( trim( $egGoogleMapsKey ) ) < 1 ) $egGoogleMapsKey = $wgGoogleMapsKey;
+		if ( isset( $wgGoogleMapsKey ) && trim( $egGoogleMapsKey ) == '' ) {
+			$egGoogleMapsKey = $wgGoogleMapsKey;
 		}
 	}
 	

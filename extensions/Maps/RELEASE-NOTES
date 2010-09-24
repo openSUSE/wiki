@@ -3,9 +3,57 @@ Documentation and examples: http://mapping.referata.com/wiki/Maps
 
 == Maps change log ==
 This change log contains a list of completed to-do's (new features, bug fixes, refactoring) for every
-version of Maps. You can find the most upt-do-date version at
+version of Maps. You can find the most up-do-date version at
 http://mapping.referata.com/wiki/Maps/Version_history#Maps_change_log
 
+
+=== Maps 0.6.6 ===
+(2010-08-26)
+
+==== New features ====
+
+* Support for geocoding over proxies.
+
+* Added $egMapsInternatDirectionLabels settings, allowing users to disable internationalization of direction labels.
+
+==== Refactoring ====
+
+* Added MapsMappingServices, which serves as factory for MapsPappingService objects and does away with all the globals previously needed for this.
+
+* Removed the http/curl request code from the geocoder classes - now using Http:get() instead.
+
+==== Bug fixes ====
+
+* Fixed issue that caused pop-up contents to render incorrectly when it contained wiki markup.
+
+* Fixed coordinate parsing bug (direction labels did not get recognized) that was introduced in 0.6.4.
+
+* Fixed spacing issues with several parser functions.
+
+=== Maps 0.6.5 ===
+(2010-07-27)
+
+==== Refactoring ====
+
+* Added unit tests for the coordinates parser.
+
+* Created iMappingFeature interface, from which iMapParserFunctions inherits.
+
+* Moved map id creation to the mapping service class for all features.
+
+* Moved marker JavaScript creation for display_points to the mapping service class for all features. 
+
+* Moved default zoom level access method to the mapping service class for all features.
+
+* Improved the way marker data is turned into JavaScript variables.
+
+* Improved coordinate recognition regexes. 
+
+==== Bug fixes ====
+
+* Fixed several small coordinate parsing and formatting issues.
+
+* Fixed a few small distance parsing issues.
 
 === Maps 0.6.4 ===
 (2010-07-08)
@@ -29,6 +77,8 @@ http://mapping.referata.com/wiki/Maps/Version_history#Maps_change_log
 * Fixed bug in the OpenLayers service causing it to display badly in Chrome.
 
 * Fixed issue with with and height validation for % values, also causing backward compatibility problems with pre 0.6 setting definitions.
+
+* Fixed several small bugs in the coordinate parser.
 
 === Maps 0.6.3 ===
 (2010-06-20)

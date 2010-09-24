@@ -31,11 +31,9 @@ class InputBox {
 	private $mID = '';
 	private $mInline = false;
 	private $mPrefix = '';
-        private $mBugsearch_dist = 'openSUSE 11.3';
-        private $mBugsearch_word;
-        private $mBugsearch_state = '__open__';
-
-
+	private $mBugsearch_dist = 'openSUSE 11.3';
+	private $mBugsearch_word;
+	private $mBugsearch_state = '__open__';
 
 	/* Functions */
 
@@ -60,7 +58,7 @@ class InputBox {
 				return $this->getSearchForm('fulltext');
 			case 'search2':
 				return $this->getSearchForm2();
-                        case 'bugzilla_search':
+                       case 'bugzilla_search':
                                 return $this->getBugSearchForm();
 			default:
 				return Xml::tags( 'div', null,
@@ -102,7 +100,7 @@ class InputBox {
 			array(
 				'name' => 'searchbox',
 				'id' => 'searchbox',
-#				'class' => 'searchbox',
+				'class' => 'searchbox',
 				'action' => SpecialPage::getTitleFor( 'Search' )->escapeLocalUrl(),
 			)
 		);
@@ -294,15 +292,16 @@ class InputBox {
 				'style' => 'background-color:' . $this->mBGColor
 			)
 		);
-		$htmlOut .= Xml::openElement( 'form',
-			array(
-				'name' => 'createbox',
-				'id' => 'createbox',
-				'class' => 'createbox',
-				'action' => $wgScript,
-				'method' => 'get'
-			)
+		$createBoxParams = array(
+			'name' => 'createbox',
+			'class' => 'createbox',
+			'action' => $wgScript,
+			'method' => 'get'
 		);
+		if( isset( $this->mId ) ) {
+			$createBoxParams['id'] = Sanitizer::escapeId( $this->mId );
+		}
+		$htmlOut .= Xml::openElement( 'form', $createBoxParams );
 		$htmlOut .= Xml::openElement( 'input',
 			array(
 				'type' => 'hidden',
@@ -388,15 +387,16 @@ class InputBox {
 				'style' => 'background-color:' . $this->mBGColor
 			)
 		);
-		$htmlOut .= Xml::openElement( 'form',
-			array(
-				'name' => 'commentbox',
-				'id' => 'commentbox',
-				'class' => 'commentbox',
-				'action' => $wgScript,
-				'method' => 'get'
-			)
+		$commentFormParams = array(
+			'name' => 'commentbox',
+			'class' => 'commentbox',
+			'action' => $wgScript,
+			'method' => 'get'
 		);
+		if( isset( $this->mId ) ) {
+			$commentFormParams['id'] = Sanitizer::escapeId( $this->mId );
+		}
+		$htmlOut .= Xml::openElement( 'form', $commentFormParams );
 		$htmlOut .= Xml::openElement( 'input',
 			array(
 				'type' => 'hidden',
@@ -468,7 +468,7 @@ class InputBox {
                                 $this->mButtonLabel = wfMsgHtml( "postcomment" );
                 }
 
-		$htmlOut .= Xml::openElement( 'form',
+                $htmlOut .= Xml::openElement( 'form',
                         array(
                                 'name' => 'bug_search_box',
                                 'class' => 'bug_search_box',
@@ -555,9 +555,9 @@ class InputBox {
 			'id' => 'mID',
 			'inline' => 'mInline',
 			'prefix' => 'mPrefix',
-                        'bugsearch_dist' => 'mBugsearch_dist',
-                        'bugsearch_word' => 'mBugsearch_word',
-                        'bugsearch_state' => 'mBugsearch_state',
+			'bugsearch_dist' => 'mBugsearch_dist',
+			'bugsearch_word' => 'mBugsearch_word',
+			'bugsearch_state' => 'mBugsearch_state',
 		);
 		foreach ( $options as $name => $var ) {
 			if ( isset( $values[$name] ) ) {
@@ -571,7 +571,28 @@ class InputBox {
 		// Validate the width; make sure it's a valid, positive integer
 		$this->mWidth = intval( $this->mWidth <= 0 ? 50 : $this->mWidth );
 
+		// Validate background color
+		if ( !$this->isValidColor( $this->mBGColor ) ) {
+			$this->mBGColor = 'transparent';
+		}
 		wfProfileOut( __METHOD__ );
 	}
 
+	/**
+	 * Do a security check on the bgcolor parameter
+	 */
+	public function isValidColor( $color ) {
+		$regex = <<<REGEX
+			/^ (
+				[a-zA-Z]* |       # color names
+				\# [0-9a-f]{3} |  # short hexadecimal
+				\# [0-9a-f]{6} |  # long hexadecimal
+				rgb \s* \( \s* (
+					\d+ \s* , \s* \d+ \s* , \s* \d+ |    # rgb integer
+					[0-9.]+% \s* , \s* [0-9.]+% \s* , \s* [0-9.]+%   # rgb percent
+				) \s* \)
+			) $ /xi
+REGEX;
+		return (bool) preg_match( $regex, $color );
+	}
 }

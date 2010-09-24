@@ -417,7 +417,7 @@ END;
 END;
 		}
 		$output .= <<<END
-		parent.fb.end();
+		parent.jQuery.fancybox.close();
 	</script>
 
 END;
@@ -955,7 +955,7 @@ class SFUploadForm extends HTMLForm {
 	$wgOut->disable();
 	$sk = $wgUser->getSkin();
 	$sk->initPage( $wgOut ); // need to call this to set skin name correctly
-	$wgTitle = Title::makeTitleSafe( NS_SPECIAL, 'Upload' );
+	$wgTitle = SpecialPage::getTitleFor( 'Upload' );
 	$skin_user_js = $sk->generateUserJs();
 
 	$user_js = <<<END
@@ -1046,10 +1046,11 @@ print $text;
 }
 
 /**
- * A form field that contains a radio box in the label
+ * A form field that contains a radio box in the label.
  */
 class SFUploadSourceField extends HTMLTextField {
-	function getLabelHtml() {
+	
+	function getLabelHtml( $cellAttributes = array() ) {
 		$id = "wpSourceType{$this->mParams['upload-type']}";
 		$label = Html::rawElement( 'label', array( 'for' => $id ), $this->mLabel  );
 
@@ -1060,6 +1061,7 @@ class SFUploadSourceField extends HTMLTextField {
 				'id' => $id,
 				'value' => $this->mParams['upload-type'],
 			);
+			
 			if ( !empty( $this->mParams['checked'] ) )
 				$attribs['checked'] = 'checked';
 			$label .= Html::element( 'input', $attribs );
@@ -1067,10 +1069,11 @@ class SFUploadSourceField extends HTMLTextField {
 
 		return Html::rawElement( 'td', array( 'class' => 'mw-label' ), $label );
 	}
+	
 	function getSize() {
 		return isset( $this->mParams['size'] )
 			? $this->mParams['size']
 			: 60;
 	}
+	
 }
-

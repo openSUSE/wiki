@@ -25,9 +25,13 @@ $aliases['en'] = array(
 	'WantedProperties' => array( 'WantedProperties' ),
 );
 
-/** Arabic (العربية)
- * @author Meno25
- */
+/** Afrikaans (Afrikaans) */
+$aliases['af'] = array(
+	'Ask' => array( 'Vra' ),
+	'Types' => array( 'Tipes' ),
+);
+
+/** Arabic (العربية) */
 $aliases['ar'] = array(
 	'Ask' => array( 'سؤال' ),
 	'Browse' => array( 'تصفح' ),
@@ -43,36 +47,43 @@ $aliases['ar'] = array(
 	'WantedProperties' => array( 'خصائص_مطلوبة' ),
 );
 
-/** Egyptian Spoken Arabic (مصرى)
- * @author Meno25
- */
+/** Egyptian Spoken Arabic (مصرى) */
 $aliases['arz'] = array(
 	'Ask' => array( 'سؤال' ),
-	'Browse' => array( 'تصفح' ),
-	'ExportRDF' => array( 'تصدير_آر_دى_إف' ),
-	'PageProperty' => array( 'خاصية_الصفحة' ),
-	'Properties' => array( 'خصائص' ),
-	'SMWAdmin' => array( 'إدارى_سمو' ),
-	'SearchByProperty' => array( 'بحث_بواسطة_الخاصية' ),
-	'SemanticStatistics' => array( 'إحصاءات_سيمانتيك' ),
-	'Types' => array( 'أنواع' ),
-	'URIResolver' => array( 'محلل_يو_آر_آى' ),
-	'UnusedProperties' => array( 'خصائص_غير_مستخدمة' ),
-	'WantedProperties' => array( 'خصائص_مطلوبة' ),
+	'Browse' => array( 'براوز' ),
+	'ExportRDF' => array( 'تصدير_RDF' ),
+	'PageProperty' => array( 'خاصية_الصفحه' ),
+	'Properties' => array( 'خصايص' ),
+	'SMWAdmin' => array( 'ادارى_SMW' ),
+	'SearchByProperty' => array( 'دوّر_بالخاصيه' ),
+	'SemanticStatistics' => array( 'إحصائيات_Semantic' ),
+	'Types' => array( 'انواع' ),
+	'URIResolver' => array( 'URI_Resolver' ),
+	'UnusedProperties' => array( 'خصايص_مش_مستعمله' ),
+	'WantedProperties' => array( 'خصايص_مطلوبه' ),
 );
 
 /** Breton (Brezhoneg) */
 $aliases['br'] = array(
 	'Ask' => array( 'Goulenn' ),
 	'Browse' => array( 'Furchal' ),
+	'ExportRDF' => array( 'EzorzhiañRDF' ),
+	'PageProperty' => array( 'PerzhioùPajenn' ),
 	'Properties' => array( 'Perzhioù' ),
 	'Types' => array( 'Seurtoù' ),
+);
+
+/** Bosnian (Bosanski) */
+$aliases['bs'] = array(
+	'Ask' => array( 'Upit' ),
+	'Browse' => array( 'Pregledanje' ),
+	'ExportRDF' => array( 'IzvozRDF' ),
+	'Properties' => array( 'Svojstva' ),
 );
 
 /** German (Deutsch) */
 $aliases['de'] = array(
 	'Ask' => array( 'Semantische Suche' ),
-	'Browse' => array( 'Browse' ),
 	'ExportRDF' => array( 'Exportiere RDF' ),
 	'PageProperty' => array( 'Seitenattribut' ),
 	'Properties' => array( 'Attribute' ),
@@ -126,7 +137,6 @@ $aliases['gl'] = array(
 /** Swiss German (Alemannisch) */
 $aliases['gsw'] = array(
 	'Ask' => array( 'Semantischi Suech' ),
-	'Browse' => array( 'Browse' ),
 	'ExportRDF' => array( 'Exportier ADF' ),
 	'PageProperty' => array( 'Syteattribut' ),
 	'Properties' => array( 'Attribut' ),
@@ -180,6 +190,22 @@ $aliases['ia'] = array(
 	'WantedProperties' => array( 'Proprietates dsesirate' ),
 );
 
+/** Indonesian (Bahasa Indonesia) */
+$aliases['id'] = array(
+	'Ask' => array( 'Tanya' ),
+	'Browse' => array( 'Jelajahi' ),
+	'ExportRDF' => array( 'EksporRDF' ),
+	'PageProperty' => array( 'PropertiHalaman' ),
+	'Properties' => array( 'Properti' ),
+	'SMWAdmin' => array( 'AdminSMW' ),
+	'SearchByProperty' => array( 'PencarianProperti' ),
+	'SemanticStatistics' => array( 'StatistikSemantik' ),
+	'Types' => array( 'Tipe' ),
+	'URIResolver' => array( 'PenguraiURI' ),
+	'UnusedProperties' => array( 'PropertiTakDigunakan' ),
+	'WantedProperties' => array( 'PropertiDiinginkan' ),
+);
+
 /** Italian (Italiano) */
 $aliases['it'] = array(
 	'Ask' => array( 'Chiedi' ),
@@ -217,7 +243,7 @@ $aliases['km'] = array(
 	'Types' => array( 'ប្រភេទ' ),
 );
 
-/** Ripoarisch (Ripoarisch) */
+/** Colognian (Ripoarisch) */
 $aliases['ksh'] = array(
 	'Ask' => array( 'Froore' ),
 	'Browse' => array( 'Bläddere' ),
@@ -247,7 +273,7 @@ $aliases['lb'] = array(
 	'SearchByProperty' => array( 'No Eegeschaft sichen' ),
 	'SemanticStatistics' => array( 'Semantesch Statistiken' ),
 	'Types' => array( 'Datentypen' ),
-	'UnusedProperties' => array( 'Netbenotzen Eegeschaften' ),
+	'UnusedProperties' => array( 'Netbenotzten Eegeschaften' ),
 	'WantedProperties' => array( 'Gewënschten Eegeschaften' ),
 );
 
@@ -266,6 +292,29 @@ $aliases['mk'] = array(
 	'Types' => array( 'Типови' ),
 	'UnusedProperties' => array( 'НекористениСвојства' ),
 	'WantedProperties' => array( 'БараниСвојства' ),
+);
+
+/** Malayalam (മലയാളം) */
+$aliases['ml'] = array(
+	'Ask' => array( 'ചോദിക്കുക' ),
+	'Browse' => array( 'ബ്രൗസ്' ),
+	'Types' => array( 'തരങ്ങൾ' ),
+);
+
+/** Marathi (मराठी) */
+$aliases['mr'] = array(
+	'Ask' => array( 'विचारा' ),
+	'Browse' => array( 'न्याहाळा' ),
+	'ExportRDF' => array( 'आरडीएफनिर्यात' ),
+	'PageProperty' => array( 'पानवैशिष्ट्ये' ),
+	'Properties' => array( 'वैशिष्ट्ये' ),
+	'SMWAdmin' => array( 'एसएमडब्ल्यूप्रचालक' ),
+	'SearchByProperty' => array( 'वैशिष्ट्येनुसारशोध' ),
+	'SemanticStatistics' => array( 'सिमॅंटीकसांख्यिकी' ),
+	'Types' => array( 'प्रकार' ),
+	'URIResolver' => array( 'यूआरायरिझॉल्व्हर' ),
+	'UnusedProperties' => array( 'नवापरलेलीवैशिष्ट्ये' ),
+	'WantedProperties' => array( 'हवीअसलेलीवैशिष्ट्ये' ),
 );
 
 /** Maltese (Malti) */
@@ -304,9 +353,11 @@ $aliases['nl'] = array(
 /** Norwegian (bokmål)‬ (‪Norsk (bokmål)‬) */
 $aliases['no'] = array(
 	'Ask' => array( 'Spør' ),
+	'Browse' => array( 'Se gjennom' ),
 	'ExportRDF' => array( 'Eksporter RDF' ),
 	'PageProperty' => array( 'Sideegenskaper' ),
 	'Properties' => array( 'Egenskaper' ),
+	'SMWAdmin' => array( 'SMW-administrasjon' ),
 	'SearchByProperty' => array( 'Søk etter egenskap' ),
 	'SemanticStatistics' => array( 'Semantisk statistikk' ),
 	'Types' => array( 'Typer' ),
@@ -342,10 +393,25 @@ $aliases['pl'] = array(
 /** Pashto (پښتو) */
 $aliases['ps'] = array(
 	'Ask' => array( 'پوښتل' ),
+	'Browse' => array( 'سپړل' ),
 	'PageProperty' => array( 'د مخ ځانتياوې' ),
 	'Properties' => array( 'ځانتياوې' ),
 	'Types' => array( 'ډولونه' ),
 	'UnusedProperties' => array( 'ناکارېدلې ځانتياوې' ),
+);
+
+/** Portuguese (Português) */
+$aliases['pt'] = array(
+	'Ask' => array( 'Pedir' ),
+	'Browse' => array( 'Navegar' ),
+	'ExportRDF' => array( 'Exportar RDF' ),
+	'PageProperty' => array( 'Propriedade de página' ),
+	'Properties' => array( 'Propriedades' ),
+	'SearchByProperty' => array( 'Pesquisar propriedade' ),
+	'SemanticStatistics' => array( 'Estatísticas de semântica' ),
+	'Types' => array( 'Tipos' ),
+	'UnusedProperties' => array( 'Propriedades não utilizadas' ),
+	'WantedProperties' => array( 'Propriedades desejadas' ),
 );
 
 /** Romanian (Română) */
@@ -381,6 +447,11 @@ $aliases['sw'] = array(
 	'Types' => array( 'Aina' ),
 );
 
+/** Telugu (తెలుగు) */
+$aliases['te'] = array(
+	'Ask' => array( 'అడుగు' ),
+);
+
 /** Tagalog (Tagalog) */
 $aliases['tl'] = array(
 	'Ask' => array( 'Magtanong' ),
@@ -395,6 +466,22 @@ $aliases['tl'] = array(
 	'URIResolver' => array( 'Tagapaglutas ng URI' ),
 	'UnusedProperties' => array( 'Mga pag-aaring hindi ginagamit' ),
 	'WantedProperties' => array( 'Mga pag-aaring ninanais' ),
+);
+
+/** Turkish (Türkçe) */
+$aliases['tr'] = array(
+	'Ask' => array( 'Sor' ),
+	'Browse' => array( 'Gezin' ),
+	'ExportRDF' => array( 'RDFAktar' ),
+	'PageProperty' => array( 'SayfaÖzelliği' ),
+	'Properties' => array( 'Özellikler' ),
+	'SMWAdmin' => array( 'SMWHizmetlisi' ),
+	'SearchByProperty' => array( 'ÖzelliğeGöreAra' ),
+	'SemanticStatistics' => array( 'Anlamİstatistikleri' ),
+	'Types' => array( 'Türler', 'Tipler' ),
+	'URIResolver' => array( 'URIÇözücü' ),
+	'UnusedProperties' => array( 'KullanılmayanÖzellikler' ),
+	'WantedProperties' => array( 'İstenenÖzellikler' ),
 );
 
 /** Vèneto (Vèneto) */

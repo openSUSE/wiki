@@ -134,7 +134,12 @@ function ajaxFormPreviewRun(btn){
 
 	    if (aj2.readyState != 4) return;
 
-	    htm = aj2.responseText.replace(/&gt;/g,'>').replace(/&lt;/g,'<').replace(/&quot;/g,'"').replace(/&amp;/g,'&').replace(/&apos;/g,"'");
+	    htm = aj2.responseText.replace(/&gt;/g,'>')
+			.replace(/&lt;/g,'<')
+			.replace(/&quot;/g,'"')
+			.replace(/&amp;/g,'&')
+			.replace(/&apos;/g,"'")
+			.replace("</body>", "<span id='SF_PREVIEW_EOD'/></body>");
 
 	    ifr = document.createElement('iframe');
 	    ifr.onload="alert('load')";
@@ -164,17 +169,17 @@ function ajaxFormPreviewRun(btn){
 
 	    doc.open();
 	    doc.write(htm);
-	    doc.close();        
+	    doc.close();
  
 	    interval=setInterval(function(){
+
+			if ( ! doc.getElementById("SF_PREVIEW_EOD") ) return;
 
 		    var visible = null;
 
 		    visible = doc.getElementById("wikiPreview");
 
-                    if (!visible) return;
-
-                    clearInterval(interval);
+            clearInterval(interval);
 
 		    var currentfr=document.getElementById('ifrPreview');
 
@@ -214,8 +219,10 @@ function ajaxFormPreviewRun(btn){
 
 			    visible = visible.parentNode;
 			}
-			
-			currentfr.style.height = " " + doc.body.scrollHeight + "px";
+
+			doc.getElementById('content').style.background = "none white";
+
+			currentfr.style.height = " " + vish + "px";
 
 			window.scrollTo(currentfr.offsetLeft, currentfr.offsetTop);
 			document.body.style.cursor = '';

@@ -52,6 +52,9 @@ $messages = array(
 'mytalk'     => 'Leqephe la ka la moqoqo',
 'navigation' => 'Eya ho',
 
+# Cologne Blue skin
+'faq' => 'Dipotso-mehla',
+
 'returnto'       => 'Kgutlela ho $1.',
 'tagline'        => 'E tswa ho {{SITENAME}}',
 'search'         => 'Fuputsa',
@@ -66,7 +69,6 @@ $messages = array(
 'jumptosearch'   => 'phuputso',
 
 # All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
-'faq'                  => 'Dipotso-mehla',
 'mainpage'             => 'Leqephe la pele',
 'mainpage-description' => 'Leqephe la pele',
 'portal'               => 'Potjho e kopano',
@@ -86,7 +88,7 @@ $messages = array(
 'remembermypassword' => 'O nkgopole',
 'nologinlink'        => 'Ingodisetse',
 'createaccount'      => 'Ingodisetse',
-'gotaccount'         => 'O se o ingodisitse? $1.',
+'gotaccount'         => "O se o ingodisitse? '''$1'''.",
 'createaccountmail'  => 'ka e-mail',
 'badretype'          => 'Mapetjo a mabedi o a ngotseng ha a tshwane.',
 'mailmypassword'     => 'Nthomele password ya ka ka email',

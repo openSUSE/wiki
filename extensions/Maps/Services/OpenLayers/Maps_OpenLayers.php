@@ -26,13 +26,13 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 class MapsOpenLayers extends MapsMappingService {
 	
 	/**
-	 * Constructor
+	 * Constructor.
 	 * 
-	 * @since 0.6.3
+	 * @since 0.6.6
 	 */	
-	function __construct() {
+	function __construct( $serviceName ) {
 		parent::__construct(
-			'openlayers',
+			$serviceName,
 			array( 'layers', 'openlayer' )
 		);
 		
@@ -46,7 +46,7 @@ class MapsOpenLayers extends MapsMappingService {
 	 * @since 0.5
 	 */	
 	protected function initParameterInfo( array &$parameters ) {
-		global $egMapsServices, $egMapsOLLayers, $egMapsOLControls, $egMapsOpenLayersZoom;
+		global $egMapsOLLayers, $egMapsOLControls, $egMapsOpenLayersZoom;
 		
 		Validator::addOutputFormat( 'olgroups', array( __CLASS__, 'unpackLayerGroups' ) );
 		
@@ -75,6 +75,53 @@ class MapsOpenLayers extends MapsMappingService {
 									
 		$parameters['zoom']['criteria']['in_range'] = array( 0, 19 );
 	}
+	
+	/**
+	 * @see iMappingService::getDefaultZoom
+	 * 
+	 * @since 0.6.5
+	 */	
+	public function getDefaultZoom() {
+		global $egMapsOpenLayersZoom;
+		return $egMapsOpenLayersZoom;
+	}		
+	
+	/**
+	 * @see MapsMappingService::getMapId
+	 * 
+	 * @since 0.6.5
+	 */
+	public function getMapId( $increment = true ) {
+		global $egMapsOpenLayersPrefix, $egOpenLayersOnThisPage;
+		
+		if ( $increment ) {
+			$egOpenLayersOnThisPage++;
+		}
+		
+		return $egMapsOpenLayersPrefix . '_' . $egOpenLayersOnThisPage;
+	}		
+	
+	/**
+	 * @see MapsMappingService::createMarkersJs
+	 * 
+	 * @since 0.6.5
+	 */
+	public function createMarkersJs( array $markers ) {
+		$markerItems = array();
+		
+		foreach ( $markers as $marker ) {
+			$markerItems[] = Xml::encodeJsVar( (object)array(
+				'lat' => $marker[0],
+				'lon' => $marker[1],
+				'title' => $marker[2],
+				'label' =>$marker[3],
+				'icon' => $marker[4]
+			) );
+		}
+		
+		// Create a string containing the marker JS.
+		return '[' . implode( ',', $markerItems ) . ']';
+	}	
 	
 	/**
 	 * @see MapsMappingService::getDependencies

@@ -184,16 +184,16 @@ class PHPlot {
 
 //Miscellaneous
     var $callbacks = array(                  // Valid callback reasons (see SetCallBack)
-        'draw_setup' => NULL,
-        'draw_image_background' => NULL,
-        'draw_plotarea_background' => NULL,
-        'draw_titles' => NULL,
-        'draw_axes' => NULL,
-        'draw_graph' => NULL,
-        'draw_border' => NULL,
-        'draw_legend' => NULL,
-        'debug_textbox' => NULL,  // For testing/debugging text box alignment
-        'debug_scale' => NULL,    // For testing/debugging scale setup
+        'draw_setup' => null,
+        'draw_image_background' => null,
+        'draw_plotarea_background' => null,
+        'draw_titles' => null,
+        'draw_axes' => null,
+        'draw_graph' => null,
+        'draw_border' => null,
+        'draw_legend' => null,
+        'debug_textbox' => null,  // For testing/debugging text box alignment
+        'debug_scale' => null,    // For testing/debugging scale setup
     );
 
 
@@ -209,7 +209,7 @@ class PHPlot {
      * \param which_output_file string Filename for output.
      * \param which_input_fule  string Path to a file to be used as background.
      */
-    function PHPlot($which_width=600, $which_height=400, $which_output_file=NULL, $which_input_file=NULL)
+    function PHPlot($which_width=600, $which_height=400, $which_output_file=null, $which_input_file=null)
     {
         $this->SetRGBArray($this->color_array);
 
@@ -317,7 +317,7 @@ class PHPlot {
     function SetIndexColor($which_color)
     {
         list ($r, $g, $b) = $this->SetRGBColor($which_color);  //Translate to RGB
-        if (!isset($r)) return NULL;
+        if (!isset($r)) return null;
         return ImageColorResolve($this->img, $r, $g, $b);
     }
 
@@ -329,7 +329,7 @@ class PHPlot {
     function SetIndexDarkColor($which_color)
     {
         list ($r, $g, $b) = $this->SetRGBColor($which_color);
-        if (!isset($r)) return NULL;
+        if (!isset($r)) return null;
         $r = max(0, $r - 0x30);
         $g = max(0, $g - 0x30);
         $b = max(0, $b - 0x30);
@@ -577,7 +577,7 @@ class PHPlot {
     /*!
      * Sets the colors for the data.
      */
-    function SetDataColors($which_data = NULL, $which_border = NULL)
+    function SetDataColors($which_data = null, $which_border = null)
     {
         if (is_null($which_data) && is_array($this->data_colors)) {
             // use already set data_colors
@@ -605,7 +605,7 @@ class PHPlot {
     /*!
      *
      */
-    function SetDataBorderColors($which_br = NULL)
+    function SetDataBorderColors($which_br = null)
     {
         if (is_null($which_br) && is_array($this->data_border_colors)) {
             // use already set data_border_colors
@@ -631,7 +631,7 @@ class PHPlot {
     /*!
      * Sets the colors for the data error bars.
      */
-    function SetErrorBarColors($which_err = NULL)
+    function SetErrorBarColors($which_err = null)
     {
         if (is_null($which_err) && is_array($this->error_bar_colors)) {
             // use already set error_bar_colors
@@ -703,7 +703,7 @@ class PHPlot {
     /*!
      * Sets line widths on a per-line basis.
      */
-    function SetLineWidths($which_lw=NULL)
+    function SetLineWidths($which_lw=null)
     {
         if (is_null($which_lw)) {
             // Do nothing, use default value.
@@ -719,7 +719,7 @@ class PHPlot {
     /*!
      *
      */
-    function SetLineStyles($which_ls=NULL)
+    function SetLineStyles($which_ls=null)
     {
         if (is_null($which_ls)) {
             // Do nothing, use default value.
@@ -1538,7 +1538,7 @@ class PHPlot {
      *   $error_message       Text of the error message
      *   $where_x, $where_y   Ignored, provided for compatibility.
      */
-    function DrawError($error_message, $where_x = NULL, $where_y = NULL)
+    function DrawError($error_message, $where_x = null, $where_y = null)
     {
         return $this->PrintError($error_message);
     }
@@ -1689,7 +1689,7 @@ class PHPlot {
             return $asked;
 
         $this->PrintError("$which_func(): '$which_opt' not in available choices: '$which_acc'.");
-        return NULL;
+        return null;
     }
 
 
@@ -2191,7 +2191,7 @@ class PHPlot {
      *      (Often called "clientData")
      * Returns: True if the callback reason is valid, else False.
      */
-    function SetCallback($reason, $function, $arg = NULL)
+    function SetCallback($reason, $function, $arg = null)
     {
         // Use array_key_exists because valid reason keys have NULL as value.
         if (!array_key_exists($reason, $this->callbacks))
@@ -2225,7 +2225,7 @@ class PHPlot {
     {
         if (!array_key_exists($reason, $this->callbacks))
             return False;
-        $this->callbacks[$reason] = NULL;
+        $this->callbacks[$reason] = null;
         return True;
     }
 
@@ -2769,7 +2769,7 @@ class PHPlot {
      * The user calls this to force one or more of the range limits to
      * specific values. Anything not set will be calculated in CalcPlotAreaWorld().
      */
-    function SetPlotAreaWorld($xmin=NULL, $ymin=NULL, $xmax=NULL, $ymax=NULL)
+    function SetPlotAreaWorld($xmin=null, $ymin=null, $xmax=null, $ymax=null)
     {
         $this->plot_min_x = $xmin;
         $this->plot_max_x = $xmax;
@@ -4576,7 +4576,7 @@ class PHPlot {
                           $v_align = 'top';
                           $y_offset = 2;
                         }
-                        $this->DrawDataLabel($this->y_label_font, NULL, $row+0.5, $this->data[$row][$record], '',
+                        $this->DrawDataLabel($this->y_label_font, null, $row+0.5, $this->data[$row][$record], '',
                                 $this->data[$row][$record], 'center', $v_align,
                                 ($idx + 0.5) * $this->record_bar_width - $x_first_bar, $y_offset);
                     }

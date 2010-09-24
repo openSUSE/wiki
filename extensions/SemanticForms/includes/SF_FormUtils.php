@@ -10,59 +10,6 @@
 
 class SFFormUtils {
 
-	static function chooserJavascript() {
-		$javascript_text = <<<END
-<script type="text/javascript">/* <![CDATA[ */
-
-function updatechooserbutton(f,n)
-{
-	document.getElementById(n).disabled = (f.options[f.selectedIndex].value=="invalid");
-}
-
-function addInstanceFromChooser(chooserid)
-{
-	var chooser = document.getElementById(chooserid);
-	var optionstring = chooser.options[chooser.selectedIndex].value;
-	var pos = optionstring.indexOf(",");
-	var tabindex = optionstring.substr(0,pos);
-	var chooservalue = optionstring.substr(pos+1);
-	addInstance('starter_' + chooservalue, 'main_' + chooservalue, parseInt(tabindex));
-}
-
-//The fieldset containing the given element was just updated. If the fieldset is associated with a chooser,
-//ensure that the fieldset is hidden if and only if there are no template instances inside.
-function hideOrShowFieldset(element)
-{
-	//Find fieldset
-	while (element.tagName.toLowerCase() != "fieldset")
-		element = element.parentNode;
-	//Bail out if fieldset is not part of chooser
-	if (!element.getAttribute("haschooser"))
-		return;
-	//Now look for "input" or "select" tags that don't look like they're part of the starter template
-	var inputs = element.getElementsByTagName("input");
-	var x;
-	var show = false;
-	for (x=0;x<inputs.length;x++)
-	{
-		if (inputs[x].type=="text" && inputs[x].name.indexOf("[num]") == -1)
-			show = true;
-	}
-	var selects = element.getElementsByTagName("select");
-	for (x=0;x<selects.length;x++)
-	{
-		if (selects[x].name.indexOf("[num]") == -1)
-			show = true;
-	}
-	//Now show or hide fieldset
-	element.style.display = (show?"block":"none");
-}
-/* ]]> */ </script>
-
-END;
-		return $javascript_text;
-	}
-
 	/**
 	 * All the Javascript calls to validate both the type of each
 	 * form field and their presence, for mandatory fields
@@ -81,10 +28,19 @@ END;
 		$javascript_text = <<<END
 
 function validate_mandatory_field(field_id, info_id) {
-	field = document.getElementById(field_id);
+	var field = document.getElementById(field_id);
+	// if there's nothing at that field ID, ignore it - it's probably
+	// a hidden field
+	if (field == null) {
+		return true;
+	}
 	if (field.value.replace(/\s+/, '') == '') {
-		infobox = document.getElementById(info_id);
-		infobox.innerHTML = "$blank_error_str";
+		var info_span = document.getElementById(info_id);
+		if ( info_span == null ) {
+			alert ("no info span found at " + info_id + "!");
+		} else {
+			info_span.innerHTML = "$blank_error_str";
+		}
 		return false;
 	} else {
 		return true;
@@ -96,8 +52,32 @@ function validate_mandatory_field(field_id, info_id) {
 function validate_mandatory_radiobutton(none_button_id, info_id) {
 	none_button = document.getElementById(none_button_id);
 	if (none_button && none_button.checked) {
-		infobox = document.getElementById(info_id);
-		infobox.innerHTML = "$blank_error_str";
+		info_span = document.getElementById(info_id);
+		info_span.innerHTML = "$blank_error_str";
+		return false;
+	} else {
+		return true;
+	}
+}
+
+function validate_mandatory_combobox(field_id, info_id) {
+	var field = jQuery('input#' + field_id);
+	// if there's nothing at that field ID, ignore it - it's probably
+	// a hidden field
+	if (field == null) {
+		return true;
+	}
+	// FIXME
+	// field.val() unfortunately doesn't work in IE - it just returns
+	// "undefined". For now, if that happens, just exit
+	var value = field.val();
+	if (value == undefined) {
+		alert(field.html());
+		return true;
+	}
+	if (value.replace(/\s+/, '') == '') {
+		var info_span = document.getElementById(info_id);
+		info_span.innerHTML = "$blank_error_str";
 		return false;
 	} else {
 		return true;
@@ -105,18 +85,18 @@ function validate_mandatory_radiobutton(none_button_id, info_id) {
 }
 
 function validate_mandatory_checkboxes(field_id, info_id) {
-	elems = document.getElementsByTagName("*");
-	var all_fields_unchecked = true;
-	for (var i = 0; i < elems.length; i++) {
-		if (elems[i].id == field_id) {
-			if (elems[i].checked) {
-				all_fields_unchecked = false;
-			}
+	// get all checkboxes - the "field_id" in this case is the span
+	// surrounding all the checkboxes
+	var checkboxes = jQuery('span#' + field_id + " > span > input");
+	var all_unchecked = true;
+	for (var i = 0; i < checkboxes.length; i++) {
+		if (checkboxes[i].checked) {
+			all_unchecked = false;
 		}
 	}
-	if (all_fields_unchecked) {
-		infobox = document.getElementById(info_id);
-		infobox.innerHTML = "$blank_error_str";
+	if (all_unchecked) {
+		info_span = document.getElementById(info_id);
+		info_span.innerHTML = "$blank_error_str";
 		return false;
 	} else {
 		return true;
@@ -155,26 +135,26 @@ function validate_field_type(field_id, type, info_id) {
 			if (url_regexp.test(field.value)) {
 				return true;
 			} else {
-				infobox = document.getElementById(info_id);
-				infobox.innerHTML = "$bad_url_error_str";
+				info_span = document.getElementById(info_id);
+				info_span.innerHTML = "$bad_url_error_str";
 				return false;
 			}
 		} else if (type == 'email') {
 			// code borrowed from http://javascript.internet.com/forms/email-validation---basic.html
-			var email_regexp = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,6})+$/;
+			var email_regexp = /^\s*\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,6})+\s*$/;
 			if (email_regexp.test(field.value)) {
 				return true;
 			} else {
-				infobox = document.getElementById(info_id);
-				infobox.innerHTML = "$bad_email_error_str";
+				info_span = document.getElementById(info_id);
+				info_span.innerHTML = "$bad_email_error_str";
 				return false;
 			}
 		} else if (type == 'number') {
-			if (field.value.match(/^\-?[\d\.,]+$/)) {
+			if (field.value.match(/^\s*\-?[\d\.,]+\s*$/)) {
 				return true;
 			} else {
-				infobox = document.getElementById(info_id);
-				infobox.innerHTML = "$bad_number_error_str";
+				info_span = document.getElementById(info_id);
+				info_span.innerHTML = "$bad_number_error_str";
 				return false;
 			}
 		} else if (type == 'date') {
@@ -189,8 +169,8 @@ function validate_field_type(field_id, type, info_id) {
 				// 'BC' and possibly other non-number strings
 				return true;
 			} else {
-				infobox = document.getElementById(info_id);
-				infobox.innerHTML = "$bad_date_error_str";
+				info_span = document.getElementById(info_id);
+				info_span.innerHTML = "$bad_date_error_str";
 				return false;
 			}
 		} else {
@@ -243,7 +223,7 @@ END;
 		return $javascript_text;
 	}
 
-	static function instancesJavascript( $using_choosers ) {
+	static function instancesJavascript() {
 		$remove_text = wfMsg( 'sf_formedit_remove' );
 		$javascript_text = <<<END
 
@@ -311,9 +291,6 @@ function addInstance(starter_div_id, main_div_id, tab_index)
 	
 	//In order to add the new instances in multiple floatBox (multiple templates)
 	fb.tagAnchors(self.document);
-	if ($using_choosers) {
-		hideOrShowFieldset(new_div);
-	}
 }
 
 function removeInstanceEventHandler(this_div_id)
@@ -327,8 +304,6 @@ function removeInstance(div_id) {
 	var olddiv = document.getElementById(div_id);
 	var parent = olddiv.parentNode;
 	parent.removeChild(olddiv);
-	if ($using_choosers)
-		hideOrShowFieldset(parent);
 }
 
 END;
@@ -336,7 +311,11 @@ END;
 	}
 
 	static function autocompletionJavascript() {
-		global $wgScriptPath;
+		global $wgScriptPath, $wgOut, $smwgScriptPath, $smwgJQueryIncluded;
+		if ( !$smwgJQueryIncluded ) {
+			$wgOut->addScriptFile( "$smwgScriptPath/libs/jquery-1.4.2.min.js" );
+			$smwgJQueryIncluded = true;
+		}
 
 		$javascript_text = <<<END
 var autocompletemappings = new Array();
@@ -401,7 +380,7 @@ function attachAutocompleteToField(input_id)
 	}
 }
 
-YAHOO.util.Event.addListener(window, 'load', attachAutocompleteToAllDocumentFields);
+jQuery.event.add(window, "load", attachAutocompleteToAllDocumentFields);
 
 END;
 		return $javascript_text;
@@ -457,9 +436,9 @@ END;
 			return Xml::expandAttributes( $attribs );
 		} else {
 			$out = '';
-                        foreach ( $attribs as $name => $val )
-                                $out .= " {$name}=\"" . Sanitizer::encodeAttribute( $val ) . '"';
-                        return $out;
+			foreach ( $attribs as $name => $val )
+				$out .= " {$name}=\"" . Sanitizer::encodeAttribute( $val ) . '"';
+			return $out;
 		}
 	}
 
@@ -752,6 +731,7 @@ END;
 
 	static function mainFCKJavascript( $showFCKEditor ) {
 		global $wgUser, $wgScriptPath, $wgFCKEditorExtDir, $wgFCKEditorDir, $wgFCKEditorToolbarSet, $wgFCKEditorHeight;
+		global $wgHooks, $wgExtensionFunctions;
 
 		$newWinMsg = wfMsg( 'rich_editor_new_window' );
 		$javascript_text = '
@@ -766,15 +746,35 @@ var RTE_VISIBLE = ' . RTE_VISIBLE . ';
 var RTE_TOGGLE_LINK = ' . RTE_TOGGLE_LINK . ';
 var RTE_POPUP = ' . RTE_POPUP . ';
 ';
+
+		$showRef = 'false';
+		if ( ( isset( $wgHooks['ParserFirstCallInit'] ) && in_array( 'wfCite', $wgHooks['ParserFirstCallInit'] ) ) || ( isset( $wgExtensionFunctions ) && in_array( 'wfCite', $wgExtensionFunctions ) ) ) {
+			$showRef = 'true';
+		}
+
+		$showSource = 'false';
+		if ( ( isset( $wgHooks['ParserFirstCallInit'] ) && in_array( 'efSyntaxHighlight_GeSHiSetup', $wgHooks['ParserFirstCallInit'] ) )
+			|| ( isset( $wgExtensionFunctions ) && in_array( 'efSyntaxHighlight_GeSHiSetup', $wgExtensionFunctions ) ) ) {
+			$showSource = 'true';
+		}
+
+		// at some point, the variable $wgFCKEditorDir got a "/"
+		// appended to it - this makes a big difference. To support
+		// all FCKeditor versions, append a slash if it's not there
+		if ( substr( $wgFCKEditorDir, -1 ) != '/' ) {
+			$wgFCKEditorDir .= '/';
+		}
 		
 		$javascript_text .= <<<END
 var oFCKeditor = new FCKeditor( "free_text" );
 
 //Set config
-oFCKeditor.BasePath = '$wgScriptPath/$wgFCKEditorDir/';
+oFCKeditor.BasePath = '$wgScriptPath/$wgFCKEditorDir';
 oFCKeditor.Config["CustomConfigurationsPath"] = "$wgScriptPath/$wgFCKEditorExtDir/fckeditor_config.js" ;
 oFCKeditor.Config["EditorAreaCSS"] = "$wgScriptPath/$wgFCKEditorExtDir/css/fckeditor.css" ;
-oFCKeditor.ToolbarSet = "$wgFCKEditorToolbarSet" ; 
+oFCKeditor.Config["showreferences"] = '$showRef';
+oFCKeditor.Config["showsource"] = '$showSource';
+oFCKeditor.ToolbarSet = "$wgFCKEditorToolbarSet"; 
 oFCKeditor.ready = true;
 
 //IE hack to call func from popup
