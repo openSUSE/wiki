@@ -9,7 +9,7 @@ $wiki_lang = str_replace( 'stage', '', $wiki_lang );
 $wiki_lang = str_replace( 'test', '', $wiki_lang );
 $wiki_lang = str_replace( 'wiki', '', $wiki_lang );
 $wiki_lang = str_replace( 'cz', 'cs', $wiki_lang );
-$wiki_lang = str_replace( 'ch_tw', 'ch_TW', $wiki_lang );
+$wiki_lang = str_replace( 'zh_tw', 'zh_TW', $wiki_lang );
 if ( in_array( $wiki_lang , $avail_bento_langs ) ) {
     $bento_lang = $wiki_lang;
 }
