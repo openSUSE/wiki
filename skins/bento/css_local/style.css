@@ -351,3 +351,9 @@ a.external[href$=".png"], a.external[href$=".jpg"], a.external[href$=".jpeg"], a
     background: url("../picture.png") no-repeat scroll right center transparent;
     padding: 3px 16px 0 0;
 }
+
+/* Redirects on [[Special:Allpages]] and [[Special:Watchlist/edit]]. */
+.allpagesredirect a, .watchlistredir a {
+    background: url("../external.png") left top no-repeat;
+    padding-left: 12px;
+}
