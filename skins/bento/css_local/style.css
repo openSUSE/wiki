@@ -356,4 +356,5 @@ a.external[href$=".png"], a.external[href$=".jpg"], a.external[href$=".jpeg"], a
 .allpagesredirect a, .watchlistredir a {
     background: url("../external.png") left top no-repeat;
     padding-left: 12px;
+    color: #C0C0C0;
 }
