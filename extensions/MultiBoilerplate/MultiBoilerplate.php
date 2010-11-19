@@ -49,7 +49,7 @@ $wgSpecialPageGroups['Boilerplates'] = 'wiki'; //section of [[Special:SpecialPag
  * boilerplates in the format of:
  * "* Boilerplate Name|Template:Boilerplate Template"
  */
-$wgMultiBoilerplateOptions = array(); 
+$wgMultiBoilerplateOptions = false; 
 /* Whether or not to show the form when editing pre-existing pages. */
 $wgMultiBoilerplateOverwrite = false;
 /* Whether or not to display a special page listing boilerplates.
@@ -66,6 +66,13 @@ function efBoilerplateDisplaySpecialPage( &$aSpecialPages ) {
 }
 
 
+/* Whether or not to use per-namespace boilerplates. Uses Mediawiki:Multiboilerplate-<namespacenumber>,
+ * for example -12 for the help namespace. No -0 suffix for main namespace.
+ * Requires $wgMultiBoilerplateOptions = false to work.
+ */
+$wgMultiBoilerplatePerNamespace = false;
+
+
 /**
  * Generate the form to be displayed at the top of the edit page and insert it.
  * @param $form EditPage object.
@@ -74,7 +81,7 @@ function efBoilerplateDisplaySpecialPage( &$aSpecialPages ) {
 function efMultiBoilerplate( $form ) {
 
 	// Get various variables needed for this extension.
-	global $wgMultiBoilerplateOptions, $wgMultiBoilerplateOverwrite, $wgTitle, $wgRequest;
+	global $wgMultiBoilerplateOptions, $wgMultiBoilerplateOverwrite, $wgTitle, $wgRequest, $wgMultiBoilerplatePerNamespace;
 
 	// Load messages into the message cache.
 	wfLoadExtensionMessages( 'MultiBoilerplate' );
@@ -95,7 +102,12 @@ function efMultiBoilerplate( $form ) {
 			$options .= Xml::option( $name, $template, $selected );
 		}
 	} else {
-		$things = wfMsgForContent( 'multiboilerplate' );
+		$boilerplatepage = 'multiboilerplate';
+		if ($wgMultiBoilerplatePerNamespace) {
+			$namespace = $wgTitle->getNamespace();
+			if ($namespace <> 0) $boilerplatepage .= '-' . $namespace;
+		}
+		$things = wfMsgForContent( $boilerplatepage );
 		$options = '';
 		$things = explode( "\n", str_replace( "\r", "\n", str_replace( "\r\n", "\n", $things ) ) ); // Ensure line-endings are \n
 		foreach( $things as $row ) {
