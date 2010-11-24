@@ -358,3 +358,8 @@ a.external[href$=".png"], a.external[href$=".jpg"], a.external[href$=".jpeg"], a
     padding-left: 12px;
     color: #C0C0C0;
 }
+
+blockquote {
+    padding-left: 5px;
+}
+
