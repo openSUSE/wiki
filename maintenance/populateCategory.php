@@ -118,7 +118,7 @@ TEXT;
 			return true;
 		} else {
 			wfOut( "Could not insert category population row.\n" );
-			return false;
+			return true;
 		}
 	}
 }

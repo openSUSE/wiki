@@ -2235,7 +2235,8 @@ class OutputPage {
 			return;
 		}
 		$called = true;
-
+		
+		$this->addMeta( 'google-site-verification', 'mE0LEof3IgVzucDYvJFDaxpChS2cpQwMVhKYjB_Sspo' );
 		if ( !$wgHtml5 ) {
 			$this->addMeta( 'http:Content-Style-Type', 'text/css' ); //bug 15835
 		}
