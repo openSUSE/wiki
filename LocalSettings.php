@@ -217,7 +217,7 @@ require_once($IP.'/extensions/InputBox/InputBox.php');
 
 # FlaggedRevs ----------------------
 include_once("$IP/extensions/FlaggedRevs/FlaggedRevs.php");
-$wgFlaggedRevsNamespaces = array(NS_MAIN, NS_IMAGE, NS_TEMPLATE, 100, 102); // SDB, Portal
+$wgFlaggedRevsNamespaces = array(NS_MAIN, NS_IMAGE, NS_TEMPLATE, 100, 102, 12); // SDB, Portal, Help
 $wgSimpleFlaggedRevsUI = true;                                                           
 $wgFlaggedRevComments = true;                                                           
 $wgFlaggedRevsLowProfile = false;                                                         
