@@ -200,6 +200,7 @@ $wgUrlProtocols[] = 'xmpp:';
 $wgGroupPermissions['user']['import'] = true;
 $wgGroupPermissions['user']['importupload'] = true;
 $wgGroupPermissions['sysop']['deleterevision']  = true;
+$wgGroupPermissions['user']['move'] = true;
 
 ##### Extensions #####
 # Intersection ---------------------
