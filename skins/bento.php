@@ -60,21 +60,28 @@ class BentoTemplate extends QuickTemplate {
                 <?php if($this->data['usercss']) { ?><style type="text/css"><?php $this->html('usercss') ?></style><?php }?>
                 <?php if($this->data['userjs']) { ?><script type="<?php $this->text('jsmimetype') ?>" src="<?php $this->text('userjs' ) ?>"></script><?php }?>
                 <?php if($this->data['userjsprev']) { ?><script type="<?php $this->text('jsmimetype') ?>"><?php $this->html('userjsprev') ?></script><?php }?>
-        <?php if($this->data['trackbackhtml']) print $this->data['trackbackhtml']; ?>
+                <?php if($this->data['trackbackhtml']) print $this->data['trackbackhtml']; ?>
 
-        <script type="text/javascript">
-          var _gaq = _gaq || [];
-          _gaq.push(
-          ['_setAccount', 'UA-3367212-3'],
-          ['_setDomainName', '.opensuse.org'],
-          ['_gat._anonymizeIp'],
-          ['_trackPageview']);
-          (function() {
-            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-          })();
-        </script>
+                <!-- Piwik -->
+                <script type="text/javascript">
+                    var _paq = _paq || [];
+                    (function(){
+                        var u=(("https:" == document.location.protocol) ? "https://features.opensuse.org/piwik/" : "http://features.opensuse.org/piwik/");
+                        _paq.push(['setSiteId', 5]);
+                        _paq.push(['setTrackerUrl', u+'piwik.php']);
+                        _paq.push(['trackPageView']);
+                        _paq.push([ 'setDomains', ["*.opensuse.org"]]);
+                        var d=document,
+                        g=d.createElement('script'),
+                        s=d.getElementsByTagName('script')[0];
+                        g.type='text/javascript';
+                        g.defer=true;
+                        g.async=true;
+                        g.src=u+'piwik.js';
+                        s.parentNode.insertBefore(g,s);
+                    })();
+                </script>
+                <!-- End Piwik Code -->
 
     </head>
 
