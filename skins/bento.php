@@ -16,7 +16,7 @@ class SkinBento extends SkinTemplate {
     function setupSkinUserCss( OutputPage $out ) {
         parent::setupSkinUserCss( $out );
         // Append to the default screen common & print styles...
-        $out->addStyle( 'https://static.opensuse.org/themes/bento/css/style.css', 'screen' );
+        $out->addStyle( 'http://static.opensuse.org/themes/bento/css/style.css', 'screen' );
     }
 }
 
@@ -43,13 +43,13 @@ class BentoTemplate extends QuickTemplate {
         <![endif]-->
         <?php print Skin::makeGlobalVariablesScript( $this->data ); ?>
         <script type="<?php $this->text('jsmimetype') ?>" src="<?php $this->text('stylepath' ) ?>/common/wikibits.js?<?php echo $GLOBALS['wgStyleVersion'] ?>"><!-- wikibits js --></script>
-        <script type="<?php $this->text('jsmimetype') ?>" src="https://static.opensuse.org/stage/themes/bento/js/jquery.js"></script>
-        <script type="<?php $this->text('jsmimetype') ?>" src="https://static.opensuse.org/stage/themes/bento/js/script.js"></script>
+        <script type="<?php $this->text('jsmimetype') ?>" src="http://static.opensuse.org/stage/themes/bento/js/jquery.js"></script>
+        <script type="<?php $this->text('jsmimetype') ?>" src="http://static.opensuse.org/stage/themes/bento/js/script.js"></script>
         <script type="<?php $this->text('jsmimetype') ?>" src="<?php $this->text('stylepath') ?>/bento/js_local/script.js"></script>
         <script type="<?php $this->text('jsmimetype') ?>" src="<?php $this->text('stylepath') ?>/bento/js_local/search.js"></script>
 
-        <script type="<?php $this->text('jsmimetype') ?>" src="https://static.opensuse.org/themes/bento/js/l10n/global-navigation-data-<?php echo $bento_lang; ?>.js"></script>
-        <script type="<?php $this->text('jsmimetype') ?>" src="https://static.opensuse.org/themes/bento/js/global-navigation.js"></script>
+        <script type="<?php $this->text('jsmimetype') ?>" src="http://static.opensuse.org/themes/bento/js/l10n/global-navigation-data-<?php echo $bento_lang; ?>.js"></script>
+        <script type="<?php $this->text('jsmimetype') ?>" src="http://static.opensuse.org/themes/bento/js/global-navigation.js"></script>
 
         <link rel="icon" type="image/png" href="http://static.opensuse.org/themes/bento/images/favicon.png" />
 
@@ -202,7 +202,7 @@ class BentoTemplate extends QuickTemplate {
                 <div id="some_other_content" class="box box-shadow alpha clear-both navigation">
                     <h2 class="box-header">Sponsors</h2>
                     <?php $arr = array("sponsor_amd.png", 'sponsor_b1-systems.png', 'sponsor_ip-exchange2.png'); ?>
-                    <a href="/Sponsors"><img src="https://static.opensuse.org/themes/bento/images/sponsors/<?php echo $arr[rand(0, count($arr)-1)] ?>" alt="Sponsor"/></a>
+                    <a href="/Sponsors"><img src="http://static.opensuse.org/themes/bento/images/sponsors/<?php echo $arr[rand(0, count($arr)-1)] ?>" alt="Sponsor"/></a>
                 </div>
 
 
