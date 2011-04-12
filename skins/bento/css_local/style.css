@@ -471,3 +471,8 @@ background:none repeat scroll 0 0 transparent;
 thumb tright {
     margin-bottom: 10px;
 }
+
+div.mw-warning-with-logexcerpt {
+    margin: 15px;
+}
+
