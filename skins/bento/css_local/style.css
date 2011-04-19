@@ -476,3 +476,6 @@ div.mw-warning-with-logexcerpt {
     margin: 15px;
 }
 
+code {
+    background-color: lightgrey;
+}
