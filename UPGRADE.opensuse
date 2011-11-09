@@ -1,0 +1,25 @@
+
+== Upgrade this repo to the latest mediawiki version ==
+
+
+- Download and untar the new MW core (http://www.mediawiki.org/wiki/Download)
+
+- Remove the images directory
+
+- Copy the Bento skin, Localsettings.php, and UPGRADE.opensuse to the new installation
+  (cp -r ../wiki.o.o/skins/bento* skins/; cp ../wiki.o.o/LocalSettings.php ../wiki.o.o/UPGRADE.opensuse .)
+
+- Svn export the latest tag, or download the latest release, of each extension into the extensions directory
+
+- Copy the git config to the new directory so you can push the update to the repo 
+  (cp -r ../wiki.o.o/.git* .)
+
+- For each language wiki (done by a script)
+
+    1. Remove symlinks to old installation
+
+    2. Symlink to new installation
+
+    4. Run update script for the core
+
+    5. Run update script for SemanticMW 
