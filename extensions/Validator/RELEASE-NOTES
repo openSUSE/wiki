@@ -4,7 +4,104 @@ For a documentation of all features, see http://www.mediawiki.org/wiki/Extension
 This change log contains a list of completed to-do's (new features, bug fixes, refactoring) for every version of Validator.
 
 
-== Validator change log ==
+=== Validator 0.4.9 ===
+(2011-07-30)
+
+* Added setMessage and getMessage methods to Parameter class for better i18n.
+
+=== Validator 0.4.8 ===
+(2011-07-19)
+
+* Added unit tests for the criteria.
+
+* Fixed issue with handling floats in CriterionInRange.
+
+* Added support for open limits in CriterionHasLength and CriterionItemCount.
+
+=== Validator 0.4.7 ===
+(2011-05-15)
+
+* Added ParameterInput class to generate HTML inputs for parameters, based on code from SMWs Special:Ask.
+
+* Added "$manipulate = true" as second parameter for Parameter::setDefault,
+  which gets passed to Parameter::setDoManipulationOfDefault.
+
+* Boolean manipulation now ignores values that are already a boolean.
+
+=== Validator 0.4.6 ===
+(2011-03-21)
+
+* Removed ParamManipulationBoolstr.
+
+* Added method to get the allowed values to CriterionInArray.
+
+* Added automatic non-using of boolean manipulation when a boolean param was defaulted to a boolean value.
+
+* Parameter fix in ListParameter::setDefault, follow up to change in 0.4.5.
+
+=== Validator 0.4.5 ===
+(2011-03-05)
+
+* Escaping fix in the describe parser hook.
+
+* Added string manipulation, applied by default on strings and chars.
+
+=== Validator 0.4.4 ===
+(2011-02-16)
+
+* Tweaks to parser usage in the ParserHook class.
+
+* Fixed incorrect output of nested pre-tags in the describe parser hook.
+
+=== Validator 0.4.3.1 ===
+(2011-01-20)
+
+* Removed underscore and space switching behaviour for tag extensions and parser functions.
+
+=== Validator 0.4.3 ===
+(2011-01-11)
+
+* Added describe parser hook that enables automatic documentation generation of parser hooks defined via Validator.
+
+* Modified the ParserHook and Parameter classes to allow specifying a description message.
+
+=== Validator 0.4.2 ===
+(2010-10-28)
+
+* Fixed compatibility with MediaWiki 1.15.x.
+
+* Removed the lowerCaseValue field in the Parameter class and replaced it's functionality with a ParameterManipulation.
+
+=== Validator 0.4.1 ===
+(2010-10-20)
+
+* Made several small fixes and improvements.
+
+=== Validator 0.4 ===
+(2010-10-15)
+
+==== New features ====
+
+* Added ParserHook class that allows for out-of-the-box parser function and tag extension creation
+: with full Validator support.
+  
+* Added listerrors parser hook that allows you to list all validation errors that occurred at the point it's rendered.
+
+* Added support for conditional parameter adding.
+
+==== Refactoring ====
+
+Basically everything got rewritten...
+
+* Added Parameter and ListParameter classes to replace parameter definitions in array form.
+
+* Added ParameterCriterion and ListParameterCriterion classes for better handling of parameter criteria.
+
+* Added ParameterManipulation and ListParameterManipulation classes for more structured formatting of parameters.
+
+* Added ValidationError class to better describe errors.
+
+* Replaced the error level enum by ValidationError::SEVERITY_ and ValidationError::ACTION_, which are linked in $egErrorActions. 
 
 === Validator 0.3.6 ===
 (2010-08-26)

@@ -3,19 +3,19 @@
  * Special page for the  CategoryTree extension, an AJAX based gadget
  * to display the category structure of a wiki
  *
- * @addtogroup Extensions
+ * @file
+ * @ingroup Extensions
  * @author Daniel Kinzler, brightbyte.de
  * @copyright © 2006 Daniel Kinzler
  * @license GNU General Public Licence 2.0 or later
  */
 
-if( !defined( 'MEDIAWIKI' ) ) {
+if ( !defined( 'MEDIAWIKI' ) ) {
 	echo( "This file is part of an extension to the MediaWiki software and cannot be used standalone.\n" );
 	die( 1 );
 }
 
 class CategoryTreePage extends SpecialPage {
-
 	var $target = '';
 	var $tree = null;
 
@@ -23,16 +23,17 @@ class CategoryTreePage extends SpecialPage {
 	 * Constructor
 	 */
 	function __construct() {
-		global $wgOut;
-		SpecialPage::SpecialPage( 'CategoryTree', '', true );
-		wfLoadExtensionMessages( 'CategoryTree' );
+		parent::__construct( 'CategoryTree', '', true );
 	}
 
 	function getOption( $name ) {
 		global $wgCategoryTreeDefaultOptions;
 
-		if ( $this->tree ) return $this->tree->getOption( $name );
-		else return $wgCategoryTreeDefaultOptions[$name];
+		if ( $this->tree ) {
+			return $this->tree->getOption( $name );
+		} else {
+			return $wgCategoryTreeDefaultOptions[$name];
+		}
 	}
 
 	/**
@@ -45,12 +46,14 @@ class CategoryTreePage extends SpecialPage {
 		$this->setHeaders();
 
 		if ( $par ) $this->target = $par;
-		else $this->target = $wgRequest->getVal( 'target', wfMsg( 'rootcategory') );
+		else $this->target = $wgRequest->getVal( 'target', wfMsg( 'rootcategory' ) );
 
 		$this->target = trim( $this->target );
 
-		#HACK for undefined root category
-		if ( $this->target == '<rootcategory>' || $this->target == '&lt;rootcategory&gt;' ) $this->target = null;
+		# HACK for undefined root category
+		if ( $this->target == '<rootcategory>' || $this->target == '&lt;rootcategory&gt;' ) {
+			$this->target = null;
+		}
 
 		$options = array();
 
@@ -68,7 +71,7 @@ class CategoryTreePage extends SpecialPage {
 
 		$this->executeInputForm();
 
-		if( $this->target !== '' && $this->target !== null ) {
+		if ( $this->target !== '' && $this->target !== null ) {
 			if ( !$wgCategoryTreeForceHeaders ) CategoryTree::setHeaders( $wgOut );
 
 			$title = CategoryTree::makeTitle( $this->target );
@@ -98,7 +101,6 @@ class CategoryTreePage extends SpecialPage {
 				$wgOut->addHTML( Xml::closeElement( 'div' ) );
 			}
 		}
-
 	}
 
 	/**
@@ -106,13 +108,13 @@ class CategoryTreePage extends SpecialPage {
 	 */
 	function executeInputForm() {
 		global $wgScript, $wgOut;
-		$thisTitle = Title::makeTitle( NS_SPECIAL, $this->getName() );
-		$mode = $this->getOption('mode');
+		$thisTitle = SpecialPage::getTitleFor( $this->getName() );
+		$mode = $this->getOption( 'mode' );
 
 		$wgOut->addHTML( Xml::openElement( 'form', array( 'name' => 'categorytree', 'method' => 'get', 'action' => $wgScript, 'id' => 'mw-categorytree-form' ) ) );
 		$wgOut->addHTML( Xml::openElement( 'fieldset' ) );
 		$wgOut->addHTML( Xml::element( 'legend', null, wfMsgNoTrans( 'categorytree-legend' ) ) );
-		$wgOut->addHTML( Xml::hidden( 'title', $thisTitle->getPrefixedDbKey() ) );
+		$wgOut->addHTML( Html::Hidden( 'title', $thisTitle->getPrefixedDbKey() ) );
 		$wgOut->addHTML( Xml::inputLabel( wfMsgNoTrans( 'categorytree-category' ), 'target', 'target', 20, $this->target ) . ' ' );
 		$wgOut->addHTML( Xml::openElement( 'select', array( 'name' => 'mode' ) ) );
 		$wgOut->addHTML( Xml::option( wfMsgNoTrans( 'categorytree-mode-categories' ), 'categories', $mode == CT_MODE_CATEGORIES ? true : false ) );

@@ -14,6 +14,9 @@
  * -d <delay>   Wait for this many milliseconds after processing an article, useful for limiting server load.
  * -s <startid> Start refreshing at given article ID, useful for partial refreshing
  * -e <endid>   Stop refreshing at given article ID, useful for partial refreshing
+ * -n <numids>  Stop refreshing after processing a given number of IDs, useful for partial refreshing
+ * --startidfile <startidfile> Read <startid> from a file instead of the arguments and write the next id
+ *              to the file when finished. Useful for continual partial refreshing from cron.
  * -b <backend> Execute the operation for the storage backend of the given name
  *              (default is to use the current backend)
  * -v           Be verbose about the progress.
@@ -22,7 +25,7 @@
  * -t           Will refresh only type pages (and other explicitly named namespaces)
  * --page=<pagelist> will refresh only the pages of the given names, with | used as a separator.
  *              Example: --page="Page 1|Page 2" refreshes Page 1 and Page 2
- *              Options -s, -e, -c, -p, -t are ignored if --page is given.
+ *              Options -s, -e, -n, --startidfile, -c, -p, -t are ignored if --page is given.
  * -f           Fully delete all content instead of just refreshing relevant entries. This will also
  *              rebuild the whole storage structure. May leave the wiki temporarily incomplete.
  * --server=<server> The protocol and server name to as base URLs, e.g.
@@ -35,13 +38,14 @@
  * @ingroup SMWMaintenance
  */
 
-$optionsWithArgs = array( 'd', 's', 'e', 'b', 'server', 'page' ); // -d <delay>, -s <startid>, -e <endid>, -b <backend>
+$optionsWithArgs = array( 'd', 's', 'e', 'n', 'b', 'startidfile', 'server', 'page' ); // -d <delay>, -s <startid>, -e <endid>, -n <numids>, --startidfile <startidfile> -b <backend>
 
 require_once ( getenv( 'MW_INSTALL_PATH' ) !== false
-    ? getenv( 'MW_INSTALL_PATH' ) . "/maintenance/commandLine.inc"
-    : dirname( __FILE__ ) . '/../../../maintenance/commandLine.inc' );
+	? getenv( 'MW_INSTALL_PATH' ) . "/maintenance/commandLine.inc"
+	: dirname( __FILE__ ) . '/../../../maintenance/commandLine.inc' );
 
-global $smwgEnableUpdateJobs, $wgServer;
+global $smwgEnableUpdateJobs, $wgServer, $wgTitle;
+$wgTitle = Title::newFromText( 'SMW_refreshData.php' );
 $smwgEnableUpdateJobs = false; // do not fork additional update jobs while running this script
 
 if ( isset( $options['server'] ) ) {
@@ -60,13 +64,27 @@ if ( isset( $options['page'] ) ) {
 	$pages = false;
 }
 
+$writeToStartidfile = false;
 if ( array_key_exists( 's', $options ) ) {
 	$start = max( 1, intval( $options['s'] ) );
+} elseif ( array_key_exists( 'startidfile', $options ) ) {
+	if ( !is_writable( file_exists( $options['startidfile'] ) ? $options['startidfile'] : dirname( $options['startidfile'] ) ) ) {
+		die("Cannot use a startidfile that we can't write to.\n");
+	}
+	$writeToStartidfile = true;
+	if ( is_readable( $options['startidfile'] ) ) {
+		$start = max( 1, intval( file_get_contents( $options['startidfile'] ) ) );
+	} else {
+		$start = 1;
+	}
 } else {
 	$start = 1;
 }
+
 if ( array_key_exists( 'e', $options ) ) { // Note: this might reasonably be larger than the page count
 	$end = intval( $options['e'] );
+} elseif ( array_key_exists( 'n', $options ) ) {
+	$end = $start + intval( $options['n'] );
 } else {
 	$end = false;
 }
@@ -89,7 +107,7 @@ if (  array_key_exists( 'p', $options ) ) {
 if (  array_key_exists( 't', $options ) ) {
 	$filterarray[] = SMW_NS_TYPE;
 }
-$filter = count( $filterarray ) > 0 ? $filterarray:false;
+$filter = count( $filterarray ) > 0 ? $filterarray : false;
 
 if (  array_key_exists( 'f', $options ) ) {
 	print "\n  Deleting all stored data completely and rebuilding it again later!\n  Semantic data in the wiki might be incomplete for some time while this operation runs.\n\n  NOTE: It is usually necessary to run this script ONE MORE TIME after this operation,\n  since some properties' types are not stored yet in the first run.\n  The first run can normally use the parameter -p to refresh only properties.\n\n";
@@ -97,28 +115,28 @@ if (  array_key_exists( 'f', $options ) ) {
 		print "  WARNING: -s or -e are used, so some pages will not be refreshed at all!\n    Data for those pages will only be available again when they have been\n    refreshed as well!\n\n";
 	}
 
-	print "Abort with control-c in the next five seconds ...  ";
+	print 'Abort with control-c in the next five seconds ...  ';
 
 	// TODO
 	// Remove the following section and replace it with a simple
-	// wfCountDown as soon as we switch to MediaWiki 1.16. 
+	// wfCountDown as soon as we switch to MediaWiki 1.16.
 	// Currently, wfCountDown is only supported from
 	// revision 51650 (Jun 9 2009) onward.
 	$n = 6;
-	if ( function_exists( "wfCountDown" ) ) {
+	if ( function_exists( 'wfCountDown' ) ) {
 		wfCountDown( $n );
 	} else {
-    	for ( $i = $n; $i >= 0; $i-- ) {
-        	if ( $i != $n ) {
-            	echo str_repeat( "\x08", strlen( $i + 1 ) );
-        	}
-        	echo $i;
-        	flush();
-        	if ( $i ) {
-            	sleep( 1 );
-        	}
-    	}
-    	echo "\n";
+		for ( $i = $n; $i >= 0; $i-- ) {
+			if ( $i != $n ) {
+				echo str_repeat( "\x08", strlen( $i + 1 ) );
+			}
+			echo $i;
+			flush();
+			if ( $i ) {
+				sleep( 1 );
+			}
+		}
+		echo "\n";
 	}
 	// Remove up to here and just uncomment the following line:
 	// wfCountDown( 6 );
@@ -143,7 +161,7 @@ if ( $pages == false ) {
 	" 1000) were refreshed, please abort with CTRL-C and resume this script\n" .
 	" at the last processed page id using the parameter -s (use -v to display\n" .
 	" page ids during refresh). Continue this until all pages were refreshed.\n---\n";
-	print "Processing all IDs from $start to " . ( $end ? "$end":"last ID" ) . " ...\n";
+	print "Processing all IDs from $start to " . ( $end ? "$end" : 'last ID' ) . " ...\n";
 
 	$id = $start;
 	while ( ( ( !$end ) || ( $id <= $end ) ) && ( $id > 0 ) ) {
@@ -156,6 +174,9 @@ if ( $pages == false ) {
 		}
 		$num_files++;
 		$linkCache->clear(); // avoid memory leaks
+	}
+	if ( $writeToStartidfile ) {
+		file_put_contents( $options['startidfile'], "$id" );
 	}
 	print "$num_files IDs refreshed.\n";
 } else {

@@ -1,13 +1,15 @@
 <?php
-
-# Setup and Hooks for the SelectCategory extension, an extension of the
-# edit box of MediaWiki to provide an easy way to add category links
-# to a specific page.
-
-# @addtogroup Extensions
-# @author Leon Weber <leon.weber@leonweber.de> & Manuel Schneider <manuel.schneider@wikimedia.ch>
-# @copyright © 2006 by Leon Weber & Manuel Schneider
-# @licence GNU General Public Licence 2.0 or later
+/**
+ * Setup and Hooks for the SelectCategory extension, an extension of the
+ * edit box of MediaWiki to provide an easy way to add category links
+ * to a specific page.
+ *
+ * @file
+ * @ingroup Extensions
+ * @author Leon Weber <leon.weber@leonweber.de> & Manuel Schneider <manuel.schneider@wikimedia.ch>
+ * @copyright © 2006 by Leon Weber & Manuel Schneider
+ * @licence GNU General Public Licence 2.0 or later
+ */
 
 if( !defined( 'MEDIAWIKI' ) ) {
 	echo( "This file is an extension to the MediaWiki software and cannot be used standalone.\n" );
@@ -68,7 +70,6 @@ $wgExtensionCredits['parserhook'][] = array(
 	'version'        => '0.7dev',
 	'author'         => 'Leon Weber & Manuel Schneider',
 	'url'            => 'http://www.mediawiki.org/wiki/Extension:SelectCategory',
-	'description'    => 'Allows the user to select from existing categories when editing a page',
 	'descriptionmsg' => 'selectcategory-desc',
 );
 

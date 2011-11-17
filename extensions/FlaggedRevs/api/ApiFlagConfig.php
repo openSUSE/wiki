@@ -17,7 +17,7 @@
  *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
- * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  * http://www.gnu.org/copyleft/gpl.html
  */
 
@@ -30,15 +30,17 @@ class ApiFlagConfig extends ApiBase {
 
 	public function execute() {
 		$this->getMain()->setCacheMode( 'public' );
-		global $wgFlaggedRevTags;
+		$minQLTags = FlaggedRevs::quickTags( FR_QUALITY );
+		$minPLTags = FlaggedRevs::quickTags( FR_PRISTINE );
 		$data = array();
-		foreach( $wgFlaggedRevTags as $tag => $params ) {
-			$tagInfo = array();
-			$tagInfo['name'] = $tag;
-			$tagInfo['levels'] = $params['levels'];
-			$tagInfo['tier2'] = $params['quality'];
-			$tagInfo['tier3'] = $params['pristine'];
-			$data[] = $tagInfo;
+		foreach ( FlaggedRevs::getDimensions() as $tag => $levels ) {
+			$data[] = array(
+				'name'   => $tag,
+				'levels' => count( $levels ) - 1, // exclude '0' level
+				'tier1'  => 1,
+				'tier2'  => $minQLTags[$tag],
+				'tier3'  => $minPLTags[$tag]
+			);
 		}
 		$result = $this->getResult();
 		$result->setIndexedTagName( $data, 'tag' );
@@ -49,8 +51,8 @@ class ApiFlagConfig extends ApiBase {
 		return false;
 	}
 	
-	public function isWriteMode() { 
- 		return false; 
+	public function isWriteMode() {
+ 		return false;
  	}
 
 	public function getAllowedParams() {
@@ -79,6 +81,6 @@ class ApiFlagConfig extends ApiBase {
 	}
 	
 	public function getVersion() {
-		return __CLASS__.': $Id: ApiFlagConfig.php 69932 2010-07-26 08:03:21Z tstarling $';
+		return __CLASS__ . ': $Id: ApiFlagConfig.php 77911 2010-12-06 21:06:12Z aaron $';
 	}
 }

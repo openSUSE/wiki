@@ -1,16 +1,16 @@
 <?php
-
 /**
  * Setup and Hooks for the CategoryTree extension, an AJAX based gadget
  * to display the category structure of a wiki
  *
- * @addtogroup Extensions
+ * @file
+ * @ingroup Extensions
  * @author Daniel Kinzler, brightbyte.de
  * @copyright © 2006-2008 Daniel Kinzler and others
  * @license GNU General Public Licence 2.0 or later
  */
 
-if( !defined( 'MEDIAWIKI' ) ) {
+if ( !defined( 'MEDIAWIKI' ) ) {
 	echo( "This file is an extension to the MediaWiki software and cannot be used standalone.\n" );
 	die( 1 );
 }
@@ -19,19 +19,19 @@ if( !defined( 'MEDIAWIKI' ) ) {
 * Constants for use with the mode,
 * defining what should be shown in the tree
 */
-define('CT_MODE_CATEGORIES', 0);
-define('CT_MODE_PAGES', 10);
-define('CT_MODE_ALL', 20);
-define('CT_MODE_PARENTS', 100);
+define( 'CT_MODE_CATEGORIES', 0 );
+define( 'CT_MODE_PAGES', 10 );
+define( 'CT_MODE_ALL', 20 );
+define( 'CT_MODE_PARENTS', 100 );
 
 /**
 * Constants for use with the hideprefix option,
 * defining when the namespace prefix should be hidden
 */
-define('CT_HIDEPREFIX_NEVER', 0);
-define('CT_HIDEPREFIX_ALWAYS', 10);
-define('CT_HIDEPREFIX_CATEGORIES', 20);
-define('CT_HIDEPREFIX_AUTO', 30);
+define( 'CT_HIDEPREFIX_NEVER', 0 );
+define( 'CT_HIDEPREFIX_ALWAYS', 10 );
+define( 'CT_HIDEPREFIX_CATEGORIES', 20 );
+define( 'CT_HIDEPREFIX_AUTO', 30 );
 
 /**
  * Options:
@@ -56,53 +56,53 @@ $wgCategoryTreeAllowTag = true;
 $wgCategoryTreeDisableCache = true;
 $wgCategoryTreeDynamicTag = false;
 $wgCategoryTreeHTTPCache = false;
-#$wgCategoryTreeUnifiedView = true;
-$wgCategoryTreeMaxDepth = array(CT_MODE_PAGES => 1, CT_MODE_ALL => 1, CT_MODE_CATEGORIES => 2);
+# $wgCategoryTreeUnifiedView = true;
+$wgCategoryTreeMaxDepth = array( CT_MODE_PAGES => 1, CT_MODE_ALL => 1, CT_MODE_CATEGORIES => 2 );
 
-# Set $wgCategoryTreeForceHeaders to true to force the JS and CSS headers for CategoryTree to be included on every page. 
+# Set $wgCategoryTreeForceHeaders to true to force the JS and CSS headers for CategoryTree to be included on every page.
 # May be usefull for using CategoryTree from within system messages, in the sidebar, or a custom skin.
-$wgCategoryTreeForceHeaders = false; 
+$wgCategoryTreeForceHeaders = false;
 $wgCategoryTreeSidebarRoot = null;
 $wgCategoryTreeHijackPageCategories = false; # EXPERIMENTAL! NOT YET FOR PRODUCTION USE! Main problem is general HTML/CSS layout cruftiness.
 
 $wgCategoryTreeExtPath = '/extensions/CategoryTree';
-$wgCategoryTreeVersion = '5';  #NOTE: bump this when you change the CSS or JS files!
+$wgCategoryTreeVersion = '6';  # NOTE: bump this when you change the CSS or JS files!
 $wgCategoryTreeUseCategoryTable = version_compare( $wgVersion, "1.13", '>=' );
 
 $wgCategoryTreeOmitNamespace = CT_HIDEPREFIX_CATEGORIES;
 $wgCategoryTreeDefaultMode = CT_MODE_CATEGORIES;
-$wgCategoryTreeDefaultOptions = array(); #Default values for most options. ADD NEW OPTIONS HERE!
+$wgCategoryTreeDefaultOptions = array(); # Default values for most options. ADD NEW OPTIONS HERE!
 $wgCategoryTreeDefaultOptions['mode'] = null; # will be set to $wgCategoryTreeDefaultMode in efCategoryTree(); compatibility quirk
 $wgCategoryTreeDefaultOptions['hideprefix'] = null; # will be set to $wgCategoryTreeDefaultMode in efCategoryTree(); compatibility quirk
 $wgCategoryTreeDefaultOptions['showcount'] = false;
 $wgCategoryTreeDefaultOptions['namespaces'] = false; # false means "no filter"
 
 $wgCategoryTreeCategoryPageMode = CT_MODE_CATEGORIES;
-$wgCategoryTreeCategoryPageOptions = array(); #Options to be used for category pages
+$wgCategoryTreeCategoryPageOptions = array(); # Options to be used for category pages
 $wgCategoryTreeCategoryPageOptions['mode'] = NULL; # will be set to $wgCategoryTreeDefaultMode in efCategoryTree(); compatibility quirk
 $wgCategoryTreeCategoryPageOptions['showcount'] = true;
 
-$wgCategoryTreeSpecialPageOptions = array(); #Options to be used for Special:CategoryTree
+$wgCategoryTreeSpecialPageOptions = array(); # Options to be used for Special:CategoryTree
 $wgCategoryTreeSpecialPageOptions['showcount'] = true;
 
-$wgCategoryTreeSidebarOptions = array(); #Options to be used in the sidebar (for use with $wgCategoryTreeSidebarRoot)
+$wgCategoryTreeSidebarOptions = array(); # Options to be used in the sidebar (for use with $wgCategoryTreeSidebarRoot)
 $wgCategoryTreeSidebarOptions['mode'] = CT_MODE_CATEGORIES;
 $wgCategoryTreeSidebarOptions['hideprefix'] = CT_HIDEPREFIX_CATEGORIES;
 $wgCategoryTreeSidebarOptions['showcount'] = false;
 $wgCategoryTreeSidebarOptions['hideroot'] = true;
-$wgCategoryTreeSidebarOptions['namespaces'] = false; 
+$wgCategoryTreeSidebarOptions['namespaces'] = false;
 $wgCategoryTreeSidebarOptions['depth'] = 1;
 
-$wgCategoryTreePageCategoryOptions = array(); #Options to be used in the sidebar (for use with $wgCategoryTreePageCategories)
+$wgCategoryTreePageCategoryOptions = array(); # Options to be used in the sidebar (for use with $wgCategoryTreePageCategories)
 $wgCategoryTreePageCategoryOptions['mode'] = CT_MODE_PARENTS;
 $wgCategoryTreePageCategoryOptions['hideprefix'] = CT_HIDEPREFIX_CATEGORIES;
 $wgCategoryTreePageCategoryOptions['showcount'] = false;
 $wgCategoryTreePageCategoryOptions['hideroot'] = false;
 $wgCategoryTreePageCategoryOptions['namespaces'] = false;
 $wgCategoryTreePageCategoryOptions['depth'] = 0;
-#$wgCategoryTreePageCategoryOptions['class'] = 'CategoryTreeInlineNode';
+# $wgCategoryTreePageCategoryOptions['class'] = 'CategoryTreeInlineNode';
 
-$wgExtensionAliasesFiles['CategoryTree'] = dirname(__FILE__) . '/CategoryTree.alias.php';
+$wgExtensionAliasesFiles['CategoryTree'] = dirname( __FILE__ ) . '/CategoryTree.alias.php';
 
 /**
  * Register extension setup hook and credits
@@ -113,7 +113,6 @@ $wgExtensionCredits['specialpage'][] = array(
 	'name' => 'CategoryTree',
 	'author' => 'Daniel Kinzler',
 	'url' => 'http://www.mediawiki.org/wiki/Extension:CategoryTree',
-	'description' => 'Dynamically navigate the category structure',
 	'descriptionmsg' => 'categorytree-desc',
 );
 $wgExtensionCredits['parserhook'][] = array(
@@ -121,14 +120,13 @@ $wgExtensionCredits['parserhook'][] = array(
 	'name' => 'CategoryTree',
 	'author' => 'Daniel Kinzler',
 	'url' => 'http://www.mediawiki.org/wiki/Extension:CategoryTree',
-	'description' => 'Dynamically navigate the category structure',
 	'descriptionmsg' => 'categorytree-desc',
 );
 
 /**
  * Register the special page
  */
-$dir = dirname(__FILE__) . '/';
+$dir = dirname( __FILE__ ) . '/';
 
 if ( $wgUseAjax && $wgCategoryTreeAllowTag ) {
 	$wgExtensionMessagesFiles['CategoryTreeMagic'] = $dir . 'CategoryTree.i18n.magic.php';
@@ -140,7 +138,7 @@ $wgAutoloadClasses['CategoryTree'] = $dir . 'CategoryTreeFunctions.php';
 $wgAutoloadClasses['CategoryTreeCategoryPage'] = $dir . 'CategoryPageSubclass.php';
 $wgSpecialPages['CategoryTree'] = 'CategoryTreePage';
 $wgSpecialPageGroups['CategoryTree'] = 'pages';
-#$wgHooks['SkinTemplateTabs'][] = 'efCategoryTreeInstallTabs';
+# $wgHooks['SkinTemplateTabs'][] = 'efCategoryTreeInstallTabs';
 $wgHooks['ArticleFromTitle'][] = 'efCategoryTreeArticleFromTitle';
 
 /**
@@ -174,7 +172,7 @@ function efCategoryTree() {
 		$wgHooks['SkinJoinCategoryLinks'][] = 'efCategoryTreeSkinJoinCategoryLinks';
 	}
 
-	if( $wgCategoryTreeAllowTag ) {
+	if ( $wgCategoryTreeAllowTag ) {
 		$wgHooks['ParserFirstCallInit'][] = 'efCategoryTreeSetHooks';
 	}
 
@@ -198,7 +196,7 @@ function efCategoryTree() {
 	}
 }
 
-function efCategoryTreeSetHooks( &$parser ) {
+function efCategoryTreeSetHooks( $parser ) {
 	$parser->setHook( 'categorytree' , 'efCategoryTreeParserHook' );
 	$parser->setFunctionHook( 'categorytree' , 'efCategoryTreeParserFunction' );
 	return true;
@@ -221,13 +219,13 @@ function efCategoryTreeAjaxWrapper( $category, $options, $enc = '' ) {
 	$depth = isset( $options['depth'] ) ? (int)$options['depth'] : 1;
 
 	$ct = new CategoryTree( $options, true );
-	$depth = efCategoryTreeCapDepth( $ct->getOption('mode'), $depth );
+	$depth = efCategoryTreeCapDepth( $ct->getOption( 'mode' ), $depth );
 	$response = $ct->ajax( $category, $depth );
 
 	if ( $wgCategoryTreeHTTPCache && $wgSquidMaxage && $wgUseSquid ) {
 		$response->setCacheDuration( $wgSquidMaxage );
-		$response->setVary( 'Accept-Encoding, Cookie' ); #cache for anons only
-		#TODO: purge the squid cache when a category page is invalidated
+		$response->setVary( 'Accept-Encoding, Cookie' ); # cache for anons only
+		# TODO: purge the squid cache when a category page is invalidated
 	}
 
 	return $response;
@@ -240,50 +238,54 @@ function efCategoryTreeAjaxWrapper( $category, $options, $enc = '' ) {
 function efCategoryTreeCapDepth( $mode, $depth ) {
 	global $wgCategoryTreeMaxDepth;
 
-	if (is_numeric($depth))
-		$depth = intval($depth);
-	else return 1;
+	if ( is_numeric( $depth ) ) {
+		$depth = intval( $depth );
+	} else {
+		return 1;
+	}
 
-	if (is_array($wgCategoryTreeMaxDepth)) {
-		$max = isset($wgCategoryTreeMaxDepth[$mode]) ? $wgCategoryTreeMaxDepth[$mode] : 1;
-	} elseif (is_numeric($wgCategoryTreeMaxDepth)) {
+	if ( is_array( $wgCategoryTreeMaxDepth ) ) {
+		$max = isset( $wgCategoryTreeMaxDepth[$mode] ) ? $wgCategoryTreeMaxDepth[$mode] : 1;
+	} elseif ( is_numeric( $wgCategoryTreeMaxDepth ) ) {
 		$max = $wgCategoryTreeMaxDepth;
 	} else {
 		wfDebug( 'efCategoryTreeCapDepth: $wgCategoryTreeMaxDepth is invalid.' );
 		$max = 1;
 	}
 
-	return min($depth, $max);
+	return min( $depth, $max );
 }
 
 /**
  * Entry point for the {{#categorytree}} tag parser function.
  * This is a wrapper around efCategoryTreeParserHook
  */
-function efCategoryTreeParserFunction( &$parser ) {
+function efCategoryTreeParserFunction( $parser ) {
 	$params = func_get_args();
-	array_shift( $params ); //first is &$parser, strip it
+	array_shift( $params ); // first is $parser, strip it
 
-	//first user-supplied parameter must be category name
-	if ( !$params ) return ''; //no category specified, return nothing
+	// first user-supplied parameter must be category name
+	if ( !$params ) {
+		return ''; // no category specified, return nothing
+	}
 	$cat = array_shift( $params );
 
-	//build associative arguments from flat parameter list
+	// build associative arguments from flat parameter list
 	$argv = array();
 	foreach ( $params as $p ) {
-		if ( preg_match('/^\s*(\S.*?)\s*=\s*(.*?)\s*$/', $p, $m) ) {
+		if ( preg_match( '/^\s*(\S.*?)\s*=\s*(.*?)\s*$/', $p, $m ) ) {
 			$k = $m[1];
-			$v = preg_replace('/^"\s*(.*?)\s*"$/', '$1', $m[2]); //strip any quotes enclusing the value
+			$v = preg_replace( '/^"\s*(.*?)\s*"$/', '$1', $m[2] ); // strip any quotes enclusing the value
 		}
 		else {
-			$k = trim($p);
+			$k = trim( $p );
 			$v = true;
 		}
 
 		$argv[$k] = $v;
 	}
 
-	//now handle just like a <categorytree> tag
+	// now handle just like a <categorytree> tag
 	$html = efCategoryTreeParserHook( $cat, $argv, $parser );
 	return array( $html, 'noparse' => true, 'isHTML' => true );
 }
@@ -292,15 +294,16 @@ function efCategoryTreeParserFunction( &$parser ) {
  * Hook implementation for injecting a category tree into the sidebar.
  * Registered automatically if $wgCategoryTreeSidebarRoot is set to a category name.
  */
-function efCategoryTreeSkinTemplateOutputPageBeforeExec( &$skin, &$tpl ) {
+function efCategoryTreeSkinTemplateOutputPageBeforeExec( $skin, $tpl ) {
 	global $wgCategoryTreeSidebarRoot, $wgCategoryTreeSidebarOptions;
-	
+
 	$html = efCategoryTreeParserHook( $wgCategoryTreeSidebarRoot, $wgCategoryTreeSidebarOptions );
-	if ( $html ) $tpl->data['sidebar']['categorytree-portlet'] = $html; //requires MW 1.13, r36917
+	if ( $html ) {
+		$tpl->data['sidebar']['categorytree-portlet'] = $html; // requires MW 1.13, r36917
+	}
 
 	return true;
 }
-
 
 /**
  * Entry point for the <categorytree> tag parser hook.
@@ -311,8 +314,7 @@ function efCategoryTreeParserHook( $cat, $argv, $parser = null, $allowMissing = 
 
 	if ( $parser ) {
 		$parser->mOutput->mCategoryTreeTag = true; # flag for use by efCategoryTreeParserOutput
-	}
-	else {
+	} else {
 		CategoryTree::setHeaders( $wgOut );
 	}
 
@@ -325,7 +327,9 @@ function efCategoryTreeParserHook( $cat, $argv, $parser = null, $allowMissing = 
 	$depthArg = isset( $argv[ 'depth' ] ) ? (int)$argv[ 'depth' ] : null;
 
 	$depth = efCategoryTreeCapDepth( $ct->getOption( 'mode' ), $depthArg );
-	if ( $onlyroot ) $depth = 0;
+	if ( $onlyroot ) {
+		$depth = 0;
+	}
 
 	return $ct->getTag( $parser, $cat, $hideroot, $attr, $depth, $allowMissing );
 }
@@ -334,7 +338,7 @@ function efCategoryTreeParserHook( $cat, $argv, $parser = null, $allowMissing = 
 * Hook callback that injects messages and things into the <head> tag
 * Does nothing if $parserOutput->mCategoryTreeTag is not set
 */
-function efCategoryTreeParserOutput( &$outputPage, $parserOutput )  {
+function efCategoryTreeParserOutput( $outputPage, $parserOutput )  {
 	if ( !empty( $parserOutput->mCategoryTreeTag ) ) {
 		CategoryTree::setHeaders( $outputPage );
 	}
@@ -344,7 +348,7 @@ function efCategoryTreeParserOutput( &$outputPage, $parserOutput )  {
 /**
  * ArticleFromTitle hook, override category page handling
  */
-function efCategoryTreeArticleFromTitle( &$title, &$article ) {
+function efCategoryTreeArticleFromTitle( $title, &$article ) {
 	if ( $title->getNamespace() == NS_CATEGORY ) {
 		$article = new CategoryTreeCategoryPage( $title );
 	}
@@ -354,10 +358,8 @@ function efCategoryTreeArticleFromTitle( &$title, &$article ) {
 /**
  * OutputPageMakeCategoryLinks hook, override category links
  */
-function efCategoryTreeOutputPageMakeCategoryLinks( &$out, &$categories, &$links ) {
-	global $wgContLang, $wgCategoryTreePageCategoryOptions;
-
-	$ct = new CategoryTree( $wgCategoryTreePageCategoryOptions );
+function efCategoryTreeOutputPageMakeCategoryLinks( $out, &$categories, &$links ) {
+	global $wgCategoryTreePageCategoryOptions;
 
 	foreach ( $categories as $category => $type ) {
 		$links[$type][] = efCategoryTreeParserHook( $category, $wgCategoryTreePageCategoryOptions, null, true );
@@ -366,13 +368,11 @@ function efCategoryTreeOutputPageMakeCategoryLinks( &$out, &$categories, &$links
 	return false;
 }
 
-
-function efCategoryTreeSkinJoinCategoryLinks( &$skin, &$links, &$result ) {
+function efCategoryTreeSkinJoinCategoryLinks( $skin, &$links, &$result ) {
 	$embed = '<div class="CategoryTreePretendInlineMSIE CategoryTreeCategoryBarItem">';
 	$pop = '</div>';
 	$sep = ' ';
 
-#	$result = '<div class="CategoryTreeCatBarWrapper" style="border:1px solid blue">' . $embed . implode ( "{$pop} {$sep} {$embed}" , $links ) . $pop . '</div>';
 	$result = $embed . implode ( "{$pop} {$sep} {$embed}" , $links ) . $pop;
 
 	return false;

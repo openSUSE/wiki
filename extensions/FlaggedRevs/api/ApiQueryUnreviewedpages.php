@@ -17,7 +17,7 @@
  *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
- * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  * http://www.gnu.org/copyleft/gpl.html
  */
 
@@ -41,14 +41,15 @@ class ApiQueryUnreviewedpages extends ApiQueryGeneratorBase {
 	}
 
 	private function run( $resultPageSet = null ) {
+		global $wgMemc;
 		$params = $this->extractRequestParams();
 
 		// Construct SQL Query
 		$this->addTables( array( 'page', 'flaggedpages' ) );
 		$this->addWhereFld( 'page_namespace', $params['namespace'] );
-		if( $params['filterredir'] == 'redirects' )
+		if ( $params['filterredir'] == 'redirects' )
 			$this->addWhereFld( 'page_is_redirect', 1 );
-		if( $params['filterredir'] == 'nonredirects' )
+		if ( $params['filterredir'] == 'nonredirects' )
 			$this->addWhereFld( 'page_is_redirect', 0 );
 		$this->addWhereRange(
 			'page_title',
@@ -57,10 +58,10 @@ class ApiQueryUnreviewedpages extends ApiQueryGeneratorBase {
 			$params['end']
 		);
 		$this->addJoinConds(
-			array('flaggedpages' => array ('LEFT JOIN','fp_page_id=page_id') )
+			array( 'flaggedpages' => array ( 'LEFT JOIN', 'fp_page_id=page_id' ) )
 		);
 		$this->addWhere( 'fp_page_id IS NULL OR
-			fp_quality < '.intval($params['filterlevel']) );
+			fp_quality < ' . intval( $params['filterlevel'] ) );
 		$this->addOption(
 			'USE INDEX',
 			array( 'page' => 'name_title', 'flaggedpages' => 'PRIMARY' )
@@ -79,13 +80,12 @@ class ApiQueryUnreviewedpages extends ApiQueryGeneratorBase {
 		}
 
 		$limit = $params['limit'];
-		$this->addOption( 'LIMIT', $limit+1 );
+		$this->addOption( 'LIMIT', $limit + 1 );
 		$res = $this->select( __METHOD__ );
 
 		$data = array ();
 		$count = 0;
-		$db = $this->getDB();
-		while ( $row = $db->fetchObject( $res ) ) {
+		foreach( $res as $row ) {
 			if ( ++$count > $limit ) {
 				// We've reached the one extra which shows that there are
 				// additional pages to be had. Stop here...
@@ -95,17 +95,18 @@ class ApiQueryUnreviewedpages extends ApiQueryGeneratorBase {
 
 			if ( is_null( $resultPageSet ) ) {
 				$title = Title::newFromRow( $row );
+				$key = wfMemcKey( 'unreviewedPages', 'underReview', $row->page_id );
 				$data[] = array(
-					'pageid' => intval( $row->page_id ),
-					'ns'     => intval( $title->getNamespace() ),
-					'title'  => $title->getPrefixedText(),
-					'revid'  => intval( $row->page_latest ),
+					'pageid' 		=> intval( $row->page_id ),
+					'ns'     		=> intval( $title->getNamespace() ),
+					'title'  		=> $title->getPrefixedText(),
+					'revid'  	  	=> intval( $row->page_latest ),
+					'under_review'  => (bool)$wgMemc->get( $key )
 				);
 			} else {
 				$resultPageSet->processDbRow( $row );
 			}
 		}
-		$db->freeResult( $res );
 
 		if ( is_null(  $resultPageSet ) ) {
 			$result = $this->getResult();
@@ -163,8 +164,8 @@ class ApiQueryUnreviewedpages extends ApiQueryGeneratorBase {
 			'end' => 'Stop listing at this page title.',
 			'namespace' => 'The namespaces to enumerate.',
 			'filterredir' => 'How to filter for redirects',
-			'filterlevel' => 'How to filter by quality (0=sighted,1=quality)',
-			'limit' => 'How many total pages to return.',			
+			'filterlevel' => 'How to filter by quality (0=checked,1=quality)',
+			'limit' => 'How many total pages to return.',
 		);
 	}
 
@@ -185,6 +186,6 @@ class ApiQueryUnreviewedpages extends ApiQueryGeneratorBase {
 	}
 	
 	public function getVersion() {
-		return __CLASS__.': $Id: ApiQueryUnreviewedpages.php 69932 2010-07-26 08:03:21Z tstarling $';
+		return __CLASS__ . ': $Id: ApiQueryUnreviewedpages.php 76230 2010-11-07 03:30:48Z aaron $';
 	}
 }

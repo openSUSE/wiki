@@ -1,8 +1,13 @@
 <?php
 /**
  * @author Jon Harald Søby
+ * @file
+ * @ingroup SF
  */
 
+/**
+ * @ingroup SFLanguage
+ */
 class SF_LanguageNo extends SF_Language {
 
 	/* private */ var $m_SpecialProperties = array(

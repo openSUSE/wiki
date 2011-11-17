@@ -3,7 +3,8 @@
 /**
  * Messages file for the InputBox extension
  *
- * @addtogroup Extensions
+ * @file
+ * @ingroup Extensions
  */
 
 /**
@@ -27,9 +28,10 @@ Please specify "create", "comment", "search", "search2" or "fulltext".',
  * @author Meno25
  * @author SPQRobin
  * @author Siebrand
+ * @author The Evil IP address
  */
 $messages['qqq'] = array(
-	'inputbox-desc' => 'Short description of the Inputbox extension, shown on [[Special:Version]].',
+	'inputbox-desc' => '{{desc}}',
 	'inputbox-error-bad-type' => '{{doc-important|"create", "comment", "search", "search2" and "fulltext" should not be translated.}}',
 	'tryexact' => 'Part of the "Inputbox" extension. This message is the text of the button to search the page you typed in the inputbox. If the page with the exact name exists, you will go directly to that page.',
 	'searchfulltext' => 'Part of the "Inputbox" extension. This message is the text of the button to search the page you typed in the inputbox. This button always goes to the search page, even if the page with the exact name exists.',
@@ -70,7 +72,7 @@ $messages['an'] = array(
 	'inputbox-desc' => 'Premite a enclusión de formularios HTML predefinitos',
 	'inputbox-error-no-type' => 'No ha endicato o tipo de caixa de dentrada que cal creyar.',
 	'inputbox-error-bad-type' => 'No se reconoixe o tipo de caixa de dentrada "$1".
-Por fabor, espezifique "create", "comment", "search" u "fulltext".',
+Por favor, especifique "create", "comment", "search" u "fulltext".',
 	'tryexact' => 'Mirar títol esauto',
 	'searchfulltext' => 'Mirar por testo completo',
 	'createarticle' => 'Creyar pachina',
@@ -131,16 +133,22 @@ $messages['ast'] = array(
 	'createarticle' => 'Crear páxina',
 );
 
-/** Azerbaijani (Azərbaycan) */
+/** Azerbaijani (Azərbaycanca) */
 $messages['az'] = array(
 	'createarticle' => 'Məqalə yarat',
 );
 
-/** Samogitian (Žemaitėška)
- * @author Hugo.arg
+/** Bashkir (Башҡорт)
+ * @author Assele
  */
-$messages['bat-smg'] = array(
-	'searchfulltext' => 'Ėiškuotė pėlna teksta',
+$messages['ba'] = array(
+	'inputbox-desc' => 'Алдан билдәләнгән HTML формаларҙы индереү мөмкинлеген бирә',
+	'inputbox-error-no-type' => 'Һеҙ булдырыла торған юлдың төрөн күрһәтмәгеҙ.',
+	'inputbox-error-bad-type' => '"$1" юл төрө танылмаған.
+Зинһар, "create", "comment", "search", "search2" йәки "fulltext" төрөнөң береһен күрһәтегеҙ.',
+	'tryexact' => 'Теүәл тура килеү буйынса эҙләү',
+	'searchfulltext' => 'Тулы текст буйынса эҙләү',
+	'createarticle' => 'Яңы бит яһарға',
 );
 
 /** Southern Balochi (بلوچی مکرانی)
@@ -337,6 +345,7 @@ Vælg venligst "create", "comment", "search", "search2" eller "fulltext".',
 );
 
 /** German (Deutsch)
+ * @author LWChris
  * @author Metalhead64
  * @author Raimond Spekking
  * @author Umherirrender
@@ -347,7 +356,7 @@ $messages['de'] = array(
 	'inputbox-error-bad-type' => 'Eingabefeld-Typ „$1“ unbekannt.
 Bitte „create“, „comment“, „search“, „search2“ oder „fulltext“ angeben.',
 	'tryexact' => 'Versuche exakte Suche',
-	'searchfulltext' => 'Gesamten Text durchsuchen',
+	'searchfulltext' => 'Volltext-Suche',
 	'createarticle' => 'Seite anlegen',
 );
 
@@ -381,9 +390,9 @@ $messages['dsb'] = array(
 	'inputbox-error-no-type' => 'Njejsy pódał typ zapódawańskego póla za napóranje.',
 	'inputbox-error-bad-type' => 'Zapódawańske pólo typa "$1" njespóznane.
 Pšosym pódaj "create", "comment", "search", "search2" abo "fulltext".',
-	'tryexact' => 'Nawłos pytaś:',
+	'tryexact' => 'Eksaktne pytanje',
 	'searchfulltext' => 'Ceły tekst pytaś',
-	'createarticle' => 'Nastawk natworiś',
+	'createarticle' => 'Bok załožyś',
 );
 
 /** Divehi (ދިވެހިބަސް)
@@ -393,8 +402,11 @@ $messages['dv'] = array(
 	'createarticle' => 'މަޒުމޫނެއް ފައްޓަވާ',
 );
 
-/** Ewe (Eʋegbe) */
+/** Ewe (Eʋegbe)
+ * @author Natsubee
+ */
 $messages['ee'] = array(
+	'searchfulltext' => 'Di nuŋɔŋlɔ bliboa me',
 	'createarticle' => 'Dze nuŋɔŋlɔ yeye gɔme',
 );
 
@@ -448,6 +460,9 @@ Por favor, especifica «create», «comment», «search» «search2» o "fulltex
  */
 $messages['et'] = array(
 	'inputbox-desc' => 'Lubab kaasata eelmääratletud HTML-vormid.',
+	'inputbox-error-no-type' => 'Sisendkasti tüüp on määramata.',
+	'inputbox-error-bad-type' => 'Tundmatu sisendkasti tüüp "$1".
+Palun vali tüübiks "create", "comment", "search", "search2" või "fulltext".',
 	'tryexact' => 'Proovi täpset vastet',
 	'searchfulltext' => 'Otsi täisteksti',
 	'createarticle' => 'Alusta lehekülge',
@@ -462,16 +477,17 @@ $messages['eu'] = array(
 
 /** Extremaduran (Estremeñu) */
 $messages['ext'] = array(
-	'createarticle' => 'Creal artículu',
+	'createarticle' => 'Crial página',
 );
 
 /** Persian (فارسی)
+ * @author Ebraminio
  * @author Huji
  */
 $messages['fa'] = array(
 	'inputbox-desc' => 'اجازهٔ استفاده از فرم‌های HTML از پیش تعریف شده را می‌دهد',
 	'inputbox-error-no-type' => 'نوع جعبهٔ ورودی  ایجادشونده را مشخص نکرده‌اید.',
-	'inputbox-error-bad-type' => 'نوع "$1" برای جعبهٔ ورودی شناخته شده نیست.
+	'inputbox-error-bad-type' => 'نوع «$1» برای جعبهٔ ورودی شناخته شده نیست.
 لطفاً یکی از موارد «create»، «comment»، «search»، «search2» یا «fulltext» را مشخص کنید.',
 	'tryexact' => 'مطابقت نظیر به نظیر را بیازما',
 	'searchfulltext' => 'جستجوی کل متن',
@@ -541,8 +557,14 @@ $messages['fy'] = array(
 	'createarticle' => 'Side oanmeitsje',
 );
 
-/** Irish (Gaeilge) */
+/** Irish (Gaeilge)
+ * @author Evertype
+ */
 $messages['ga'] = array(
+	'inputbox-desc' => 'Ceadaigh glactha foirmeacha HTML réamhshainithe',
+	'inputbox-error-no-type' => 'Níor shocraigh tú an cineál bosca ionchur a bheadh le cruthú.',
+	'inputbox-error-bad-type' => 'Bosca iochur den chineál "$1" gan aithint.
+Sonraigh "create", "comment", "search", "search2" nó "fulltext".',
 	'tryexact' => 'Déan iarracht ar meaitseáil cruinn',
 	'searchfulltext' => 'Cuardaigh sa téacs iomlán',
 	'createarticle' => 'Cruthaigh alt',
@@ -735,6 +757,7 @@ Per favor specifica "create", "comment", "search", "search2" o "fulltext".',
 );
 
 /** Indonesian (Bahasa Indonesia)
+ * @author -iNu-
  * @author IvanLanin
  * @author Rex
  */
@@ -745,7 +768,14 @@ $messages['id'] = array(
 Harap gunakan "create", "comment", "search", "search2", atau "fulltext".',
 	'tryexact' => 'Coba pencocokan eksak',
 	'searchfulltext' => 'Cari di teks lengkap',
-	'createarticle' => 'Buat artikel',
+	'createarticle' => 'Buat halaman',
+);
+
+/** Igbo (Igbo)
+ * @author Ukabia
+ */
+$messages['ig'] = array(
+	'createarticle' => 'Ké ihü',
 );
 
 /** Iloko (Ilokano) */
@@ -897,7 +927,16 @@ $messages['ko'] = array(
 	'createarticle' => '문서 만들기',
 );
 
-/** Ripoarisch (Ripoarisch)
+/** Komi-Permyak (Перем Коми)
+ * @author Enye Lav
+ */
+$messages['koi'] = array(
+	'tryexact' => 'Кошшыны утлянно сiйö',
+	'searchfulltext' => 'Кошшыны тыр текст',
+	'createarticle' => 'Лöсьöтны листбок',
+);
+
+/** Colognian (Ripoarisch)
  * @author Purodha
  */
 $messages['ksh'] = array(
@@ -1026,13 +1065,13 @@ $messages['mk'] = array(
  * @author Shijualex
  */
 $messages['ml'] = array(
-	'inputbox-desc' => 'നിര്‍‌വചിക്കപ്പെട്ടു വെച്ചിരിക്കുന്ന HTML ഫോമുകള്‍ ഉള്‍പ്പെടുത്താന്‍ അനുവദിക്കുക',
-	'inputbox-error-no-type' => 'സൃഷ്ടിക്കേണ്ട ഇന്‍‌പുട്ട് ബോക്സിന്റെ തരം നിഷ്കര്‍ഷിച്ചിട്ടില്ല',
-	'inputbox-error-bad-type' => 'ഇന്‍പുട്ട് ബോക്സ് "$1" ഏതു തരം എന്നു തിരിച്ചറിയാൻ കഴിഞ്ഞില്ല.
-ദയവു ചെയ്ത് "create", "comment", "search", "search2" ഇവയിലൊന്നു നിഷ്കര്‍ഷിക്കുക',
-	'tryexact' => 'കൃത്യമായി യോജിക്കുന്ന ഫലങ്ങള്‍ ഉണ്ടോയെന്നു പരിശോധിക്കുക',
+	'inputbox-desc' => 'നിർവചിക്കപ്പെട്ടു വെച്ചിരിക്കുന്ന HTML ഫോമുകൾ ഉൾപ്പെടുത്താൻ അനുവദിക്കുക',
+	'inputbox-error-no-type' => 'സൃഷ്ടിക്കേണ്ട ഇൻപുട്ട് ബോക്സിന്റെ തരം നിഷ്കർഷിച്ചിട്ടില്ല',
+	'inputbox-error-bad-type' => 'ഇൻപുട്ട് ബോക്സ് "$1" ഏതു തരം എന്നു തിരിച്ചറിയാൻ കഴിഞ്ഞില്ല.
+ദയവു ചെയ്ത് "create", "comment", "search", "search2" ഇവയിലൊന്നു നിഷ്കർഷിക്കുക',
+	'tryexact' => 'കൃത്യമായി യോജിക്കുന്ന ഫലങ്ങൾ ഉണ്ടോയെന്നു പരിശോധിക്കുക',
 	'searchfulltext' => 'എഴുത്ത് മൊത്തമായി തിരയുക',
-	'createarticle' => 'താള്‍ സൃഷ്ടിക്കുക',
+	'createarticle' => 'താൾ സൃഷ്ടിക്കുക',
 );
 
 /** Mongolian (Монгол)
@@ -1089,9 +1128,10 @@ $messages['myv'] = array(
 
 /** Mazanderani (مازِرونی)
  * @author Spacebirdy
+ * @author محک
  */
 $messages['mzn'] = array(
-	'createarticle' => 'ولگ بایتن',
+	'createarticle' => 'صفحه بَیتن',
 );
 
 /** Nahuatl (Nāhuatl)
@@ -1110,7 +1150,7 @@ $messages['nan'] = array(
  * @author SabineCretella
  */
 $messages['nap'] = array(
-	'searchfulltext' => 'Ascià dint&#39;&#39;o testo',
+	'searchfulltext' => "Ascià dint''o testo",
 	'createarticle' => 'Cria voce',
 );
 
@@ -1266,11 +1306,12 @@ $messages['ps'] = array(
 );
 
 /** Portuguese (Português)
+ * @author Hamilton Abreu
  * @author Malafaya
  */
 $messages['pt'] = array(
 	'inputbox-desc' => 'Permite a inclusão de formulários HTML pré-definidos.',
-	'inputbox-error-no-type' => 'Você não especificou o tipo de box de inserção a ser criado.',
+	'inputbox-error-no-type' => 'Não especificou o tipo de caixa de edição a ser criado.',
 	'inputbox-error-bad-type' => 'O tipo de caixa de introdução de dados "$1" não foi reconhecido.
 Por favor, especifique "create", "comment", "search", "search2" ou "fulltext".',
 	'tryexact' => 'Tentar a exata expressão',
@@ -1302,10 +1343,12 @@ $messages['qu'] = array(
 );
 
 /** Romanian (Română)
+ * @author AdiJapan
  * @author Emily
  * @author Firilacroco
  * @author KlaudiuMihaila
  * @author Mihai
+ * @author Minisarm
  */
 $messages['ro'] = array(
 	'inputbox-desc' => 'Permite includerea formelor HTML predefinite',
@@ -1314,7 +1357,7 @@ $messages['ro'] = array(
 Te rog să specifici parametrii "create", "comment", "search", "search2" sau "fulltext".',
 	'tryexact' => 'Încearcă varianta exactă',
 	'searchfulltext' => 'Caută textul întreg',
-	'createarticle' => 'Crează articol',
+	'createarticle' => 'Creează pagină',
 );
 
 /** Aromanian (Armãneashce) */
@@ -1346,6 +1389,19 @@ $messages['ru'] = array(
 	'tryexact' => 'Строгий поиск',
 	'searchfulltext' => 'Полнотекстовый поиск',
 	'createarticle' => 'Создать статью',
+);
+
+/** Rusyn (Русиньскый)
+ * @author Gazeb
+ */
+$messages['rue'] = array(
+	'inputbox-desc' => 'Доволює вкладати вызначены HTML формуларї.',
+	'inputbox-error-no-type' => 'Не задали сьте тіп формуларёвого поля про створїня.',
+	'inputbox-error-bad-type' => 'Нерозпознаный тіп поля „$1“.
+Зазначте єдну з можностей: „create“, „comment“, „search“, „search2“ або „fulltext“.',
+	'tryexact' => 'Спробуйте точне гляданя',
+	'searchfulltext' => 'Повнотекстове гляданя',
+	'createarticle' => 'Створити статю',
 );
 
 /** Yakut (Саха тыла)
@@ -1389,6 +1445,13 @@ $messages['sg'] = array(
 	'createarticle' => 'Sü soura',
 );
 
+/** Samogitian (Žemaitėška)
+ * @author Hugo.arg
+ */
+$messages['sgs'] = array(
+	'searchfulltext' => 'Ėiškuotė pėlna teksta',
+);
+
 /** Sinhala (සිංහල)
  * @author Asiri wiki
  * @author නන්දිමිතුරු
@@ -1416,9 +1479,15 @@ Prosím, použite „create“, „comment“, „search“ alebo „search2“.
 	'createarticle' => 'Vytvoriť stránku',
 );
 
-/** Slovenian (Slovenščina) */
+/** Slovenian (Slovenščina)
+ * @author Dbc334
+ */
 $messages['sl'] = array(
-	'tryexact' => 'Poskusite z natančnim zadetkom',
+	'inputbox-desc' => 'Omogoča vključitev vnaprej določenih obrazcev HTML',
+	'inputbox-error-no-type' => 'Niste določili vrste vnosnega polja za ustvarjanje.',
+	'inputbox-error-bad-type' => 'Vrsta vnosnega polja »$1« ni prepoznana.
+Prosimo, določite »create«, »comment«, »search«, »search2« ali »fulltext«.',
+	'tryexact' => 'Poskusite z natančnim ujemanjem',
 	'searchfulltext' => 'Preišči vse besedilo',
 	'createarticle' => 'Ustvarite stran',
 );
@@ -1503,11 +1572,24 @@ Var god specifiera "create", "comment", "search", "search2" eller "fulltext".',
 	'createarticle' => 'Skapa sida',
 );
 
+/** Swahili (Kiswahili) */
+$messages['sw'] = array(
+	'createarticle' => 'Anzisha ukurasa',
+);
+
 /** Silesian (Ślůnski)
  * @author Ozi64
  */
 $messages['szl'] = array(
 	'createarticle' => 'Naškryflej artikel',
+);
+
+/** Tamil (தமிழ்)
+ * @author Kanags
+ * @author TRYPPN
+ */
+$messages['ta'] = array(
+	'createarticle' => 'பக்கத்தை உருவாக்கவும்',
 );
 
 /** Telugu (తెలుగు)
@@ -1684,6 +1766,10 @@ $messages['vo'] = array(
  * @author Võrok
  */
 $messages['vro'] = array(
+	'inputbox-desc' => 'Lupa pruukiq ette ärqmäärätüid HTML-vormõ.',
+	'inputbox-error-no-type' => 'Sa olõ-õi määränüq sisseandmisvälä tüüpi.',
+	'inputbox-error-bad-type' => 'Sisseandmisvälä tüüp ”$1” ei kõlbaq.
+Tüüp piät olõma create, comment, search, search2 vai fulltext.',
 	'tryexact' => 'Täpsä otsminõ',
 	'searchfulltext' => 'Otsiq terveq tekst',
 	'createarticle' => 'Luuq leht',
@@ -1699,7 +1785,7 @@ $messages['wa'] = array(
  */
 $messages['wo'] = array(
 	'inputbox-error-no-type' => 'Leeraloo ban xeetu boyotu duggit nga bëgga sos.',
-	'inputbox-error-bad-type' => '"$1" du xeetu boyotu duggit bu ñu xam. Tànnal benn ci yii "create", "comment", "seach" walla "search2"',
+	'inputbox-error-bad-type' => '↓"$1" du xeetu boyotu duggiit bees xam. Tànnal benn ci yii "create", "comment", "seach" walla "search2"',
 	'tryexact' => 'Seet wi mu yamal',
 	'searchfulltext' => 'Ceet ci mbind mi',
 	'createarticle' => 'Sos jukki bi',
@@ -1715,6 +1801,11 @@ $messages['wuu'] = array(
  * @author Huuchin
  */
 $messages['xal'] = array(
+	'inputbox-error-no-type' => 'Та бүтәлдг оруллһна теегин янз заав уга.',
+	'inputbox-error-bad-type' => '«$1» буру оруллһна теегин янз болҗана.
+Буйн болтха, нег йоста янз автн: «create», «comment», «search», «search2» аль «fulltext».',
+	'tryexact' => 'Дарата хәәлһн',
+	'searchfulltext' => 'Күцц бичг хәәлһн',
 	'createarticle' => 'Халхиг бүтәх',
 );
 
@@ -1732,7 +1823,14 @@ $messages['yi'] = array(
 	'createarticle' => 'באשאפט ארטיקל',
 );
 
-/** Yue (粵語) */
+/** Yoruba (Yorùbá)
+ * @author Demmy
+ */
+$messages['yo'] = array(
+	'createarticle' => 'Dá ojúewé',
+);
+
+/** Cantonese (粵語) */
 $messages['yue'] = array(
 	'inputbox-desc' => '容許包含預先設定嘅HTML表格',
 	'inputbox-error-no-type' => '你重未指定開輸入盒嘅指定類型。',

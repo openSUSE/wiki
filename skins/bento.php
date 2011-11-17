@@ -16,7 +16,7 @@ class SkinBento extends SkinTemplate {
     function setupSkinUserCss( OutputPage $out ) {
         parent::setupSkinUserCss( $out );
         // Append to the default screen common & print styles...
-        $out->addStyle( 'http://static.opensuse.org/themes/bento/css/style.css', 'screen' );
+        $out->addStyle( 'https://static.opensuse.org/themes/bento/css/style.css', 'screen' );
     }
 }
 
@@ -43,45 +43,38 @@ class BentoTemplate extends QuickTemplate {
         <![endif]-->
         <?php print Skin::makeGlobalVariablesScript( $this->data ); ?>
         <script type="<?php $this->text('jsmimetype') ?>" src="<?php $this->text('stylepath' ) ?>/common/wikibits.js?<?php echo $GLOBALS['wgStyleVersion'] ?>"><!-- wikibits js --></script>
-        <script type="<?php $this->text('jsmimetype') ?>" src="http://static.opensuse.org/stage/themes/bento/js/jquery.js"></script>
-        <script type="<?php $this->text('jsmimetype') ?>" src="http://static.opensuse.org/stage/themes/bento/js/script.js"></script>
+        <script type="<?php $this->text('jsmimetype') ?>" src="https://static.opensuse.org/stage/themes/bento/js/jquery.js"></script>
+        <script type="<?php $this->text('jsmimetype') ?>" src="https://static.opensuse.org/stage/themes/bento/js/script.js"></script>
         <script type="<?php $this->text('jsmimetype') ?>" src="<?php $this->text('stylepath') ?>/bento/js_local/script.js"></script>
         <script type="<?php $this->text('jsmimetype') ?>" src="<?php $this->text('stylepath') ?>/bento/js_local/search.js"></script>
 
-        <script type="<?php $this->text('jsmimetype') ?>" src="http://static.opensuse.org/themes/bento/js/l10n/global-navigation-data-<?php echo $bento_lang; ?>.js"></script>
-        <script type="<?php $this->text('jsmimetype') ?>" src="http://static.opensuse.org/themes/bento/js/global-navigation.js"></script>
+        <script type="<?php $this->text('jsmimetype') ?>" src="https://static.opensuse.org/themes/bento/js/l10n/global-navigation-data-<?php echo $bento_lang; ?>.js"></script>
+        <script type="<?php $this->text('jsmimetype') ?>" src="https://static.opensuse.org/themes/bento/js/global-navigation.js"></script>
 
         <link rel="icon" type="image/png" href="http://static.opensuse.org/themes/bento/images/favicon.png" />
 
         <!-- Head Scripts -->
-        <?php $this->html('headscripts') ?>
-        <?php if($this->data['jsvarurl']) { ?><script type="<?php $this->text('jsmimetype') ?>" src="<?php $this->text('jsvarurl') ?>"><!-- site js --></script><?php }?>
-        <?php if($this->data['pagecss']) { ?> <style type="text/css"><?php $this->html('pagecss') ?></style><?php }?>
-        <?php if($this->data['usercss']) { ?><style type="text/css"><?php $this->html('usercss') ?></style><?php }?>
-        <?php if($this->data['userjs']) { ?><script type="<?php $this->text('jsmimetype') ?>" src="<?php $this->text('userjs' ) ?>"></script><?php }?>
-        <?php if($this->data['userjsprev']) { ?><script type="<?php $this->text('jsmimetype') ?>"><?php $this->html('userjsprev') ?></script><?php }?>
+                <?php $this->html('headscripts') ?>
+                <?php if($this->data['jsvarurl']) { ?><script type="<?php $this->text('jsmimetype') ?>" src="<?php $this->text('jsvarurl') ?>"><!-- site js --></script><?php }?>
+                <?php if($this->data['pagecss']) { ?> <style type="text/css"><?php $this->html('pagecss') ?></style><?php }?>
+                <?php if($this->data['usercss']) { ?><style type="text/css"><?php $this->html('usercss') ?></style><?php }?>
+                <?php if($this->data['userjs']) { ?><script type="<?php $this->text('jsmimetype') ?>" src="<?php $this->text('userjs' ) ?>"></script><?php }?>
+                <?php if($this->data['userjsprev']) { ?><script type="<?php $this->text('jsmimetype') ?>"><?php $this->html('userjsprev') ?></script><?php }?>
         <?php if($this->data['trackbackhtml']) print $this->data['trackbackhtml']; ?>
 
-        <!-- Piwik -->
         <script type="text/javascript">
-          var _paq = _paq || [];
-          (function(){
-            var u=(("https:" == document.location.protocol) ? "https://beans.opensuse.org/piwik/" : "http://beans.opensuse.org/piwik/");
-            _paq.push(['setSiteId', 9]);
-            _paq.push(['setTrackerUrl', u+'piwik.php']);
-            _paq.push(['trackPageView']);
-            _paq.push([ 'setDomains', ["*.opensuse.org"]]);
-            var d=document,
-            g=d.createElement('script'),
-            s=d.getElementsByTagName('script')[0];
-            g.type='text/javascript';
-            g.defer=true;
-            g.async=true;
-            g.src=u+'piwik.js';
-            s.parentNode.insertBefore(g,s);
+          var _gaq = _gaq || [];
+          _gaq.push(
+          ['_setAccount', 'UA-3367212-3'],
+          ['_setDomainName', '.opensuse.org'],
+          ['_gat._anonymizeIp'],
+          ['_trackPageview']);
+          (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
           })();
         </script>
-        <!-- End Piwik Code -->
 
     </head>
 
@@ -125,8 +118,8 @@ class BentoTemplate extends QuickTemplate {
                 <a href="<?php echo $this->data['personal_urls'][login][href] ?>">Sign up</a> | <a id="login-trigger" href="#login">Login</a>
 
                 <div id="login-form">
-                    <form action="https://<?php echo $_SERVER['SERVER_NAME'] ?>/ICSLogin/auth-up" method="post" enctype="application/x-www-form-urlencoded" id="login_form">
-                        <input name="url" value="http://<?php echo $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'] ?>" type="hidden"/>
+                    <form action="https://loginstage.provo.novell.com/ICSLogin/auth-up" method="post" enctype="application/x-www-form-urlencoded" id="login_form">
+                        <input name="url" value="http://<?php echo $_SERVER['SERVER_NAME'] . $this->data['personal_urls'][login][href] ?>" type="hidden"/>
                         <input name="context" value="default" type="hidden"/>
                         <input name="proxypath" value="reverse" type="hidden"/>
                         <input name="message" value="Please log In" type="hidden"/>
@@ -202,7 +195,7 @@ class BentoTemplate extends QuickTemplate {
                 <div id="some_other_content" class="box box-shadow alpha clear-both navigation">
                     <h2 class="box-header">Sponsors</h2>
                     <?php $arr = array("sponsor_amd.png", 'sponsor_b1-systems.png', 'sponsor_ip-exchange2.png'); ?>
-                    <a href="/Sponsors"><img src="http://static.opensuse.org/themes/bento/images/sponsors/<?php echo $arr[rand(0, count($arr)-1)] ?>" alt="Sponsor"/></a>
+                    <a href="/Sponsors"><img src="https://static.opensuse.org/themes/bento/images/sponsors/<?php echo $arr[rand(0, count($arr)-1)] ?>" alt="Sponsor"/></a>
                 </div>
 
 

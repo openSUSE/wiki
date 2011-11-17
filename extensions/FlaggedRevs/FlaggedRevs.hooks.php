@@ -1,36 +1,41 @@
 <?php
-
+if ( !defined( 'MEDIAWIKI' ) ) {
+	echo "FlaggedRevs extension\n";
+	exit( 1 );
+}
+/**
+ * Class containing hooked functions for a FlaggedRevs environment
+ */
 class FlaggedRevsHooks {
 	/* 
 	 * Register FlaggedRevs special pages as needed. 
 	 * Also sets $wgSpecialPages just to be consistent.
 	 */
-	public static function defineSpecialPages( &$list ) {
+	public static function defineSpecialPages( array &$list ) {
 		global $wgSpecialPages, $wgUseTagFilter;
-		global $wgFlaggedRevsNamespaces, $wgFlaggedRevsOverride, $wgFlaggedRevsProtectLevels;
 		// Show special pages only if FlaggedRevs is enabled on some namespaces
-		if ( empty( $wgFlaggedRevsNamespaces ) ) {
+		if ( !FlaggedRevs::getReviewNamespaces() ) {
 			return true;
 		}
 		$list['RevisionReview'] = $wgSpecialPages['RevisionReview'] = 'RevisionReview';
 		$list['ReviewedVersions'] = $wgSpecialPages['ReviewedVersions'] = 'ReviewedVersions';
-		// Protect levels define allowed stability settings
-		if ( empty( $wgFlaggedRevsProtectLevels ) ) {
-			$list['Stabilization'] = $wgSpecialPages['Stabilization'] = 'Stabilization';
-		}
-		$list['UnreviewedPages'] = $wgSpecialPages['UnreviewedPages'] = 'UnreviewedPages';
-		$list['OldReviewedPages'] = $wgSpecialPages['OldReviewedPages'] = 'OldReviewedPages';
+		$list['PendingChanges'] = $wgSpecialPages['PendingChanges'] = 'PendingChanges';
 		// Show tag filtered pending edit page if there are tags
 		if ( $wgUseTagFilter && ChangeTags::listDefinedTags() ) {
 			$list['ProblemChanges'] = $wgSpecialPages['ProblemChanges'] = 'ProblemChanges';
 		}
-		$list['ReviewedPages'] = $wgSpecialPages['ReviewedPages'] = 'ReviewedPages';
+		if ( !FlaggedRevs::useOnlyIfProtected() ) {
+			$list['ReviewedPages'] = $wgSpecialPages['ReviewedPages'] = 'ReviewedPages';
+			$list['UnreviewedPages'] = $wgSpecialPages['UnreviewedPages'] = 'UnreviewedPages';
+		}
 		$list['QualityOversight'] = $wgSpecialPages['QualityOversight'] = 'QualityOversight';
 		$list['ValidationStatistics'] = $wgSpecialPages['ValidationStatistics'] = 'ValidationStatistics';
-		if ( !$wgFlaggedRevsOverride ) {
+		// Protect levels define allowed stability settings
+		if ( FlaggedRevs::useProtectionLevels() ) {
 			$list['StablePages'] = $wgSpecialPages['StablePages'] = 'StablePages';
 		} else {
-			$list['UnstablePages'] = $wgSpecialPages['UnstablePages'] = 'UnstablePages';
+			$list['ConfiguredPages'] = $wgSpecialPages['ConfiguredPages'] = 'ConfiguredPages';
+			$list['Stabilization'] = $wgSpecialPages['Stabilization'] = 'Stabilization';
 		}
 		return true;
 	}
@@ -39,123 +44,154 @@ class FlaggedRevsHooks {
 	* Add FlaggedRevs css/js.
 	*/
 	protected static function injectStyleAndJS() {
-		global $wgOut, $wgUser;
-		if ( $wgOut->hasHeadItem( 'FlaggedRevs' ) ) {
+		global $wgOut, $wgUser, $wgFlaggedRevStyleVersion;
+		static $loadedModules = false;
+		if ( $loadedModules ) {
 			return true; # Don't double-load
 		}
+		$loadedModules = true;
 		$fa = FlaggedArticleView::globalArticleInstance();
 		# Try to only add to relevant pages
 		if ( !$fa || !$fa->isReviewable() ) {
 			return true;
 		}
-		global $wgScriptPath, $wgJsMimeType, $wgFlaggedRevsStylePath, $wgFlaggedRevStyleVersion;
-		$stylePath = str_replace( '$wgScriptPath', $wgScriptPath, $wgFlaggedRevsStylePath );
+		$stylePath = FlaggedRevs::styleUrlPath();
 		# Get JS/CSS file locations
 		$encCssFile = htmlspecialchars( "$stylePath/flaggedrevs.css?$wgFlaggedRevStyleVersion" );
 		$encJsFile = htmlspecialchars( "$stylePath/flaggedrevs.js?$wgFlaggedRevStyleVersion" );
 		# Add CSS file
 		$wgOut->addExtensionStyle( $encCssFile );
 		# Add main JS file
-		$head = "<script type=\"{$wgJsMimeType}\" src=\"{$encJsFile}\"></script>";
+		$wgOut->includeJQuery();
+		$wgOut->addScriptFile( $encJsFile );
 		# Add review form JS for reviewers
 		if ( $wgUser->isAllowed( 'review' ) ) {
 			$encJsFile = htmlspecialchars( "$stylePath/review.js?$wgFlaggedRevStyleVersion" );
-			$head .= "\n<script type=\"{$wgJsMimeType}\" src=\"{$encJsFile}\"></script>";
+			$wgOut->addScriptFile( $encJsFile );
 		}
-		# Set basic messages
-		$msgs = (object) array(
-			'revreviewDiffToggleShow' => wfMsgHtml( 'revreview-diff-toggle-show' ),
-			'revreviewDiffToggleHide' => wfMsgHtml( 'revreview-diff-toggle-hide' )
+		# Set basic messages for all users...
+		$msgs = array(
+			'diffToggleShow' => wfMsgHtml( 'revreview-diff-toggle-show' ),
+			'diffToggleHide' => wfMsgHtml( 'revreview-diff-toggle-hide' ),
+			'logToggleShow'	 => wfMsgHtml( 'revreview-log-toggle-show' ),
+			'logToggleHide'  => wfMsgHtml( 'revreview-log-toggle-hide' ),
+			'logDetailsShow' => wfMsgHtml( 'revreview-log-details-show' ),
+			'logDetailsHide' => wfMsgHtml( 'revreview-log-details-hide' ),
+			'toggleShow'	 => wfMsgHtml( 'revreview-toggle-show' ),
+			'toggleHide'     => wfMsgHtml( 'revreview-toggle-hide' )
 		);
-		$head .= "\n<script type=\"{$wgJsMimeType}\">" .
-			"FlaggedRevs.messages = " . Xml::encodeJsVar( $msgs ) . ";</script>\n";
-		$wgOut->addHeadItem( 'FlaggedRevs', $head );
+		# Extra reviewer messages...
+		if ( $wgUser->isAllowed( 'review' ) ) {
+			$msgs['saveArticle'] = wfMsgHtml( 'savearticle' );
+			$msgs['tooltipSave'] = wfMsgHtml( 'tooltip-save' ) .
+				' [' . wfMsgHtml( 'accesskey-save' ) . ']';
+			$msgs['submitArticle'] = wfMsg( 'revreview-submitedit' );
+			$msgs['tooltipSubmit'] = wfMsg( 'revreview-submitedit-title' ) .
+				' ['. wfMsg( 'accesskey-save' ) . ']';
+		}
+		# Add msgs to JS
+		$wgOut->addInlineScript(
+			"FlaggedRevs.messages = " . Xml::encodeJsVar( (object)$msgs ) . ";" );
 
 		return true;
 	}
-	
-	public static function injectGlobalJSVars( &$globalVars ) {
+
+	public static function injectGlobalJSVars( array &$globalVars ) {
 		global $wgUser;
-		$fa = FlaggedArticleView::globalArticleInstance();
-		# Try to only add to relevant pages
-		if ( !$fa || !FlaggedRevs::inReviewNamespace( $fa->getTitle() ) ) {
-			return true;
-		}
 		# Get the review tags on this wiki
 		$rTags = FlaggedRevs::getJSTagParams();
-		# Get page-specific meta-data
-		$frev = $fa->getStableRev();
-		$stableId = $frev ? $frev->getRevId() : 0;
 		$globalVars['wgFlaggedRevsParams'] = $rTags;
+		# Get page-specific meta-data
+		$fa = FlaggedArticleView::globalArticleInstance();
+		# Try to only add to relevant pages
+		if ( $fa && $fa->isReviewable() ) {
+			$frev = $fa->getStableRev();
+			$stableId = $frev ? $frev->getRevId() : 0;
+		} else {
+			$stableId = null;
+		}
 		$globalVars['wgStableRevisionId'] = $stableId;
+		$revisionContents = (object) array(
+			'error'		=> wfMsgHtml( 'revcontents-error' ),
+			'waiting'	=> wfMsgHtml( 'revcontents-waiting' )
+		);
+		$globalVars['wgRevContents'] = $revisionContents;
 		if ( $wgUser->isAllowed( 'review' ) ) {
 			$ajaxReview = (object) array(
 				'sendMsg'		 => wfMsgHtml( 'revreview-submit' ),
 				'flagMsg'		 => wfMsgHtml( 'revreview-submit-review' ),
 				'unflagMsg'		 => wfMsgHtml( 'revreview-submit-unreview' ),
-				'flagLegMsg'	 => wfMsgHtml( 'revreview-flag' ),
 				'sendingMsg'     => wfMsgHtml( 'revreview-submitting' ),
+				'flaggedMsg'	 => wfMsgHtml( 'revreview-submit-reviewed' ),
+				'unflaggedMsg'	 => wfMsgHtml( 'revreview-submit-unreviewed' ),
 				'actioncomplete' => wfMsgHtml( 'actioncomplete' ),
 				'actionfailed'	 => wfMsgHtml( 'actionfailed' ),
-				'draftRev'  	 => wfMsgHtml( 'revreview-hist-draft' ),
-				'sightedRev' 	 => wfMsgHtml( 'revreview-hist-basic' ),
-				'qualityRev' 	 => wfMsgHtml( 'revreview-hist-quality' ),
 			);
 			$globalVars['wgAjaxReview'] = $ajaxReview; // language for AJAX form
 		}
 		return true;
 	}
-	
+
 	/**
 	* Add FlaggedRevs css for relevant special pages.
+	* @param OutputPage $out
 	*/
-	protected static function injectStyleForSpecial() {
-		global $wgTitle, $wgOut;
-		if ( empty( $wgTitle ) || $wgTitle->getNamespace() !== NS_SPECIAL ) {
+	protected static function injectStyleForSpecial( &$out ) {
+		$title = $out->getTitle();
+		if ( $title->getNamespace() !== NS_SPECIAL ) {
 			return true;
 		}
-		$spPages = array( 'UnreviewedPages', 'OldReviewedPages', 'Watchlist',
-			'Recentchanges', 'Contributions' );
-		foreach ( $spPages as $n => $key ) {
-			if ( $wgTitle->isSpecial( $key ) ) {
-				global $wgScriptPath, $wgFlaggedRevsStylePath, $wgFlaggedRevStyleVersion;
-				$stylePath = str_replace( '$wgScriptPath',
-					$wgScriptPath, $wgFlaggedRevsStylePath );
+		$spPages = array( 'UnreviewedPages', 'PendingChanges', 'ProblemChanges',
+			'Watchlist', 'Recentchanges', 'Contributions', 'Recentchangeslinked' );
+		foreach ( $spPages as $key ) {
+			if ( $title->isSpecial( $key ) ) {
+				global $wgExtensionAssetsPath, $wgFlaggedRevsStylePath, $wgFlaggedRevStyleVersion;
+				$stylePath = str_replace( '$wgExtensionAssetsPath',
+					$wgExtensionAssetsPath, $wgFlaggedRevsStylePath );
 				$encCssFile = htmlspecialchars( "$stylePath/flaggedrevs.css?" .
 					$wgFlaggedRevStyleVersion );
-				$wgOut->addExtensionStyle( $encCssFile );
+				$out->addExtensionStyle( $encCssFile );
 				break;
 			}
 		}
 		return true;
 	}
-	
+
 	/*
 	* Add tag notice, CSS/JS, and set robots policy
 	*/
-	public static function onBeforePageDisplay() {
-		global $wgOut;
-		if ( $wgOut->isArticleRelated() ) {
+	public static function onBeforePageDisplay( &$out, &$skin ) {
+		if ( $out->isArticleRelated() ) {
 			$view = FlaggedArticleView::singleton();
 			$view->displayTag(); // show notice bar/icon in subtitle
 			$view->setRobotPolicy(); // set indexing policy
 			self::injectStyleAndJS(); // full CSS/JS
 		} else {
-			self::injectStyleForSpecial(); // try special page CSS
+			self::maybeAddBacklogNotice( $out ); // RC/Watchlist notice
+			self::injectStyleForSpecial( $out ); // try special page CSS
 		}
 		return true;
 	}
-	
-	public static function markUnderReview( $output, $article, $title, $user, $request ) {
-		if( !$user->isAllowed( 'review' ) ) {
-			return true; // user cannot review
-		}
+
+	// Note: $user may be stubbed
+	public static function onMediaWikiPerformAction(
+		$output, $article, Title $title, $user, $request
+	) {
+		$fa = FlaggedArticle::getTitleInstance( $title );
+		self::maybeMarkUnderReview( $fa, $request );
+		return true;
+	}
+
+	// Mark when an unreviewed page is being reviewed
+	protected static function maybeMarkUnderReview( FlaggedArticle $fa, WebRequest $request ) {
+		global $wgMemc;
 		# Set a key to note when someone is reviewing this.
 		# NOTE: diff-to-stable views already handled elsewhere.
 		if ( $request->getInt( 'reviewing' ) || $request->getInt( 'rcid' ) ) {
-			global $wgMemc;
-			$key = wfMemcKey( 'unreviewedPages', 'underReview', $title->getArticleId() );
-			$wgMemc->set( $key, '1', 20 * 60 ); // 20 min
+			if ( $fa->isReviewable() && $fa->getTitle()->userCan( 'review' ) ) {
+				$key = wfMemcKey( 'unreviewedPages', 'underReview', $fa->getId() );
+				$wgMemc->set( $key, '1', 20 * 60 );
+			}
 		}
 		return true;
 	}
@@ -163,364 +199,199 @@ class FlaggedRevsHooks {
 	/**
 	* Update flaggedrevs table on revision restore
 	*/
-	public static function onRevisionRestore( $title, $revision, $oldPageID ) {
+	public static function onRevisionRestore( $title, Revision $revision, $oldPageID ) {
 		$dbw = wfGetDB( DB_MASTER );
 		# Some revisions may have had null rev_id values stored when deleted.
 		# This hook is called after insertOn() however, in which case it is set
 		# as a new one.
 		$dbw->update( 'flaggedrevs',
 			array( 'fr_page_id' => $revision->getPage() ),
-			array( 'fr_page_id' => $oldPageID,
-				'fr_rev_id' => $revision->getID() ),
+			array( 'fr_page_id' => $oldPageID, 'fr_rev_id' => $revision->getID() ),
 			__METHOD__
 		);
 		return true;
 	}
 
 	/**
-	* Update flaggedrevs table on article history merge
+	* Update flaggedrevs page/tracking tables (revision moving)
 	*/
-	public static function updateFromMerge( $sourceTitle, $destTitle ) {
+	public static function onArticleMergeComplete( Title $sourceTitle, Title $destTitle ) {
 		$oldPageID = $sourceTitle->getArticleID();
 		$newPageID = $destTitle->getArticleID();
 		# Get flagged revisions from old page id that point to destination page
 		$dbw = wfGetDB( DB_MASTER );
-		$result = $dbw->select( array( 'flaggedrevs', 'revision' ),
+		$result = $dbw->select(
+			array( 'flaggedrevs', 'revision' ),
 			array( 'fr_rev_id' ),
 			array( 'fr_page_id' => $oldPageID,
 				'fr_rev_id = rev_id',
 				'rev_page' => $newPageID ),
-			__METHOD__ );
+			__METHOD__
+		);
 		# Update these rows
 		$revIDs = array();
-		while ( $row = $dbw->fetchObject( $result ) ) {
+		foreach( $result as $row ) {
 			$revIDs[] = $row->fr_rev_id;
 		}
 		if ( !empty( $revIDs ) ) {
 			$dbw->update( 'flaggedrevs',
 				array( 'fr_page_id' => $newPageID ),
-				array( 'fr_page_id' => $oldPageID,
-					'fr_rev_id' => $revIDs ),
-				__METHOD__ );
+				array( 'fr_page_id' => $oldPageID, 'fr_rev_id' => $revIDs ),
+				__METHOD__
+			);
 		}
-		# Update pages..stable version possibly lost to another page
-		FlaggedRevs::titleLinksUpdate( $sourceTitle );
-		FlaggedRevs::titleLinksUpdate( $destTitle );
+		# Update pages...stable versions possibly lost to another page
+		FlaggedRevs::stableVersionUpdates( $sourceTitle );
+		FlaggedRevs::HTMLCacheUpdates( $sourceTitle );
+		FlaggedRevs::stableVersionUpdates( $destTitle );
+		FlaggedRevs::HTMLCacheUpdates( $destTitle );
+		return true;
+	}
 
-		return true;
-	}
-	
 	/**
-	* Update flaggedrevs tracking tables
+	* (a) Update flaggedrevs page/tracking tables
+	* (b) Autoreview pages moved into content NS
 	*/
-	public static function onArticleDelete( &$article, &$user, $reason, $id ) {
-		FlaggedRevs::clearTrackingRows( $id );
-		return true;
-	}
-	
-	/**
-	* Update stable version selection
-	*/
-	public static function onRevisionDelete( &$title ) {
-		FlaggedRevs::titleLinksUpdate( $title );
-		return true;
-	}
-	
-	/**
-	* Update pending revision table
-	* Autoreview pages moved into content NS
-	*/
-	public static function onTitleMoveComplete( &$otitle, &$ntitle, $user, $pageId ) {
+	public static function onTitleMoveComplete(
+		Title $otitle, Title $ntitle, $user, $pageId
+	) {
 		$fa = FlaggedArticle::getTitleInstance( $ntitle );
 		// Re-validate NS/config (new title may not be reviewable)
 		if ( $fa->isReviewable( FR_MASTER ) ) {
 			// Moved from non-reviewable to reviewable NS?
-			if ( FlaggedRevs::autoReviewNewPages() && $user->isAllowed( 'autoreview' )
-				&& !FlaggedRevs::inReviewNamespace( $otitle ) )
+			// Auto-review such edits like new pages...
+			if ( !FlaggedRevs::inReviewNamespace( $otitle )
+				&& FlaggedRevs::autoReviewNewPages()
+				&& $ntitle->userCan( 'autoreview' ) )
 			{
 				$rev = Revision::newFromTitle( $ntitle );
-				// Treat this kind of like a new page...
-				FlaggedRevs::autoReviewEdit( $fa, $user, $rev->getText(), $rev );
-				return true; // pending list handled
-			} else if ( $fa->getStableRev( FR_MASTER ) ) {
-				return true; // nothing to do
+				if ( $rev ) { // sanity
+					FlaggedRevs::autoReviewEdit( $fa, $user, $rev );
+				}
 			}
 		}
-		FlaggedRevs::clearTrackingRows( $pageId );
+		# Update page and tracking tables and clear cache
+		FlaggedRevs::stableVersionUpdates( $otitle );
+		FlaggedRevs::HTMLCacheUpdates( $otitle );
+		FlaggedRevs::stableVersionUpdates( $ntitle );
+		FlaggedRevs::HTMLCacheUpdates( $ntitle );
 		return true;
 	}
 
 	/**
-	* Inject stable links on LinksUpdate
+	* (a) Update flaggedrevs page/tracking tables
+	* (b) Pages with stable versions that use this page will be purged
+	* Note: pages with current versions that use this page should already be purged
 	*/
-	public static function extraLinksUpdate( $linksUpdate ) {
-		$dbw = wfGetDB( DB_MASTER );
-		$pageId = $linksUpdate->mTitle->getArticleId();
-		# Check if this page has a stable version...
-		if ( isset( $u->fr_stableRev ) ) {
-			$sv = $u->fr_stableRev; // Try the process cache...
-		} else {
-			$fa = FlaggedArticle::getTitleInstance( $linksUpdate->mTitle );
-			if ( FlaggedRevs::inReviewNamespace( $linksUpdate->mTitle ) ) {
-				$sv = $fa->getStableRev( FR_MASTER ); // re-validate NS/config
-			} else {
-				$sv = null;
-			}
-		}
-		# Empty flagged revs data for this page if there is no stable version
-		if ( !$sv ) {
-			FlaggedRevs::clearTrackingRows( $pageId );
-			return true;
-		}
-		# Try the process cache...
-		$article = new Article( $linksUpdate->mTitle );
-		if ( isset( $linksUpdate->fr_stableParserOut ) ) {
-			$parserOut = $linksUpdate->fr_stableParserOut;
-		} else {
-			global $wgUser;
-			# Try stable version cache. This should be updated before this is called.
-			$anon = new User; // anon cache most likely to exist
-			$parserOut = FlaggedRevs::getPageCache( $article, $anon );
-			if ( $parserOut == false && $wgUser->getId() )
-				$parserOut = FlaggedRevs::getPageCache( $article, $wgUser );
-			if ( $parserOut == false ) {
-				$text = $sv->getRevText();
-				# Parse the text
-				$parserOut = FlaggedRevs::parseStableText( $article, $text, $sv->getRevId() );
-			}
-		}
-		# Update page fields
-		FlaggedRevs::updateStableVersion( $article, $sv->getRevision() );
-		# Get the list of categories that must be reviewed
-		$reviewedCats = array();
-		$msg = wfMsgForContent( 'flaggedrevs-stable-categories' );
-		if ( !wfEmptyMsg( 'flaggedrevs-stable-categories', $msg ) ) {
-			$list = explode( "\n*", "\n$msg" );
-			foreach ( $list as $category ) {
-				$category = trim( $category );
-				if ( $category != '' )
-					$reviewedCats[$category] = 1;
-			}
-		}
-		$links = array();
-		# Get any links that are only in the stable version...
-		foreach ( $parserOut->getLinks() as $ns => $titles ) {
-			foreach ( $titles as $title => $id ) {
-				if ( !isset( $linksUpdate->mLinks[$ns] )
-					|| !isset( $linksUpdate->mLinks[$ns][$title] ) )
-				{
-					self::addLink( $links, $ns, $title );
-				}
-			}
-		}
-		# Get any images that are only in the stable version...
-		foreach ( $parserOut->getImages() as $image => $n ) {
-			if ( !isset( $linksUpdate->mImages[$image] ) ) {
-				self::addLink( $links, NS_FILE, $image );
-			}
-		}
-		# Get any templates that are only in the stable version...
-		foreach ( $parserOut->getTemplates() as $ns => $titles ) {
-			foreach ( $titles as $title => $id ) {
-				if ( !isset( $linksUpdate->mTemplates[$ns] )
-					|| !isset( $linksUpdate->mTemplates[$ns][$title] ) )
-				{
-					self::addLink( $links, $ns, $title );
-				}
-			}
-		}
-		# Get any categories that are only in the stable version...
-		foreach ( $parserOut->getCategories() as $category => $sort ) {
-            if ( !isset( $linksUpdate->mCategories[$category] ) ) {
-				// Stable categories must remain until removed from the stable version
-				if ( isset( $reviewedCats[$category] ) ) {
-					$linksUpdate->mCategories[$category] = $sort;
-				} else {
-					self::addLink( $links, NS_CATEGORY, $category );
-				}
-			}
-        }
-		$stableCats = $parserOut->getCategories(); // from stable version
-		foreach ( $reviewedCats as $category ) {
-			// Stable categories cannot be added until added to the stable version
-			if ( isset( $linksUpdate->mCategories[$category] )
-				&& !isset( $stableCats[$category] ) )
-			{
-				unset( $linksUpdate->mCategories[$category] );
-			}
-		}
-		# Get any link tracking changes
-		$existing = self::getExistingLinks( $pageId );
-		$insertions = self::getLinkInsertions( $existing, $links, $pageId );
-		$deletions = self::getLinkDeletions( $existing, $links );
-		# Delete removed links
-		if ( $clause = self::makeWhereFrom2d( $deletions ) ) {
-			$where = array( 'ftr_from' => $pageId );
-			$where[] = $clause;
-			$dbw->delete( 'flaggedrevs_tracking', $where, __METHOD__ );
-		}
-		# Add any new links
-		if ( count( $insertions ) ) {
-			$dbw->insert( 'flaggedrevs_tracking', $insertions, __METHOD__, 'IGNORE' );
+	public static function onArticleEditUpdates( Article $article ) {
+		FlaggedRevs::stableVersionUpdates( $article->getTitle() );
+		FlaggedRevs::extraHTMLCacheUpdate( $article->getTitle() );
+		return true;
+	}
+
+	/**
+	* (a) Update flaggedrevs page/tracking tables
+	* (b) Pages with stable versions that use this page will be purged
+	* Note: pages with current versions that use this page should already be purged
+	*/
+	public static function onArticleDelete( Article $article, $user, $reason, $id ) {
+		FlaggedRevs::clearTrackingRows( $id );
+		FlaggedRevs::extraHTMLCacheUpdate( $article->getTitle() );
+		return true;
+	}
+
+	/**
+	* (a) Update flaggedrevs page/tracking tables
+	* (b) Pages with stable versions that use this page will be purged
+	* Note: pages with current versions that use this page should already be purged
+	*/
+	public static function onArticleUndelete( Title $title ) {
+		FlaggedRevs::stableVersionUpdates( $title );
+		FlaggedRevs::HTMLCacheUpdates( $title );
+		return true;
+	}
+
+	/**
+	* (a) Update flaggedrevs page/tracking tables
+	* (b) Pages with stable versions that use this page will be purged
+	* Note: pages with current versions that use this page should already be purged
+	*/
+	public static function onFileUpload( File $file ) {
+		FlaggedRevs::stableVersionUpdates( $file->getTitle() );
+		FlaggedRevs::extraHTMLCacheUpdate( $file->getTitle() );
+		return true;
+	}
+
+	/**
+	* Update flaggedrevs page/tracking tables
+	*/
+	public static function onRevisionDelete( Title $title ) {
+		$changed = FlaggedRevs::stableVersionUpdates( $title );
+		if ( $changed ) {
+			FlaggedRevs::HTMLCacheUpdates( $title );
 		}
 		return true;
 	}
-	
-	protected static function addLink( &$links, $ns, $dbKey ) {
-		if ( !isset( $links[$ns] ) ) {
-			$links[$ns] = array();
-		}
-		$links[$ns][$dbKey] = 1;
-	}
-	
-	protected static function getExistingLinks( $pageId ) {
-		$dbr = wfGetDB( DB_SLAVE );
-		$res = $dbr->select( 'flaggedrevs_tracking',
-			array( 'ftr_namespace', 'ftr_title' ),
-			array( 'ftr_from' => $pageId ),
-			__METHOD__ );
-		$arr = array();
-		while ( $row = $dbr->fetchObject( $res ) ) {
-			if ( !isset( $arr[$row->ftr_namespace] ) ) {
-				$arr[$row->ftr_namespace] = array();
-			}
-			$arr[$row->ftr_namespace][$row->ftr_title] = 1;
-		}
-		return $arr;
-	}
-	
-	protected static function makeWhereFrom2d( &$arr ) {
-		$lb = new LinkBatch();
-		$lb->setArray( $arr );
-		return $lb->constructSet( 'ftr', wfGetDB( DB_SLAVE ) );
-	}
-	
-	protected static function getLinkInsertions( $existing, $new, $pageId ) {
-		$arr = array();
-		foreach ( $new as $ns => $dbkeys ) {
-			$diffs = isset( $existing[$ns] ) ?
-				array_diff_key( $dbkeys, $existing[$ns] ) : $dbkeys;
-			foreach ( $diffs as $dbk => $id ) {
-				$arr[] = array(
-					'ftr_from'      => $pageId,
-					'ftr_namespace' => $ns,
-					'ftr_title'     => $dbk
-				);
-			}
-		}
-		return $arr;
-	}
-	
-	protected static function getLinkDeletions( $existing, $new ) {
-		$del = array();
-		foreach ( $existing as $ns => $dbkeys ) {
-			if ( isset( $new[$ns] ) ) {
-				$del[$ns] = array_diff_key( $existing[$ns], $new[$ns] );
-			} else {
-				$del[$ns] = $existing[$ns];
-			}
-		}
-		return $del;
-	}
-	
-	/*
-	* Update pages where only the stable version links to a page
-	* that was just changed in some way.
-	*/
-	public static function doCacheUpdate( $title ) {
-		$update = new FRCacheUpdate( $title );
-		$update->doUpdate();
-		return true;
-	}
-	
+
 	/**
 	* Add special fields to parser.
 	*/
-	public static function parserAddFields( $parser ) {
-		$parser->mOutput->fr_ImageSHA1Keys = array();
-		$parser->mOutput->fr_newestImageTime = "0";
-		$parser->mOutput->fr_newestTemplateID = 0;
+	public static function parserAddFields( Parser $parser ) {
+		$parser->mOutput->fr_fileSHA1Keys = array();
 		$parser->mOutput->fr_includeErrors = array();
 		return true;
 	}
 
 	/**
 	* Select the desired templates based on the selected stable revision IDs
+	* Note: $parser can be false
 	*/
-	public static function parserFetchStableTemplate( $parser, $title, &$skip, &$id ) {
-		# Trigger for stable version parsing only
-		if ( !$parser || empty( $parser->fr_isStable ) || $title->getNamespace() < 0 ) {
-			return true;
+	public static function parserFetchStableTemplate( $parser, Title $title, &$skip, &$id ) {
+		if ( !( $parser instanceof Parser ) || $title->getNamespace() < 0 ) {
+			return true; // nothing to do
 		}
-		if( FlaggedRevs::inclusionSetting() == FR_INCLUDES_CURRENT ) {
-			return true; // use the current version as normal
+		$incManager = FRInclusionManager::singleton();
+		if ( !$incManager->parserOutputIsStabilized() ) {
+			return true; // trigger for stable version parsing only
 		}
-		$dbr = wfGetDB( DB_SLAVE );
+		$id = false; // current
+		# Check for the version of this template used when reviewed.
+		$maybeId = $incManager->getReviewedTemplateVersion( $title );
+		if ( $maybeId !== null ) {
+			$id = (int)$maybeId; // use if specified (even 0)
+		}
 		# Check for stable version of template if this feature is enabled.
-		# Should be in reviewable namespace, this saves unneeded DB checks as
-		# well as enforce site settings if they are later changed.
-		if ( FlaggedRevs::inclusionSetting() == FR_INCLUDES_STABLE
-			&& FlaggedRevs::inReviewNamespace( $title ) && $title->getArticleId() )
-		{
-			$id = $dbr->selectField( 'flaggedpages', 'fp_stable',
-				array( 'fp_page_id' => $title->getArticleId() ),
-				__METHOD__ );
-		}
-		# Check cache before doing another DB hit...
-		$idP = FlaggedRevs::getTemplateIdFromCache( $parser->getRevisionId(),
-			$title->getNamespace(), $title->getDBkey() );
-		# Use the process cache key if it's newer or we have none yet
-		if ( !is_null( $idP ) && ( !$id || $idP > $id ) ) {
-			$id = $idP;
-		}
-		# If there is no stable version (or that feature is not enabled), use
-		# the template revision during review time. If both, use the newest one.
-		$revId = $parser->getRevisionId();
-		if ( $revId && !FlaggedRevs::useProcessCache( $revId ) ) {
-			$idP = $dbr->selectField( 'flaggedtemplates',
-				'ft_tmp_rev_id',
-				array( 'ft_rev_id'  => $revId,
-					'ft_namespace'  => $title->getNamespace(),
-					'ft_title' 		=> $title->getDBkey() ),
-				__METHOD__
-			);
-			# Take the newest (or only available) of the two
-			$id = ( $id === false || $idP > $id ) ? $idP : $id;
-		}
-		# If none specified, see if we are allowed to use the current revision
-		if ( !$id ) {
-			global $wgUseCurrentTemplates;
-			if ( $id === false ) {
-				// May want to give an error
-				$parser->mOutput->fr_includeErrors[] = $title->getPrefixedDBKey();
-				if ( !$wgUseCurrentTemplates ) {
-					$skip = true;
-				}
-			} else {
-				$skip = true; // If ID is zero, don't load it
+		if ( FlaggedRevs::inclusionSetting() == FR_INCLUDES_STABLE ) {
+			$maybeId = $incManager->getStableTemplateVersion( $title );
+			# Take the newest of these two...
+			if ( $maybeId && $maybeId > $id ) {
+				$id = (int)$maybeId;
 			}
 		}
-		if ( $id > $parser->mOutput->fr_newestTemplateID ) {
-			$parser->mOutput->fr_newestTemplateID = $id;
+		# If $id not specified, see if we are allowed to use the current revision
+		if ( $id === false ) {
+			$parser->mOutput->fr_includeErrors[] = $title->getPrefixedDBKey(); // unspecified
+		# If $id is zero, don't bother loading it
+		} elseif ( !$id ) {
+			$skip = true;
 		}
 		return true;
 	}
 
 	/**
-	* Select the desired images based on the selected stable revision times/SHA-1s
+	* (a) Select the desired images based on the selected stable version time/SHA-1
+	* (b) Set specified versions in fr_fileSHA1Keys
 	*/
-	public static function parserMakeStableFileLink(
-		$parser, $nt, &$skip, &$time, &$query = false
+	public static function parserFetchStableFile(
+		$parser, Title $nt, &$skip, &$time, &$query = false
 	) {
-		# Trigger for stable version parsing only
-		if ( empty( $parser->fr_isStable ) ) {
-			return true;
+		if ( !( $parser instanceof Parser ) ) {
+			return true; // nothing to do
 		}
-		if( FlaggedRevs::inclusionSetting() == FR_INCLUDES_CURRENT ) {
-			return true; // use the current version as normal
+		$incManager = FRInclusionManager::singleton();
+		if ( !$incManager->parserOutputIsStabilized() ) {
+			return true; // trigger for stable version parsing only
 		}
-		$file = null;
-		$isKnownLocal = $isLocalFile = false; // local file on this wiki?
 		# Normalize NS_MEDIA to NS_FILE
 		if ( $nt->getNamespace() == NS_MEDIA ) {
 			$title = Title::makeTitle( NS_FILE, $nt->getDBkey() );
@@ -528,246 +399,194 @@ class FlaggedRevsHooks {
 		} else {
 			$title =& $nt;
 		}
-		# Check for stable version of image if this feature is enabled.
-		# Should be in reviewable namespace, this saves unneeded DB checks as
-		# well as enforce site settings if they are later changed.
-		$sha1 = '';
-		if ( FlaggedRevs::inclusionSetting() == FR_INCLUDES_STABLE
-			&& FlaggedRevs::inReviewNamespace( $title ) )
-		{
-			$srev = FlaggedRevision::newFromStable( $title );
-			if ( $srev && $srev->getFileTimestamp() ) {
-				$time = $srev->getFileTimestamp(); // TS or null
-				$sha1 = $srev->getFileSha1();
-				$isKnownLocal = true; // must be local
-			}
-		}
-		# Check cache before doing another DB hit...
-		$params = FlaggedRevs::getFileVersionFromCache(
-			$parser->getRevisionId(), $title->getDBkey() );
-		if ( is_array( $params ) ) {
-			list( $timeP, $sha1P ) = $params;
-			// Take the newest one...
-			if ( !$time || $timeP > $time ) {
-				$time = $timeP;
-				$sha1 = $sha1P;
-				$isKnownLocal = false; // up in the air...possibly a commons image
-			}
-		}
-		# If there is no stable version (or that feature is not enabled), use
-		# the image revision during review time. If both, use the newest one.
-		$revId = $parser->getRevisionId();
-		if ( $revId && !FlaggedRevs::useProcessCache( $revId ) ) {
-			$dbr = wfGetDB( DB_SLAVE );
-			$row = $dbr->selectRow( 'flaggedimages',
-				array( 'fi_img_timestamp', 'fi_img_sha1' ),
-				array( 'fi_rev_id' => $parser->getRevisionId(), 'fi_name' => $title->getDBkey() ),
-				__METHOD__
-			);
-			# Only the one picked at review time exists OR it is the newest...use it!
-			if ( $row && ( $time === false || $row->fi_img_timestamp > $time ) ) {
-				$time = $row->fi_img_timestamp;
-				$sha1 = $row->fi_img_sha1;
-				$isKnownLocal = false; // up in the air...possibly a commons image
-			}
-		}
-		$query = $time ? "filetimestamp=" . urlencode( wfTimestamp( TS_MW, $time ) ) : "";
-		# If none specified, see if we are allowed to use the current revision
-		if ( !$time ) {
-			global $wgUseCurrentImages;
-			# If the DB found nothing...
-			if ( $time === false ) {
-				# May want to give an error, so track these...
-				$parser->mOutput->fr_includeErrors[] = $title->getPrefixedDBKey();
-				if ( !$wgUseCurrentImages ) {
-					$time = "0"; // no image
-				} else {
-					$file = wfFindFile( $title );
-					$time = $file ? $file->getTimestamp() : "0"; // Use current
-				}
-			} else {
-				$time = "0"; // no image (may trigger on review)
-			}
-		}
-		# Add image metadata to parser output
-		$parser->mOutput->fr_ImageSHA1Keys[$title->getDBkey()] = array();
-		$parser->mOutput->fr_ImageSHA1Keys[$title->getDBkey()][$time] = $sha1;
-		# Check if this file is local or on a foreign repo...
-		if ( $isKnownLocal ) {
-			$isLocalFile = true; // no need to check
-		# Load the image if needed (note that time === '0' means we have no image)
-		} elseif ( $time !== "0" ) {
-			# FIXME: would be nice not to double fetch!
-			$file = $file ? $file : self::getLocalFile( $title, $time );
-			$isLocalFile = $file && $file->exists() && $file->isLocal();
-		}
-		# Bug 15748, be lax about commons image sync status...
-		# When getting the max timestamp, just ignore the commons image timestamps.
-		if ( $isLocalFile && $time > $parser->mOutput->fr_newestImageTime ) {
-			$parser->mOutput->fr_newestImageTime = $time;
+		# Get version, update fr_fileSHA1Keys...
+		list( $time, $sha1 ) = self::parserFindStableFile( $parser, $title );
+		# Stabilize the file link
+		if ( $time ) {
+			if ( $query != '' ) $query .= '&';
+			$query = "filetimestamp=" . urlencode( wfTimestamp( TS_MW, $time ) );
 		}
 		return true;
 	}
 
 	/**
-	* Select the desired images based on the selected stable revision times/SHA-1s
+	* (a) Select the desired images based on the selected stable version time/SHA-1
+	* (b) Set specified versions in fr_fileSHA1Keys
 	*/
-	public static function galleryFindStableFileTime( $ig, $nt, &$time, &$query = false ) {
-		# Trigger for stable version parsing only
-		if ( empty( $ig->mParser->fr_isStable ) || $nt->getNamespace() != NS_FILE ) {
-			return true;
+	public static function galleryFetchStableFile( $ig, Title $nt, &$time, &$query = false ) {
+		$parser =& $ig->mParser; // convenience
+		if ( !( $parser instanceof Parser ) || $nt->getNamespace() != NS_FILE ) {
+			return true; // nothing to do
 		}
-		if( FlaggedRevs::inclusionSetting() == FR_INCLUDES_CURRENT ) {
-			return true; // use the current version as normal
+		$incManager = FRInclusionManager::singleton();
+		if ( !$incManager->parserOutputIsStabilized() ) {
+			return true; // trigger for stable version parsing only
 		}
-		$file = null;
-		$isKnownLocal = $isLocalFile = false; // local file on this wiki?
-		# Check for stable version of image if this feature is enabled.
-		# Should be in reviewable namespace, this saves unneeded DB checks as
-		# well as enforce site settings if they are later changed.
-		$sha1 = "";
-		if ( FlaggedRevs::inclusionSetting() == FR_INCLUDES_STABLE
-			&& FlaggedRevs::inReviewNamespace( $nt ) )
-		{
-			$srev = FlaggedRevision::newFromStable( $nt );
-			if ( $srev && $srev->getFileTimestamp() ) {
-				$time = $srev->getFileTimestamp(); // TS or null
-				$sha1 = $srev->getFileSha1();
-				$isKnownLocal = true; // must be local
-			}
-		}
-		# Check cache before doing another DB hit...
-		$params = FlaggedRevs::getFileVersionFromCache( $ig->mRevisionId, $nt->getDBkey() );
-		if ( is_array( $params ) ) {
-			list( $timeP, $sha1P ) = $params;
-			// Take the newest one...
-			if ( !$time || $timeP > $time ) {
-				$time = $timeP;
-				$sha1 = $sha1P;
-				$isKnownLocal = false; // up in the air...possibly a commons image
-			}
-		}
-		# If there is no stable version (or that feature is not enabled), use
-		# the image revision during review time. If both, use the newest one.
-		if ( $ig->mRevisionId && !FlaggedRevs::useProcessCache( $ig->mRevisionId ) ) {
-			$dbr = wfGetDB( DB_SLAVE );
-			$row = $dbr->selectRow( 'flaggedimages',
-				array( 'fi_img_timestamp', 'fi_img_sha1' ),
-				array( 'fi_rev_id' => $ig->mRevisionId, 'fi_name' => $nt->getDBkey() ),
-				__METHOD__
-			);
-			# Only the one picked at review time exists OR it is the newest...use it!
-			if ( $row && ( $time === false || $row->fi_img_timestamp > $time ) ) {
-				$time = $row->fi_img_timestamp;
-				$sha1 = $row->fi_img_sha1;
-				$isKnownLocal = false; // up in the air...possibly a commons image
-			}
-		}
-		$query = $time ? "filetimestamp=" . urlencode( wfTimestamp( TS_MW, $time ) ) : "";
-		# If none specified, see if we are allowed to use the current revision
-		if ( !$time ) {
-			global $wgUseCurrentImages;
-			# If the DB found nothing...
-			if ( $time === false ) {
-				# May want to give an error, so track these...
-				$ig->mParser->mOutput->fr_includeErrors[] = $nt->getPrefixedDBKey();
-				if ( !$wgUseCurrentImages ) {
-					$time = "0"; // no image
-				} else {
-					$file = wfFindFile( $nt );
-					$time = $file ? $file->getTimestamp() : "0";
-				}
-			} else {
-				$time = "0"; // no image (may trigger on review)
-			}
-		}
-		# Add image metadata to parser output
-		$ig->mParser->mOutput->fr_ImageSHA1Keys[$nt->getDBkey()] = array();
-		$ig->mParser->mOutput->fr_ImageSHA1Keys[$nt->getDBkey()][$time] = $sha1;
-		# Check if this file is local or on a foreign repo...
-		if ( $isKnownLocal ) {
-			$isLocalFile = true; // no need to check
-		# Load the image if needed (note that time === '0' means we have no image)
-		} elseif ( $time !== "0" ) {
-			# FIXME: would be nice not to double fetch!
-			$file = $file ? $file : self::getLocalFile( $nt, $time );
-			$isLocalFile = $file && $file->exists() && $file->isLocal();
-		}
-		# Bug 15748, be lax about commons image sync status
-		if ( $isLocalFile && $time > $ig->mParser->mOutput->fr_newestImageTime ) {
-			$ig->mParser->mOutput->fr_newestImageTime = $time;
+		# Get version, update fr_fileSHA1Keys...
+		list( $time, $sha1 ) = self::parserFindStableFile( $parser, $nt );
+		# Stabilize the file link
+		if ( $time ) {
+			if ( $query != '' ) $query .= '&';
+			$query = "filetimestamp=" . urlencode( wfTimestamp( TS_MW, $time ) );
 		}
 		return true;
 	}
-	
+
+	/**
+	* (a) Select the desired images based on the selected stable version time/SHA-1
+	* (b) Set specified versions in fr_fileSHA1Keys
+	*/
+	protected static function parserFindStableFile( Parser $parser, Title $title ) {
+		$time = false; // current version
+		$sha1 = null; // corresponds to $time
+		# Check for the version of this file used when reviewed.
+		$incManager = FRInclusionManager::singleton();
+		list( $maybeTS, $maybeSha1 ) = $incManager->getReviewedFileVersion( $title );
+		if ( $maybeTS !== null ) {
+			$time = $maybeTS; // use if specified (even "0")
+			$sha1 = $maybeSha1;
+		}
+		# Check for stable version of file if this feature is enabled.
+		if ( FlaggedRevs::inclusionSetting() == FR_INCLUDES_STABLE ) {
+			list( $maybeTS, $maybeSha1 ) = $incManager->getStableFileVersion( $title );
+			# Take the newest of these two...
+			if ( $maybeTS && $maybeTS > $time ) {
+				$time = $maybeTS;
+				$sha1 = $maybeSha1;
+			}
+		}
+		# If $time not specified, see if we are allowed to use the current revision
+		if ( $time === false ) {
+			# May want to give an error, so track these...
+			$parser->mOutput->fr_includeErrors[] = $title->getPrefixedDBKey();
+		} elseif ( !$time ) {
+			$time = "0"; // make sure this the string '0'
+		}
+		# Add specified image metadata to parser output
+		if ( $time !== false ) {
+			$parser->mOutput->fr_fileSHA1Keys[$title->getDBkey()] =  array();
+			$parser->mOutput->fr_fileSHA1Keys[$title->getDBkey()]['ts'] = $time;
+			$parser->mOutput->fr_fileSHA1Keys[$title->getDBkey()]['sha1'] = $sha1;
+		}
+		return array( $time, $sha1 );
+	}
+
 	/**
 	* Insert image timestamps/SHA-1 keys into parser output
 	*/
-	public static function parserInjectTimestamps( $parser, &$text ) {
-		# Don't trigger this for stable version parsing...it will do it separately.
-		if ( !empty( $parser->fr_isStable ) ) {
-			return true;
+	public static function parserInjectTimestamps( Parser $parser ) {
+		$pOutput =& $parser->mOutput; // convenience
+		if ( !isset( $pOutput->mImages ) ) {
+			return true; // sanity check
 		}
-		$maxRevision = 0;
-		# Record the max template revision ID
-		if ( !empty( $parser->mOutput->mTemplateIds ) ) {
-			foreach ( $parser->mOutput->mTemplateIds as $namespace => $DBKeyRev ) {
-				foreach ( $DBKeyRev as $DBkey => $revID ) {
-					if ( $revID > $maxRevision ) {
-						$maxRevision = $revID;
-					}
-				}
-			}
-		}
-		$parser->mOutput->fr_newestTemplateID = $maxRevision;
 		# Fetch the current timestamps of the images.
-		$maxTimestamp = "0";
-		if ( !empty( $parser->mOutput->mImages ) ) {
-			foreach ( $parser->mOutput->mImages as $filename => $x ) {
-				# FIXME: it would be nice not to double fetch these!
-				$file = wfFindFile( Title::makeTitleSafe( NS_FILE, $filename ) );
-				$parser->mOutput->fr_ImageSHA1Keys[$filename] = array();
-				if ( $file ) {
-					$ts = $file->getTimestamp();
-					# Bug 15748, be lax about commons image sync status
-					if ( $file->isLocal() && $ts > $maxTimestamp ) {
-						$maxTimestamp = $ts;
-					}
-					$parser->mOutput->fr_ImageSHA1Keys[$filename][$ts] = $file->getSha1();
-				} else {
-					$parser->mOutput->fr_ImageSHA1Keys[$filename]["0"] = '';
-				}
+		foreach ( $pOutput->mImages as $filename => $x ) {
+			# FIXME: it would be nice not to double fetch these!
+			$time = false; // current
+			# Stable output with versions specified
+			if ( isset( $pOutput->fr_fileSHA1Keys[$filename] ) ) {
+				// Fetch file with $time to confirm the specified version exists
+				$time = $pOutput->fr_fileSHA1Keys[$filename]['ts'];
+			}
+			$title = Title::makeTitleSafe( NS_FILE, $filename );
+			$file = wfFindFile( $title, array( 'time' => $time ) );
+			$pOutput->fr_fileSHA1Keys[$filename] = array();
+			if ( $file ) {
+				$pOutput->fr_fileSHA1Keys[$filename]['ts'] = $file->getTimestamp();
+				$pOutput->fr_fileSHA1Keys[$filename]['sha1'] = $file->getSha1();
+			} else {
+				$pOutput->fr_fileSHA1Keys[$filename]['ts'] = '0';
+				$pOutput->fr_fileSHA1Keys[$filename]['sha1'] = '';
 			}
 		}
-		# Record the max timestamp
-		$parser->mOutput->fr_newestImageTime = $maxTimestamp;
 		return true;
 	}
 
 	/**
 	* Insert image timestamps/SHA-1s into page output
 	*/
-	public static function outputInjectTimestamps( $out, $parserOut ) {
+	public static function outputInjectTimestamps( OutputPage $out, ParserOutput $parserOut ) {
 		# Set first time
-		$out->fr_ImageSHA1Keys = isset( $out->fr_ImageSHA1Keys ) ?
-			$out->fr_ImageSHA1Keys : array();
+		if ( !isset( $out->fr_fileSHA1Keys ) ) {
+			$out->fr_fileSHA1Keys = array();
+		}
 		# Leave as defaults if missing. Relevant things will be updated only when needed.
 		# We don't want to go around resetting caches all over the place if avoidable...
-		$imageSHA1Keys = isset( $parserOut->fr_ImageSHA1Keys ) ?
-			$parserOut->fr_ImageSHA1Keys : array();
+		$fileSHA1Keys = isset( $parserOut->fr_fileSHA1Keys ) ?
+			$parserOut->fr_fileSHA1Keys : array();
 		# Add on any new items
-		$out->fr_ImageSHA1Keys = wfArrayMerge( $out->fr_ImageSHA1Keys, $imageSHA1Keys );
+		$out->fr_fileSHA1Keys = wfArrayMerge( $out->fr_fileSHA1Keys, $fileSHA1Keys );
 		return true;
 	}
 
-	protected static function getLocalFile( $title, $time ) {
-		return RepoGroup::singleton()->getLocalRepo()->findFile( $title, $time );
+	public static function onParserFirstCallInit( &$parser ) {
+		$parser->setFunctionHook( 'pagesusingpendingchanges',
+			'FlaggedRevsHooks::parserPagesUsingPendingChanges' );
+		return true;
+	}
+
+	public static function onLanguageGetMagic( &$magicWords, $langCode ) {
+		$magicWords['pagesusingpendingchanges'] =
+			array( 0, 'pagesusingpendingchanges' );
+		$magicWords['pendingchangelevel'] =
+			array( 0, 'pendingchangelevel' );
+		return true;
+	}
+
+	public static function onParserGetVariableValueSwitch( &$parser, &$cache, &$word, &$ret ) {
+		if( $word == 'pendingchangelevel' ) {
+			$title = $parser->getTitle();
+			if( !FlaggedRevs::inReviewNamespace( $title ) ) {
+				$ret = '';
+			} else {
+				$config = FlaggedRevs::getPageVisibilitySettings( $title );
+				$ret = $config['autoreview'];
+			}
+		}
+		return true;
+	}
+
+	public static function onMagicWordwgVariableIDs( &$words ) {
+		$words[] = 'pendingchangelevel';
+		return true;
+	}
+
+	public static function parserPagesUsingPendingChanges( &$parser, $ns = '' ) {
+		$nsList = FlaggedRevs::getReviewNamespaces();
+		if ( !$nsList ) {
+			return 0;
+		}
+
+		if ( $ns !== '' ) {
+			$ns = intval( $ns );
+			if ( !in_array( $ns, $nsList ) ) {
+				return 0;
+			}
+		}
+
+		static $pcCounts = null;
+		if ( !$pcCounts ) {
+			$dbr = wfGetDB( DB_SLAVE );
+			$res = $dbr->select( 'flaggedrevs_stats', '*', array(), __METHOD__ );
+			$totalCount = 0;
+			foreach( $res as $row ) {
+				$nsList[ "ns-{$row->namespace}" ] = $row->reviewed;
+				$totalCount += $row->reviewed;
+			}
+			$nsList[ 'all' ] = $totalCount;
+		}
+
+		if ( $ns === '' ) {
+			return $nsList['all'];
+		} else {
+			return $nsList[ "ns-$ns" ];
+		}
 	}
 
 	/**
 	* Check page move and patrol permissions for FlaggedRevs
 	*/
-	public static function onUserCan( $title, $user, $action, &$result ) {
+	public static function onUserCan( Title $title, $user, $action, &$result ) {
 		if ( $result === false ) {
 			return true; // nothing to do
 		}
@@ -798,67 +617,35 @@ class FlaggedRevsHooks {
 				$result = false;
 				return false;
 			}
-		# Enforce autoreview restrictions
-		} else if( $action === 'autoreview' ) {
+		# Enforce autoreview/review restrictions
+		} else if ( $action === 'autoreview' || $action === 'review' ) {
 			# Get autoreview restriction settings...
-			$config = FlaggedRevs::getPageVisibilitySettings( $title, true );
+			$fa = FlaggedArticle::getTitleInstance( $title );
+			$config = $fa->getVisibilitySettings();
 			# Convert Sysop -> protect
 			$right = ( $config['autoreview'] === 'sysop' ) ?
 				'protect' : $config['autoreview'];
 			# Check if the user has the required right, if any
-			if( $right != '' && !$user->isAllowed( $right ) ) {
+			if ( $right != '' && !$user->isAllowed( $right ) ) {
 				$result = false;
 				return false;
 			}
 		}
 		return true;
 	}
-	
-    /**
-    * Allow users to view reviewed pages
-    */
-    public static function userCanView( $title, $user, $action, &$result ) {
-        global $wgFlaggedRevsVisible, $wgFlaggedRevsTalkVisible, $wgTitle;
-        # Assume $action may still not be set, in which case, treat it as 'view'...
-		# Return out if $result set to false by some other hooked call.
-        if ( $action !== 'read' || $result === false || empty( $wgFlaggedRevsVisible ) )
-            return true;
-        # Admin may set this to false, rather than array()...
-        $groups = $user->getGroups();
-        $groups[] = '*';
-        if ( !array_intersect( $groups, $wgFlaggedRevsVisible ) )
-            return true;
-        # Is this a talk page?
-        if ( $wgFlaggedRevsTalkVisible && $title->isTalkPage() ) {
-            $result = true;
-            return true;
-        }
-        # See if there is a stable version. Also, see if, given the page 
-        # config and URL params, the page can be overriden. The later
-		# only applies on page views of $title.
-		$flaggedArticle = FlaggedArticle::getTitleInstance( $title );
-        if ( !empty( $wgTitle ) && $wgTitle->equals( $title ) ) {
-			$view = FlaggedArticleView::singleton();
-            // Cache stable version while we are at it.
-            if ( $view->pageOverride() && $flaggedArticle->getStableRev() ) {
-                $result = true;
-            }
-        } else {
-            if ( FlaggedRevision::newFromStable( $title ) ) {
-                $result = true;
-            }
-        }
-        return true;
-    }
-	
+
 	/**
-	* When an edit is made by a reviewer, if the base revision the
-	* edit was made from is the stable version, or the edit is a reversion
-	* to the stable version, then try to automatically review it.
-	* Also automatically review if the "review this revision" box is checked.
+	* When an edit is made by a user, review it if either:
+	* (a) The user can 'autoreview' and the edit's base revision is a checked
+	* (b) The edit is a self-revert to the stable version (by anyone)
+	* (c) The user can 'autoreview' new pages and this edit is a new page
+	* (d) The user can 'review' and the "review pending edits" checkbox was checked
+	*
+	* Note: RC items not inserted yet, RecentChange_save hook does rc_patrolled bit...
+	* Note: $article one of Article, ImagePage, Category page as appropriate.
 	*/
 	public static function maybeMakeEditReviewed(
-		$article, $rev, $baseRevId = false, $user = null
+		Article $article, $rev, $baseRevId = false, $user = null
 	) {
 		global $wgRequest;
 		# Edit must be non-null, and to a reviewable page
@@ -869,38 +656,31 @@ class FlaggedRevsHooks {
 		if ( !$user ) {
 			$user = User::newFromId( $rev->getUser() );
 		}
-		$title = $article->getTitle();
+		$title = $article->getTitle(); // convenience
 		$title->resetArticleID( $rev->getPage() ); // Avoid extra DB hit and lag issues
 		# Get what was just the current revision ID
 		$prevRevId = $rev->getParentId();
-		$prevTimestamp = $frev = $flags = null;
+		$frev = $flags = null;
 		# Get edit timestamp. Existance already validated by EditPage.php.
 		$editTimestamp = $wgRequest->getVal( 'wpEdittime' );
 		# Is the page manually checked off to be reviewed?
-		if ( $wgRequest->getCheck( 'wpReviewEdit' ) && $user->isAllowed( 'review' ) ) {
-			# Check wpEdittime against the previous edit for verification
-			if ( $prevRevId ) {
-				$prevTimestamp = Revision::getTimestampFromId( $title, $prevRevId );
-			}
-			# Review this revision of the page unless edit was auto-merged in between...
-			if ( !$editTimestamp || !$prevTimestamp || $prevTimestamp == $editTimestamp ) {
-				# Note: articlesavecomplete hook does rc_patrolled bit
-				$ok = FlaggedRevs::autoReviewEdit(
-					$article, $user, $rev->getText(), $rev, $flags, false );
-				if ( $ok ) return true; // done!
+		if ( $editTimestamp
+			&& $wgRequest->getCheck( 'wpReviewEdit' )
+			&& $title->userCan( 'review' ) )
+		{
+			if ( self::editCheckReview( $article, $rev, $user, $editTimestamp ) ) {
+				return true; // reviewed...done!
 			}
 		}
 		# All cases below require auto-review of edits to be enabled
-		if( !FlaggedRevs::autoReviewEdits() ) {
+		if ( !FlaggedRevs::autoReviewEdits() ) {
 			return true;
 		}
 		# If a $baseRevId is passed in this is a null edit
 		$isNullEdit = (bool)$baseRevId;
 		# Get the revision ID the incoming one was based off...
 		if ( !$baseRevId && $prevRevId ) {
-			if ( is_null( $prevTimestamp ) ) { // may already be set
-				$prevTimestamp = Revision::getTimestampFromId( $title, $prevRevId );
-			}
+			$prevTimestamp = Revision::getTimestampFromId( $title, $prevRevId );
 			# The user just made an edit. The one before that should have
 			# been the current version. If not reflected in wpEdittime, an
 			# edit may have been auto-merged in between, in that case, discard
@@ -915,10 +695,11 @@ class FlaggedRevsHooks {
 			}
 		}
 		# Self-reversions to the stable version by anyone can be auto-reviewed...
-		$srev = FlaggedRevision::newFromStable( $title, FR_MASTER );
+		$srev = $fa->getStableRev( FR_MASTER );
 		if ( $srev && self::isSelfRevertToStable( $rev, $srev, $baseRevId, $user ) ) {
 			$flags = $srev->getTags(); // use old tags
-			FlaggedRevs::autoReviewEdit( $article, $user, $rev->getText(), $rev, $flags );
+			# Review this revision of the page...
+			FlaggedRevs::autoReviewEdit( $article, $user, $rev, $flags );
 			return true; // done!
 		}
 		# Can this user auto-review this page?
@@ -938,21 +719,52 @@ class FlaggedRevsHooks {
 				: FlaggedRevision::newFromTitle( $title, $baseRevId, FR_MASTER );
 		}
 		// Is this an edit directly to the stable version? Is it a new page?
-		if ( $isAllowed && ( $reviewableNewPage || !is_null( $frev ) ) ) {
+		if ( $isAllowed && ( $reviewableNewPage || $frev ) ) {
 			if ( $isNullEdit && $frev ) {
-				$flags = $frev->getTags(); // Null edits always keep previous tags
+				$flags = $frev->getTags(); // Dummy edits always keep previous tags
 			}
-			# Review this revision of the page. Let articlesavecomplete hook do rc_patrolled bit...
-			FlaggedRevs::autoReviewEdit( $article, $user, $rev->getText(), $rev, $flags );
+			# Review this revision of the page...
+			FlaggedRevs::autoReviewEdit( $article, $user, $rev, $flags );
 		}
 		return true;
 	}
-	
+
+	// Review $rev if $editTimestamp matches the previous revision's timestamp.
+	// Otherwise, review the revision that has $editTimestamp as its timestamp value.
+	protected static function editCheckReview(
+		Article $article, $rev, $user, $editTimestamp
+	) {
+		$prevTimestamp = $flags = null;
+		$prevRevId = $rev->getParentId(); // revision before $rev
+		$title = $article->getTitle(); // convenience
+		# Check wpEdittime against the former current rev for verification
+		if ( $prevRevId ) {
+			$prevTimestamp = Revision::getTimestampFromId( $title, $prevRevId );
+		}
+		# Was $rev is an edit to an existing page?
+		if ( $prevTimestamp ) {
+			# Check wpEdittime against the former current revision's time.
+			# If an edit was auto-merged in between, then the new revision
+			# has content different than what the user expected. However, if
+			# the auto-merged edit was reviewed, then assume that it's OK.
+			if ( $editTimestamp != $prevTimestamp
+				&& !FlaggedRevs::revIsFlagged( $title, $prevRevId, FR_MASTER )
+			) {
+				return false; // not flagged?
+			}
+		}
+		# Review this revision of the page...
+		return FlaggedRevs::autoReviewEdit(
+			$article, $user, $rev, $flags, false  /* manual */ );
+	}
+
 	/**
 	* Check if a user reverted himself to the stable version
 	*/
-	protected static function isSelfRevertToStable( $rev, $srev, $baseRevId, $user ) {
-		if( !$srev || $baseRevId != $srev->getRevId() ) {
+	protected static function isSelfRevertToStable(
+		Revision $rev, $srev, $baseRevId, $user
+	) {
+		if ( !$srev || $baseRevId != $srev->getRevId() ) {
 			return false; // user reports they are not the same
 		}
 		$dbw = wfGetDB( DB_MASTER );
@@ -965,7 +777,7 @@ class FlaggedRevsHooks {
 				'rev_user_text' => $user->getName()
 			), __METHOD__
 		);
-		if( !$revertedRevs ) {
+		if ( !$revertedRevs ) {
 			return false; // can't be a revert
 		}
 		# Check that this user is ONLY reverting his/herself.
@@ -976,60 +788,87 @@ class FlaggedRevsHooks {
 				'rev_user_text != ' . $dbw->addQuotes( $user->getName() )
 			), __METHOD__
 		);
-		if( $otherUsers ) {
+		if ( $otherUsers ) {
 			return false; // only looking for self-reverts
 		}
 		# Confirm the text because we can't trust this user.
 		return ( $rev->getText() == $srev->getRevText() );
 	}
-	
+
 	/**
 	* When an user makes a null-edit we sometimes want to review it...
+	* (a) Null undo or rollback
+	* (b) Null edit with review box checked
+	* Note: called after edit ops are finished
 	*/
 	public static function maybeNullEditReview(
-		$article, $user, $text, $summary, $m, $a, $b, $flags, $rev, &$status, $baseId
+		Article $article, $user, $text, $s, $m, $a, $b, $flags, $rev, &$status, $baseId
 	) {
 		global $wgRequest;
-		# Must be in reviewable namespace
-		$title = $article->getTitle();
 		# Revision must *be* null (null edit). We also need the user who made the edit.
-		if ( !$user || $rev !== null || !FlaggedRevs::inReviewNamespace( $title ) ) {
+		if ( !$user || $rev !== null ) {
 			return true;
 		}
+		$fa = FlaggedArticle::getArticleInstance( $article );
+		if ( !$fa->isReviewable( FR_MASTER ) ) {
+			return true; // page is not reviewable
+		}
+		$title = $article->getTitle(); // convenience
 		# Get the current revision ID
 		$rev = Revision::newFromTitle( $title );
+		if ( !$rev ) {
+			return true; // wtf?
+		}
 		$flags = null;
 		# Is this a rollback/undo that didn't change anything?
-		if ( $rev && $baseId ) {
+		if ( $baseId > 0 ) {
 			$frev = FlaggedRevision::newFromTitle( $title, $baseId );
 			# Was the edit that we tried to revert to reviewed?
 			if ( $frev ) {
-				FlaggedRevs::autoReviewEdit( $article, $user, $rev->getText(), $rev, $flags );
-				FlaggedRevs::markRevisionPatrolled( $rev ); // Make sure it is now marked patrolled...
+				# Review this revision of the page...
+				$ok = FlaggedRevs::autoReviewEdit( $article, $user, $rev, $flags );
+				if ( $ok ) {
+					FlaggedRevs::markRevisionPatrolled( $rev ); // reviewed -> patrolled
+					FlaggedRevs::extraHTMLCacheUpdate( $title );
+					return true;
+				}
 			}
 		}
 		# Get edit timestamp, it must exist.
 		$editTimestamp = $wgRequest->getVal( 'wpEdittime' );
 		# Is the page checked off to be reviewed?
-		if ( $rev && $editTimestamp && $wgRequest->getCheck( 'wpReviewEdit' )
-			&& $user->isAllowed( 'review' ) )
+		if ( $editTimestamp
+			&& $wgRequest->getCheck( 'wpReviewEdit' )
+			&& $title->userCan( 'review' ) )
 		{
-			# Review this revision of the page. Let articlesavecomplete hook do rc_patrolled bit.
-			# Don't do so if an edit was auto-merged in between though...
-			if ( $rev->getTimestamp() == $editTimestamp ) {
-				FlaggedRevs::autoReviewEdit( $article, $user, $rev->getText(),
-					$rev, $flags, false );
-				FlaggedRevs::markRevisionPatrolled( $rev ); // Make sure it is now marked patrolled...
-				return true; // done!
+			# Check wpEdittime against current revision's time.
+			# If an edit was auto-merged in between, review only up to what
+			# was the current rev when this user started editing the page.
+			if ( $rev->getTimestamp() != $editTimestamp ) {
+				$dbw = wfGetDB( DB_MASTER );
+				$rev = Revision::loadFromTimestamp( $dbw, $title, $editTimestamp );
+				if ( !$rev ) {
+					return true; // deleted?
+				}
+			}
+			# Review this revision of the page...
+			$ok = FlaggedRevs::autoReviewEdit( $article, $user, $rev, $flags, false );
+			if ( $ok ) {
+				FlaggedRevs::markRevisionPatrolled( $rev ); // reviewed -> patrolled
+				FlaggedRevs::extraHTMLCacheUpdate( $title );
 			}
 		}
 		return true;
 	}
 
 	/**
-	* When an edit is made to a page that can't be reviewed, autopatrol if allowed.
+	* When an edit is made to a page:
+	* (a) If the page is reviewable, silently mark the edit patrolled if it was auto-reviewed
+	* (b) If the page can be patrolled, auto-patrol the edit patrolled as normal
+	* (c) If the page is new and $wgUseNPPatrol is on, auto-patrol the edit patrolled as normal
+	* (d) If the edit is neither reviewable nor patrolleable, silently mark it patrolled
 	*/
-	public static function autoMarkPatrolled( &$rc ) {
+	public static function autoMarkPatrolled( RecentChange &$rc ) {
 		global $wgUser;
 		if ( empty( $rc->mAttribs['rc_this_oldid'] ) ) {
 			return true;
@@ -1038,104 +877,136 @@ class FlaggedRevsHooks {
 		// Is the page reviewable?
 		if ( $fa->isReviewable( FR_MASTER ) ) {
 			$revId = $rc->mAttribs['rc_this_oldid'];
-			$quality = FlaggedRevs::getRevQuality( $rc->mAttribs['rc_cur_id'], $revId, FR_MASTER );
-			if ( $quality !== false && $quality >= FlaggedRevs::getPatrolLevel() ) {
-				RevisionReview::updateRecentChanges( $rc->getTitle(), $revId );
+			$quality = FlaggedRevs::getRevQuality(
+				$rc->mAttribs['rc_cur_id'], $revId, FR_MASTER );
+			// Reviewed => patrolled
+			if ( $quality !== false && $quality >= FR_CHECKED ) {
+				RevisionReviewForm::updateRecentChanges( $rc->getTitle(), $revId );
 				$rc->mAttribs['rc_patrolled'] = 1; // make sure irc/email notifs know status
 			}
 			return true;
 		}
-		// Is this page in patrollable namespace?
-		$patrol = $record = false;
-		if ( FlaggedRevs::inPatrolNamespace( $rc->getTitle() ) ) {
-			# Bots and users with 'autopatrol' have edits to patrollable
-			# pages marked automatically on edit.
-			$patrol = $wgUser->isAllowed( 'autopatrol' ) || $wgUser->isAllowed( 'bot' );
-			$record = true; // record if patrolled
-		} else {
-			global $wgUseNPPatrol;
-			// Is this is a new page edit and $wgUseNPPatrol is enabled?
-			if( $wgUseNPPatrol && !empty( $rc->mAttribs['rc_new'] ) ) {
-				# Automatically mark it patrolled if the user can do so
-				$patrol = $wgUser->isAllowed( 'autopatrol' );
-				$record = true;
-			// Otherwise, this edit is not patrollable
+		global $wgFlaggedRevsRCCrap;
+		if ( $wgFlaggedRevsRCCrap ) {
+			// Is this page in patrollable namespace?
+			if ( FlaggedRevs::inPatrolNamespace( $rc->getTitle() ) ) {
+				# Bots and users with 'autopatrol' have edits to patrollable
+				# pages marked automatically on edit.
+				$patrol = $wgUser->isAllowed( 'autopatrol' ) || $wgUser->isAllowed( 'bot' );
+				$record = true; // record if patrolled
 			} else {
-				# Silently mark it "patrolled" so that it doesn't show up as being unpatrolled
-				$patrol = true;
-				$record = false;
+				global $wgUseNPPatrol;
+				// Is this is a new page edit and $wgUseNPPatrol is enabled?
+				if ( $wgUseNPPatrol && !empty( $rc->mAttribs['rc_new'] ) ) {
+					# Automatically mark it patrolled if the user can do so
+					$patrol = $wgUser->isAllowed( 'autopatrol' );
+					$record = true;
+				// Otherwise, this edit is not patrollable
+				} else {
+					# Silently mark it "patrolled" so that it doesn't show up as being unpatrolled
+					$patrol = true;
+					$record = false;
+				}
 			}
-		}
-		// Set rc_patrolled flag and add log entry as needed
-		if ( $patrol ) {
-			$rc->reallyMarkPatrolled();
-			$rc->mAttribs['rc_patrolled'] = 1; // make sure irc/email notifs now status
-			if ( $record ) {
-				PatrolLog::record( $rc->mAttribs['rc_id'], true );
+			// Set rc_patrolled flag and add log entry as needed
+			if ( $patrol ) {
+				$rc->reallyMarkPatrolled();
+				$rc->mAttribs['rc_patrolled'] = 1; // make sure irc/email notifs now status
+				if ( $record ) {
+					PatrolLog::record( $rc->mAttribs['rc_id'], true );
+				}
 			}
 		}
 		return true;
 	}
-	
-	public static function incrementRollbacks( $this, $user, $target, $current ) {
+
+	public static function incrementRollbacks(
+		Article $article, $user, $goodRev, Revision $badRev
+	) {
 		# Mark when a user reverts another user, but not self-reverts
-		if ( $current->getRawUser() && $user->getId() != $current->getRawUser() ) {
-			$p = FlaggedRevs::getUserParams( $current->getRawUser() );
-			$p['revertedEdits'] = isset( $p['revertedEdits'] ) ? $p['revertedEdits'] : 0;
+		$badUserId = $badRev->getRawUser();
+		if ( $badUserId && $user->getId() != $badUserId ) {
+			$p = FRUserCounters::getUserParams( $badUserId, FR_FOR_UPDATE );
+			if ( !isset( $p['revertedEdits'] ) ) {
+				$p['revertedEdits'] = 0;
+			}
 			$p['revertedEdits']++;
-			FlaggedRevs::saveUserParams( $current->getRawUser(), $p );
+			FRUserCounters::saveUserParams( $badUserId, $p );
 		}
 		return true;
 	}
-	
-	public static function incrementReverts( $article, $rev, $baseRevId = false, $user = null ) {
+
+	public static function incrementReverts(
+		Article $article, $rev, $baseRevId = false, $user = null
+	) {
 		global $wgRequest;
 		# Was this an edit by an auto-sighter that undid another edit?
 		$undid = $wgRequest->getInt( 'undidRev' );
 		if ( $rev && $undid && $user->isAllowed( 'autoreview' ) ) {
+			// Note: $rev->getTitle() might be undefined (no rev id?)
 			$badRev = Revision::newFromTitle( $article->getTitle(), $undid );
 			# Don't count self-reverts
-			if ( $badRev && $badRev->getRawUser() && $badRev->getRawUser() != $rev->getRawUser() ) {
-				$p = FlaggedRevs::getUserParams( $badRev->getRawUser() );
-				$p['revertedEdits'] = isset( $p['revertedEdits'] ) ? $p['revertedEdits'] : 0;
+			if ( $badRev && $badRev->getRawUser()
+				&& $badRev->getRawUser() != $rev->getRawUser() )
+			{
+				$p = FRUserCounters::getUserParams( $badRev->getRawUser(), FR_FOR_UPDATE );
+				if ( !isset( $p['revertedEdits'] ) ) {
+					$p['revertedEdits'] = 0;
+				}
 				$p['revertedEdits']++;
-				FlaggedRevs::saveUserParams( $badRev->getRawUser(), $p );
+				FRUserCounters::saveUserParams( $badRev->getRawUser(), $p );
 			}
 		}
 		return true;
 	}
-	
-	protected static function editSpacingCheck( $spacing, $points, $user ) {
+
+	/*
+	 * Check if a user meets the edit spacing requirements.
+	 * If the user does not, return a *lower bound* number of seconds
+	 * that must elapse for it to be possible for the user to meet them.
+	 * @param int $spacingReq days apart (of edit points)
+	 * @param int $pointsReq number of edit points
+	 * @param User $user
+	 * @returns mixed (true if passed, int seconds on failure)
+	 */
+	protected static function editSpacingCheck( $spacingReq, $pointsReq, $user ) {
+		$benchmarks = 0; // actual edit points
 		# Convert days to seconds...
-		$spacing = $spacing * 24 * 3600;
+		$spacingReq = $spacingReq * 24 * 3600;
 		# Check the oldest edit
-		$dbr = isset( $dbr ) ? $dbr : wfGetDB( DB_SLAVE );
+		$dbr = wfGetDB( DB_SLAVE );
 		$lower = $dbr->selectField( 'revision', 'rev_timestamp',
 			array( 'rev_user' => $user->getId() ),
 			__METHOD__,
 			array( 'ORDER BY' => 'rev_timestamp ASC', 'USE INDEX' => 'user_timestamp' )
 		);
-		# Recursively check for an edit $spacing seconds later, until we are done.
-		# The first edit counts, so we have one less scans to do...
-		$benchmarks = 0; // actual
-		$needed = $points - 1; // required
-		while ( $lower && $benchmarks < $needed ) {
-			$next = wfTimestamp( TS_UNIX, $lower ) + $spacing;
-			$lower = $dbr->selectField( 'revision', 'rev_timestamp',
-				array( 'rev_user' => $user->getId(),
-					'rev_timestamp > ' . $dbr->addQuotes( $dbr->timestamp( $next ) ) ),
-					__METHOD__,
-				array( 'ORDER BY' => 'rev_timestamp ASC', 'USE INDEX' => 'user_timestamp' )
-			);
-			if ( $lower !== false ) $benchmarks++;
+		# Recursively check for an edit $spacingReq seconds later, until we are done.
+		if ( $lower ) {
+			$benchmarks++; // the first edit above counts
+			while ( $lower && $benchmarks < $pointsReq ) {
+				$next = wfTimestamp( TS_UNIX, $lower ) + $spacingReq;
+				$lower = $dbr->selectField( 'revision', 'rev_timestamp',
+					array( 'rev_user' => $user->getId(),
+						'rev_timestamp > ' . $dbr->addQuotes( $dbr->timestamp( $next ) ) ),
+						__METHOD__,
+					array( 'ORDER BY' => 'rev_timestamp ASC', 'USE INDEX' => 'user_timestamp' )
+				);
+				if ( $lower !== false ) $benchmarks++;
+			}
 		}
-		return ( $benchmarks >= $needed );
+		if ( $benchmarks >= $pointsReq ) {
+			return true;
+		} else {
+			// Does not add time for the last required edit point; it could be a
+			// fraction of $spacingReq depending on the last actual edit point time.
+			return ( $spacingReq * ($pointsReq - $benchmarks - 1) );
+		}
 	}
-	
+
 	/**
 	* Checks if $user was previously blocked
 	*/
-	protected function previousBlockCheck( $user ) {
+	public static function previousBlockCheck( $user ) {
 		$dbr = wfGetDB( DB_SLAVE );
 		return (bool)$dbr->selectField( 'logging', '1',
 			array(
@@ -1147,38 +1018,48 @@ class FlaggedRevsHooks {
 			array( 'USE INDEX' => 'page_time' )
 		);
 	}
-	
+
 	/**
-	* Check for 'autoreview' permission. This lets people who opt-out as
-	* Editors still have their own edits automatically reviewed. Bot
-	* accounts are also handled here to make sure that can autoreview.
+	* Grant 'autoreview' rights to users with the 'bot' right
 	*/
-	public static function checkAutoPromote( $user, &$promote ) {
-		global $wgFlaggedRevsAutoconfirm, $wgMemc;
-		# Make sure bots always have autoreview
-		if ( $user->isAllowed( 'bot' ) ) {
-			$promote[] = 'autoreview'; // add the group
-			return true;
+	public static function onUserGetRights( $user, array &$rights ) {
+		# Make sure bots always have the 'autoreview' right
+		if ( in_array( 'bot', $rights ) && !in_array( 'autoreview', $rights ) ) {
+			$rights[] = 'autoreview';
 		}
+		return true;
+	}
+
+	/**
+	* Grant implicit 'autoreview' group to users meeting the
+	* $wgFlaggedRevsAutoconfirm requirements. This lets people who
+	* opt-out as Editors still have their own edits automatically reviewed.
+	*
+	* Note: some unobtrusive caching is used to avoid DB hits.
+	*/
+	public static function checkAutoPromote( $user, array &$promote ) {
+		global $wgFlaggedRevsAutoconfirm, $wgMemc;
 		# Check if $wgFlaggedRevsAutoconfirm is actually enabled
 		# and that this is a logged-in user that doesn't already
 		# have the 'autoreview' permission
-		if ( !$user->getId() || $user->isAllowed( 'autoreview' )
-			|| empty( $wgFlaggedRevsAutoconfirm ) )
-		{
+		if ( !$user->getId() || empty( $wgFlaggedRevsAutoconfirm ) ) {
 			return true;
 		}
 		# Check if results are cached to avoid DB queries.
 		# Checked basic, already available, promotion heuristics first...
 		$APSkipKey = wfMemcKey( 'flaggedrevs', 'autoreview-skip', $user->getId() );
 		$value = $wgMemc->get( $APSkipKey );
-		if ( $value === 'true' ) return true;
+		if ( $value === 'true' ) {
+			return true;
+		}
 		# Check $wgFlaggedRevsAutoconfirm settings...
 		$now = time();
 		$userCreation = wfTimestampOrNull( TS_UNIX, $user->getRegistration() );
 		# User registration was not always tracked in DB...use null for such cases
-		$userage = $userCreation ? floor( ( $now - $userCreation ) / 86400 ) : null;
-		$p = FlaggedRevs::getUserParams( $user->getId() );
+		$userage = $userCreation
+			? floor( ( $now - $userCreation ) / 86400 )
+			: null;
+		$p = FRUserCounters::getUserParams( $user->getId() );
 		# Check if user edited enough content pages
 		$totalCheckedEditsNeeded = false;
 		if ( $wgFlaggedRevsAutoconfirm['totalContentEdits'] > $p['totalContentEdits'] ) {
@@ -1188,7 +1069,7 @@ class FlaggedRevsHooks {
 			$totalCheckedEditsNeeded = true;
 		}
 		# Check if user edited enough unique pages
-		$pages = explode( ',', trim( $p['uniqueContentPages'] ) ); // page IDs
+		$pages = $p['uniqueContentPages']; // page IDs
 		if ( $wgFlaggedRevsAutoconfirm['uniqueContentPages'] > count( $pages ) ) {
 			return true;
 		}
@@ -1237,16 +1118,15 @@ class FlaggedRevsHooks {
 					$user
 				);
 				# Make a key to store the results
-				if ( !$pass ) {
-					$wgMemc->set( $APSkipKey, 'true',
-						3600 * 24 * $spacing * ( $benchmarks - $needed - 1 ) );
-					return true;
-				} else {
+				if ( $pass === true ) {
 					$wgMemc->set( $sTestKey, 'true', 7 * 24 * 3600 );
+				} else {
+					$wgMemc->set( $APSkipKey, 'true', $pass /* wait time */ );
+					return true;
 				}
 			}
 		}
-		# Check implicitly sighted edits
+		# Check implicitly checked edits
 		if ( $totalCheckedEditsNeeded && $wgFlaggedRevsAutoconfirm['totalCheckedEdits'] ) {
 			$dbr = wfGetDB( DB_SLAVE );
 			$res = $dbr->select( array( 'revision', 'flaggedpages' ), '1',
@@ -1269,41 +1149,24 @@ class FlaggedRevsHooks {
 	* $wgFlaggedRevsAutopromote. This also handles user stats tallies.
 	*/
 	public static function maybeMakeEditor(
-		$article, $user, $text, $summary, $m, $a, $b, &$f, $rev
+		Article $article, $user, $text, $summary, $m, $a, $b, &$f, $rev
 	) {
 		global $wgFlaggedRevsAutopromote, $wgFlaggedRevsAutoconfirm, $wgMemc;
 		# Ignore NULL edits or edits by anon users
-		if ( !$rev || !$user->getId() )
+		if ( !$rev || !$user->getId() ) {
 			return true;
 		# No sense in running counters if nothing uses them
-		if ( empty( $wgFlaggedRevsAutopromote ) && empty( $wgFlaggedRevsAutoconfirm ) ) {
+		} elseif ( !$wgFlaggedRevsAutopromote && !$wgFlaggedRevsAutoconfirm ) {
 			return true;
 		}
-		$p = FlaggedRevs::getUserParams( $user->getId() );
-		# Update any special counters for non-null revisions
-		$changed = false;
-		$pages = array();
-		if ( $article->getTitle()->isContentPage() ) {
-			$pages = explode( ',', trim( $p['uniqueContentPages'] ) ); // page IDs
-			# Don't let this get bloated for no reason
-			# (assumes $wgFlaggedRevsAutopromote is stricter than $wgFlaggedRevsAutoconfirm)
-			if ( count( $pages ) < $wgFlaggedRevsAutopromote['uniqueContentPages']
-				&& !in_array( $article->getId(), $pages ) )
-			{
-				$pages[] = $article->getId();
-				// Clear out any formatting garbage
-				$p['uniqueContentPages'] = preg_replace( '/^,/', '', implode( ',', $pages ) );
-			}
-			$p['totalContentEdits'] += 1;
-			$changed = true;
-		}
-		if ( $summary ) {
-			$p['editComments'] += 1;
-			$changed = true;
-		}
+		$p = FRUserCounters::getUserParams( $user->getId(), FR_FOR_UPDATE );
+		$changed = FRUserCounters::updateUserParams( $p, $article, $summary );
 		# Save any updates to user params
 		if ( $changed ) {
-			FlaggedRevs::saveUserParams( $user->getId(), $p );
+			FRUserCounters::saveUserParams( $user->getId(), $p );
+		}
+		if ( !is_array( $wgFlaggedRevsAutopromote ) ) {
+			return true; // nothing to do
 		}
 		# Grab current groups
 		$groups = $user->getGroups();
@@ -1328,6 +1191,7 @@ class FlaggedRevsHooks {
 			$totalCheckedEditsNeeded = true;
 		}
 		# Check if user edited enough unique pages
+		$pages = $p['uniqueContentPages']; // page IDs
 		if ( $wgFlaggedRevsAutopromote['uniqueContentPages'] > count( $pages ) ) {
 			return true;
 		}
@@ -1393,12 +1257,11 @@ class FlaggedRevsHooks {
 					$user
 				);
 				# Make a key to store the results
-				if ( !$pass ) {
-					$wgMemc->set( $APSkipKey, 'true',
-						3600 * 24 * $spacing * ( $benchmarks - $needed - 1 ) );
-					return true;
-				} else {
+				if ( $pass === true ) {
 					$wgMemc->set( $sTestKey, 'true', 7 * 24 * 3600 );
+				} else {
+					$wgMemc->set( $APSkipKey, 'true', $pass /* wait time */ );
+					return true;
 				}
 			}
 		}
@@ -1414,7 +1277,7 @@ class FlaggedRevsHooks {
 				array( 'USE INDEX' => 'rc_ip' ) );
 			if ( $shared ) {
 				# Make a key to store the results
-				$wgMemc->set( $key, 'true', 3600 * 24 * 7 );
+				$wgMemc->set( $sTestKey, 'true', 3600 * 24 * 7 );
 				return true;
 			}
 		}
@@ -1457,7 +1320,7 @@ class FlaggedRevsHooks {
 				return true;
 			}
 		}
-		# Check implicitly sighted edits
+		# Check implicitly checked edits
 		if ( $totalCheckedEditsNeeded && $wgFlaggedRevsAutopromote['totalCheckedEdits'] ) {
 			$dbr = isset( $dbr ) ? $dbr : wfGetDB( DB_SLAVE );
 			$res = $dbr->select( array( 'revision', 'flaggedpages' ), '1',
@@ -1475,37 +1338,36 @@ class FlaggedRevsHooks {
 		$newGroups = $groups ;
 		array_push( $newGroups, 'editor' );
 
-		global $wgFlaggedRevsAutopromoteInRC;
-		$log = new LogPage( 'rights', $wgFlaggedRevsAutopromoteInRC );
-		$log->addEntry( 'rights', $user->getUserPage(), wfMsg( 'rights-editor-autosum' ),
-			array( implode( ', ', $groups ), implode( ', ', $newGroups ) ) );
+		$log = new LogPage( 'rights', false /* $rc */ );
+		$log->addEntry( 'rights',
+			$user->getUserPage(),
+			wfMsgForContent( 'rights-editor-autosum' ),
+			array( implode( ', ', $groups ), implode( ', ', $newGroups ) )
+		);
 		$user->addGroup( 'editor' );
 
 		return true;
 	}
-	
+
    	/**
 	* Record demotion so that auto-promote will be disabled
 	*/
-	public static function recordDemote( $u, $addgroup, $removegroup ) {
+	public static function recordDemote( $user, array $addgroup, array $removegroup ) {
 		if ( $removegroup && in_array( 'editor', $removegroup ) ) {
-			// Cross-wiki rights change
-			if ( $u instanceof UserRightsProxy ) {
-				$params = FlaggedRevs::getUserParams( $u->getId(), $u->getDBName() );
-				$params['demoted'] = 1;
-				FlaggedRevs::saveUserParams( $u->getId(), $params, $u->getDBName() );
-			// On-wiki rights change
-			} else {
-				$params = FlaggedRevs::getUserParams( $u->getId() );
-				$params['demoted'] = 1;
-				FlaggedRevs::saveUserParams( $u->getId(), $params );
+			$dbName = false; // this wiki
+			// Cross-wiki rights changes...
+			if ( $user instanceof UserRightsProxy ) {
+				$dbName = $user->getDBName(); // use foreign DB of the user
 			}
+			$p = FRUserCounters::getUserParams( $user->getId(), FR_FOR_UPDATE, $dbName );
+			$p['demoted'] = 1;
+			FRUserCounters::saveUserParams( $user->getId(), $p, $dbName );
 		}
 		return true;
 	}
-	
+
 	/** Add user preferences */
-	public static function onGetPreferences( $user, &$preferences ) {
+	public static function onGetPreferences( $user, array &$preferences ) {
 		// Box or bar UI
 		$preferences['flaggedrevssimpleui'] =
 			array(
@@ -1544,89 +1406,96 @@ class FlaggedRevsHooks {
 			$preferences['flaggedrevsviewdiffs'] =
 				array(
 					'type' => 'toggle',
-					'section' => 'misc/diffs',
+					'section' => 'flaggedrevs/flaggedrevs-ui',
 					'label-message' => 'flaggedrevs-prefs-viewdiffs',
 				);
 		}
 		return true;
 	}
-	
+
 	public static function logLineLinks(
-		$type, $action, $title = null, $params, &$comment, &$rv, $ts
+		$type, $action, $title, $params, &$comment, &$rv, $ts
 	) {
 		if ( !$title ) {
-			return true; // nothing to do
+			return true; // sanity check
+		}
 		// Stability log
-		} else if ( $type == 'stable' ) {
-			$rv .= FlaggedRevsLogs::stabilityLogLinks( $title, $ts );
+		if ( $type == 'stable' && FlaggedRevsLogs::isStabilityAction( $action ) ) {
+			$rv .= FlaggedRevsLogs::stabilityLogLinks( $title, $ts, $params );
 		// Review log
-		} else if ( $type == 'review' && FlaggedRevsLogs::isReviewAction( $action ) ) {
+		} elseif ( $type == 'review' && FlaggedRevsLogs::isReviewAction( $action ) ) {
 			$rv .= FlaggedRevsLogs::reviewLogLinks( $action, $title, $params );
 		}
 		return true;
 	}
 
-	public static function imagePageFindFile( $imagePage, &$normalFile, &$displayFile ) {
+	public static function onImagePageFindFile( $imagePage, &$normalFile, &$displayFile ) {
 		$view = FlaggedArticleView::singleton();
 		$view->imagePageFindFile( $normalFile, $displayFile );
 		return true;
 	}
 
-	public static function setActionTabs( $skin, &$contentActions ) {
+	// MonoBook et al: $contentActions is all the tabs
+	// Vector et al: $contentActions is all the action tabs...unused
+	public static function onSkinTemplateTabs( Skin $skin, array &$contentActions ) {
+		if ( $skin instanceof SkinVector ) {
+			// *sigh*...skip, dealt with in setNavigation()
+			return true;
+		}
 		// Note: $wgArticle sometimes not set here
 		if ( FlaggedArticleView::globalArticleInstance() != null ) {
 			$view = FlaggedArticleView::singleton();
 			$view->setActionTabs( $skin, $contentActions );
-			$view->setViewTabs( $skin, $contentActions );
+			$view->setViewTabs( $skin, $contentActions, 'flat' );
 		}
 		return true;
 	}
 
-	public static function setNavigation( $skin, &$links ) {
+	// Vector et al: $links is all the tabs (2 levels)
+	public static function onSkinTemplateNavigation( Skin $skin, array &$links ) {
 		// Note: $wgArticle sometimes not set here
 		if ( FlaggedArticleView::globalArticleInstance() != null ) {
 			$view = FlaggedArticleView::singleton();
 			$view->setActionTabs( $skin, $links['actions'] );
-			$view->setViewTabs( $skin, $links['views'] );
+			$view->setViewTabs( $skin, $links['views'], 'nav' );
 		}
 		return true;
 	}
 
-	public static function onArticleViewHeader( &$article, &$outputDone, &$pcache ) {
+	public static function onArticleViewHeader( &$article, &$outputDone, &$useParserCache ) {
 		$view = FlaggedArticleView::singleton();
-		$view->maybeUpdateMainCache( $outputDone, $pcache );
-		$view->addStableLink( $outputDone, $pcache );
-		$view->setPageContent( $outputDone, $pcache );
+		$view->addStableLink( $outputDone, $useParserCache );
+		$view->setPageContent( $outputDone, $useParserCache );
 		return true;
 	}
-	
+
 	public static function overrideRedirect(
-		&$title, $request, &$ignoreRedirect, &$target, &$article
+		Title &$title, WebRequest $request, &$ignoreRedirect, &$target, Article &$article
 	) {
-		# Get an instance on the title ($wgTitle)
-		if ( !FlaggedRevs::inReviewNamespace( $title ) ) {
-			return true;
+		global $wgMemc, $wgParserCacheExpireTime;
+		$fa = FlaggedArticle::getTitleInstance( $title ); // on $wgTitle
+		if ( !$fa->isReviewable() ) {
+			return true; // nothing to do
 		}
 		if ( $request->getVal( 'stableid' ) ) {
 			$ignoreRedirect = true;
 		} else {
-			global $wgMemc, $wgParserCacheExpireTime;
 			# Try the cache...
-			$key = wfMemcKey( 'flaggedrevs', 'overrideRedirect', $title->getArticleId() );
-			$data = $wgMemc->get( $key );
-			if ( is_object( $data ) && $data->time >= $article->getTouched() ) {
-				list( $ignoreRedirect, $target ) = $data->value;
-				return true;
+			$key = wfMemcKey( 'flaggedrevs', 'overrideRedirect', $article->getId() );
+			$tuple = FlaggedRevs::getMemcValue( $wgMemc->get( $key ), $article );
+			if ( is_array( $tuple ) ) {
+				list( $ignoreRedirect, $target ) = $tuple;
+				return true; // use stable redirect
 			}
-			$fa = FlaggedArticle::getTitleInstance( $title );
-			if ( $srev = $fa->getStableRev() ) {
+			$srev = $fa->getStableRev();
+			if ( $srev ) {
 				$view = FlaggedArticleView::singleton();
 				# If synced, nothing special here...
 				if ( $srev->getRevId() != $article->getLatest() && $view->pageOverride() ) {
 					$text = $srev->getRevText();
 					$redirect = $fa->followRedirectText( $text );
 					if ( $redirect ) {
-						$target = $redirect;
+						$target = $redirect; // use stable redirect
 					} else {
 						$ignoreRedirect = true;
 					}
@@ -1637,34 +1506,42 @@ class FlaggedRevsHooks {
 		}
 		return true;
 	}
-	
+
 	public static function addToEditView( &$editPage ) {
 		$view = FlaggedArticleView::singleton();
 		$view->addToEditView( $editPage );
 		return true;
 	}
-	
+
+	public static function onBeforeEditButtons( &$editPage, &$buttons ) {
+		$view = FlaggedArticleView::singleton();
+		$view->changeSaveButton( $editPage, $buttons );
+		return true;
+	}
+
 	public static function onNoSuchSection( &$editPage, &$s ) {
 		$view = FlaggedArticleView::singleton();
 		$view->addToNoSuchSection( $editPage, $s );
 		return true;
 	}
-	
+
 	public static function addToHistView( &$article ) {
 		$view = FlaggedArticleView::singleton();
 		$view->addToHistView();
 		return true;
 	}
-	
+
 	public static function onCategoryPageView( &$category ) {
 		$view = FlaggedArticleView::singleton();
 		$view->addToCategoryView();
 		return true;
 	}
-	
+
 	public static function onSkinAfterContent( &$data ) {
 		global $wgOut;
-		if ( $wgOut->isArticleRelated() && FlaggedArticleView::globalArticleInstance() != null ) {
+		if ( $wgOut->isArticleRelated()
+			&& FlaggedArticleView::globalArticleInstance() != null )
+		{
 			$view = FlaggedArticleView::singleton();
 			$view->addReviewNotes( $data );
 			$view->addReviewForm( $data );
@@ -1672,8 +1549,8 @@ class FlaggedRevsHooks {
 		}
 		return true;
 	}
-	
-	public static function addToHistQuery( $pager, &$queryInfo ) {
+
+	public static function addToHistQuery( HistoryPager $pager, array &$queryInfo ) {
 		$flaggedArticle = FlaggedArticle::getArticleInstance( $pager->getArticle() );
 		# Non-content pages cannot be validated. Stable version must exist.
 		if ( $flaggedArticle->isReviewable() && $flaggedArticle->getStableRev() ) {
@@ -1685,7 +1562,7 @@ class FlaggedRevsHooks {
 			$queryInfo['join_conds']['flaggedrevs'] = array( 'LEFT JOIN',
 				"fr_page_id = rev_page AND fr_rev_id = rev_id" );
 			# Find reviewer name. Sanity check that no extensions added a `user` query.
-			if( !in_array( 'user', $queryInfo['tables'] ) ) {
+			if ( !in_array( 'user', $queryInfo['tables'] ) ) {
 				$queryInfo['tables'][] = 'user';
 				$queryInfo['fields'][] = 'user_name AS reviewer';
 				$queryInfo['join_conds']['user'] = array( 'LEFT JOIN', "user_id = fr_user" );
@@ -1693,9 +1570,9 @@ class FlaggedRevsHooks {
 		}
 		return true;
 	}
-	
+
 	public static function addToFileHistQuery(
-		$file, &$tables, &$fields, &$conds, &$opts, &$join_conds
+		File $file, array &$tables, array &$fields, &$conds, array &$opts, array &$join_conds
 	) {
 		if ( !$file->isLocal() ) {
 			return true; // local files only
@@ -1706,14 +1583,25 @@ class FlaggedRevsHooks {
 			$tables[] = 'flaggedrevs';
 			$fields[] = 'MAX(fr_quality) AS fr_quality';
 			# Avoid duplicate rows due to multiple revs with the same sha-1 key
-			$opts['GROUP BY'] = 'oi_name,oi_timestamp';
+
+			# This is a stupid hack to get all the field names in our GROUP BY
+			# clause. Postgres yells at you for not including all of the selected
+			# columns, so grab the full list, unset the two we actually want to
+			# order by, then append the rest of them to our two. It would be
+			# REALLY nice if we handled this automagically in makeSelectOptions()
+			# or something *sigh*
+			$groupBy = OldLocalFile::selectFields();
+			unset( $groupBy[ array_search( 'oi_name', $groupBy ) ] );
+			unset( $groupBy[ array_search( 'oi_timestamp', $groupBy ) ] );
+			$opts['GROUP BY'] = 'oi_name,oi_timestamp,' . implode( ',', $groupBy );
+
 			$join_conds['flaggedrevs'] = array( 'LEFT JOIN',
 				'oi_sha1 = fr_img_sha1 AND oi_timestamp = fr_img_timestamp' );
 		}
 		return true;
 	}
-	
-	public static function addToContribsQuery( $pager, &$queryInfo ) {
+
+	public static function addToContribsQuery( $pager, array &$queryInfo ) {
 		# Highlight flaggedrevs
 		$queryInfo['tables'][] = 'flaggedrevs';
 		$queryInfo['fields'][] = 'fr_quality';
@@ -1722,62 +1610,71 @@ class FlaggedRevsHooks {
 		# Highlight unchecked content
 		$queryInfo['tables'][] = 'flaggedpages';
 		$queryInfo['fields'][] = 'fp_stable';
+		$queryInfo['fields'][] = 'fp_pending_since';
 		$queryInfo['join_conds']['flaggedpages'] = array( 'LEFT JOIN', "fp_page_id = rev_page" );
 		return true;
 	}
-	
-	public static function addToRCQuery( &$conds, &$tables, &$join_conds, $opts ) {
-		global $wgUser;
-		if ( $wgUser->isAllowed( 'review' ) ) {
-			$tables[] = 'flaggedpage_pending';
-			$join_conds['flaggedpage_pending'] = array( 'LEFT JOIN',
-				'fpp_page_id = rc_cur_id AND fpp_quality = ' . FlaggedRevs::getPatrolLevel() );
+
+	public static function addToRCQuery(
+		&$conds, array &$tables, array &$join_conds, $opts, &$query_opts, &$select
+	) {
+		$tables[] = 'flaggedpages';
+		$join_conds['flaggedpages'] = array( 'LEFT JOIN', 'fp_page_id = rc_cur_id' );
+		if ( is_array( $select ) ) { // RCL
+			$select[] = 'fp_stable';
+			$select[] = 'fp_pending_since';
 		}
 		return true;
 	}
-	
-	public static function addToWatchlistQuery( &$conds, &$tables, &$join_conds, &$fields ) {
+
+	public static function addToWatchlistQuery(
+		&$conds, array &$tables, array &$join_conds, array &$fields
+	) {
 		global $wgUser;
 		if ( $wgUser->isAllowed( 'review' ) ) {
-			$fields[] = 'fpp_rev_id';
-			$tables[] = 'flaggedpage_pending';
-			$join_conds['flaggedpage_pending'] = array( 'LEFT JOIN',
-				'fpp_page_id = rc_cur_id AND fpp_quality = ' . FlaggedRevs::getPatrolLevel() );
+			$fields[] = 'fp_stable';
+			$fields[] = 'fp_pending_since';
+			$tables[] = 'flaggedpages';
+			$join_conds['flaggedpages'] = array( 'LEFT JOIN', 'fp_page_id = rc_cur_id' );
 		}
 		return true;
 	}
-	
-	public static function addToHistLine( $history, $row, &$s, &$liClasses ) {
+
+	public static function addToHistLine( HistoryPager $history, $row, &$s, &$liClasses ) {
 		$fa = FlaggedArticle::getArticleInstance( $history->getArticle() );
 		if ( !$fa->isReviewable() ) {
 			return true; // nothing to do here
 		}
-		$title = $history->getArticle()->getTitle();
 		# Fetch and process cache the stable revision
 		if ( !isset( $history->fr_stableRevId ) ) {
-			$frev = $fa->getStableRev();
-			$history->fr_stableRevId = $frev ? $frev->getRevId() : 0;
+			$srev = $fa->getStableRev();
+			$history->fr_stableRevId = $srev ? $srev->getRevId() : null;
+			$history->fr_stableRevUTS = $srev ? // bug 15515
+				wfTimestamp( TS_UNIX, $srev->getRevTimestamp() ) : null;
 			$history->fr_pendingRevs = false;
 		}
 		if ( !$history->fr_stableRevId ) {
 			return true; // nothing to do here
 		}
+		$title = $history->getArticle()->getTitle();
 		$revId = (int)$row->rev_id;
-		// Unreviewed revision: highlight if pending
+		// Pending revision: highlight and add diff link
 		$link = $class = '';
-		if ( !isset( $row->fr_quality ) ) {
-			if ( $revId > $history->fr_stableRevId ) {
-				$class = 'flaggedrevs-unreviewed';
-				$link = '<strong>' . wfMsgHtml( 'revreview-hist-pending' ) . '</strong>';
-				$history->fr_pendingRevs = true; // pending rev shown above stable
-			}
+		if ( wfTimestamp( TS_UNIX, $row->rev_timestamp ) > $history->fr_stableRevUTS ) {
+			$class = 'flaggedrevs-pending';
+			$link = wfMsgExt( 'revreview-hist-pending-difflink', 'parseinline',
+				$title->getPrefixedText(), $history->fr_stableRevId, $revId );
+			$link = '<span class="plainlinks">' . $link . '</span>';
+			$history->fr_pendingRevs = true; // pending rev shown above stable
 		// Reviewed revision: highlight and add link
-		} else if ( !( $row->rev_deleted & Revision::DELETED_TEXT ) ) {
-			# Add link to stable version of *this* rev, if any
-			list( $link, $class ) = self::markHistoryRow( $title, $row );
-			# Space out and demark the stable revision
-			if ( $revId == $history->fr_stableRevId && $history->fr_pendingRevs ) {
-				$liClasses[] = 'fr-hist-stable-margin';
+		} elseif ( isset( $row->fr_quality ) ) {
+			if ( !( $row->rev_deleted & Revision::DELETED_TEXT ) ) {
+				# Add link to stable version of *this* rev, if any
+				list( $link, $class ) = self::markHistoryRow( $title, $row );
+				# Space out and demark the stable revision
+				if ( $revId == $history->fr_stableRevId && $history->fr_pendingRevs ) {
+					$liClasses[] = 'fr-hist-stable-margin';
+				}
 			}
 		}
 		# Style the row as needed
@@ -1786,15 +1683,14 @@ class FlaggedRevsHooks {
 		if ( $link ) $s .= " <small>$link</small>";
 		return true;
 	}
-	
-	
+
 	/**
 	 * Make stable version link and return the css
 	 * @param Title $title
 	 * @param Row $row, from history page
 	 * @returns array (string,string)
 	 */
-	protected static function markHistoryRow( $title, $row ) {
+	protected static function markHistoryRow( Title $title, $row ) {
 		if ( !isset( $row->fr_quality ) ) {
 			return array( "", "" ); // not reviewed
 		}
@@ -1815,14 +1711,14 @@ class FlaggedRevsHooks {
 				? 'fr-hist-quality-user'
 				: 'fr-hist-basic-user';
 		}
-		$name = isset($row->reviewer) ?
+		$name = isset( $row->reviewer ) ?
 			$row->reviewer : User::whoIs( $row->fr_user );
 		$link = wfMsgExt( $msg, 'parseinline', $title->getPrefixedDBkey(), $row->rev_id, $name );
 		$link = "<span class='$css plainlinks'>[$link]</span>";
 		return array( $link, $liCss );
 	}
-	
-	public static function addToFileHistLine( $hist, $file, &$s, &$rowClass ) {
+
+	public static function addToFileHistLine( $hist, File $file, &$s, &$rowClass ) {
 		if ( !$file->isVisible() ) {
 			return true; // Don't bother showing notice for deleted revs
 		}
@@ -1844,7 +1740,7 @@ class FlaggedRevsHooks {
 		}
 		return true;
 	}
-	
+
 	public static function addToContribsLine( $contribs, &$ret, $row ) {
 		$namespaces = FlaggedRevs::getReviewNamespaces();
 		if ( !in_array( $row->page_namespace, $namespaces ) ) {
@@ -1852,33 +1748,61 @@ class FlaggedRevsHooks {
 		} elseif ( isset( $row->fr_quality ) ) {
 			$ret = '<span class="' . FlaggedRevsXML::getQualityColor( $row->fr_quality ) .
 				'">' . $ret . '</span>';
-		} elseif ( isset( $row->fp_stable ) && $row->rev_id > $row->fp_stable ) {
-			$ret = '<span class="flaggedrevs-unreviewed">' . $ret . '</span>';
+		} elseif ( isset( $row->fp_pending_since )
+			&& $row->rev_timestamp >= $row->fp_pending_since ) // bug 15515
+		{
+			$ret = '<span class="flaggedrevs-pending">' . $ret . '</span>';
 		} elseif ( !isset( $row->fp_stable ) ) {
-			$ret = '<span class="flaggedrevs-unreviewed2">' . $ret . '</span>';
+			$ret = '<span class="flaggedrevs-unreviewed">' . $ret . '</span>';
 		}
 		return true;
 	}
-	
-	public static function addToChangeListLine(
-		&$list, &$articlelink, &$s, &$rc, $unpatrolled, $watched
-	) {
-		if ( empty( $rc->mAttribs['fpp_rev_id'] ) )
-			return true; // page is not listed in pending edit table
-		if ( !FlaggedRevs::inReviewNamespace( $rc->getTitle() ) )
+
+	public static function addToChangeListLine( &$list, &$articlelink, &$s, RecentChange &$rc ) {
+		global $wgUser;
+		$title = $rc->getTitle(); // convenience
+		if ( !FlaggedRevs::inReviewNamespace( $title )
+			|| empty( $rc->mAttribs['rc_this_oldid'] ) // rev, not log
+			|| !array_key_exists( 'fp_stable', $rc->mAttribs ) )
+		{
 			return true; // confirm that page is in reviewable namespace
-		$rlink = $list->skin->makeKnownLinkObj( $rc->getTitle(), wfMsg( 'revreview-reviewlink' ),
-			'oldid=' . intval( $rc->mAttribs['fpp_rev_id'] ) . '&diff=cur' );
-		$articlelink .= " <span class='mw-fr-reviewlink'>($rlink)</span>";
+		}
+		$rlink = '';
+		// page is not reviewed
+		if ( $rc->mAttribs['fp_stable'] == null ) {
+			// Is this a config were pages start off reviewable?
+			// Hide notice from non-reviewers due to vandalism concerns (bug 24002).
+			if ( !FlaggedRevs::useOnlyIfProtected() && $wgUser->isAllowed( 'review' ) ) {
+				$rlink = wfMsgHtml( 'revreview-unreviewedpage' );
+				$css = 'flaggedrevs-unreviewed';
+			}
+		// page is reviewed and has pending edits (use timestamps; bug 15515)
+		} elseif ( isset( $rc->mAttribs['fp_pending_since'] ) &&
+			$rc->mAttribs['rc_timestamp'] >= $rc->mAttribs['fp_pending_since'] )
+		{
+			$rlink = $list->skin->link(
+				$title,
+				wfMsgHtml( 'revreview-reviewlink' ),
+				array( 'title' => wfMsg( 'revreview-reviewlink-title' ) ),
+				array( 'oldid' => $rc->mAttribs['fp_stable'], 'diff' => 'cur' )
+			);
+			$css = 'flaggedrevs-pending';
+		}
+		if ( $rlink != '' ) {
+			$articlelink .= " <span class=\"mw-fr-reviewlink $css\">[$rlink]</span>";
+		}
 		return true;
 	}
-	
+
 	public static function injectPostEditURLParams( $article, &$sectionAnchor, &$extraQuery ) {
-		$view = FlaggedArticleView::singleton();
-		$view->injectPostEditURLParams( $sectionAnchor, $extraQuery );
+		// Note: $wgArticle sometimes not set here
+		if ( FlaggedArticleView::globalArticleInstance() != null ) {
+			$view = FlaggedArticleView::singleton();
+			$view->injectPostEditURLParams( $sectionAnchor, $extraQuery );
+		}
 		return true;
 	}
-	
+
 	// diff=review param (bug 16923)
 	public static function checkDiffUrl( $titleObj, &$mOldid, &$mNewid, $old, $new ) {
 		if ( $new === 'review' && isset( $titleObj ) ) {
@@ -1895,9 +1819,21 @@ class FlaggedRevsHooks {
 		self::injectStyleAndJS();
 		$view = FlaggedArticleView::singleton();
 		$view->setViewFlags( $diff, $oldRev, $newRev );
-		$view->addDiffLink( $diff, $oldRev, $newRev );
-		$view->addDiffNoticeAndIncludes( $diff, $oldRev, $newRev );
+		$view->addToDiffView( $diff, $oldRev, $newRev );
 		return true;
+	}
+	
+	/*
+	 * If an article is reviewable, get custom article contents from the FlaggedArticleView
+	 */
+	public static function onArticleContentOnDiff( $diffEngine, $out ) {
+		$fa = FlaggedArticle::getTitleInstance( $out->getTitle() );
+		if ( !$fa->isReviewable() ) {
+			return true; // nothing to do
+		}
+		$view = FlaggedArticleView::singleton();
+		$view->addCustomContentHtml( $out, $diffEngine->getNewid() );
+		return false;
 	}
 
 	public static function addRevisionIDField( $editPage, $out ) {
@@ -1905,169 +1841,122 @@ class FlaggedRevsHooks {
 		$view->addRevisionIDField( $editPage, $out );
 		return true;
 	}
-	
+
 	public static function addReviewCheck( $editPage, &$checkboxes, &$tabindex ) {
-		global $wgUser, $wgRequest;
-		if ( !$wgUser->isAllowed( 'review' ) ) {
-			return true;
-		}
-		if ( FlaggedRevs::autoReviewNewPages() && !$editPage->getArticle()->getId() ) {
-			return true; // not needed
-		}
-		$fa = FlaggedArticleView::globalArticleInstance();
-		if ( $fa->isReviewable() ) {
-			$srev = $fa->getStableRev();
-			# For pages with either no stable version, or an outdated one, let
-			# the user decide if he/she wants it reviewed on the spot. One might
-			# do this if he/she just saw the diff-to-stable and *then* decided to edit.
-			if ( !$srev || $srev->getRevId() != $editPage->getArticle()->getLatest() ) {
-				$reviewLabel = wfMsgExt( 'revreview-check-flag', array( 'parseinline' ) );
-				$attribs = array( 'tabindex' => ++$tabindex, 'id' => 'wpReviewEdit' );
-				$checkboxes['reviewed'] = Xml::check( 'wpReviewEdit',
-					$wgRequest->getCheck( 'wpReviewEdit' ), $attribs ) .
-					'&nbsp;' . Xml::label( $reviewLabel, 'wpReviewEdit' );
-			}
-		}
+		$view = FlaggedArticleView::singleton();
+		$view->addReviewCheck( $editPage, $checkboxes, $tabindex );
 		return true;
 	}
-	
-	public static function addBacklogNotice( &$notice ) {
-		global $wgUser, $wgTitle;
-		$namespaces = FlaggedRevs::getReviewNamespaces();
-		if ( !count( $namespaces ) ) {
-			return true; // nothing to have a backlog on
-		}
-		if ( empty( $wgTitle ) || $wgTitle->getNamespace() !== NS_SPECIAL ) {
-			return true; // nothing to do here
-		}
-		if ( !$wgUser->isAllowed( 'review' ) )
-			return true; // not relevant to user
 
+	protected static function maybeAddBacklogNotice( OutputPage &$out ) {
+		global $wgUser;
+		if ( !$wgUser->isAllowed( 'review' ) ) {
+			return true; // not relevant to user
+		}
+		$namespaces = FlaggedRevs::getReviewNamespaces();
 		$watchlist = SpecialPage::getTitleFor( 'Watchlist' );
-		$recentchanges = SpecialPage::getTitleFor( 'Recentchanges' );
-		if ( $wgTitle->equals( $watchlist ) || $wgTitle->equals( $recentchanges ) ) {
-			$dbr = wfGetDB( DB_SLAVE );
-			$watchedOutdated = $dbr->selectField(
-				array( 'watchlist', 'page', 'flaggedpages' ), '1',
+		# Add notice to watchlist about pending changes...
+		if ( $out->getTitle()->equals( $watchlist ) && $namespaces ) {
+			$dbr = wfGetDB( DB_SLAVE, 'watchlist' ); // consistency with watchlist
+			$watchedOutdated = (bool)$dbr->selectField(
+				array( 'watchlist', 'page', 'flaggedpages' ),
+				'1', // existence
 				array( 'wl_user' => $wgUser->getId(), // this user
 					'wl_namespace' => $namespaces, // reviewable
 					'wl_namespace = page_namespace',
 					'wl_title = page_title',
 					'fp_page_id = page_id',
-					'fp_reviewed' => 0,  // edits pending
+					'fp_pending_since IS NOT NULL', // edits pending
 				), __METHOD__
 			);
-			# Give a notice if pages on the wachlist are outdated
+			# Give a notice if pages on the users's wachlist have pending edits
 			if ( $watchedOutdated ) {
-				$notice .= "<div id='mw-fr-oldreviewed-notice' class='plainlinks fr-watchlist-old-notice'>" .
-					wfMsgExt( 'flaggedrevs-watched-pending', array( 'parseinline' ) ) . "</div>";
-			# Otherwise, give a notice if there is a large backlog in general
-			} else {
-				$pages = $dbr->estimateRowCount( 'page', '*',
-					array( 'page_namespace' => $namespaces ), __METHOD__ );
-				# For small wikis, just get the real numbers to avoid some bogus messages
-				if ( $pages < 50 ) {
-					$pages = $dbr->selectField( 'page', 'COUNT(*)',
-						array( 'page_namespace' => $namespaces ), __METHOD__ );
-					$unreviewed = $dbr->selectField( 'flaggedpages', 'COUNT(*)',
-						'fp_pending_since IS NOT NULL', __METHOD__ );
-				} else {
-					$unreviewed = $dbr->estimateRowCount( 'flaggedpages', '*',
-						'fp_pending_since IS NOT NULL', __METHOD__ );
-				}
-				if ( $unreviewed > .02 * $pages ) {
-					$notice .= "<div id='mw-fr-oldreviewed-notice' class='plainlinks fr-backlognotice'>" .
-						wfMsgExt( 'flaggedrevs-backlog', array( 'parseinline' ) ) . "</div>";
-				}
+				$css = 'plainlinks fr-watchlist-pending-notice';
+				$out->prependHTML( "<div id='mw-fr-watchlist-pending-notice' class='$css'>" .
+					wfMsgExt( 'flaggedrevs-watched-pending', 'parseinline' ) . "</div>" );
 			}
 		}
 		return true;
 	}
-	
-	public static function stableDumpQuery( &$tables, &$opts, &$join ) {
+
+	public static function stableDumpQuery( array &$tables, array &$opts, array &$join ) {
 		$namespaces = FlaggedRevs::getReviewNamespaces();
-		$tables = array( 'flaggedpages', 'page', 'revision' );
-		$opts['ORDER BY'] = 'fp_page_id ASC';
-		$opts['USE INDEX'] = array( 'flaggedpages' => 'PRIMARY' );
-		$join['page'] = array( 'INNER JOIN',
-			array( 'page_id = fp_page_id', 'page_namespace' => $namespaces )
-		);
-		$join['revision'] = array( 'INNER JOIN', 'rev_page = fp_page_id AND rev_id = fp_stable' );
+		if ( $namespaces ) {
+			$tables[] = 'flaggedpages';
+			$opts['ORDER BY'] = 'fp_page_id ASC';
+			$opts['USE INDEX'] = array( 'flaggedpages' => 'PRIMARY' );
+			$join['page'] = array( 'INNER JOIN',
+				array( 'page_id = fp_page_id', 'page_namespace' => $namespaces )
+			);
+			$join['revision'] = array( 'INNER JOIN',
+				'rev_page = fp_page_id AND rev_id = fp_stable' );
+		}
 		return false; // final
 	}
-	
+
 	// Add selector of review "protection" options
 	// Code stolen from Stabilization (which was stolen from ProtectionForm)
-	public static function onProtectionForm( $article, &$output ) {
-		global $wgUser, $wgRequest, $wgOut, $wgLang;
-		if ( !FlaggedRevs::useProtectionLevels() || !$article->exists() ) {
+	public static function onProtectionForm( Article $article, &$output ) {
+		global $wgUser, $wgRequest, $wgLang;
+		if ( !$article->exists() ) {
 			return true; // nothing to do
-		} else if ( !FlaggedRevs::inReviewNamespace( $article->getTitle() ) ) {
+		} elseif ( !FlaggedRevs::inReviewNamespace( $article->getTitle() ) ) {
 			return true; // not a reviewable page
 		}
+		$form = new PageStabilityProtectForm( $wgUser );
+		$form->setPage( $article->getTitle() );
 		# Can the user actually do anything?
-		$isAllowed = $wgUser->isAllowed( 'stablesettings' );
-		$disabledAttrib = !$isAllowed ? array( 'disabled' => 'disabled' ) : array();
+		$isAllowed = $form->isAllowed();
+		$disabledAttrib = $isAllowed ?
+			array() : array( 'disabled' => 'disabled' );
+		
 		# Get the current config/expiry
-		$config = FlaggedRevs::getPageVisibilitySettings( $article->getTitle(), true );
-		$oldExpiry = $config['expiry'] !== 'infinity' ?
-			wfTimestamp( TS_RFC2822, $config['expiry'] ) : 'infinite';
-		# Load request params...
-		$selected = $wgRequest->getVal( 'wpStabilityConfig',
+		$config = FlaggedRevs::getPageVisibilitySettings( $article->getTitle(), FR_MASTER );
+		$oldExpirySelect = ( $config['expiry'] == 'infinity' ) ? 'infinite' : 'existing';
+		
+		# Load requested restriction level, default to current level...
+		$restriction = $wgRequest->getVal( 'mwStabilityLevel',
 			FlaggedRevs::getProtectionLevel( $config ) );
-		if ( $selected == 'invalid' ) {
-			throw new MWException( 'This page has an undefined stability configuration!' );
-		}
-		$expiry = $wgRequest->getText( 'mwStabilize-expiry' );
-		# Add some script for expiry dropdowns
-		$wgOut->addScript(
-			"<script type=\"text/javascript\">
-				function updateStabilizationDropdowns() {
-					val = document.getElementById('mwExpirySelection').value;
-					if( val == 'existing' )
-						document.getElementById('mwStabilize-expiry').value = " .
-						Xml::encodeJsVar( $oldExpiry ) . ";
-					else if( val != 'othertime' )
-						document.getElementById('mwStabilize-expiry').value = val;
-				}
-			</script>"
-		);
-		# Add an extra row to the protection fieldset tables
+		# Load the requested expiry time (dropdown)
+		$expirySelect = $wgRequest->getVal( 'mwStabilizeExpirySelection', $oldExpirySelect );
+		# Load the requested expiry time (field)
+		$expiryOther = $wgRequest->getVal( 'mwStabilizeExpiryOther', '' );
+		if ( $expiryOther != '' ) $expirySelect = 'othertime'; // mutual exclusion
+
+		# Add an extra row to the protection fieldset tables.
+		# Includes restriction dropdown and expiry dropdown & field.
 		$output .= "<tr><td>";
 		$output .= Xml::openElement( 'fieldset' );
-		$output .= Xml::element( 'legend', null, wfMsg( 'flaggedrevs-protect-legend' ) );
+		$legendMsg = wfMsgExt( 'flaggedrevs-protect-legend', 'parseinline' );
+		$output .= "<legend>{$legendMsg}</legend>";
 		# Add a "no restrictions" level
-		$effectiveLevels = array( "none" => null );
-		$effectiveLevels += FlaggedRevs::getProtectionLevels();
-		
+		$effectiveLevels = FlaggedRevs::getRestrictionLevels();
+		array_unshift( $effectiveLevels, "none" );
+		# Show all restriction levels in a <select>...
 		$attribs = array(
-			'id' => 'mwStabilityConfig',
-			'name' => 'mwStabilityConfig',
-			'size' => count( $effectiveLevels ),
+			'id' 	=> 'mwStabilityLevel',
+			'name'  => 'mwStabilityLevel',
+			'size'  => count( $effectiveLevels ),
 		) + $disabledAttrib;
 		$output .= Xml::openElement( 'select', $attribs );
-		# Show all restriction levels in a select...
-		foreach ( $effectiveLevels as $level => $x ) {
-			if ( $level == 'none' ) {
-				$label = FlaggedRevs::stableOnlyIfConfigured()
-					? wfMsg( 'flaggedrevs-protect-none' )
-					: wfMsg( 'flaggedrevs-protect-basic' );
+		foreach ( $effectiveLevels as $limit ) {
+			if ( $limit == 'none' ) {
+				$label = wfMsg( 'flaggedrevs-protect-none' );
 			} else {
-				$label = wfMsg( 'flaggedrevs-protect-' . $level );
+				$label = wfMsg( 'flaggedrevs-protect-' . $limit );
 			}
 			// Default to the key itself if no UI message
-			if ( wfEmptyMsg( 'flaggedrevs-protect-' . $level, $label ) ) {
-				$label = 'flaggedrevs-protect-' . $level;
+			if ( wfEmptyMsg( 'flaggedrevs-protect-' . $limit, $label ) ) {
+				$label = 'flaggedrevs-protect-' . $limit;
 			}
-			$output .= Xml::option( $label, $level, $level == $selected );
+			$output .= Xml::option( $label, $limit, $limit == $restriction );
 		}
 		$output .= Xml::closeElement( 'select' );
-		# Get expiry dropdown
+		# Get expiry dropdown <select>...
 		$scExpiryOptions = wfMsgForContent( 'protect-expiry-options' );
-		$showProtectOptions = ( $scExpiryOptions !== '-' && $isAllowed );
 		# Add the current expiry as an option
 		$expiryFormOptions = '';
-		if ( $config['expiry'] && $config['expiry'] != 'infinity' ) {
+		if ( $config['expiry'] != 'infinity' ) {
 			$timestamp = $wgLang->timeanddate( $config['expiry'] );
 			$d = $wgLang->date( $config['expiry'] );
 			$t = $wgLang->time( $config['expiry'] );
@@ -2075,11 +1964,11 @@ class FlaggedRevsHooks {
 				Xml::option(
 					wfMsg( 'protect-existing-expiry', $timestamp, $d, $t ),
 					'existing',
-					$config['expiry'] == 'existing'
+					$expirySelect == 'existing'
 				) . "\n";
 		}
-		$expiryFormOptions .= Xml::option( wfMsg( 'protect-othertime-op' ), "othertime" ) . "\n";
-		# Add custom levels (from MediaWiki message)
+		$expiryFormOptions .= Xml::option( wfMsg( 'protect-othertime-op' ), 'othertime' ) . "\n";
+		# Add custom dropdown levels (from MediaWiki message)
 		foreach ( explode( ',', $scExpiryOptions ) as $option ) {
 			if ( strpos( $option, ":" ) === false ) {
 				$show = $value = $option;
@@ -2088,9 +1977,9 @@ class FlaggedRevsHooks {
 			}
 			$show = htmlspecialchars( $show );
 			$value = htmlspecialchars( $value );
-			$expiryFormOptions .= Xml::option( $show, $value, $config['expiry'] === $value )."\n";
+			$expiryFormOptions .= Xml::option( $show, $value, $expirySelect == $value ) . "\n";
 		}
-		# Add expiry dropdown to form
+		# Actually add expiry dropdown to form
 		$scExpiryOptions = wfMsgForContent( 'protect-expiry-options' );
 		$showProtectOptions = ( $scExpiryOptions !== '-' && $isAllowed );
 		$output .= "<table>"; // expiry table start
@@ -2098,42 +1987,44 @@ class FlaggedRevsHooks {
 			$output .= "
 				<tr>
 					<td class='mw-label'>" .
-						Xml::label( wfMsg( 'stabilization-expiry' ), 'mwExpirySelection' ) .
+						Xml::label( wfMsg( 'stabilization-expiry' ), 'mwStabilizeExpirySelection' ) .
 					"</td>
 					<td class='mw-input'>" .
 						Xml::tags( 'select',
 							array(
-								'id' => 'mwExpirySelection',
-								'name' => 'wpExpirySelection',
-								'onchange' => 'updateStabilizationDropdowns()',
+								'id' 		=> 'mwStabilizeExpirySelection',
+								'name' 		=> 'mwStabilizeExpirySelection',
+								'onchange'  => 'onFRChangeExpiryDropdown()',
 							) + $disabledAttrib,
 							$expiryFormOptions ) .
 					"</td>
 				</tr>";
 		}
 		# Add custom expiry field to form
-		$attribs = array( 'id' => "mwStabilize-expiry",
-			'onkeyup' => 'updateStabilizationDropdowns()' ) + $disabledAttrib;
+		$attribs = array( 'id' => 'mwStabilizeExpiryOther',
+			'onkeyup' => 'onFRChangeExpiryField()' ) + $disabledAttrib;
 		$output .= "
 			<tr>
 				<td class='mw-label'>" .
-					Xml::label( wfMsg( 'stabilization-othertime' ), 'mwStabilize-expiry' ) .
+					Xml::label( wfMsg( 'stabilization-othertime' ), 'mwStabilizeExpiryOther' ) .
 				'</td>
 				<td class="mw-input">' .
-					Xml::input( "mwStabilize-expiry", 50,
-						$expiry ? $expiry : $oldExpiry, $attribs ) .
+					Xml::input( 'mwStabilizeExpiryOther', 50, $expiryOther, $attribs ) .
 				'</td>
 			</tr>';
 		$output .= "</table>"; // expiry table end
 		# Close field set and table row
 		$output .= Xml::closeElement( 'fieldset' );
 		$output .= "</td></tr>";
+
+		# Add some javascript for expiry dropdowns
+		PageStabilityProtectForm::addProtectionJS();
 		return true;
 	}
-	
+
 	// Add stability log extract to protection form
-	public static function insertStabilityLog( $article, $out ) {
-		if ( !FlaggedRevs::useProtectionLevels() || !$article->exists() ) {
+	public static function insertStabilityLog( Article $article, OutputPage $out ) {
+		if ( !$article->exists() ) {
 			return true; // nothing to do
 		} else if ( !FlaggedRevs::inReviewNamespace( $article->getTitle() ) ) {
 			return true; // not a reviewable page
@@ -2143,43 +2034,31 @@ class FlaggedRevsHooks {
 		LogEventsList::showLogExtract( $out, 'stable', $article->getTitle()->getPrefixedText() );
 		return true;
 	}
-	
+
 	// Update stability config from request
-	public static function onProtectionSave( $article, &$errorMsg ) {
+	public static function onProtectionSave( Article $article, &$errorMsg ) {
 		global $wgUser, $wgRequest;
-		$levels = FlaggedRevs::getProtectionLevels();
-		if ( empty( $levels ) || !$article->exists() )
+		if ( !$article->exists() ) {
 			return true; // simple custom levels set for action=protect
-		if ( wfReadOnly() || !$wgUser->isAllowed( 'stablesettings' ) ) {
+		} elseif ( !FlaggedRevs::inReviewNamespace( $article->getTitle() ) ) {
+			return true; // not a reviewable page
+		} elseif ( wfReadOnly() || !$wgUser->isAllowed( 'stablesettings' ) ) {
 			return true; // user cannot change anything
 		}
-		if ( !FlaggedRevs::inReviewNamespace( $article->getTitle() ) ) {
-			return true; // not a reviewable page
+		$form = new PageStabilityProtectForm( $wgUser );
+		$form->setPage( $article->getTitle() ); // target page
+		$permission = $wgRequest->getVal( 'mwStabilityLevel' );
+		if ( $permission == "none" ) {
+			$permission = ''; // 'none' => ''
 		}
-		$form = new Stabilization();
-		$form->target = $article->getTitle(); # Our target page
-		$form->watchThis = null; # protection form already has a watch check
-		$form->reason = $wgRequest->getText( 'mwProtect-reason' ); # Reason
-		$form->reasonSelection = $wgRequest->getVal( 'wpProtectReasonSelection' ); # Reason dropdown
-		$form->expiry = $wgRequest->getText( 'mwStabilize-expiry' ); # Expiry
-		$form->expirySelection = $wgRequest->getVal( 'wpExpirySelection' ); # Expiry dropdown
-		# Fill in config from the protection level...
-		$selected = $wgRequest->getVal( 'mwStabilityConfig' );
-		if ( $selected == "none" ) {
-			$form->select = FlaggedRevs::getPrecedence(); // default
-			$form->override = (int)FlaggedRevs::isStableShownByDefault(); // default
-			$form->autoreview = ''; // default
-			$form->reviewThis = false;
-		} else if ( isset( $levels[$selected] ) ) {
-			$form->select = $levels[$selected]['select'];
-			$form->override = $levels[$selected]['override'];
-			$form->autoreview = $levels[$selected]['autoreview'];
-			$form->reviewThis = true; // auto-review; protection-like
-		} else {
-			return false; // bad level
-		}
-		$form->wasPosted = $wgRequest->wasPosted();
-		if ( $form->handleParams() ) {
+		$form->setAutoreview( $permission ); // protection level (autoreview restriction)
+		$form->setWatchThis( null ); // protection form already has a watch check
+		$form->setReason( $wgRequest->getText( 'mwProtect-reason' ) ); // manual
+		$form->setReasonSelection( $wgRequest->getVal( 'wpProtectReasonSelection' ) ); // dropdown
+		$form->setExpiry( $wgRequest->getVal( 'mwStabilizeExpiryOther' ) ); // manual
+		$form->setExpirySelection( $wgRequest->getVal( 'mwStabilizeExpirySelection' ) ); // dropdown
+		$form->ready(); // params all set
+		if ( $wgRequest->wasPosted() && $form->isAllowed() ) {
 			$status = $form->submit();
 			if ( $status !== true ) {
 				$errorMsg = wfMsg( $status ); // some error message
@@ -2188,7 +2067,13 @@ class FlaggedRevsHooks {
 		return true;
 	}
 
-	public static function onParserTestTables( &$tables ) {
+	public static function getUnitTests( &$files ) {
+		$files[] = dirname( __FILE__ ) . '/maintenance/tests/FRInclusionManagerTest.php';
+		$files[] = dirname( __FILE__ ) . '/maintenance/tests/FRUserCountersTest.php';
+		return true;
+	}
+
+	public static function onParserTestTables( array &$tables ) {
 		$tables[] = 'flaggedpages';
 		$tables[] = 'flaggedrevs';
 		$tables[] = 'flaggedpage_pending';
@@ -2197,52 +2082,65 @@ class FlaggedRevsHooks {
 		$tables[] = 'flaggedimages';
 		$tables[] = 'flaggedrevs_promote';
 		$tables[] = 'flaggedrevs_tracking';
+		$tables[] = 'valid_tag'; // we need this core table
 		return true;
 	}
-	
-	public static function addSchemaUpdates() {
-		global $wgDBtype, $wgExtNewFields, $wgExtPGNewFields, $wgExtNewIndexes, $wgExtNewTables;
+
+	public static function addSchemaUpdates( DatabaseUpdater $du ) {
+		global $wgDBtype;
 		$base = dirname( __FILE__ );
 		if ( $wgDBtype == 'mysql' ) {
 			// Initial install tables (current schema)
-			$wgExtNewTables[] = array( 'flaggedrevs', "$base/FlaggedRevs.sql" );
+			$du->addExtensionUpdate( array( 'addTable',
+				'flaggedrevs', "$base/FlaggedRevs.sql", true ) );
 			// Updates (in order)...
-			$wgExtNewFields[] = array( 'flaggedpage_config',
-				'fpc_expiry', "$base/archives/patch-fpc_expiry.sql" );
-			$wgExtNewIndexes[] = array( 'flaggedpage_config',
-				'fpc_expiry', "$base/archives/patch-expiry-index.sql" );
-			$wgExtNewTables[] = array( 'flaggedrevs_promote',
-				"$base/archives/patch-flaggedrevs_promote.sql" );
-			$wgExtNewTables[] = array( 'flaggedpages', "$base/archives/patch-flaggedpages.sql" );
-			$wgExtNewFields[] = array( 'flaggedrevs',
-				'fr_img_name', "$base/archives/patch-fr_img_name.sql" );
-			$wgExtNewTables[] = array( 'flaggedrevs_tracking',
-				"$base/archives/patch-flaggedrevs_tracking.sql" );
-			$wgExtNewFields[] = array( 'flaggedpages', 'fp_pending_since',
-				"$base/archives/patch-fp_pending_since.sql" );
-			$wgExtNewFields[] = array( 'flaggedpage_config', 'fpc_level',
-				"$base/archives/patch-fpc_level.sql" );
-			$wgExtNewTables[] = array( 'flaggedpage_pending',
-				"$base/archives/patch-flaggedpage_pending.sql" );
+			$du->addExtensionUpdate( array( 'addField',
+				'flaggedpage_config', 'fpc_expiry', "$base/mysql/patch-fpc_expiry.sql", true ) );
+			$du->addExtensionUpdate( array( 'addIndex',
+				'flaggedpage_config', 'fpc_expiry', "$base/mysql/patch-expiry-index.sql", true ) );
+			$du->addExtensionUpdate( array( 'addTable',
+				'flaggedrevs_promote', "$base/mysql/patch-flaggedrevs_promote.sql", true ) );
+			$du->addExtensionUpdate( array( 'addTable',
+				'flaggedpages', "$base/mysql/patch-flaggedpages.sql", true ) );
+			$du->addExtensionUpdate( array( 'addField',
+				'flaggedrevs', 'fr_img_name', "$base/mysql/patch-fr_img_name.sql", true ) );
+			$du->addExtensionUpdate( array( 'addTable',
+				'flaggedrevs_tracking', "$base/mysql/patch-flaggedrevs_tracking.sql", true ) );
+			$du->addExtensionUpdate( array( 'addField',
+				'flaggedpages', 'fp_pending_since', "$base/mysql/patch-fp_pending_since.sql", true ) );
+			$du->addExtensionUpdate( array( 'addField',
+				'flaggedpage_config', 'fpc_level', "$base/mysql/patch-fpc_level.sql", true ) );
+			$du->addExtensionUpdate( array( 'addTable',
+				'flaggedpage_pending', "$base/mysql/patch-flaggedpage_pending.sql", true ) );
+			$du->addExtensionUpdate( array( 'addTable',
+				'flaggedrevs_stats', "$base/mysql/patch-flaggedrevs_stats.sql", true ) );
 		} elseif ( $wgDBtype == 'postgres' ) {
 			// Initial install tables (current schema)
-			$wgExtNewTables[] = array( 'flaggedrevs', "$base/FlaggedRevs.pg.sql" );
+			$du->addExtensionUpdate( array( 'addTable',
+				'flaggedrevs', "$base/FlaggedRevs.pg.sql", true ) );
 			// Updates (in order)...
-			$wgExtPGNewFields[] = array( 'flaggedpage_config', 'fpc_expiry', "TIMESTAMPTZ NULL" );
-			$wgExtNewIndexes[] = array( 'flaggedpage_config',
-				'fpc_expiry', "$base/postgres/patch-expiry-index.sql" );
-			$wgExtNewTables[] = array( 'flaggedrevs_promote',
-				"$base/postgres/patch-flaggedrevs_promote.sql" );
-			$wgExtNewTables[] = array( 'flaggedpages', "$base/postgres/patch-flaggedpages.sql" );
-			$wgExtNewIndexes[] = array( 'flaggedrevs', 'fr_img_sha1',
-				"$base/postgres/patch-fr_img_name.sql" );
-			$wgExtNewTables[] = array( 'flaggedrevs_tracking',
-				"$base/postgres/patch-flaggedrevs_tracking.sql" );
-			$wgExtNewIndexes[] = array( 'flaggedpages', 'fp_pending_since',
-				"$base/postgres/patch-fp_pending_since.sql" );
-			$wgExtPGNewFields[] = array( 'flaggedpage_config', 'fpc_level', "TEXT NULL" );
-			$wgExtNewTables[] = array( 'flaggedpage_pending',
-				"$base/postgres/patch-flaggedpage_pending.sql" );
+			$du->addExtensionUpdate( array( 'addField',
+				'flaggedpage_config', 'fpc_expiry', "TIMESTAMPTZ NULL" ) );
+			$du->addExtensionUpdate( array( 'addIndex',
+				'flaggedpage_config', 'fpc_expiry', "$base/postgres/patch-expiry-index.sql", true ) );
+			$du->addExtensionUpdate( array( 'addTable',
+				'flaggedrevs_promote', "$base/postgres/patch-flaggedrevs_promote.sql", true ) );
+			$du->addExtensionUpdate( array( 'addTable',
+				'flaggedpages', "$base/postgres/patch-flaggedpages.sql", true ) );
+			$du->addExtensionUpdate( array( 'addIndex',
+				'flaggedrevs', 'fr_img_sha1', "$base/postgres/patch-fr_img_name.sql", true ) );
+			$du->addExtensionUpdate( array( 'addTable',
+				'flaggedrevs_tracking', "$base/postgres/patch-flaggedrevs_tracking.sql", true ) );
+			$du->addExtensionUpdate( array( 'addIndex',
+				'flaggedpages', 'fp_pending_since', "$base/postgres/patch-fp_pending_since.sql", true ) );
+			$du->addExtensionUpdate( array( 'addField',
+				'flaggedpage_config', 'fpc_level', "TEXT NULL" ) );
+			$du->addExtensionUpdate( array( 'addTable',
+				'flaggedpage_pending', "$base/postgres/patch-flaggedpage_pending.sql", true ) );
+			// @TODO: PG stats table???
+		} elseif ( $wgDBtype == 'sqlite' ) {
+			$du->addExtensionUpdate( array( 'addTable',
+				'flaggedrevs', "$base/FlaggedRevs.sql", true ) );
 		}
 		return true;
 	}

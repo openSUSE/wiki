@@ -9,7 +9,8 @@
  * @file Validator.php
  * @ingroup Validator
  *
- * @author Jeroen De Dauw
+ * @licence GNU GPL v3 or later
+ * @author Jeroen De Dauw < jeroendedauw@gmail.com >
  */
 
 /**
@@ -24,22 +25,10 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 	die( 'Not an entry point.' );
 }
 
-define( 'Validator_VERSION', '0.3.6 rc1' );
-
-// Constants indicating the strictness of the parameter validation.
-define( 'Validator_ERRORS_NONE', 0 );
-define( 'Validator_ERRORS_LOG', 1 );
-define( 'Validator_ERRORS_WARN', 2 );
-define( 'Validator_ERRORS_SHOW', 3 );
-define( 'Validator_ERRORS_STRICT', 4 );
-
-$egValidatorDir = dirname( __FILE__ ) . '/';
-
-// Include the settings file.
-require_once( $egValidatorDir . 'Validator_Settings.php' );
+define( 'Validator_VERSION', '0.4.9' );
 
 // Register the internationalization file.
-$wgExtensionMessagesFiles['Validator'] = $egValidatorDir . 'Validator.i18n.php';
+$wgExtensionMessagesFiles['Validator'] = dirname( __FILE__ ) . '/Validator.i18n.php';
 
 $wgExtensionCredits['other'][] = array(
 	'path' => __FILE__,
@@ -50,9 +39,63 @@ $wgExtensionCredits['other'][] = array(
 	'descriptionmsg' => 'validator-desc',
 );
 
-// Autoload the general classes.
-$wgAutoloadClasses['Validator'] 			= $egValidatorDir . 'Validator.class.php';
-$wgAutoloadClasses['ValidatorFunctions'] 	= $egValidatorDir . 'Validator_Functions.php';
-$wgAutoloadClasses['ValidatorFormats'] 		= $egValidatorDir . 'Validator_Formats.php';
-$wgAutoloadClasses['ValidatorManager'] 		= $egValidatorDir . 'Validator_Manager.php';
-$wgAutoloadClasses['TopologicalSort'] 		= $egValidatorDir . 'TopologicalSort.php';
+// Autoload the classes.
+$wgAutoloadClasses['ValidatorHooks']			= dirname( __FILE__ ) . '/Validator.hooks.php';
+
+$incDir = dirname( __FILE__ ) . '/includes/';
+$wgAutoloadClasses['CriterionValidationResult']	= $incDir . 'CriterionValidationResult.php';
+$wgAutoloadClasses['ItemParameterCriterion']	= $incDir . 'ItemParameterCriterion.php';
+$wgAutoloadClasses['ItemParameterManipulation']	= $incDir . 'ItemParameterManipulation.php';
+$wgAutoloadClasses['ListParameter'] 			= $incDir . 'ListParameter.php';
+$wgAutoloadClasses['ListParameterCriterion']	= $incDir . 'ListParameterCriterion.php';
+$wgAutoloadClasses['ListParameterManipulation']	= $incDir . 'ListParameterManipulation.php';
+$wgAutoloadClasses['Parameter'] 				= $incDir . 'Parameter.php';
+$wgAutoloadClasses['ParameterCriterion'] 		= $incDir . 'ParameterCriterion.php';
+$wgAutoloadClasses['ParameterInput']			= $incDir . 'ParameterInput.php';
+$wgAutoloadClasses['ParameterManipulation'] 	= $incDir . 'ParameterManipulation.php';
+$wgAutoloadClasses['ParserHook'] 				= $incDir . 'ParserHook.php';
+$wgAutoloadClasses['Validator'] 				= $incDir . 'Validator.php';
+$wgAutoloadClasses['TopologicalSort'] 			= $incDir . 'TopologicalSort.php';
+// No need to autoload this one, since it's directly included below.
+//$wgAutoloadClasses['ValidationError']			= $incDir . 'ValidationError.php';
+$wgAutoloadClasses['ValidationErrorHandler']	= $incDir . 'ValidationErrorHandler.php';
+
+$wgAutoloadClasses['CriterionHasLength']		= $incDir . 'criteria/CriterionHasLength.php';
+$wgAutoloadClasses['CriterionInArray']			= $incDir . 'criteria/CriterionInArray.php';
+$wgAutoloadClasses['CriterionInRange']			= $incDir . 'criteria/CriterionInRange.php';
+$wgAutoloadClasses['CriterionIsFloat']			= $incDir . 'criteria/CriterionIsFloat.php';
+$wgAutoloadClasses['CriterionIsInteger']		= $incDir . 'criteria/CriterionIsInteger.php';
+$wgAutoloadClasses['CriterionIsNumeric']		= $incDir . 'criteria/CriterionIsNumeric.php';
+$wgAutoloadClasses['CriterionItemCount']		= $incDir . 'criteria/CriterionItemCount.php';
+$wgAutoloadClasses['CriterionMatchesRegex']		= $incDir . 'criteria/CriterionMatchesRegex.php';
+$wgAutoloadClasses['CriterionNotEmpty']			= $incDir . 'criteria/CriterionNotEmpty.php'; 
+$wgAutoloadClasses['CriterionTrue']				= $incDir . 'criteria/CriterionTrue.php';
+$wgAutoloadClasses['CriterionUniqueItems']		= $incDir . 'criteria/CriterionUniqueItems.php';
+
+$wgAutoloadClasses['ParamManipulationBoolean']	= $incDir . 'manipulations/ParamManipulationBoolean.php';
+$wgAutoloadClasses['ParamManipulationFloat']	= $incDir . 'manipulations/ParamManipulationFloat.php';
+$wgAutoloadClasses['ParamManipulationFunctions']= $incDir . 'manipulations/ParamManipulationFunctions.php';
+$wgAutoloadClasses['ParamManipulationImplode']	= $incDir . 'manipulations/ParamManipulationImplode.php';
+$wgAutoloadClasses['ParamManipulationInteger']	= $incDir . 'manipulations/ParamManipulationInteger.php';
+$wgAutoloadClasses['ParamManipulationString']	= $incDir . 'manipulations/ParamManipulationString.php';
+
+$wgAutoloadClasses['ValidatorDescribe'] 		= $incDir . 'parserHooks/Validator_Describe.php';
+$wgAutoloadClasses['ValidatorListErrors'] 		= $incDir . 'parserHooks/Validator_ListErrors.php';
+unset( $incDir );
+
+# Registration of the listerrors parser hooks.
+$wgHooks['ParserFirstCallInit'][] = 'ValidatorListErrors::staticInit';
+$wgHooks['LanguageGetMagic'][] = 'ValidatorListErrors::staticMagic';
+
+# Registration of the describe parser hooks.
+$wgHooks['ParserFirstCallInit'][] = 'ValidatorDescribe::staticInit';
+$wgHooks['LanguageGetMagic'][] = 'ValidatorDescribe::staticMagic';
+
+// Since 0.4.8
+$wgHooks['UnitTestsList'][] = 'ValidatorHooks::registerUnitTests';
+
+// This file needs to be included directly, since Validator_Settings.php
+// uses it, in some rare cases before autoloading is defined.
+require_once 'includes/ValidationError.php' ;
+// Include the settings file.
+require_once 'Validator_Settings.php';

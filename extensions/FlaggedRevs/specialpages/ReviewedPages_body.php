@@ -30,9 +30,13 @@ class ReviewedPages extends SpecialPage
 	public function showForm() {
 		global $wgOut, $wgScript;
 
+		// Text to explain level select (if there are several levels)
+		if ( FlaggedRevs::qualityVersions() ) {
+			$wgOut->addWikiMsg( 'reviewedpages-list' );
+		}
 		$form = Xml::openElement( 'form',
 			array( 'name' => 'reviewedpages', 'action' => $wgScript, 'method' => 'get' ) );
-		$form .= "<fieldset><legend>" . wfMsg( 'reviewedpages-leg' ) . "</legend>\n";
+		$form .= "<fieldset><legend>" . wfMsgHtml( 'reviewedpages-leg' ) . "</legend>\n";
 
 		// show/hide links
 		$showhide = array( wfMsgHtml( 'show' ), wfMsgHtml( 'hide' ) );
@@ -56,20 +60,19 @@ class ReviewedPages extends SpecialPage
 		if ( count( $fields ) ) {
 			$form .= " " . Xml::submitButton( wfMsg( 'go' ) );
 		}
-		$form .= Xml::hidden( 'title', $this->getTitle()->getPrefixedDBKey() );
+		$form .= Html::hidden( 'title', $this->getTitle()->getPrefixedDBKey() );
 		$form .= "</fieldset></form>\n";
 
 		$wgOut->addHTML( $form );
 	}
 
 	protected function showPageList() {
-		global $wgOut, $wgUser, $wgLang;
+		global $wgOut;
 
 		$pager = new ReviewedPagesPager( $this, array(), $this->type,
 			$this->namespace, $this->hideRedirs );
 		$num = $pager->getNumRows();
 		if ( $num ) {
-			$wgOut->addHTML( wfMsgExt( 'reviewedpages-list', array( 'parse' ), $num ) );
 			$wgOut->addHTML( $pager->getNavigationBar() );
 			$wgOut->addHTML( $pager->getBody() );
 			$wgOut->addHTML( $pager->getNavigationBar() );
@@ -79,7 +82,7 @@ class ReviewedPages extends SpecialPage
 	}
 
 	public function formatRow( $row ) {
-		global $wgLang, $wgUser;
+		global $wgLang;
 
 		$title = Title::makeTitle( $row->page_namespace, $row->page_title );
 		$link = $this->skin->makeKnownLinkObj( $title, $title->getPrefixedText() );
@@ -93,13 +96,23 @@ class ReviewedPages extends SpecialPage
 					$wgLang->formatNum( $size ) ) . '</small>';
 		}
 
-		$SVtitle = SpecialPage::getTitleFor( 'ReviewedVersions' );
-		$list = $this->skin->makeKnownLinkObj( $SVtitle, wfMsgHtml( 'reviewedpages-all' ),
-			'page=' . $title->getPrefixedUrl() );
-		$best = $this->skin->makeKnownLinkObj( $title, wfMsgHtml( 'reviewedpages-best' ),
-			'stableid=best' );
+		$list = $this->skin->makeKnownLinkObj(
+			SpecialPage::getTitleFor( 'ReviewedVersions' ),
+			wfMsgHtml( 'reviewedpages-all' ),
+			'page=' . $title->getPrefixedUrl()
+		);
 
-		return "<li>$link $stxt ($list) [$best]</li>";
+		$best = '';
+		if ( FlaggedRevs::qualityVersions() ) {
+			$best = $this->skin->makeKnownLinkObj(
+				$title,
+				wfMsgHtml( 'reviewedpages-best' ),
+				'stableid=best'
+			);
+			$best = " [$best]";
+		}
+
+		return "<li>$link $stxt ($list)$best</li>";
 	}
 }
 
@@ -160,7 +173,7 @@ class ReviewedPagesPager extends AlphabeticPager {
 		wfProfileIn( __METHOD__ );
 		# Do a link batch query
 		$lb = new LinkBatch();
-		while ( $row = $this->mResult->fetchObject() ) {
+		foreach ( $this->mResult as $row ) {
 			$lb->add( $row->page_namespace, $row->page_title );
 		}
 		$lb->execute();

@@ -1,14 +1,7 @@
 <?php
 
 class CategoryTreeCategoryPage extends CategoryPage {
-	function closeShowCategory() {
-		global $wgOut, $wgRequest;
-		$from = $wgRequest->getVal( 'from' );
-		$until = $wgRequest->getVal( 'until' );
-
-		$viewer = new CategoryTreeCategoryViewer( $this->mTitle, $from, $until );
-		$wgOut->addHTML( $viewer->getHTML() );
-	}
+	protected $mCategoryViewerClass = 'CategoryTreeCategoryViewer';
 }
 
 class CategoryTreeCategoryViewer extends CategoryViewer {
@@ -17,7 +10,7 @@ class CategoryTreeCategoryViewer extends CategoryViewer {
 	function getCategoryTree() {
 		global $wgOut, $wgCategoryTreeCategoryPageOptions, $wgCategoryTreeForceHeaders;
 
-		if ( ! isset($this->categorytree) ) {
+		if ( ! isset( $this->categorytree ) ) {
 			if ( !$wgCategoryTreeForceHeaders ) CategoryTree::setHeaders( $wgOut );
 
 			$this->categorytree = new CategoryTree( $wgCategoryTreeCategoryPageOptions );
@@ -29,19 +22,14 @@ class CategoryTreeCategoryViewer extends CategoryViewer {
 	/**
 	 * Add a subcategory to the internal lists
 	 */
-	function addSubcategoryObject( $cat, $sortkey, $pageLength ) {
-		global $wgContLang, $wgOut, $wgRequest;
+	function addSubcategoryObject( Category $cat, $sortkey, $pageLength ) {
+		global $wgRequest;
 
 		$title = $cat->getTitle();
 
 		if ( $wgRequest->getCheck( 'notree' ) ) {
 			return parent::addSubcategoryObject( $cat, $sortkey, $pageLength );
 		}
-
-		/*if ( ! $GLOBALS['wgCategoryTreeUnifiedView'] ) {
-			$this->child_cats[] = $cat;
-			return parent::addSubcategory( $cat, $sortkey, $pageLength );
-		}*/
 
 		$tree = $this->getCategoryTree();
 
@@ -56,7 +44,7 @@ class CategoryTreeCategoryViewer extends CategoryViewer {
 	}
 
 	function finaliseCategoryState() {
-		if( $this->flip ) {
+		if ( $this->flip ) {
 			$this->child_cats = array_reverse( $this->child_cats );
 		}
 		parent::finaliseCategoryState();

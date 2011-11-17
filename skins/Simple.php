@@ -1,8 +1,8 @@
 <?php
 /**
- * See docs/skin.txt
+ * Simple: A lightweight skin with a simple white-background sidebar and no
+ * top bar.
  *
- * @todo document
  * @file
  * @ingroup Skins
  */
@@ -14,62 +14,38 @@ if( !defined( 'MEDIAWIKI' ) )
 require_once( dirname(__FILE__) . '/MonoBook.php' );
 
 /**
- * @todo document
+ * Inherit main code from SkinTemplate, set the CSS and template filter.
  * @ingroup Skins
  */
 class SkinSimple extends SkinTemplate {
-	function initPage( OutputPage $out ) {
-		SkinTemplate::initPage( $out );
-		$this->skinname  = 'simple';
-		$this->stylename = 'simple';
-		$this->template  = 'MonoBookTemplate';
-	}
+	var $skinname = 'simple', $stylename = 'simple',
+		$template = 'MonoBookTemplate', $useHeadElement = true;
 
-	function setupSkinUserCss( OutputPage $out ){
-		$out->addStyle( 'simple/main.css', 'screen' );
-		$out->addStyle( 'simple/rtl.css', '', '', 'rtl' );
+	function setupSkinUserCss( OutputPage $out ) {
+		parent::setupSkinUserCss( $out );
 
-	}
+		$out->addModuleStyles( 'skins.simple' );
 
-	function reallyGenerateUserStylesheet() {
-		global $wgUser;
-		$s = '';
-		if (($undopt = $wgUser->getOption("underline")) != 2) {
-			$underline = $undopt ? 'underline' : 'none';
-			$s .= "a { text-decoration: $underline; }\n";
+		/* Add some userprefs specific CSS styling */
+		global $wgUser, $wgContLang;
+		$rules = array();
+		$underline = "";
+
+		if ( $wgUser->getOption( 'underline' ) < 2 ) {
+			$underline = "text-decoration: " . $wgUser->getOption( 'underline' ) ? 'underline' : 'none' . ";";
 		}
-		if ($wgUser->getOption('highlightbroken')) {
-			$s .= "a.new, #quickbar a.new { text-decoration: line-through; }\n";
-		} else {
-			$s .= <<<END
-a.new, #quickbar a.new,
-a.stub, #quickbar a.stub {
-	color: inherit;
-	text-decoration: inherit;
-}
-a.new:after, #quickbar a.new:after {
-	content: "?";
-	color: #CC2200;
-	text-decoration: $underline;
-}
-a.stub:after, #quickbar a.stub:after {
-	content: "!";
-	color: #772233;
-	text-decoration: $underline;
-}
-END;
+
+		/* Also inherits from resourceloader */
+		if( !$wgUser->getOption( 'highlightbroken' ) ) {
+			$rules[] = "a.new, a.stub { color: inherit; text-decoration: inherit;}";
+			$rules[] = "a.new:after { color: #CC2200; $underline;}";
+			$rules[] = "a.stub:after { $underline; }";
 		}
-		if ($wgUser->getOption('justify')) {
-			$s .= "#article, #bodyContent { text-align: justify; }\n";
+		$style = implode( "\n", $rules );
+		if ( $wgContLang->getDir() === 'rtl' ) {
+			$style = CSSJanus::transform( $style, true, false );
 		}
-		if (!$wgUser->getOption('showtoc')) {
-			$s .= "#toc { display: none; }\n";
-		}
-		if (!$wgUser->getOption('editsection')) {
-			$s .= ".editsection { display: none; }\n";
-		}
-		return $s;
+		$out->addInlineStyle( $style );
+
 	}
 }
-
-

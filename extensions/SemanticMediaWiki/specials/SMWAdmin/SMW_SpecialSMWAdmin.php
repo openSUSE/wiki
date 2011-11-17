@@ -22,6 +22,7 @@
  * @ingroup SpecialPage
  */
 class SMWAdmin extends SpecialPage {
+	
 	/**
 	 * Constructor
 	 */
@@ -31,7 +32,7 @@ class SMWAdmin extends SpecialPage {
 	}
 
 	public function execute( $par ) {
-		global $wgOut, $wgRequest, $wgServer, $wgArticlePath, $wgScript, $wgUser, $smwgAdminRefreshStore;
+		global $wgOut, $wgRequest, $wgServer, $wgArticlePath, $wgUser, $smwgAdminRefreshStore;
 
 		if ( !$this->userCanExecute( $wgUser ) ) {
 			// If the user is not authorized, show an error.
@@ -118,8 +119,8 @@ class SMWAdmin extends SpecialPage {
 				$html .=
 				'<form name="refreshwiki" action="" method="POST">' .
 				'<input type="hidden" name="action" value="refreshstore" />' .
-				'<input type="submit" value="' . wfMsg( 'smw_smwadmin_datarefreshstop' ) . '"/> ' .
-				' <input type="checkbox" name="rfsure" value="stop"/> ' . wfMsg( 'smw_smwadmin_datarefreshstopconfirm' ) .
+				'<input type="submit" value="' . htmlspecialchars( wfMsg( 'smw_smwadmin_datarefreshstop' ) ) . '" /> ' .
+				' <input type="checkbox" name="rfsure" value="stop"/> ' . htmlspecialchars( wfMsg( 'smw_smwadmin_datarefreshstopconfirm' ) ) .
 				'</form>' . "\n";
 			}
 		} elseif ( $smwgAdminRefreshStore ) {

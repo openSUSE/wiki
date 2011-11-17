@@ -2,8 +2,9 @@
 /**
  * Internationalisation file for extension CategoryWatch.
  *
- * @addtogroup Extensions
-*/
+ * @file
+ * @ingroup Extensions
+ */
 
 $messages = array();
 
@@ -24,9 +25,10 @@ $messages['en'] = array(
  * @author Fryed-peach
  * @author Purodha
  * @author Siebrand
+ * @author The Evil IP address
  */
 $messages['qqq'] = array(
-	'categorywatch-desc' => 'Short description of this extension, shown on [[Special:Version]]. Do not translate or change links.',
+	'categorywatch-desc' => '{{desc}}',
 	'categorywatch-catmovein' => 'Substituted as $5 in {{msg-mw|categorywatch-emailbody}}.
 * $1 is a page name
 * $2 is the target category name
@@ -68,6 +70,19 @@ $messages['arz'] = array(
 	'categorywatch-catmoveout' => 'نقل $1 من التصنيف $2 إلى $3',
 	'categorywatch-catadd' => 'أضاف $1 إلى التصنيف $2',
 	'categorywatch-catsub' => 'ازال $1 من التصنيف $2',
+);
+
+/** Bashkir (Башҡорт)
+ * @author Assele
+ */
+$messages['ba'] = array(
+	'categorywatch-desc' => 'Күҙәтелгән категорияларға кергән биттәр исемлегенең үҙгәреүе тураһында белгертеү мөмкинлеге менән күҙәтеү исемлеген киңәйтә',
+	'categorywatch-emailsubject' => '"$1" категорияһына ҡағылған үҙгәртеүҙәр',
+	'categorywatch-catmovein' => '$1 битен $3 категорияһынан $2 категорияһына күсергән',
+	'categorywatch-catmoveout' => '$1 битен $3 категорияһынан $2 категорияһына күсергән',
+	'categorywatch-catadd' => '$2 категорияһына $1 битен өҫтәгән',
+	'categorywatch-catsub' => '$2 категорияһынан $1 битен юйған',
+	'categorywatch-autocat' => '$1 категорияһы үҙенән-үҙе күҙәтелә',
 );
 
 /** Belarusian (Taraškievica orthography) (Беларуская (тарашкевіца))
@@ -122,9 +137,12 @@ $messages['bs'] = array(
 );
 
 /** Catalan (Català)
+ * @author Davidpar
  * @author Solde
  */
 $messages['ca'] = array(
+	'categorywatch-desc' => "Amplia la funcionalitat de les alertes per tal d'incloure la notificació sobre els canvis de membres de les categories visitades.",
+	'categorywatch-emailsubject' => 'Activitat en relació amb la categoria vigilada "$1"',
 	'categorywatch-catmovein' => "$1 s'ha mogut a $2 des de $3",
 	'categorywatch-catmoveout' => "$1 s'ha mogut fora de $2 i dins de $3",
 	'categorywatch-catadd' => "$1 s'ha afegit a $2",
@@ -156,6 +174,19 @@ $messages['cy'] = array(
 	'categorywatch-catadd' => "wedi ychwanegu $1 i'r categori $2",
 	'categorywatch-catsub' => "wedi tynnu $1 o'r categori $2",
 	'categorywatch-autocat' => "Yn cael ei wylio'n awtomatig gan $1",
+);
+
+/** Danish (Dansk)
+ * @author Sarrus
+ */
+$messages['da'] = array(
+	'categorywatch-desc' => 'Udvider overvågningslistens funktionalitet til også at omfatte underretning om ændringer af overvågede kategoriers artikelmedlemsstatus',
+	'categorywatch-emailsubject' => 'Aktivitet, der indebærer den overvågede kategori "$ 1"',
+	'categorywatch-catmovein' => '$1 er flyttet til $2 fra $3',
+	'categorywatch-catmoveout' => '$1 er blevet flyttet fra $2 til $3',
+	'categorywatch-catadd' => '$1 er blevet tilføjet til $2',
+	'categorywatch-catsub' => '$1 er blevet fjernet fra $2',
+	'categorywatch-autocat' => 'Automatisk overvåget af $1',
 );
 
 /** German (Deutsch)
@@ -267,6 +298,18 @@ $messages['fr'] = array(
 	'categorywatch-catadd' => 'a inclu la page $1 dans la catégorie $2',
 	'categorywatch-catsub' => 'a retiré la page $1 de la catégorie $2',
 	'categorywatch-autocat' => 'Suivie automatiquement par $1',
+);
+
+/** Franco-Provençal (Arpetan)
+ * @author ChrisPtDe
+ */
+$messages['frp'] = array(
+	'categorywatch-emailsubject' => 'Activitât en rapôrt avouéc la catègorie siuvua « $1 »',
+	'categorywatch-catmovein' => 'at dèplaciê la pâge $1 vers la catègorie $2 dês $3',
+	'categorywatch-catmoveout' => 'at dèplaciê la pâge $1 en defôr de la catègorie $2 vers $3',
+	'categorywatch-catadd' => 'at apondu la pâge $1 a la catègorie $2',
+	'categorywatch-catsub' => 'at enlevâ la pâge $1 de la catègorie $2',
+	'categorywatch-autocat' => 'Siuvua ôtomaticament per $1',
 );
 
 /** Galician (Galego)
@@ -428,7 +471,7 @@ $messages['ko'] = array(
 	'categorywatch-autocat' => '$1에 의해 자동 주시됨',
 );
 
-/** Ripoarisch (Ripoarisch)
+/** Colognian (Ripoarisch)
  * @author Purodha
  */
 $messages['ksh'] = array(
@@ -472,7 +515,7 @@ $messages['li'] = array(
  * @author Brest
  */
 $messages['mk'] = array(
-	'categorywatch-desc' => 'Проширување на функциите на набљудувана листа, известување за промени врз членови од набљудувани категории',
+	'categorywatch-desc' => 'Ги проширува можностите на функциите на списокот на набљудувани страници со известување за промени во членството во набљудуваните категории',
 	'categorywatch-emailsubject' => 'Активности поврзани со набљудувана категорија "$1"',
 	'categorywatch-catmovein' => 'преместено $1 во категорија $2 од $3',
 	'categorywatch-catmoveout' => 'преместено $1 од категорија $2 во $3',
@@ -563,10 +606,11 @@ $messages['pms'] = array(
 );
 
 /** Portuguese (Português)
+ * @author Hamilton Abreu
  * @author Malafaya
  */
 $messages['pt'] = array(
-	'categorywatch-desc' => 'Estende a funcionalidade da lista de vigiados para incluir notificações sobre alterações nos membros de categorias vigiadas',
+	'categorywatch-desc' => 'Expande a funcionalidade das páginas vigiadas para incluir notificações sobre alterações nos membros das categorias vigiadas',
 	'categorywatch-emailsubject' => 'Actividade envolvendo a categoria vigiada "$1"',
 	'categorywatch-catmovein' => 'moveu $1 para a categoria $2 a partir de $3',
 	'categorywatch-catmoveout' => 'moveu $1 da categoria $2 para $3',
@@ -590,14 +634,16 @@ $messages['pt-br'] = array(
 
 /** Romanian (Română)
  * @author KlaudiuMihaila
+ * @author Minisarm
  */
 $messages['ro'] = array(
-	'categorywatch-desc' => 'Extinde funcţionalitatea listei de urmărire pentru a include notifcări privind modificările categoriilor urmărite',
-	'categorywatch-emailsubject' => 'Activitatea privind categoria urmărită "$1"',
+	'categorywatch-desc' => 'Extinde funcționalitatea listei de urmărire pentru a include notifcări privind modificările categoriilor urmărite',
+	'categorywatch-emailsubject' => 'Activitatea privind categoria urmărită „$1”',
 	'categorywatch-catmovein' => 'a mutat $1 în categoria $2 din $3',
 	'categorywatch-catmoveout' => 'a mutat $1 din categoria $2 în $3',
 	'categorywatch-catadd' => 'a adăugat $1 în categoria $2',
 	'categorywatch-catsub' => 'a eliminat $1 din categoria $2',
+	'categorywatch-autocat' => 'Urmărită automat de $1',
 );
 
 /** Tarandíne (Tarandíne)
@@ -782,19 +828,35 @@ $messages['vo'] = array(
 	'categorywatch-catsub' => 'ämoükon padi: $1 se klad: $2',
 );
 
+/** Yiddish (ייִדיש)
+ * @author פוילישער
+ */
+$messages['yi'] = array(
+	'categorywatch-catadd' => '$1 איז געווארן צוגעשטעלט צו קאַטעגאריע $2',
+);
+
 /** Simplified Chinese (‪中文(简体)‬)
+ * @author Chenxiaoqino
  * @author Gzdavidwong
  */
 $messages['zh-hans'] = array(
+	'categorywatch-emailsubject' => '在被监视的分类"$1"中的活动',
+	'categorywatch-catmovein' => '$1已经由$2搬到$3。',
+	'categorywatch-catmoveout' => '$1已经移离$2并改到$3',
 	'categorywatch-catadd' => '已把$1新增至分类$2',
 	'categorywatch-catsub' => '已把$1从分类$2移除',
+	'categorywatch-autocat' => '由$1自动监视',
 );
 
 /** Traditional Chinese (‪中文(繁體)‬)
+ * @author Horacewai2
  * @author Wrightbus
  */
 $messages['zh-hant'] = array(
+	'categorywatch-catmovein' => '$1已經由$2搬到$3。',
+	'categorywatch-catmoveout' => '$1已經移離$2並改到$3',
 	'categorywatch-catadd' => '已把$1新增至分類$2',
 	'categorywatch-catsub' => '已把$1從分類$2移除',
+	'categorywatch-autocat' => '由$1自動監視',
 );
 

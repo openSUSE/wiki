@@ -41,23 +41,26 @@ class UnreviewedPages extends SpecialPage
 		);
 		$showhideredirs = wfMsgHtml( 'whatlinkshere-hideredirs', $link );
 
+		# Add explanatory text
+		$wgOut->addWikiMsg( 'unreviewedpages-list' );
+		# Add form...
 		$action = htmlspecialchars( $wgScript );
 		$wgOut->addHTML( "<form action=\"$action\" method=\"get\">\n" .
-			'<fieldset><legend>' . wfMsg( 'unreviewed-legend' ) . '</legend>' .
-			Xml::hidden( 'title', $this->getTitle()->getPrefixedDBKey() ) . '<p>' );
+			'<fieldset><legend>' . wfMsg( 'unreviewedpages-legend' ) . '</legend>' .
+			Html::hidden( 'title', $this->getTitle()->getPrefixedDBKey() ) . '<p>' );
 		# Add dropdowns as needed
 		if ( count( $namespaces ) > 1 ) {
-			$wgOut->addHTML( FlaggedRevsXML::getNamespaceMenu( $namespace ) . '&nbsp;' );
+			$wgOut->addHTML( FlaggedRevsXML::getNamespaceMenu( $namespace ) . '&#160;' );
 		}
 		if ( FlaggedRevs::qualityVersions() ) {
-			$wgOut->addHTML( FlaggedRevsXML::getLevelMenu( $level, false, 1 ) . '&nbsp;' );
+			$wgOut->addHTML( FlaggedRevsXML::getLevelMenu( $level, false, 1 ) . '&#160;' );
 		}
 		$wgOut->addHTML(
 			"<span style='white-space: nowrap;'>" .
-			Xml::label( wfMsg( "unreviewed-category" ), 'category' ) . '&nbsp;' .
+			Xml::label( wfMsg( "unreviewedpages-category" ), 'category' ) . '&#160;' .
 			Xml::input( 'category', 30, $category, array( 'id' => 'category' ) ) .
 			'</span><br />' .
-			$showhideredirs . '&nbsp;&nbsp;' .
+			$showhideredirs . '&#160;&#160;' .
 			Xml::submitButton( wfMsg( 'allpagessubmit' ) ) . "</p>\n" .
 			"</fieldset></form>"
 		);
@@ -77,15 +80,14 @@ class UnreviewedPages extends SpecialPage
 				$wgOut->addHTML( wfMsg( 'perfcached' ) );
 			}
 		}
-		$pager = new UnreviewedPagesPager( $this, $live, $namespace,
-			!$hideRedirs, $category, $level );
+		$pager = new UnreviewedPagesPager(
+			$this, $live, $namespace, !$hideRedirs, $category, $level );
 		if ( $pager->getNumRows() ) {
-			$wgOut->addHTML( wfMsgExt( 'unreviewed-list', array( 'parse' ) ) );
 			$wgOut->addHTML( $pager->getNavigationBar() );
 			$wgOut->addHTML( $pager->getBody() );
 			$wgOut->addHTML( $pager->getNavigationBar() );
 		} else {
-			$wgOut->addHTML( wfMsgExt( 'unreviewed-none', array( 'parse' ) ) );
+			$wgOut->addWikiMsg( 'unreviewedpages-none' );
 		}
 	}
 	
@@ -100,7 +102,7 @@ class UnreviewedPages extends SpecialPage
 		if ( !is_null( $size = $row->page_len ) ) {
 			$stxt = ( $size == 0 )
 				? wfMsgHtml( 'historyempty' )
-				: wfMsgExt( 'historysize', array( 'parsemag' ), $wgLang->formatNum( $size ) );
+				: wfMsgExt( 'historysize', 'parsemag', $wgLang->formatNum( $size ) );
 			$stxt = " <small>$stxt</small>";
 		}
 		# Get how long the first unreviewed edit has been waiting...
@@ -111,32 +113,33 @@ class UnreviewedPages extends SpecialPage
 		// After three days, just use days
 		if ( $hours > ( 3 * 24 ) ) {
 			$days = round( $hours / 24, 0 );
-			$age = ' ' . wfMsgExt( 'unreviewed-days', array( 'parsemag' ), $days );
+			$age = ' ' . wfMsgExt( 'unreviewedpages-days', 'parsemag', $wgLang->formatNum( $days ) );
 		// If one or more hours, use hours
 		} elseif ( $hours >= 1 ) {
 			$hours = round( $hours, 0 );
-			$age = ' ' . wfMsgExt( 'unreviewed-hours', array( 'parsemag' ), $hours );
+			$age = ' ' . wfMsgExt( 'unreviewedpages-hours', 'parsemag', $wgLang->formatNum( $hours ) );
 		} else {
-			$age = ' ' . wfMsg( 'unreviewed-recent' ); // hot off the press :)
+			$age = ' ' . wfMsg( 'unreviewedpages-recent' ); // hot off the press :)
 		}
 		if ( $wgUser->isAllowed( 'unwatchedpages' ) ) {
 			$uw = self::usersWatching( $title );
 			$watching = $uw
-				? wfMsgExt( 'unreviewed-watched', array( 'parsemag' ), $uw )
-				: wfMsgHtml( 'unreviewed-unwatched' );
+				? wfMsgExt( 'unreviewedpages-watched', 'parsemag', $wgLang->formatNum( $uw ) )
+				: wfMsgHtml( 'unreviewedpages-unwatched' );
 			$watching = " $watching"; // Oh-noes!
 		} else {
 			$uw = - 1;
 		}
 		$css = self::getLineClass( $hours, $uw );
 		$css = $css ? " class='$css'" : "";
-		$pageId = isset( $row->page_id ) ? $row->page_id : $row->qc_value;
+		$pageId = isset( $row->page_id ) ?
+			$row->page_id : $row->qc_value;
 		$key = wfMemcKey( 'unreviewedPages', 'underReview', $pageId );
 		$val = $wgMemc->get( $key );
 		# Show if a user is looking at this page
 		if ( $val ) {
 			$underReview = " <b class='fr-under-review'>" .
-				wfMsgHtml( 'unreviewed-viewing' ) . '</b>';
+				wfMsgHtml( 'unreviewedpages-viewing' ) . '</b>';
 		}
 
 		return( "<li{$css}>{$link} {$stxt} ({$hist})" .
@@ -146,9 +149,10 @@ class UnreviewedPages extends SpecialPage
 	/**
 	 * Get number of users watching a page. Max is 5.
 	 * @param Title $title
+	 * @return int
 	 */
-	public static function usersWatching( $title ) {
-		global $wgMiserMode;
+	public static function usersWatching( Title $title ) {
+		global $wgMiserMode, $wgCookieExpiration;
 		$dbr = wfGetDB( DB_SLAVE );
 		$count = - 1;
 		if ( $wgMiserMode ) {
@@ -160,7 +164,6 @@ class UnreviewedPages extends SpecialPage
 		}
 		# If it is small, just COUNT() it, otherwise, stick with estimate...
 		if ( $count == - 1 || $count <= 100 ) {
-			global $wgCookieExpiration;
 			# Get number of active editors watchling this
 			$cutoff = $dbr->timestamp( wfTimestamp( TS_UNIX ) - 2 * $wgCookieExpiration );
 			$res = $dbr->select( array( 'watchlist', 'user' ), '1',
@@ -174,7 +177,7 @@ class UnreviewedPages extends SpecialPage
 			);
 			$count = $dbr->numRows( $res );
 		}
-		return $count;
+		return (int)$count;
 	}
 	
 	protected static function getLineClass( $hours, $uw ) {
@@ -222,20 +225,20 @@ class UnreviewedPagesPager extends AlphabeticPager {
 		$this->mForm = $form;
 		$this->live = (bool)$live;
 		# Must be a content page...
-
 		if ( !is_null( $namespace ) ) {
-			$namespace = intval( $namespace );
+			$namespace = (int)$namespace;
 		}
 		$vnamespaces = FlaggedRevs::getReviewNamespaces();
+		# Must be a single NS for perfomance reasons
 		if ( is_null( $namespace ) || !in_array( $namespace, $vnamespaces ) ) {
-			$namespace = !$vnamespaces ? - 1 : $vnamespaces[0];
+			$namespace = !$vnamespaces ? -1 : $vnamespaces[0];
 		}
 		$this->namespace = $namespace;
 		$this->category = $category ? str_replace( ' ', '_', $category ) : null;
 		$this->level = intval( $level );
 		$this->showredirs = (bool)$redirs;
 		parent::__construct();
-		// Don't get to expensive
+		// Don't get too expensive
 		$this->mLimitsShown = array( 20, 50 );
 		$this->mLimit = min( $this->mLimit, 50 );
 	}
@@ -269,6 +272,14 @@ class UnreviewedPagesPager extends AlphabeticPager {
 			$fields[] = 'cl_sortkey';
 			$conds['cl_to'] = $this->category;
 			$conds[] = 'cl_from = page_id';
+			# Note: single NS always specified
+			if( $this->namespace == NS_FILE ) {
+				$conds['cl_type'] = 'file';
+			} elseif( $this->namespace == NS_CATEGORY ) {
+				$conds['cl_type'] = 'subcat';
+			} else {
+				$conds['cl_type'] = 'page';
+			}
 			$this->mIndexField = 'cl_sortkey';
 			$useIndex = array( 'categorylinks' => 'cl_sortkey' );
 			$groupBy = 'cl_sortkey,cl_from';
@@ -345,7 +356,7 @@ class UnreviewedPagesPager extends AlphabeticPager {
 		wfProfileIn( __METHOD__ );
 		# Do a link batch query
 		$lb = new LinkBatch();
-		while ( $row = $this->mResult->fetchObject() ) {
+		foreach ( $this->mResult as $row ) {
 			$lb->add( $row->page_namespace, $row->page_title );
 		}
 		$lb->execute();

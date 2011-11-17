@@ -1,21 +1,16 @@
 <?php
 /**
+ * @file
+ * @ingroup SF
+ */
+
+/**
  * Adds and handles the 'sfautocomplete' action to the MediaWiki API.
+ *
+ * @ingroup SF
  *
  * @author Sergey Chernyshev
  * @author Yaron Koren
- */
-
-/**
- * Protect against register_globals vulnerabilities.
- * This line must be present before any global variable is referenced.
- */
-if ( !defined( 'MEDIAWIKI' ) ) {
-	die( 'Not an entry point.' );
-}
-
-/**
- * @ingroup API
  */
 class SFAutocompleteAPI extends ApiBase {
 
@@ -24,8 +19,6 @@ class SFAutocompleteAPI extends ApiBase {
 	}
 
 	public function execute() {
-		global $wgContLang;
-
 		$params = $this->extractRequestParams();
 		$substr = $params['substr'];
 		$namespace = $params['namespace'];
@@ -60,14 +53,24 @@ class SFAutocompleteAPI extends ApiBase {
 			$data = array();
 		}
 		
+		// to prevent JS parsing problems, display should be the same
+		// even if there are no results
+		/*
 		if ( count( $data ) <= 0 ) {
 			return;
+		}
+		 */
+
+		// Format data as the API requires it.
+		$formattedData = array();
+		foreach ( $data as $value ) {
+			$formattedData[] = array( 'title' => $value );
 		}
 
 		// Set top-level elements.
 		$result = $this->getResult();
-		$result->setIndexedTagName( $data, 'p' );
-		$result->addValue( null, $this->getModuleName(), $data );
+		$result->setIndexedTagName( $formattedData, 'p' );
+		$result->addValue( null, $this->getModuleName(), $formattedData );
 	}
 
 	protected function getAllowedParams() {
@@ -115,7 +118,7 @@ class SFAutocompleteAPI extends ApiBase {
 	}
 
 	public function getVersion() {
-		return __CLASS__ . ': $Id: SF_AutocompleteAPI.php 70880 2010-08-11 14:30:25Z jeroendedauw $';
+		return __CLASS__ . ': $Id: SF_AutocompleteAPI.php 89319 2011-06-02 04:26:58Z yaron $';
 	}
 
 	public static function getAllValuesForProperty( $is_relation, $property_name, $substring = null ) {
@@ -150,7 +153,7 @@ class SFAutocompleteAPI extends ApiBase {
 			
 		while ( $row = $db->fetchRow( $res ) ) {
 			if ( $substring != null ) {
-				$values[] = array( 'title' => str_replace( '_', ' ', $row[0] ) );
+				$values[] = str_replace( '_', ' ', $row[0] );
 			} else {
 				$cur_value = str_replace( "'", "\'", $row[0] );
 				$values[] = str_replace( '_', ' ', $cur_value );

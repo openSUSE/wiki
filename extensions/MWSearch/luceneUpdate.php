@@ -12,31 +12,56 @@ if( !isset( $args[0] ) ) {
 	exit( -1 );
 }
 
+$ret = true;
+
 switch( $args[0] ) {
 case 'stop':
-	$ret = MWSearchUpdater::stop();
+	try {
+		MWSearchUpdater::stop();
+	} catch ( MWException $e ) {
+		$ret = $e;
+	}
 	break;
 case 'restart':
 case 'flushall':
 case 'flush':
-	$ret = MWSearchUpdater::flushAll();
+	try {
+		MWSearchUpdater::flushAll();
+	} catch ( MWException $e ) {
+		$ret = $e;
+	}
 	break;
 case 'start':
-	$ret = MWSearchUpdater::start();
+	try {
+		MWSearchUpdater::start();
+	} catch ( MWException $e ) {
+		$ret = $e;
+	}
 	break;
 //case 'flush':
 //	global $wgDBname;
-//	$ret = MWSearchUpdater::flush( $wgDBname );
+//	try {
+//		MWSearchUpdater::flush( $wgDBname );
+//	} catch ( MWException $e ) {
+//		$ret = $e;
+//	}
 //	break;
 case 'status':
 	// no-op
-	$ret = true;
 	break;
 case 'quit':
-	$ret = MWSearchUpdater::quit();
+	try {
+		MWSearchUpdater::quit();
+	} catch ( MWException $e ) {
+		$ret = $e;
+	}
 	break;
 case 'optimize':
-	$ret = MWSearchUpdater::optimize();
+	try {
+		MWSearchUpdater::optimize();
+	} catch ( MWException $e ) {
+		$ret = $e;
+	}
 	break;
 case 'update':
 	$title = Title::newFromText( $args[1] );
@@ -44,11 +69,15 @@ case 'update':
 		die( "Invalid title\n" );
 	}
 	$rev = Revision::newFromTitle( $title );
-	if( $rev ) {
-		$text = $rev->getText();
-		$ret = MWSearchUpdater::updatePage( $wgDBname, $title, $text );
-	} else {
-		$ret = MWSearchUpdater::deletePage( $wgDBname, $title );
+	try {
+		if( $rev ) {
+			$text = $rev->getText();
+			$ret = MWSearchUpdater::updatePage( $wgDBname, $title, $text );
+		} else {
+			$ret = MWSearchUpdater::deletePage( $wgDBname, $title );
+		}
+	} catch ( MWException $e ) {
+		$ret = $e;
 	}
 	break;
 case 'rebuild':
@@ -96,25 +125,25 @@ default:
 	exit( -1 );
 }
 
-if( WikiError::isError( $ret ) ) {
+if( $ret instanceof MWException ) {
 	echo $ret->getMessage() . "\n";
 	exit( -1 );
 }
 
-$status = MWSearchUpdater::getStatus();
-if( WikiError::isError( $status ) ) {
-	echo $status->getMessage() . "\n";
-	exit( -1 );
-} else {
+try {
+	$status = MWSearchUpdater::getStatus();
 	echo $status . "\n";
 	exit( 0 );
+} catch ( MWException $e ) {
+	echo $e->getMessage() . "\n";
+	exit( -1 );
 }
 
 
 ///
 
 class LuceneBuilder {
-	function LuceneBuilder() {
+	function __construct() {
 		$this->db       = wfGetDB( DB_SLAVE );
 		$this->dbstream =& $this->streamingSlave( $this->db );
 		$this->offset = 0;
@@ -172,9 +201,10 @@ class LuceneBuilder {
 		$waittime = 10;
 		
 		while( true ) {
-			$status = MWSearchUpdater::getStatus();
-			if( WikiError::isError( $status ) ) {
-				echo $status->getMessage() . "\n";
+			try {
+				$status = MWSearchUpdater::getStatus();
+			} catch ( MWException $e ) {
+				echo $e->getMessage() . "\n";
 				sleep( $waittime );
 				continue;
 			}
@@ -240,7 +270,7 @@ class LuceneBuilder {
 			$limit );
 		
 		$errorCount = 0;
-		while( $row = $this->dbstream->fetchObject( $result ) ) {
+		foreach ( $result as $row ) {
 			$this->progress();
 			
 			$title = Title::makeTitle( $row->page_namespace, $row->page_title );
@@ -251,11 +281,12 @@ class LuceneBuilder {
 			}
 			
  			$text = $rev->getText();
-			$hit = MWSearchUpdater::updatePage( $wgDBname, $title, $text );
-			
-			if( WikiError::isError( $hit ) ) {
-				echo "ERROR: " . $hit->getMessage() . "\n";
-				$lastError = $hit;
+
+			try {
+				MWSearchUpdater::updatePage( $wgDBname, $title, $text );
+			} catch( MWException $e ) {
+				echo "ERROR: " . $e->getMessage() . "\n";
+				$lastError = $e;
 				$errorCount++;
 				if( $errorCount > 20 ) {
 					echo "Lots of errors, giving up. :(\n";
@@ -274,7 +305,7 @@ class LuceneBuilder {
 	 * that might have been missed when the index updater daemon was broken.
 	 */
 	function rebuildDeleted( $since = null ) {
-		global $wgDBname, $options;
+		global $wgDBname;
 		$fname   = 'LuceneBuilder::rebuildDeleted';
 		
 		if( is_null( $since ) ) {
@@ -304,13 +335,14 @@ class LuceneBuilder {
 		$this->init( $max );
 		$lastError = true;
 		
-		while( $row = $this->dbstream->fetchObject( $result ) ) {
+		foreach ( $result as $row ) {
 			$this->progress();
 			$title = Title::makeTitle( $row->log_namespace, $row->log_title );
-			$hit = MWSearchUpdater::deletePage( $wgDBname, $title );
-			if( WikiError::isError( $hit ) ) {
-				echo "ERROR: " . $hit->getMessage() . "\n";
-				$lastError = $hit;
+			try {
+				MWSearchUpdater::deletePage( $wgDBname, $title );
+			} catch ( MWException $e ) {
+				echo "ERROR: " . $e->getMessage() . "\n";
+				$lastError = $e;
 			}
 		}
 		
@@ -326,7 +358,7 @@ class LuceneBuilder {
 	 * the index updater daemon was broken or disabled since last build.
 	 */
 	function rebuildRecent( $since = null ) {
-		global $wgDBname, $options;
+		global $wgDBname;
 		$fname   = 'LuceneBuilder::rebuildDeleted';
 		
 		if( is_null( $since ) ) {
@@ -358,15 +390,16 @@ class LuceneBuilder {
 		$this->init( $max );
 		$lastError = true;
 		
-		while( $row = $this->dbstream->fetchObject( $result ) ) {
+		foreach ( $result as $row ) {
 			$this->progress();
 			$rev = new Revision( $row );
 			if( is_object( $rev ) ) {
 				$title = Title::makeTitle( $row->page_namespace, $row->page_title );
-				$hit = MWSearchUpdater::updatePage( $wgDBname, $title, $rev->getText() );
-				if( WikiError::isError( $hit ) ) {
-					echo "ERROR: " . $hit->getMessage() . "\n";
-					$lastError = $hit;
+				try {
+					MWSearchUpdater::updatePage( $wgDBname, $title, $rev->getText() );
+				} catch ( MWException $e ) {
+					echo "ERROR: " . $e->getMessage() . "\n";
+					$lastError = $e;
 				}
 			}
 		}

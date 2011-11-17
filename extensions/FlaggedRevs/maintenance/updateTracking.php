@@ -6,22 +6,23 @@ if ( getenv( 'MW_INSTALL_PATH' ) ) {
     $IP = dirname(__FILE__).'/../../..';
 }
 
-$options = array( 'updateonly', 'help', 'start' );
+$options = array( 'updateonly', 'help', 'startrev', 'startpage' );
 require "$IP/maintenance/commandLine.inc";
 require dirname(__FILE__) . '/updateTracking.inc';
 
-if( isset($options['help']) ) {
+if ( isset($options['help']) ) {
 	echo <<<TEXT
 Purpose:
-	Correct the data in the flaggedrevs tracking tables and
-	remove any extraneous template/file inclusion data.
+	Correct the page data in the flaggedrevs tracking tables.
+	Update the quality tier of revisions based on their rating tags.
+	Migrate flagged revision file version data to proper table.
 Usage:
     php updateLinks.php --help
-    php updateLinks.php [--start <ID> | --updateonly <CALL> ]
+    php updateLinks.php [--startpage <ID> | --startrev <ID> | --updateonly <CALL> ]
 
     --help             : This help message
-    --<ID>             : The ID of the starting rev
-	--<CALL>           : One of revs,pages,templates, or images
+    --<ID>             : The ID of the starting rev/page
+    --<CALL>           : One of (revs, pages)
 
 TEXT;
 	exit(0);
@@ -29,20 +30,27 @@ TEXT;
 
 error_reporting( E_ALL );
 
-$start = isset($options['start']) ? $options['start'] : null;
-$updateonly = isset($options['updateonly']) ? $options['updateonly'] : null;
+$startPage = isset( $options['startpage'] ) ?
+	(int)$options['startpage'] : null;
+$startRev = isset( $options['startrev'] ) ?
+	(int)$options['startrev'] : null;
+$updateonly = isset( $options['updateonly'] ) ?
+	$options['updateonly'] : null;
 
-$actions = array( 'revs', 'pages', 'templates', 'images' );
-if( $updateonly && in_array($updateonly,$actions) ) {
-	$do = "update_flagged{$updateonly}";
-	$do($start);
-	exit(0);
+if ( $updateonly ) {
+	switch ( $updateonly ) {
+		case 'revs':
+			update_flaggedrevs( $startRev );
+			break;
+		case 'pages':
+			update_flaggedpages( $startPage );
+			break;
+		default:
+			echo "Invalidate operation specified.\n";
+	}
+	exit( 0 );
 }
 
-update_flaggedrevs($start);
+update_flaggedrevs( $startRev );
 
-update_flaggedpages();
-
-update_flaggedtemplates($start);
-
-update_flaggedimages($start);
+update_flaggedpages( $startPage );

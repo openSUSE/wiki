@@ -1,0 +1,44 @@
+/* IE6 - only fixes
+ * Adapted styles from monobook for openSUSE.org
+ * Only works in addition to IF60Fixes.css from the MonoBook theme
+ * Author: Frank Sundermeyer <fs@suse.de>
+ * Last changed: 18 Oct 2006
+ */
+
+html, body, #globalWrapper {
+    height: 100% !important;
+}
+#globalWrapper {
+    width: expression( ( documentElement.clientWidth < 780 ) ? "780px" :
+    "auto" );
+}
+#column-one {
+    padding-top: 6.2em !important;
+}
+#p-personal ul {
+    margin-left: 13.6em;
+}
+li#pt-userpage,
+li#pt-anonuserpage,
+li#pt-login {
+    background-position: center left;
+}
+#p-cactions li, #p-cactions li.selected {
+    border: none;
+}
+#p-cactions li a {
+    padding-bottom: .2em;
+    border: 1px solid #0b5147;
+}
+#p-cactions li.selected a {
+    padding-bottom: .2em;
+    border: 1px dotted #0b5147;
+}
+#p-topnav {
+    position: absolute;
+    top: 0;
+}
+div.bar {
+    position: absolute;
+    height: 100%;
+}

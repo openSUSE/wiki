@@ -1,10 +1,10 @@
 BEGIN;
 
 CREATE TABLE flaggedpages (
-  fp_page_id INTEGER NOT NULL DEFAULT 0 ,
-  fp_reviewed INTEGER NOT NULL DEFAULT 0 ,
-  fp_stable INTEGER NULL,
-  fp_quality INTEGER default NULL,
+  fp_page_id    BIGINT NOT NULL DEFAULT 0,
+  fp_reviewed   INTEGER NOT NULL DEFAULT 0,
+  fp_stable     BIGINT NOT NULL DEFAULT 0,
+  fp_quality    INTEGER default NULL,
   PRIMARY KEY (fp_page_id)
 );
 CREATE INDEX fp_reviewed_page ON flaggedpages (fp_reviewed,fp_page_id),

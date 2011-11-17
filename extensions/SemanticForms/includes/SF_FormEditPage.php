@@ -1,11 +1,17 @@
 <?php
 /**
- * Form Edit Page inheriting from EditPage
+ * Contains Form Edit Page inheriting from EditPage
  * 
  * @author Daniel Friesen
  * @author Yaron Koren
+ * @file
+ * @ingroup SF
  */
 
+/**
+ * Form Edit Page inheriting from EditPage
+ * @ingroup SF
+ */
 class SFFormEditPage extends EditPage {
 
 	protected $form, $form_name;
@@ -13,7 +19,7 @@ class SFFormEditPage extends EditPage {
 	function __construct( $article, $form_name = '' ) {
 		global $wgRequest;
 		parent::__construct( $article );
-		wfLoadExtensionMessages( 'SemanticForms' );
+		SFUtils::loadMessages();
 		$this->action = 'formedit';
 		$form_name = $wgRequest->getText( 'form', $form_name );
 		$this->form = Title::makeTitleSafe( SF_NS_FORM, $form_name );
@@ -43,9 +49,8 @@ class SFFormEditPage extends EditPage {
 	}
 	
 	protected function showContentForm() {
-		global $sfgIP;
 		$target_title = $this->mArticle->getTitle();
-		$target_name = SFLinkUtils::titleString( $target_title );
+		$target_name = SFUtils::titleString( $target_title );
 		if ( $target_title->exists() ) {
 			SFEditData::printEditForm( $this->form_name, $target_name, $this->textbox1 );
 		} else {

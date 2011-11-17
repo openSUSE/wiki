@@ -1,0 +1,626 @@
+/* 
+**
+**  $Id: $
+**
+**  Funktion:  Provides styles only needed on the openSUSE.org wiki
+**  Author:    Frank Sundermeyer <fs@opensuse.org>
+**  License:   see copyright/COPYRIGHT
+*/
+
+/*****************
+* General Styles *
+*****************/
+
+.navlist,
+#rightnav ul {
+    list-style-image: url(http://static.opensuse.org/c/css/common/images/liDot_double_green.png);
+}
+.skipLinks {
+    display: none;
+}
+#searchbox .topleft {
+    background: #fff url(images/green_searchbox/top_left_corner.png) top left no-repeat;
+}
+#searchbox .topright {
+    background: url(images/green_searchbox/top_right_corner.png) top right no-repeat;
+}
+#searchbox .bottomleft {
+    background: url(images/green_searchbox/bottom_left_corner.png) bottom left no-repeat;
+}
+#searchbox .bottomright {
+    background: url(images/green_searchbox/bottom_right_corner.png) bottom right no-repeat;
+}
+h1, h2, h3, h4, h5, h6 {
+    color: #669900;
+}
+
+/*******************
+* Content Elements *
+********************/
+
+div.center {
+    width: 100%;
+    text-align: center;
+    display: block;
+}
+div.shell {
+    background-color: #000;
+    color: #FFF;
+    font-family:courier, monospace;
+    font-weight:bold;
+    padding:.3em 1em;
+    width:85%;
+    margin:2em;
+    white-space: pre;
+}
+div.pre_scroll {
+    font-family: "Courier New", Courier, monospace;
+    margin: 0 0 1em 1em;
+    padding: 0.5em;
+    color: #000;
+    background: #f0f0f4;
+    overflow: auto;
+    border: 2px dashed #B2CC7F;
+    white-space: pre;
+    line-height: normal;
+    max-height: 18em;
+}
+div.pre_hscroll {
+    font-family: "Courier New", Courier, monospace;
+    margin: 0 0 1em 1em;
+    padding: 0 .5em;
+    color: #000;
+    background: #f0f0f4;
+    overflow-x: auto;
+    border: 2px dashed #B2CC7F;
+    white-space: pre;
+    line-height: normal;
+    max-height: 25em;
+}
+div.minutes {
+    margin: 0 0 1em 1em;
+    padding: 0 .5em;
+    color: #000;
+    background: #f0f0f4;
+    border: 1px solid #669900;
+    white-space: pre;
+}
+
+
+/*************************************************
+* Overwrite YAML styles                          *
+*   all non color/image changes should go to the *
+*   common css directory                         *
+*************************************************/
+
+blockquote {
+    border-left: 4px solid #D9E5BF;
+    border-right: 4px solid #D9E5BF;
+    border-top: 1px solid #D9E5BF;
+    border-bottom: 1px solid #D9E5BF;
+}
+cite {
+    border-left: 4px solid #D9E5BF;
+}
+code {
+    background-color: #D9E5BF;
+}
+hr {
+    border-bottom: 1px #ccc solid; 
+}
+input, textarea {
+    border: 1px solid #669900;
+}
+input[type=text]:focus, textarea:focus {
+        border-color: #669900;
+}
+input[type=submit] {
+    background-color: #D9E5BF;
+    color: #000;
+}
+pre {
+    border: 2px dashed #B2CC7F;
+    background:#F0F0F4 none repeat scroll 0%;
+    color:#000;
+    display:block;
+    margin:0pt 0pt 1em 1em;
+    padding:0.5em;
+}
+ul {
+    list-style-image: url(http://static.opensuse.org/c/css/common/images/liDot_wiki.png);
+}
+
+/*********************************************
+* Wiki generated classes and ids             *
+*  This is the main part of the opensuseskin *
+**********************************************/
+
+/*--------------------
+* Content Area stuff 
+*---------------------*/
+
+#siteSub {
+    display: none;
+}
+#siteNotice {
+    padding: 0 1em;
+    text-align: center;
+    font-size: 95%;
+}
+#contentSub {
+    font-size: 100%;
+    line-height: 1.2em;
+    margin: 1.5em 1em;
+}
+#bodyContent {
+    padding: .5em 1.5em;
+}
+
+/*-----------------
+*  General classes 
+*-----------------*/
+
+.usermessage {
+    background-color: #D9E5BF;
+    border: 1px solid #669900;
+    font-weight: bold;
+    margin: 2em 0 1em;
+    padding: .5em 1em;
+    vertical-align: middle;
+}
+.error {
+    color: red;
+    font-size: larger;
+    font-weight: bold;
+}
+.previewnote {
+    background-color: #D9E5BF;
+    font-weight: bold;
+    text-align: center;
+    padding: .5em 0;
+}
+.printfooter {
+    display: none;
+}
+.redirectText {
+    font-size: larger;
+    margin: .5em 0 1.5em 1em;
+}
+.special {
+}
+
+/*----------------------
+*  The Personal Toolbar 
+*----------------------*/
+
+#pt-personal {
+    color: #D9E5BF;
+}
+#pt-personal a {
+    color: #D9E5BF;
+}
+/*---------------
+* Edit article 
+*---------------*/
+
+/* Input box */
+#editform textarea {
+    font-size: 120%;
+    font-family: courier, monospace;
+    width: 98%;
+}
+
+/*------------
+* Preferences 
+*-------------*/
+#preftoc {
+    float: left;
+    margin: 1em 2em 1em 1em;
+    width: auto;
+}
+#preftoc li {
+    border: 1px solid white;
+}
+#preftoc li.selected {
+    background-color: #f9f9f9;
+    border-top: 1px dotted #669900;
+    border-bottom: 1px dotted #669900;
+}
+#preftoc a,
+#preftoc a:active {
+    display: block;
+    text-decoration: none;
+}
+#preferences legend {
+    font-weight: bold;
+    padding: 0 8px;
+    border: 1px solid #D9E5BF;
+    background-color: #FFF;
+}
+#prefcontrol {
+    clear: both;
+    float: left;
+    margin-top: 1em;
+}
+fieldset.prefsection {
+    border-top: 5px solid #D9E5BF;
+    border-bottom: 5px solid #D9E5BF;
+    padding: 1em;
+}
+div.prefsectiontip {
+    font-size: 95%;
+    margin-top: 1em;
+}
+fieldset.operaprefsection {
+    margin-left: 16em;
+}
+.toggle {
+    margin-left: 2em;
+    text-indent: -2.1em;
+}
+.toggletext {
+
+}
+/*---------------
+* Recent changes 
+*---------------*/
+
+span.newpage, span.minor {
+    font-weight: bold;
+}
+span.changedby {
+    margin: 0 0.5em;
+}
+
+   
+/*---------------
+* Search 
+*---------------*/
+
+span.searchmatch {
+    font-weight: bold;
+    color: red;
+}
+
+/*-------------------
+* Table of Contents 
+*-------------------*/
+
+.toc {
+    border-top: 1px solid #669900;
+    border-bottom: 1px solid #669900;
+    /* background-color: #f9f9f9; */
+    background: #D9E5BF url(images/geeko_tail.gif) no-repeat top right;
+    padding: 5px 0;
+    margin: 0 -17px;
+    font-size: 95%;
+    display: block;
+}
+#toc h2,
+.toc h2 {
+    display: inline;
+    border: none;
+    padding: 0 2em 0 0;
+    font-size: 110%;
+    font-weight: bold;
+}
+#toc #toctitle,
+.toc #toctitle,
+#toc .toctitle,
+.toc .toctitle {
+    text-align: left;
+    margin: .7em 0;
+}
+#toc ul,
+.toc ul {
+    list-style-type: none;
+    list-style-image: none;
+    margin-left: 0;
+    padding-left: 0;
+    text-align: left;
+}
+#toc ul ul,
+.toc ul ul {
+    margin: 0;
+}
+
+/*--------------------
+* Categories section 
+*--------------------*/
+
+#catlinks {
+    border-top: 5px solid #D9E5BF;
+    padding: .5em 0 0 2em;
+    margin: 2em 0 1em 0;
+}
+.catlinks {
+    font-size: 120%;
+}
+
+/*-----------
+* Image page
+*-----------*/
+
+#filetoc {
+    border-top: 5px solid #D9E5BF;
+    border-bottom: 5px solid #D9E5BF;
+    background-color: #f9f9f9;
+    padding: 5px;
+    font-size: 95%;
+}
+ul#filetoc {
+    list-style-type: none;
+    list-style-image: none;
+    margin-left: 0;
+    padding-left: 0;
+    text-align: left;
+}
+.fileInfo code {
+    background-color: transparent;
+    padding: 0;
+    margin: 0;
+    display: inline;
+}
+/*---------------
+* Image Galleries 
+----------------*/
+
+table.gallery {
+    margin: 1em 0;
+    padding: 2px;
+    border-collapse: separate;
+}
+table.gallery tr {
+    vertical-align: top;
+}
+table.gallery td {
+    vertical-align: top;
+    padding: 2px;
+}
+div.gallerybox {
+    margin: 2px;
+    width:  150px;
+}
+div.gallerybox div.thumb {
+    background-color: #F9F9F9;
+    text-align: center;
+    margin: 2px;
+    border-top: 5px solid #D9E5BF;
+    border-bottom: 5px solid #D9E5BF;
+    border-left: none;
+    border-right: none;
+}
+div.gallerytext {
+    font-size: 90%;
+    padding: 2px 4px;
+}
+
+/*-------------
+* Page history 
+*-------------*/
+
+#pagehistory span.user {
+    margin-left: 1em;
+    margin-right: 1em;
+}
+#pagehistory span.minor {
+    font-weight: bold;
+}
+#pagehistory li {
+    margin: 4px 0;
+}
+#pagehistory input[type=radio] {
+    vertical-align: bottom;
+}
+#pagehistory li.selected {
+    background-color: #F0F0F0;
+    border-top: 1px dotted #669900;
+    border-bottom: 1px dotted #669900;
+}
+
+/*-------
+* Diffs 
+*--------*/
+
+td.diff-addedline {
+    background: #D9E5BF;
+    font-size: smaller;
+}
+td.diff-deletedline {
+    background: #FCE7C6;
+    font-size: smaller;
+}
+td.diff-context {
+    background: #eee;
+    font-size: smaller;
+}
+span.diffchange {
+    color: red;
+    font-weight: bold;
+}
+
+/*----------------------
+* System Messages Table 
+*---------------------*/
+
+#allmessagestable th {
+    background-color: #669900;
+    color:#FFF;
+}
+#allmessagestable tr.orig {
+    background-color: #B2CC7F;
+}
+
+#allmessagestable tr.new {
+    background-color: #D9E5BF;
+}
+
+/*------
+* Links 
+*------*/
+
+#bodyContent a[href^="http://"],
+#bodyContent a[href^= "gopher://"] {
+    background: url(images/http.png) center right no-repeat;
+    padding-right: 18px;
+}
+#bodyContent a[href^="https://"],
+.link-https {
+    background: url(images/https.png) center right no-repeat;
+    padding-right: 18px;
+}
+#bodyContent a[href^="mailto:"],
+.link-mailto {
+    background: url(images/mail.png) center right no-repeat;
+    padding-right: 18px;
+}
+#bodyContent a[href ^="xmpp:"],
+.link-xmpp {
+    background: url(images/xmpp_icon.png) center right no-repeat;
+    padding-right: 10px;
+}
+#bodyContent a[href^="news://"] {
+    background: url(images/news.png) center right no-repeat;
+    padding-right: 18px;
+}
+#bodyContent a[href^="ftp://"],
+.link-ftp {
+    background: url(images/ftp.png) center right no-repeat;
+    padding-right: 18px;
+}
+#bodyContent a[href^="irc://"],
+.link-irc {
+    background: url(images/irc.png) center right no-repeat;
+    padding-right: 18px;
+}
+/* no icon */
+#bodyContent .plainlink,
+#rightnav a {
+    background: none !important;
+    padding-right: 0 !important;
+}
+a.stub {
+    color: #990099 !important;
+}
+#pt-personal a.new {
+    color: #000 !important;
+}
+a.new {
+    color: #d52c35 !important;
+}
+
+/*----------*
+* Watchlist *
+*----------*/
+
+span.comment {
+}
+span.autocomment {
+    font-style: italic;
+}
+span.autocomment a {
+    margin: 0 0.5em;
+}
+
+/**********************************
+* Styles generated by MediaWiki   *
+*   that are currently not set up *
+**********************************/
+
+/* make these styles visible */
+
+.not-patrolled,
+div.patrollink,
+.sharedUploadNotice,
+span.unpatrolled,
+span.updatedmarker,
+span.texhtml,
+li span.deleted,
+table.metadata,
+table.revisionform {
+    background-color:#FF00FF;
+    border: 5px solid yellow; 
+}
+
+/* end make visible */
+
+.not-patrolled {
+}
+div.patrollink {
+}
+
+.sharedUploadNotice {
+}
+
+span.unpatrolled {
+}
+
+span.updatedmarker {
+}
+
+
+span.texhtml {
+}
+
+li span.deleted {
+}
+
+table.metadata {
+  /* the complete EXIF data table */
+}
+table.revisionform {
+ /* article validation stuff */
+}
+
+/*------------*
+* Thumb stuff *
+*------------*/
+
+div.thumb {
+    border: 1px solid #669900;
+    padding: 5px 5px 0 5px;
+}
+div.thumb img {
+    margin-bottom:.5em;
+}
+div.thumbcaption {
+    margin-left: 5px;
+    padding: 0;   
+}
+div.magnify {
+    float: right;
+    margin-right: 5px;
+}
+div.tright {
+    clear: right;
+    float: right;
+    margin-left: .7em;
+}
+div.tleft {
+    float: left;
+    margin-right: .7em;
+}
+
+/********************
+* Homepage CSS *
+********************/
+
+div.special_info {
+  padding: 1em 100px 0 1em;
+  margin-bottom: 2em !important;
+}
+div#page_1 {
+ text-align: left !important;
+}
+p.page_1 {
+  float: left;
+  width: 50px;
+  /*background-color: #f9f;*/
+}
+.margin_r_m {
+  margin-right: 15px;
+}
+.long_spacer {
+  margin-bottom: 5em;
+}
+

@@ -1,11 +1,14 @@
 <?php
 /**
  * @author Yaron Koren
+ * @file
+ * @ingroup SF
  */
 
 /**
  * Base class for all language classes - a truncated version of Semantic
  * MediaWiki's 'SMW_Language' class
+ * @ingroup SFLanguage
  */
 abstract class SF_Language {
 

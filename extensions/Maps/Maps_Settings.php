@@ -1,7 +1,7 @@
 <?php
 /**
  * File defining the settings for the Maps extension.
- * More info can be found at http://www.mediawiki.org/wiki/Extension:Maps#Settings
+ * More info can be found at http://mapping.referata.com/wiki/Help:Configuration
  *
  *                          NOTICE:
  * Changing one of these settings can be done by copieng or cutting it,
@@ -21,56 +21,9 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 
 
 
-# Features configuration
-# Commenting out the inclusion of any feature will make Maps completely ignore it, and so improve performance.
-
-	# Include the features you want to have available.
-	# Functionality in the features directory uses the Maps framework to support multiple mapping services.
-
-		# General function support, required for #display_map and #display_point(s).
-		include_once $egMapsDir . 'Features/Maps_ParserFunctions.php'; 		
-		# Required for #display_map.
-		include_once $egMapsDir . 'Features/DisplayMap/Maps_DisplayMap.php';
-		# Required for #display_point and #display_points.
-		include_once $egMapsDir . 'Features/DisplayPoint/Maps_DisplayPoint.php';
-
-	# Include the additional features such geocoding and stand alone parser functions that should be loaded into Maps.
-		# Geocoding support, required for the geocoding parser functions and smart geocoding support in all other parser functions.
-		include_once $egMapsDir . 'Geocoders/Maps_Geocoders.php';
-		# Geocoding parser functions: #geocode, #geocodelat, #geocodelon.
-		include_once $egMapsDir . 'ParserFunctions/Maps_GeocodeFunctions.php';
-		# Required for #coordinates.
-		include_once $egMapsDir . 'ParserFunctions/Maps_Coordinates.php';
-		# Required for #distance.
-		include_once $egMapsDir . 'ParserFunctions/Maps_Distance.php';		
-		# Geographic parser functions: #geodistance, #finddestination
-		include_once $egMapsDir . 'ParserFunctions/Maps_GeoFunctions.php';
-
-		
-		
 # Mapping services configuration
-# Note: You can not use aliases in the settings. Use the main service names.
-
-	# Include the mapping services that should be loaded into Maps.
-	# Commenting or removing a mapping service will make Maps completely ignore it, and so improve performance.
-	
-	# Google Maps API v2
-	include_once $egMapsDir . 'Services/GoogleMaps/GoogleMaps.php';
-	
-	# Google Maps API v3
-	include_once $egMapsDir . 'Services/GoogleMaps3/GoogleMaps3.php';
-	
-	# OpenLayers API
-	include_once $egMapsDir . 'Services/OpenLayers/OpenLayers.php';
-	
-	# Yahoo! Maps API
-	include_once $egMapsDir . 'Services/YahooMaps/YahooMaps.php';
-	
-	# Yahoo! Maps API
-	include_once $egMapsDir . 'Services/OSM/OSM.php';	
 
 	# Array of String. Array containing all the mapping services that will be made available to the user.
-	# Currently Maps provides the following services: googlemaps, yahoomaps, openlayers, osm.
 	$egMapsAvailableServices = array(
 		'googlemaps2',
 		'googlemaps3',
@@ -83,7 +36,7 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 	# service is present in the $egMapsDefaultServices array for a certain feature.
 	# A service that supports all features is recommended. This service needs to be
 	# enabled, if not, the first one from the available services will be taken.
-	$egMapsDefaultService = 'googlemaps2';
+	$egMapsDefaultService = 'googlemaps3';
 	
 	# Array of String. The default mapping service for each feature, which will be
 	# used when no valid service is provided by the user. Each service needs to be
@@ -91,31 +44,27 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 	# Note: The default service needs to be available for the feature you set it
 	# for, since it's used as a fallback mechanism.
 	$egMapsDefaultServices = array(
-		'display_point' => 'googlemaps2',
-		'display_map' => 'googlemaps2'
+		'display_point' => $egMapsDefaultService,
+		'display_map' => $egMapsDefaultService
 	);
 
 
-
-# General configuration
-
-	# Boolean. Indicates if minified js files should be used where available.
-	# Do not change this value unless you know what you are doing!
-	$egMapsUseMinJs = false;
-
-
 	
-# Geocoding services configuration
+# Geocoding
 
 	# Array of String. Array containing all the geocoding services that will be
 	# made available to the user. Currently Maps provides the following services:
 	# geonames, google, yahoo
+    # It is recommended that when using GeoNames you get a GeoNames webservice account
+    # at http://www.geonames.org/login and set the username to $egMapsGeoNamesUser below.
+    # Not doing this will result into a legacy service being used, which might be
+    # disabled at some future point.
 	$egMapsAvailableGeoServices = array(
 		'geonames',
 		'google',
 		'yahoo'
 	);
-	
+
 	# String. The default geocoding service, which will be used when no service is
 	# is provided by the user. This service needs to be enabled, if not, the first
 	# one from the available services will be taken.
@@ -124,6 +73,17 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 	# Boolean. Indicates if geocoders can override the default geoservice based on
 	# the used mapping service.
 	$egMapsUserGeoOverrides = true;
+	
+	# Boolean. Sets if coordinates should be allowed in geocoding calls.
+	$egMapsAllowCoordsGeocoding = true;
+	
+	# Boolean. Sets if geocoded addresses should be stored in a cache.
+	$egMapsEnableGeoCache = true;
+	
+	# String. GeoNames API user/application name.
+	# Obtain an account here: http://www.geonames.org/login
+	# Do not forget to activate your account for API usage!
+	$egMapsGeoNamesUser = '';
 
 
 
@@ -145,12 +105,6 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 	# Recommended to be true for Maps_COORDS_DMS and false for Maps_COORDS_FLOAT.
 	$egMapsCoordinateDirectional = true;
 	
-	# Boolean. Sets if coordinates should be allowed in geocoding calls.
-	$egMapsAllowCoordsGeocoding = true;
-	
-	# Boolean. Sets if geocoded addresses should be stored in a cache.
-	$egMapsEnableGeoCache = true;
-	
 	# Boolean. Sets if direction labels should be translated to their equivalent in the wiki language or not.
 	$egMapsInternatDirectionLabels = true;
 
@@ -159,7 +113,7 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 # Distance configuration
 	
 	# Array. A list of units (keys) and how many meters they represent (value).
-	# No spaces! If the unit consists out of multple words, just write them together.
+	# No spaces! If the unit consists out of multiple words, just write them together.
 	$egMapsDistanceUnits = array(
 		'm' => 1,
 		'meter' => 1,
@@ -178,7 +132,7 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 	# String. The default unit for distances.
 	$egMapsDistanceUnit = 'm';
 	
-	# Integer. The default limit of fractal digits in a distance.
+	# Integer. The default amount of fractal digits in a distance.
 	$egMapsDistanceDecimals = 2;	
 	
 	
@@ -187,7 +141,7 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 
 	# Integer or string. The default width and height of a map. These values will
 	# only be used when the user does not provide them.
-	$egMapsMapWidth = '100%';
+	$egMapsMapWidth = 'auto';
 	$egMapsMapHeight = 350;
 
 	# Array. The minimum and maximum width and height for all maps. First min and
@@ -199,29 +153,95 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 		'height' => array( 50, 1000, 1, 100 ),
 	);
 	
-	# Strings. The default coordinates for the map. Must be in floating point
-	# notation. This value will only be used when the user does not provide one.
-	$egMapsMapLat = '1';
-	$egMapsMapLon = '1';
+	# String. The default centre for maps. Can be either a set of coordinates or an address.
+	$egMapsDefaultMapCentre = '0, 0';
 	
 	# Strings. The default content for all pop-ups. This value will only be used
 	# when the user does not provide one.
 	$egMapsDefaultTitle = '';
 	$egMapsDefaultLabel = '';
+	
+	$egMapsResizableByDefault = false;
+	
+	$egMapsRezoomForKML = false;
 
 
-
+	
+# Other general configuration
+	
+	# When true, debugging messages will be logged using mw.log(). Do not use on production wikis.
+	$egMapsDebugJS = false;
+	
+	# Namespace index start of the mapping namespaces.
+	$egMapsNamespaceIndex = 420;
+	
+	# Boolean. Controls if you can specify images using a full path in layers.
+	$egMapsAllowExternalImages = true;
+	
+	
+	
 # Specific mapping service configuration
 
+	# Google Maps v3
+	
+		# Integer. The default zoom of a map. This value will only be used when the
+		# user does not provide one.
+		$egMapsGMaps3Zoom = 14;
+		
+		# Array of String. The Google Maps v3 default map types. This value will only
+		# be used when the user does not provide one.
+		$egMapsGMaps3Types = array(
+			'roadmap',
+			'satellite',
+			'hybrid',
+			'terrain'
+		);
+		
+		# String. The default map type. This value will only be used when the user
+		# does not provide one.
+		$egMapsGMaps3Type = 'roadmap';
+		
+		# Array. List of controls to display onto maps by default.
+		$egMapsGMaps3Controls = array(
+			'pan',
+			'zoom',
+			'type',
+			'scale',
+			'streetview'			
+		);
+		
+		# String. The default style for the type control.
+		# horizontal, vertical or default
+		$egMapsGMaps3DefTypeStyle = 'default';
+
+		# String. The default style for the zoom control.
+		# small, large or default
+		$egMapsGMaps3DefZoomStyle = 'default';
+		
+		# Boolean. Open the info windows on load by default?
+		$egMapsGMaps3AutoInfoWindows = false;
+		
+		# Array. Layers to load by default.
+		$egMapsGMaps3Layers = array();
+		
+		# Integer. Default tilt when using Google Maps.
+		$egMapsGMaps3DefaultTilt = 0;
+		
+		# Google JavaScript Loader API key.
+		# Can be obtained at: https://code.google.com/apis/loader/signup.html
+		# This key is needed when using Google Earth.
+		$egGoogleJsApiKey = '';
+		
+		
 	# Google Maps
 	
 		# Your Google Maps API key. Required for displaying Google Maps, and using the
 		# Google Geocoder services.
 		$egGoogleMapsKey = ''; # http://code.google.com/apis/maps/signup.html
 		
-		# String. The Google Maps map name prefix. It can not be identical to the one
-		# of another mapping service.
-		$egMapsGoogleMapsPrefix = 'map_google';
+		# If your wiki is accessable via multiple urls, you'll need multiple keys.
+		# Example: $egGoogleMapsKeys['http://yourdomain.tld/something'] = 'your key';
+		$egGoogleMapsKeys = array();
 		
 		# Integer. The default zoom of a map. This value will only be used when the
 		# user does not provide one.
@@ -265,32 +285,7 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 			'wikipedia',
 			'webcams'
 		);
-	
-	
-	
-	# Google Maps v3
-	
-		# String. The Google Maps v3 map name prefix. It can not be identical to the
-		# one of another mapping service.
-		$egMapsGMaps3Prefix = 'map_google3';
 		
-		# Integer. The default zoom of a map. This value will only be used when the
-		# user does not provide one.
-		$egMapsGMaps3Zoom = 14;
-		
-		# Array of String. The Google Maps v3 default map types. This value will only
-		# be used when the user does not provide one.
-		$egMapsGMaps3Types = array(
-			'roadmap',
-			'satellite',
-			'hybrid',
-			'terrain'
-		);
-		
-		# String. The default map type. This value will only be used when the user
-		# does not provide one.
-		$egMapsGMaps3Type = 'roadmap';
-	
 	
 	
 	# Yahoo! Maps
@@ -298,10 +293,6 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 		# Your Yahoo! Maps API key. Required for displaying Yahoo! Maps.
 		# Haven't got an API key yet? Get it here: https://developer.yahoo.com/wsregapp/
 		$egYahooMapsKey = '';
-		
-		# String. The Yahoo! maps map name prefix. It can not be identical to the one
-		# of another mapping service.
-		$egMapsYahooMapsPrefix = 'map_yahoo';
 		
 		# Array of String. The Google Maps default map types. This value will only be
 		# used when the user does not provide one.
@@ -335,10 +326,6 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 	
 	
 	# OpenLayers
-	
-		# String. The OpenLayers map name prefix. It can not be identical to the one of
-		# another mapping service.
-		$egMapsOpenLayersPrefix = 'open_layer';
 		
 		# Integer. The default zoom of a map. This value will only be used when the
 		# user does not provide one.
@@ -358,13 +345,16 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 		
 		# Array of String. The default layers for Open Layers. This value will only be
 		# used when the user does not provide one.
-		# Available values: google, bing, yahoo, openlayers, nasa
 		$egMapsOLLayers = array(
-			'openlayers-wms'
+			'osm-mapnik',
+			'osm-cyclemap',
+			'osmarender'
 		);
 		
 		# The difinitions for the layers that should be available for the user.
 		$egMapsOLAvailableLayers = array(
+			//'google' => array( 'OpenLayers.Layer.Google("Google Streets")' ),
+		
 			'bing-normal' => array( 'OpenLayers.Layer.VirtualEarth( "Bing Streets", {type: VEMapStyle.Shaded, "sphericalMercator":true} )', 'bing' ),
 			'bing-satellite' => array( 'OpenLayers.Layer.VirtualEarth( "Bing Satellite", {type: VEMapStyle.Aerial, "sphericalMercator":true} )', 'bing' ),
 			'bing-hybrid' => array( 'OpenLayers.Layer.VirtualEarth( "Bing Hybrid", {type: VEMapStyle.Hybrid, "sphericalMercator":true} )', 'bing' ),
@@ -377,24 +367,8 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 			'osm-mapnik' => array( 'OpenLayers.Layer.OSM.Mapnik("OSM Mapnik")', 'osm' ),
 			'osm-cyclemap' => array( 'OpenLayers.Layer.OSM.CycleMap("OSM Cycle Map")', 'osm' ),
 		
-			'openlayers-wms' => array( 'OpenLayers.Layer.WMS( "OpenLayers WMS", "http://labs.metacarta.com/wms/vmap0",
-				{layers: "basic", "sphericalMercator":true} )', 'ol-wms' ),
-		
 			'nasa' => 'OpenLayers.Layer.WMS("NASA Global Mosaic", "http://t1.hypercube.telascience.org/cgi-bin/landsat7",
 				{layers: "landsat7", "sphericalMercator":true} )',
-		
-			/* FIXME: does not work properly yet
-			'wikipediaworld' => 'OpenLayers.Layer.Vector("Wikipedia World", {
-		strategies: [new OpenLayers.Strategy.BBOX( { ratio : 1.1, resFactor: 1 })],
-		protocol: new OpenLayers.Protocol.HTTP({
-				url: "http://toolserver.org/~kolossos/geoworld/marks.php?LANG=de",
-				format: new OpenLayers.Format.KML({
-                           extractStyles: true, 
-                           extractAttributes: true
-                })		
-        })
-	})'
-	*/
 		);
 		
 		# Layer group definitions. Group names must be different from layer names, and
@@ -405,14 +379,14 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 			'osm' => array( 'osmarender', 'osm-mapnik', 'osm-cyclemap' ),
 		);
 		
-		# Layer dependencies.
+		# Layer dependencies
 		$egMapsOLLayerDependencies = array(
 			'yahoo' => "<style type='text/css'> #controls {width: 512px;}</style><script src='http://api.maps.yahoo.com/ajaxymap?v=3.0&appid=euzuro-openlayers'></script>",
 			'bing' => "<script type='$wgJsMimeType' src='http://dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=6.1'></script>",
 			'ol-wms' => "<script type='$wgJsMimeType' src='http://clients.multimap.com/API/maps/1.1/metacarta_04'></script>",
-			'osm' => "<script type='$wgJsMimeType' src='$egMapsScriptPath/Services/OpenLayers/OSM/OpenStreetMap.js?$egMapsStyleVersion'></script>",
 		);
-	
+			
+
 	
 	
 	# OpenStreetMap
@@ -421,28 +395,8 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 		# user does not provide one.
 		$egMapsOSMZoom = 13;		
 		
-		# String. The OSM map name prefix. It can not be identical to the one of
-		# another mapping service.
-		$egMapsOSMPrefix = 'map_osm';		
+		# Boolean. Thumbnail pictures on or off.
+		$egMapsOSMThumbs = false;
 		
-		/*
-		# Array of String. The default controls for OSM maps. This value will only be
-		# used when the user does not provide one.
-		# Available values: layerswitcher, mouseposition, autopanzoom, panzoom,
-		# panzoombar, scaleline, navigation, keyboarddefaults, overviewmap, permalink
-		$egMapsOSMControls = array(
-			'layerswitcher',
-			'mouseposition',
-			'autopanzoom',
-			'scaleline',
-			'navigation'
-		);
-		
-		# Boolean. Indicates whether you want to get a static map (image) or not.
-		# This value will only be used when the user does not provide one.
-		$egMapsOSMStaticAsDefault = false;
-		
-		# Boolean. Indicates whether the user should be able to activate a static map.
-		# This value will only be used when the user does not provide one.
-		$egMapsOSMStaticActivatable = true;
-		*/
+		# Boolean. Photos in article pop-ups on or off.
+		$egMapsOSMPhotos = false;		

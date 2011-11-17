@@ -62,15 +62,19 @@ class SyntaxHighlight_GeSHi {
 		// Highlighting specific lines
 		if( isset( $args['highlight'] ) ) {
 			$lines = self::parseHighlightLines( $args['highlight'] );
-			if ( count($lines) ) $geshi->highlight_lines_extra( $lines );
+			if ( count($lines) ) {
+				$geshi->highlight_lines_extra( $lines );
+			}
 		}
 		// Starting line number
-		if( isset( $args['start'] ) )
+		if( isset( $args['start'] ) ) {
 			$geshi->start_line_numbers_at( $args['start'] );
+		}
 		$geshi->set_header_type( $enclose );
 		// Strict mode
-		if( isset( $args['strict'] ) )
+		if( isset( $args['strict'] ) ) {
 			$geshi->enable_strict_mode();
+		}
 		// Format
 		$out = $geshi->parse_code();
 		$err = $geshi->error();
@@ -86,14 +90,14 @@ class SyntaxHighlight_GeSHi {
 		// Register CSS
 		$parser->mOutput->addHeadItem( self::buildHeadItem( $geshi ), "source-{$lang}" );
 		if ( $enclose === GESHI_HEADER_NONE ) {
-			$out = '<span class="mw-geshi '.$lang.' source-'.$lang.'"> '.$out . '</span>';
+			$out = '<span class="mw-geshi '.$lang.' source-'.$lang.'">' . $out . '</span>';
 		} else {
 			$out = '<div dir="ltr" class="mw-geshi" style="text-align: left;">' . $out . '</div>';
 		}
 		wfProfileOut( __METHOD__ );
 		return $out;
 	}
-	
+
 	/**
 	 * Take an input specifying a list of lines to highlight, returning
 	 * a raw list of matching line numbers.
@@ -124,7 +128,7 @@ class SyntaxHighlight_GeSHi {
 		}
 		return $lines;
 	}
-	
+
 	/**
 	 * Validate a provided input range
 	 */
@@ -209,8 +213,9 @@ class SyntaxHighlight_GeSHi {
 	private static function prepare( $text, $lang ) {
 		self::initialise();
 		$geshi = new GeSHi( $text, $lang );
-		if( $geshi->error() == GESHI_ERROR_NO_SUCH_LANG )
+		if( $geshi->error() == GESHI_ERROR_NO_SUCH_LANG ) {
 			return null;
+		}
 		$geshi->set_encoding( 'UTF-8' );
 		$geshi->enable_classes();
 		$geshi->set_overall_class( "source-$lang" );
@@ -255,8 +260,9 @@ class SyntaxHighlight_GeSHi {
 	 */
 	private static function formatError( $error = '' ) {
 		$html = '';
-		if( $error )
+		if( $error ) {
 			$html .= "<p>{$error}</p>";
+		}
 		$html .= '<p>' . htmlspecialchars( wfMsgForContent( 'syntaxhighlight-specify' ) )
 			. ' <samp>&lt;source lang=&quot;html4strict&quot;&gt;...&lt;/source&gt;</samp></p>'
 			. '<p>' . htmlspecialchars( wfMsgForContent( 'syntaxhighlight-supported' ) ) . '</p>'
@@ -304,21 +310,29 @@ class SyntaxHighlight_GeSHi {
 	 */
 	private static function initialise() {
 		if( !self::$initialised ) {
-			wfLoadExtensionMessages( 'SyntaxHighlight_GeSHi' );
-			if( !class_exists( 'GeSHi' ) )
+			if( !class_exists( 'GeSHi' ) ) {
 				require( 'geshi/geshi.php' );
+			}
 			self::$initialised = true;
 		}
 		return true;
 	}
 
 	/**
-	 * Get the GeSHI's version information while Special:Version is read
+	 * Get the GeSHI's version information while Special:Version is read.
 	 */
-	public static function hSpecialVersion_GeSHi( &$sp, &$extensionTypes ) {
+	public static function hSpecialVersion_GeSHi( &$extensionTypes ) {
 		global $wgExtensionCredits;
-		require_once( 'geshi/geshi.php' );
+		self::initialise();
 		$wgExtensionCredits['parserhook']['SyntaxHighlight_GeSHi']['version'] = GESHI_VERSION;
 		return true;
 	}
+
+	/**
+	 * @see SyntaxHighlight_GeSHi::hSpecialVersion_GeSHi
+	 */
+	public static function hOldSpecialVersion_GeSHi( &$sp, &$extensionTypes ) {
+		return self::hSpecialVersion_GeSHi( $extensionTypes );
+	}
+	
 }

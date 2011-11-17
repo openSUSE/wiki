@@ -1,8 +1,13 @@
 <?php
 /**
  * @author Yaron Koren  翻譯:張致信(Translation: Roc Michael Email:roc.no1@gmail.com)
+ * @file
+ * @ingroup SF
  */
 
+/**
+ * @ingroup SFLanguage
+ */
 class SF_LanguageZh_tw extends SF_Language {
 
 	/* private */ var $m_SpecialProperties = array(

@@ -16,12 +16,13 @@
  *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
- * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  * http://www.gnu.org/copyleft/gpl.html
  */
 
 /**
- * @addtogroup Extensions
+ * @file
+ * @ingroup Extensions
  * @author Brion Vibber
  *
  * This extension wraps the GeSHi highlighter: http://qbnz.com/highlighter/
@@ -35,14 +36,14 @@
  * some help text and a list of all supported languages.
  */
 
-if( !defined( 'MEDIAWIKI' ) )
+if( !defined( 'MEDIAWIKI' ) ) {
 	die();
+}
 
 $wgExtensionCredits['parserhook']['SyntaxHighlight_GeSHi'] = array(
 	'path'           => __FILE__,
 	'name'           => 'SyntaxHighlight',
 	'author'         => array( 'Brion Vibber', 'Tim Starling', 'Rob Church', 'Niklas Laxström' ),
-	'description'    => 'Provides syntax highlighting using [http://qbnz.com/highlighter/ GeSHi Highlighter]',
 	'descriptionmsg' => 'syntaxhighlight-desc',
 	'url'            => 'http://www.mediawiki.org/wiki/Extension:SyntaxHighlight_GeSHi',
 );
@@ -52,8 +53,15 @@ $dir = dirname(__FILE__) . '/';
 $wgExtensionMessagesFiles['SyntaxHighlight_GeSHi'] = $dir . 'SyntaxHighlight_GeSHi.i18n.php';
 $wgAutoloadClasses['SyntaxHighlight_GeSHi'] = $dir . 'SyntaxHighlight_GeSHi.class.php';
 $wgHooks['ShowRawCssJs'][] = 'SyntaxHighlight_GeSHi::viewHook';
-$wgHooks['SpecialVersionExtensionTypes'][] = 'SyntaxHighlight_GeSHi::hSpecialVersion_GeSHi';
 $wgHooks['ParserFirstCallInit'][] = 'efSyntaxHighlight_GeSHiSetup';
+
+if ( version_compare( $wgVersion, '1.17alpha', '>=' ) ) {
+	// For MediaWiki 1.17 alpha and later.
+	$wgHooks['ExtensionTypes'][] = 'SyntaxHighlight_GeSHi::hSpecialVersion_GeSHi';
+} else {
+	// For pre-MediaWiki 1.17 alpha.
+	$wgHooks['SpecialVersionExtensionTypes'][] = 'SyntaxHighlight_GeSHi::hOldSpecialVersion_GeSHi';
+}
 
 /**
  * Register parser hook

@@ -1,8 +1,13 @@
 <?php
 /**
  * @author Meno25
+ * @file
+ * @ingroup SF
  */
 
+/**
+ * @ingroup SFLanguage
+ */
 class SF_LanguageArz extends SF_Language {
 
 	/* private */ var $m_SpecialProperties = array(

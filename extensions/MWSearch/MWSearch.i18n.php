@@ -2,7 +2,8 @@
 /**
  * Internationalisation file for MWSearch extension.
  *
- * @addtogroup Extensions
+ * @file
+ * @ingroup Extensions
  */
 
 $messages = array();
@@ -52,6 +53,13 @@ $messages['arz'] = array(
  */
 $messages['ast'] = array(
 	'mwsearch-desc' => 'Plugin MWSearch',
+);
+
+/** Bavarian (Boarisch)
+ * @author Mucalexx
+ */
+$messages['bar'] = array(
+	'mwsearch-desc' => "Hintergrundprózess fyr d'Lucene-Suachmaschijn",
 );
 
 /** Southern Balochi (بلوچی مکرانی)
@@ -115,6 +123,13 @@ $messages['cs'] = array(
  */
 $messages['cy'] = array(
 	'mwsearch-desc' => 'Ategyn MWSearch',
+);
+
+/** Danish (Dansk)
+ * @author Froztbyte
+ */
+$messages['da'] = array(
+	'mwsearch-desc' => 'MWSearch-plugin',
 );
 
 /** German (Deutsch)
@@ -190,9 +205,10 @@ $messages['fi'] = array(
 /** French (Français)
  * @author Grondin
  * @author IAlex
+ * @author Urhixidur
  */
 $messages['fr'] = array(
-	'mwsearch-desc' => 'Plug-in pour les recherches dans MediaWiki',
+	'mwsearch-desc' => 'Extension pour les recherches dans MediaWiki',
 );
 
 /** Franco-Provençal (Arpetan)
@@ -314,6 +330,13 @@ $messages['jv'] = array(
 	'mwsearch-desc' => 'plugin MWSearch',
 );
 
+/** Georgian (ქართული)
+ * @author BRUTE
+ */
+$messages['ka'] = array(
+	'mwsearch-desc' => 'MWSearch მოდული',
+);
+
 /** Korean (한국어)
  * @author Kwj2772
  */
@@ -321,7 +344,7 @@ $messages['ko'] = array(
 	'mwsearch-desc' => 'MWSearch 플러그인',
 );
 
-/** Ripoarisch (Ripoarisch)
+/** Colognian (Ripoarisch)
  * @author Purodha
  */
 $messages['ksh'] = array(
@@ -367,7 +390,7 @@ $messages['mk'] = array(
  * @author Shijualex
  */
 $messages['ml'] = array(
-	'mwsearch-desc' => 'മീഡിയാവിക്കി തിരച്ചില്‍ പ്ലഗിന്‍',
+	'mwsearch-desc' => 'മീഡിയാവിക്കി തിരച്ചിൽ പ്ലഗിൻ',
 );
 
 /** Marathi (मराठी)
@@ -476,6 +499,13 @@ $messages['ru'] = array(
 	'mwsearch-desc' => 'Плагин MWSearch',
 );
 
+/** Rusyn (Русиньскый)
+ * @author Gazeb
+ */
+$messages['rue'] = array(
+	'mwsearch-desc' => 'Плаґін MWSearch',
+);
+
 /** Yakut (Саха тыла)
  * @author HalanTul
  */
@@ -488,6 +518,13 @@ $messages['sah'] = array(
  */
 $messages['sk'] = array(
 	'mwsearch-desc' => 'Zásuvný modul MWSearch',
+);
+
+/** Slovenian (Slovenščina)
+ * @author Dbc334
+ */
+$messages['sl'] = array(
+	'mwsearch-desc' => 'Vtičnik MWSearch',
 );
 
 /** Serbian Cyrillic ekavian (Српски (ћирилица))
@@ -509,6 +546,13 @@ $messages['sr-el'] = array(
  */
 $messages['stq'] = array(
 	'mwsearch-desc' => 'Bäätergruundprozess foar ju Lucene-Säikmaschine',
+);
+
+/** Sundanese (Basa Sunda)
+ * @author Kandar
+ */
+$messages['su'] = array(
+	'mwsearch-desc' => 'Plugin MWSearch',
 );
 
 /** Swedish (Svenska)
@@ -588,7 +632,7 @@ $messages['vo'] = array(
 	'mwsearch-desc' => 'program: MWSearch',
 );
 
-/** Yue (粵語)
+/** Cantonese (粵語)
  * @author Shinjiman
  */
 $messages['yue'] = array(

@@ -26,7 +26,6 @@ function prune_flaggedrevs( $start = null, $prune = false ) {
 	$tDeleted = $fDeleted = 0; // tallies
 	
 	$newerRevs = 50;
-	$cutoff = $db->timestamp( time() - 30*24*3600 );
 	$cutoff = $db->timestamp( time() - 3600 );
 	while( $blockEnd <= $end ) {
 		echo "...doing fp_page_id from $blockStart to $blockEnd\n";
@@ -34,7 +33,7 @@ function prune_flaggedrevs( $start = null, $prune = false ) {
 		$res = $db->select( 'flaggedpages', 'fp_page_id', $cond, __FUNCTION__ );
 		$batchCount = 0; // rows deleted without slave lag check
 		// Go through a chunk of flagged pages...
-		while( $row = $db->fetchObject($res) ) {
+		foreach( $res as $row ) {
 			// Get the newest X ($newerRevs) flagged revs for this page
 			$sres = $db->select( 'flaggedrevs',
 				'fr_rev_id',

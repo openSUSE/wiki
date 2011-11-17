@@ -1,8 +1,13 @@
 <?php
 /**
  * @author Yaron Koren (Translation:Ghassem Tofighi Email:[MyFamily]@gmail.com, HomePage:http://ght.ir)
+ * @file
+ * @ingroup SF
  */
 
+/**
+ * @ingroup SFLanguage
+ */
 class SF_LanguageFa extends SF_Language {
 
 	/* private */ var $m_SpecialProperties = array(

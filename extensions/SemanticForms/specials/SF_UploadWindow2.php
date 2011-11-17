@@ -6,13 +6,15 @@
  * a few changes to remove skin CSS and HTML, and to populate the relevant
  * field in the form with the name of the uploaded form.
  *
- * @ingroup SpecialPage
- *
  * @author Yaron Koren
+ * @file
+ * @ingroup SF
  */
 
-
-class SFUploadWindow2 extends SpecialPage {
+/**
+ * @ingroup SFSpecialPages
+ */
+class SFUploadWindow2Proto extends UnlistedSpecialPage {
 	/**
 	 * Constructor : initialise object
 	 * Get data POSTed through the form and assign them to the object
@@ -27,31 +29,31 @@ class SFUploadWindow2 extends SpecialPage {
 	}
 
 	/** Misc variables **/
-	protected $mRequest;			// The WebRequest or FauxRequest this form is supposed to handle
-	protected $mSourceType;
-	protected $mUpload;
-	protected $mLocalFile;
-	protected $mUploadClicked;
+	public $mRequest;			// The WebRequest or FauxRequest this form is supposed to handle
+	public $mSourceType;
+	public $mUpload;
+	public $mLocalFile;
+	public $mUploadClicked;
 
 	/** User input variables from the "description" section **/
-	protected $mDesiredDestName;	// The requested target file name
-	protected $mComment;
-	protected $mLicense;
+	public $mDesiredDestName;	// The requested target file name
+	public $mComment;
+	public $mLicense;
 
 	/** User input variables from the root section **/
-	protected $mIgnoreWarning;
-	protected $mWatchThis;
-	protected $mCopyrightStatus;
-	protected $mCopyrightSource;
+	public $mIgnoreWarning;
+	public $mWatchThis;
+	public $mCopyrightStatus;
+	public $mCopyrightSource;
 
 	/** Hidden variables **/
-	protected $mForReUpload;		// The user followed an "overwrite this file" link
-	protected $mCancelUpload;		// The user clicked "Cancel and return to upload form" button
-	protected $mTokenOk;
+	public $mForReUpload;		// The user followed an "overwrite this file" link
+	public $mCancelUpload;		// The user clicked "Cancel and return to upload form" button
+	public $mTokenOk;
 
 	/** used by Semantic Forms **/
-	protected $mInputID;
-	protected $mDelimiter;
+	public $mInputID;
+	public $mDelimiter;
 
 	/**
 	 * Initialize instance variables from request and create an Upload handler
@@ -76,6 +78,7 @@ class SFUploadWindow2 extends SpecialPage {
 		$this->mLicense	   = $request->getText( 'wpLicense' );
 
 
+		$this->mDestWarningAck    = $request->getText( 'wpDestFileWarningAck' );
 		$this->mIgnoreWarning     = $request->getCheck( 'wpIgnoreWarning' )
 			|| $request->getCheck( 'wpUploadIgnoreWarning' );
 		$this->mWatchthis	 = $request->getBool( 'wpWatchthis' );
@@ -102,26 +105,16 @@ class SFUploadWindow2 extends SpecialPage {
 	}
 
 	/**
-	 * This page can be shown if uploading is enabled.
-	 * Handle permission checking elsewhere in order to be able to show
-	 * custom error messages.
-	 *
-	 * @param User $user
-	 * @return bool
-	 */
-	public function userCanExecute( $user ) {
-		return UploadBase::isEnabled() && parent::userCanExecute( $user );
-	}
-
-	/**
 	 * Special page entry point
 	 */
 	public function execute( $par ) {
-		global $wgUser, $wgOut, $wgRequest;
-	// disable $wgOut - we'll print out the page manually, taking the
-	// body created by the form, plus the necessary Javascript files,
-	// and turning them into an HTML page
-	$wgOut->disable();
+		global $wgUser, $wgOut;
+		// Disable $wgOut - we'll print out the page manually, taking
+		// the body created by the form, plus the necessary Javascript
+		// files, and turning them into an HTML page.
+		$wgOut->disable();
+		// This line is needed to get around Squid caching.
+		$wgOut->sendCacheControl();
 
 		$this->setHeaders();
 		$this->outputHeader();
@@ -129,6 +122,7 @@ class SFUploadWindow2 extends SpecialPage {
 		# Check uploading enabled
 		if ( !UploadBase::isEnabled() ) {
 			$wgOut->showErrorPage( 'uploaddisabled', 'uploaddisabledtext' );
+			print $wgOut->getHTML();
 			return;
 		}
 
@@ -142,18 +136,21 @@ class SFUploadWindow2 extends SpecialPage {
 			} else {
 				$wgOut->permissionRequired( 'upload' );
 			}
+			print $wgOut->getHTML();
 			return;
 		}
 
 		# Check blocks
 		if ( $wgUser->isBlocked() ) {
 			$wgOut->blockedPage();
+			print $wgOut->getHTML();
 			return;
 		}
 
 		# Check whether we actually want to allow changing stuff
 		if ( wfReadOnly() ) {
 			$wgOut->readOnlyPage();
+			print $wgOut->getHTML();
 			return;
 		}
 
@@ -208,6 +205,7 @@ class SFUploadWindow2 extends SpecialPage {
 			'forreupload' => $this->mForReUpload,
 			'sessionkey' => $sessionKey,
 			'hideignorewarning' => $hideIgnoreWarning,
+			'destfile' => $this->mDesiredDestName,
 			'sfInputID' => $this->mInputID,
 			'sfDelimiter' => $this->mDelimiter,
 		) );
@@ -286,11 +284,7 @@ class SFUploadWindow2 extends SpecialPage {
 	 * @param array $warnings
 	 */
 	protected function uploadWarning( $warnings ) {
-		global $wgUser;
-
 		$sessionKey = $this->mUpload->stashSession();
-
-		$sk = $wgUser->getSkin();
 
 		$warningHtml = '<h2>' . wfMsgHtml( 'uploadwarning' ) . "</h2>\n"
 			. '<ul class="warning">';
@@ -572,7 +566,7 @@ END;
 	 * consisting of one or more <li> elements if there is a warning.
 	 */
 	public static function getExistsWarning( $exists ) {
-		global $wgUser, $wgContLang;
+		global $wgUser;
 
 		if ( !$exists )
 			return '';
@@ -696,17 +690,17 @@ class SFUploadForm extends HTMLForm {
 	protected $mForReUpload;
 	protected $mSessionKey;
 	protected $mHideIgnoreWarning;
+	protected $mDestWarningAck;
 	
 	protected $mSourceIds;
 
 	public function __construct( $options = array() ) {
-		global $wgLang;
-
 		$this->mWatch = !empty( $options['watch'] );
 		$this->mForReUpload = !empty( $options['forreupload'] );
 		$this->mSessionKey = isset( $options['sessionkey'] )
 				? $options['sessionkey'] : '';
 		$this->mHideIgnoreWarning = !empty( $options['hideignorewarning'] );
+		$this->mDestFile = isset( $options['destfile'] ) ? $options['destfile'] : '';
 
 		$sourceDescriptor = $this->getSourceSection();
 		$descriptor = $sourceDescriptor
@@ -916,8 +910,6 @@ class SFUploadForm extends HTMLForm {
 	 * @return array Descriptor array
 	 */
 	protected function getOptionsSection() {
-		global $wgOut;
-
 		$descriptor = array(
 			'Watchthis' => array(
 				'type' => 'check',
@@ -934,6 +926,12 @@ class SFUploadForm extends HTMLForm {
 				'section' => 'options',
 			);
 		}
+		$descriptor['wpDestFileWarningAck'] = array(
+			'type' => 'hidden',
+			'id' => 'wpDestFileWarningAck',
+			'default' => $this->mDestWarningAck ? '1' : '',
+		);
+
 
 		return $descriptor;
 
@@ -945,57 +943,60 @@ class SFUploadForm extends HTMLForm {
 	public function show() {
 		$this->addUploadJS();
 		parent::show();
-	// disable $wgOut - we'll print out the page manually, taking the
-	// body created by the form, plus the necessary Javascript files,
-	// and turning them into an HTML page
-	global $wgOut, $wgUser, $wgTitle, $wgJsMimeType,
-	$wgLanguageCode, $wgStylePath, $wgStyleVersion,
-	$wgXhtmlDefaultNamespace, $wgXhtmlNamespaces, $wgContLang;
+		// disable $wgOut - we'll print out the page manually,
+		// taking the body created by the form, plus the necessary
+		// Javascript files, and turning them into an HTML page
+		global $wgOut, $wgUser, $wgTitle, $wgLanguageCode,
+		$wgXhtmlDefaultNamespace, $wgXhtmlNamespaces, $wgContLang;
 
-	$wgOut->disable();
-	$sk = $wgUser->getSkin();
-	$sk->initPage( $wgOut ); // need to call this to set skin name correctly
-	$wgTitle = SpecialPage::getTitleFor( 'Upload' );
-	$skin_user_js = $sk->generateUserJs();
+		$wgOut->disable();
+		$sk = $wgUser->getSkin();
+		$sk->initPage( $wgOut ); // need to call this to set skin name correctly
+		$wgTitle = SpecialPage::getTitleFor( 'Upload' );
 
-	$user_js = <<<END
-<script type="{$wgJsMimeType}">
-$skin_user_js;
-</script>
+		if ( method_exists( $wgOut, 'addModules' ) ) {
+			$head_scripts = '';
+			$wgOut->addModules( array( 'mediawiki.action.edit', 'mediawiki.legacy.upload', 'mediawiki.legacy.wikibits', 'mediawiki.legacy.ajax' ) );
+			$body_scripts = $wgOut->getHeadScripts( $sk );
+		} else {
+			global $wgJsMimeType, $wgStylePath, $wgStyleVersion;
+			$vars_js = Skin::makeGlobalVariablesScript( array( 'skinname' => $sk->getSkinName() ) );
+			$head_scripts = <<<END
+$vars_js
+<script type="{$wgJsMimeType}" src="{$wgStylePath}/common/wikibits.js?$wgStyleVersion"></script>
+{$wgOut->getScript()}
+<script type="{$wgJsMimeType}" src="{$wgStylePath}/common/ajax.js?$wgStyleVersion"></script>
+<script type="{$wgJsMimeType}" src="{$wgStylePath}/common/ajaxwatch.js?$wgStyleVersion"></script>
 
 END;
-	$vars_js = Skin::makeGlobalVariablesScript( array( 'skinname' => $sk->getSkinName() ) );
-	$wikibits_include = "<script type=\"{$wgJsMimeType}\" src=\"{$wgStylePath}/common/wikibits.js?$wgStyleVersion\"></script>";
-	$ajax_include = "<script type=\"{$wgJsMimeType}\" src=\"{$wgStylePath}/common/ajax.js?$wgStyleVersion\"></script>";
-	$ajaxwatch_include = "<script type=\"{$wgJsMimeType}\" src=\"{$wgStylePath}/common/ajaxwatch.js?$wgStyleVersion\"></script>";
-	$text = <<<END
+			$body_scripts = '';
+		}
+
+		$text = <<<END
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="{$wgXhtmlDefaultNamespace}"
 END;
-	foreach ( $wgXhtmlNamespaces as $tag => $ns ) {
-		$text .= "xmlns:{$tag}=\"{$ns}\" ";
-	}
-	$dir = $wgContLang->isRTL() ? "rtl" : "ltr";
-	$text .= "xml:lang=\"{$wgLanguageCode}\" lang=\"{$wgLanguageCode}\" dir=\"{$dir}\">";
+		foreach ( $wgXhtmlNamespaces as $tag => $ns ) {
+			$text .= "xmlns:{$tag}=\"{$ns}\" ";
+		}
+		$dir = $wgContLang->isRTL() ? "rtl" : "ltr";
+		$text .= "xml:lang=\"{$wgLanguageCode}\" lang=\"{$wgLanguageCode}\" dir=\"{$dir}\">";
 
-	$text .= <<<END
+		$text .= <<<END
 
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <head>
-$vars_js
-$wikibits_include
-{$wgOut->getScript()}
-$ajax_include
-$ajaxwatch_include
+$head_scripts
 </head>
 <body>
 {$wgOut->getHTML()}
+$body_scripts
 </body>
 </html>
 
 
 END;
-print $text;
+		print $text;
 	}
 
 	/**
@@ -1006,31 +1007,37 @@ print $text;
 	 */
 	protected function addUploadJS( $autofill = true ) {
 		global $wgUseAjax, $wgAjaxUploadDestCheck, $wgAjaxLicensePreview;
+		global $wgStrictFileExtensions;
 		global $wgEnableFirefogg, $wgEnableJS2system;
 		global $wgOut;
-
-		$useAjaxDestCheck = $wgUseAjax && $wgAjaxUploadDestCheck;
-		$useAjaxLicensePreview = $wgUseAjax && $wgAjaxLicensePreview;
 
 		$scriptVars = array(
 			'wgAjaxUploadDestCheck' => $wgUseAjax && $wgAjaxUploadDestCheck,
 			'wgAjaxLicensePreview' => $wgUseAjax && $wgAjaxLicensePreview,
 			'wgEnableFirefogg' => (bool)$wgEnableFirefogg,
-			'wgUploadAutoFill' => (bool)$autofill,
+			'wgUploadAutoFill' => (bool)$autofill &&
+				// If we received mDestFile from the request, don't autofill
+				// the wpDestFile textbox
+				$this->mDestFile === '',
 			'wgUploadSourceIds' => $this->mSourceIds,
+			'wgStrictFileExtensions' => $wgStrictFileExtensions,
+			'wgCapitalizeUploads' => MWNamespace::isCapitalized( NS_FILE ),
 		);
 
 		$wgOut->addScript( Skin::makeVariablesScript( $scriptVars ) );
-		
-		// For <charinsert> support; not provided by js2 yet
-		$wgOut->addScriptFile( 'edit.js' );
-		
-		if ( $wgEnableJS2system ) {
-			// JS2 upload scripts
-			$wgOut->addScriptClass( 'uploadPage' );
-		} else {
-			// Legacy upload javascript
-			$wgOut->addScriptFile( 'upload.js' );
+
+		// MW < 1.17
+		if ( ! class_exists( 'ResourceLoader' ) ) {
+			// For <charinsert> support; not provided by js2 yet
+			$wgOut->addScriptFile( 'edit.js' );
+
+			if ( $wgEnableJS2system ) {
+				// JS2 upload scripts
+				$wgOut->addScriptClass( 'uploadPage' );
+			} else {
+				// Legacy upload javascript
+				$wgOut->addScriptFile( 'upload.js' );
+			}
 		}
 	}
 
@@ -1076,4 +1083,54 @@ class SFUploadSourceField extends HTMLTextField {
 			: 60;
 	}
 	
+}
+
+global $wgVersion;
+$uceMethod = new ReflectionMethod( 'SpecialPage', 'userCanExecute' );
+$uceParams = $uceMethod->getParameters();
+// @TODO The "User" class was added to the function header
+// for SpecialPage::userCanExecute in MW 1.18 (r86407) - somehow
+// both the old and new signatures need to be supported. When support
+// is dropped for MW below 1.18 this should be reintegrated into one
+// class.
+if ( $uceParams[0]->getClass() ) { // found a class definition for param $user
+
+	/**
+	 * Class variant for MW 1.18+
+	 */
+	class SFUploadWindow2 extends SFUploadWindow2Proto {
+		/**
+		 * This page can be shown if uploading is enabled.
+		 * Handle permission checking elsewhere in order to be able to show
+		 * custom error messages.
+		 *
+		 * @param User $user
+		 * @return bool
+		 */
+		public function userCanExecute( User $user ) {
+			return UploadBase::isEnabled() && parent::userCanExecute( $user );
+		}
+
+
+	}
+
+} else {
+
+	/**
+	 * Class variant for MW up to 1.17
+	 */
+	class SFUploadWindow2 extends SFUploadWindow2Proto {
+		/**
+		 * This page can be shown if uploading is enabled.
+		 * Handle permission checking elsewhere in order to be able to show
+		 * custom error messages.
+		 *
+		 * @param User $user
+		 * @return bool
+		 */
+		public function userCanExecute( $user ) {
+			return UploadBase::isEnabled() && parent::userCanExecute( $user );
+		}
+	}
+
 }

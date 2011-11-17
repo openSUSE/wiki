@@ -1,0 +1,49 @@
+/* 
+**
+**  $Id: $
+**
+**  Funktion: Provides styles for printing only needed on the openSUSE.org wiki
+**  Author:  Frank Sundermeyer <fs@opensuse.org>
+**  License:  see copyright/COPYRIGHT
+*/
+
+
+/* Work in progress */
+
+
+@media print {
+
+  #toc {
+    display: none;
+  }
+
+  .editsection {
+    display: none;
+  }
+
+  blockquote,
+  cite {
+    border: none;
+  }
+
+  /*******************
+  * Content Elements *
+  ********************/
+
+  div.shell {
+    font-family:"Courier New",Courier,mono !important;
+    font-weight: normal;
+    margin: 0;
+    background: none;
+    color: #000;
+  }
+  div.pre_scroll,
+  div.pre_hscroll,
+  div.minutes {
+    font-family:"Courier New",Courier,mono !important;
+    background: none;
+    border: 0;
+    white-space: pre;
+  }
+
+}

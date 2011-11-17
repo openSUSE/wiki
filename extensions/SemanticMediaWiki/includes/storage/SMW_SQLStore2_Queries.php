@@ -87,20 +87,23 @@ class SMWSQLStore2QueryEngine {
 	 * Refresh the concept cache for the given concept.
 	 *
 	 * @param $concept Title
+	 * 
+	 * @return array
 	 */
-	public function refreshConceptCache( $concept ) {
+	public function refreshConceptCache( Title $concept ) {
 		global $smwgQMaxLimit, $smwgQConceptFeatures, $wgDBtype;
 
-		$cid = $this->m_store->getSMWPageID( $concept->getDBkey(), SMW_NS_CONCEPT, '' );
-		$cid_c = $this->m_store->getSMWPageID( $concept->getDBkey(), SMW_NS_CONCEPT, '', false );
+		$cid = $this->m_store->getSMWPageID( $concept->getDBkey(), SMW_NS_CONCEPT, '', '' );
+		$cid_c = $this->m_store->getSMWPageID( $concept->getDBkey(), SMW_NS_CONCEPT, '', '', false );
 
 		if ( $cid != $cid_c ) {
 			$this->m_errors[] = "Skipping redirect concept.";
 			return $this->m_errors;
 		}
 
-		$dv = end( $this->m_store->getPropertyValues( $concept, SMWPropertyValue::makeProperty( '_CONC' ) ) );
-		$desctxt = ( $dv !== false ) ? $dv->getWikiValue():false;
+		$values = $this->m_store->getPropertyValues( $concept, new SMWDIProperty( '_CONC' ) );// two lines due to "strict standards" warning
+		$di = end( $values );
+		$desctxt = ( $di !== false ) ? $di->getConceptQuery() : false;
 		$this->m_errors = array();
 
 		if ( $desctxt ) { // concept found
@@ -159,7 +162,7 @@ class SMWSQLStore2QueryEngine {
 	 * @param $concept Title
 	 */
 	public function deleteConceptCache( $concept ) {
-		$cid = $this->m_store->getSMWPageID( $concept->getDBkey(), SMW_NS_CONCEPT, '', false );
+		$cid = $this->m_store->getSMWPageID( $concept->getDBkey(), SMW_NS_CONCEPT, '', '', false );
 		$this->m_dbs->delete( 'smw_conccache', array( 'o_id' => $cid ), 'SMW::refreshConceptCache' );
 		$this->m_dbs->update( 'smw_conc2', array( 'cache_date' => null, 'cache_count' => null ), array( 's_id' => $cid ), 'SMW::refreshConceptCache' );
 	}
@@ -222,7 +225,7 @@ class SMWSQLStore2QueryEngine {
 			$q = new SMWSQLStore2Query();
 			$q->jointable = 'smw_ids';
 			$q->joinfield = "$q->alias.smw_id";
-			$q->where = "$q->alias.smw_iw!=" . $this->m_dbs->addQuotes( SMW_SQL2_SMWIW ) . " AND $q->alias.smw_iw!=" . $this->m_dbs->addQuotes( SMW_SQL2_SMWREDIIW ) . " AND $q->alias.smw_iw!=" . $this->m_dbs->addQuotes( SMW_SQL2_SMWBORDERIW ) . " AND $q->alias.smw_iw!=" . $this->m_dbs->addQuotes( SMW_SQL2_SMWINTDEFIW );
+			$q->where = "$q->alias.smw_iw!=" . $this->m_dbs->addQuotes( SMW_SQL2_SMWIW_OUTDATED ) . " AND $q->alias.smw_iw!=" . $this->m_dbs->addQuotes( SMW_SQL2_SMWREDIIW ) . " AND $q->alias.smw_iw!=" . $this->m_dbs->addQuotes( SMW_SQL2_SMWBORDERIW ) . " AND $q->alias.smw_iw!=" . $this->m_dbs->addQuotes( SMW_SQL2_SMWINTDEFIW );
 			$this->m_queries[$qid] = $q;
 		}
 
@@ -283,50 +286,36 @@ class SMWSQLStore2QueryEngine {
 	 */
 	protected function getDebugQueryResult( SMWQuery $query, $rootid ) {
 		$qobj = $this->m_queries[$rootid];
+
+		$entries = array();
+
 		$sql_options = $this->getSQLOptions( $query, $rootid );
-
 		list( $startOpts, $useIndex, $tailOpts ) = $this->m_dbs->makeSelectOptions( $sql_options );
-
-		$result = '<div style="border: 1px dotted black; background: #A1FB00; padding: 20px; ">' .
-		          '<b>Debug output by SMWSQLStore2</b><br />' .
-		          'Generated Wiki-Query<br /><tt>' .
-		          str_replace( '[', '&#x005B;', $query->getDescription()->getQueryString() ) . '</tt><br />' .
-		          'Query-Size: ' . $query->getDescription()->getSize() . '<br />' .
-		          'Query-Depth: ' . $query->getDescription()->getDepth() . '<br />';
-
 		if ( $qobj->joinfield !== '' ) {
-			$result .= 'SQL query<br />' .
+			$entries['SQL Query'] =
 			           "<tt>SELECT DISTINCT $qobj->alias.smw_title AS t,$qobj->alias.smw_namespace AS ns FROM " .
 			           $this->m_dbs->tableName( $qobj->jointable ) . " AS $qobj->alias" . $qobj->from .
 			           ( ( $qobj->where == '' ) ? '':' WHERE ' ) . $qobj->where . "$tailOpts LIMIT " .
 			           $sql_options['LIMIT'] . ' OFFSET ' . $sql_options['OFFSET'] . ';</tt>';
 		} else {
-			$result .= '<b>Empty result, no SQL query created.</b>';
+			$entries['SQL Query'] = 'Empty result, no SQL query created.';
 		}
 
-		$errors = '';
-
-		foreach ( $query->getErrors() as $error ) {
-			$errors .= $error . '<br />';
-		}
-
-		$result .= ( $errors ) ? "<br />Errors and warnings:<br />$errors":'<br />No errors or warnings.';
 		$auxtables = '';
-
 		foreach ( $this->m_querylog as $table => $log ) {
 			$auxtables .= "<li>Temporary table $table";
-
 			foreach ( $log as $q ) {
 				$auxtables .= "<br />&#160;&#160;<tt>$q</tt>";
 			}
-
 			$auxtables .= '</li>';
 		}
+		if ( $auxtables ) {
+			$entries['Auxilliary Tables Used'] = "<ul>$auxtables</ul>";
+		} else {
+			$entries['Auxilliary Tables Used'] = 'No auxilliary tables used.';
+		}
 
-		$result .= ( $auxtables ) ? "<br />Auxilliary tables used:<ul>$auxtables</ul>":'<br />No auxilliary tables used.';
-		$result .= '</div>';
-
-		return $result;
+		return SMWStore::formatDebugOutput( 'SMWSQLStore2', $entries, $query );
 	}
 
 	/**
@@ -351,6 +340,7 @@ class SMWSQLStore2QueryEngine {
 		$sql_options = array( 'LIMIT' => $query->getLimit() + 1, 'OFFSET' => $query->getOffset() );
 		$res = $this->m_dbs->select( $this->m_dbs->tableName( $qobj->jointable ) . " AS $qobj->alias" . $qobj->from, "COUNT(DISTINCT $qobj->alias.smw_id) AS count", $qobj->where, 'SMW::getQueryResult', $sql_options );
 		$row = $this->m_dbs->fetchObject( $res );
+
 		$count = $row->count;
 		$this->m_dbs->freeResult( $res );
 
@@ -395,19 +385,21 @@ class SMWSQLStore2QueryEngine {
 		$sortfields = implode( $qobj->sortfields, ',' );
 
 		$res = $this->m_dbs->select( $this->m_dbs->tableName( $qobj->jointable ) . " AS $qobj->alias" . $qobj->from,
-			"DISTINCT $qobj->alias.smw_id AS id,$qobj->alias.smw_title AS t,$qobj->alias.smw_namespace AS ns,$qobj->alias.smw_iw AS iw,$qobj->alias.smw_sortkey AS sortkey" .
+			"DISTINCT $qobj->alias.smw_id AS id,$qobj->alias.smw_title AS t,$qobj->alias.smw_namespace AS ns,$qobj->alias.smw_iw AS iw,$qobj->alias.smw_subobject AS so,$qobj->alias.smw_sortkey AS sortkey" .
 			  ( $wgDBtype == 'postgres' ? ( ( $sortfields ? ',' : '' ) . $sortfields ) : '' ),
 			$qobj->where, 'SMW::getQueryResult', $sql_options );
 
 		$qr = array();
-		$count = 0;
+		$count = 0; // the number of fetched results ( != number of valid results in array $qr)
 		$prs = $query->getDescription()->getPrintrequests();
 
 		while ( ( $count < $query->getLimit() ) && ( $row = $this->m_dbs->fetchObject( $res ) ) ) {
 			$count++;
-			$v = SMWWikiPageValue::makePage( $row->t, $row->ns, $row->sortkey );
-			$qr[] = $v;
-			$this->m_store->cacheSMWPageID( $row->id, $row->t, $row->ns, $row->iw );
+			if ( $row->iw == '' || $row->iw{0} != ':' )  {
+				$v = new SMWDIWikiPage( $row->t, $row->ns, $row->iw, $row->so );
+				$qr[] = $v;
+				$this->m_store->cacheSMWPageID( $row->id, $row->t, $row->ns, $row->iw, $row->so );
+			}
 		}
 
 		if ( $this->m_dbs->fetchObject( $res ) ) {
@@ -468,7 +460,7 @@ class SMWSQLStore2QueryEngine {
 			$cquery->joinfield = array();
 
 			foreach ( $description->getCategories() as $cat ) {
-				$cid = $this->m_store->getSMWPageID( $cat->getDBkey(), NS_CATEGORY, $cat->getInterwiki() );
+				$cid = $this->m_store->getSMWPageID( $cat->getDBkey(), NS_CATEGORY, $cat->getInterwiki(), '' );
 				if ( $cid != 0 ) {
 					$cquery->joinfield[] = $cid;
 				}
@@ -485,19 +477,21 @@ class SMWSQLStore2QueryEngine {
 				$this->m_queries[$cqid] = $cquery;
 			}
 		} elseif ( $description instanceof SMWValueDescription ) { // Only type '_wpg' objects can appear on query level (essentially as nominal classes).
-			if ( $description->getDatavalue()->getTypeID() == '_wpg' ) {
+			if ( $description->getDataItem() instanceof SMWDIWikiPage ) {
 				if ( $description->getComparator() == SMW_CMP_EQ ) {
 					$query->type = SMW_SQL2_VALUE;
-					$oid = $this->m_store->getSMWPageID( $description->getDatavalue()->getDBkey(), $description->getDatavalue()->getNamespace(), $description->getDatavalue()->getInterwiki() );
+					$oid = $this->m_store->getSMWPageID( $description->getDataItem()->getDBkey(), $description->getDataItem()->getNamespace(), $description->getDataItem()->getInterwiki(), $description->getDataItem()->getSubobjectName() );
 					$query->joinfield = array( $oid );
 				} else { // Join with smw_ids needed for other comparators (apply to title string).
 					$query->jointable = 'smw_ids';
 					$query->joinfield = "$query->alias.smw_id";
-					$value = $description->getDatavalue()->getSortkey();
+					$value = $description->getDataItem()->getSortKey();
 
 					switch ( $description->getComparator() ) {
 						case SMW_CMP_LEQ: $comp = '<='; break;
 						case SMW_CMP_GEQ: $comp = '>='; break;
+						case SMW_CMP_LESS: $comp = '<'; break;
+						case SMW_CMP_GRTR: $comp = '>'; break;
 						case SMW_CMP_NEQ: $comp = '!='; break;
 						case SMW_CMP_LIKE: case SMW_CMP_NLKE:
 							$comp = ' LIKE ';
@@ -505,12 +499,13 @@ class SMWSQLStore2QueryEngine {
 							$value =  str_replace( array( '%', '_', '*', '?' ), array( '\%', '\_', '%', '_' ), $value );
 						break;
 					}
-
 					$query->where = "$query->alias.smw_sortkey$comp" . $this->m_dbs->addQuotes( $value );
 				}
 			}
 		} elseif ( $description instanceof SMWConceptDescription ) { // fetch concept definition and insert it here
-			$cid = $this->m_store->getSMWPageID( $description->getConcept()->getDBkey(), SMW_NS_CONCEPT, '' );
+			$cid = $this->m_store->getSMWPageID( $description->getConcept()->getDBkey(), SMW_NS_CONCEPT, '', '' );
+			// We bypass the storage interface here (which is legal as we controll it, and safe if we are careful with changes ...)
+			// This should be faster, but we must implement the unescaping that concepts do on getWikiValue()
 			$row = $this->m_dbs->selectRow(
 				'smw_conc2',
 				array( 'concept_txt', 'concept_features', 'concept_size', 'concept_depth', 'cache_date' ),
@@ -540,8 +535,9 @@ class SMWSQLStore2QueryEngine {
 					if ( $may_be_computed ) {
 						$qp = new SMWQueryParser();
 
-						//No defaultnamespaces here; If any, these are already in the concept.
-						$desc = $qp->getQueryDescription( $row->concept_txt );
+						// No defaultnamespaces here; If any, these are already in the concept.
+						// Unescaping is the same as in SMW_DV_Conept's getWikiValue().
+						$desc = $qp->getQueryDescription( str_replace( array( '&lt;', '&gt;', '&amp;' ), array( '<', '>', '&' ), $row->concept_txt ) );
 						$qid = $this->compileQueries( $desc );
 						if ($qid != -1) {
 							$query = $this->m_queries[$qid];
@@ -580,15 +576,9 @@ class SMWSQLStore2QueryEngine {
 	 * to check for this and discard the query in this case.
 	 * @todo Check if hierarchy queries work as expected.
 	 */
-	protected function compilePropertyCondition( SMWSQLStore2Query $query, $property, SMWDescription $valuedesc ) {
+	protected function compilePropertyCondition( SMWSQLStore2Query $query, SMWDIProperty $property, SMWDescription $valuedesc ) {
 		$tableid = SMWSQLStore2::findPropertyTableID( $property );
-
-		if ( $tableid == '' ) { // probably a type-polymorphic property
-			$typeid = $valuedesc->getTypeID();
-			$tableid = SMWSQLStore2::findTypeTableID( $typeid );
-		} else { // normal property
-			$typeid = $property->getPropertyTypeID();
-		}
+		$typeid = $property->findPropertyTypeID();
 
 		if ( $tableid == '' ) { // Still no table to query? Give up.
 			$query->type = SMW_SQL2_NOQUERY;
@@ -604,14 +594,15 @@ class SMWSQLStore2QueryEngine {
 		}
 
 		list( $sig, $valueindex, $labelindex ) = SMWSQLStore2::getTypeSignature( $typeid );
-		$sortkey = $property->getDBkey(); // TODO: strictly speaking, the DB key is not what we want here, since sortkey is based on a "wiki value"
+		$sortkey = $property->getKey(); // TODO: strictly speaking, the DB key is not what we want here, since sortkey is based on a "wiki value"
 
 		// *** Basic settings: table, joinfield, and objectfields ***//
 		$query->jointable = $proptable->name;
 
 		if ( $property->isInverse() ) { // see if we can support inverses by inverting the proptable data
 			if ( ( count( $proptable->objectfields ) == 1 ) && ( reset( $proptable->objectfields ) == 'p' ) ) {
-				$query->joinfield = $query->alias . '.' . reset( array_keys( $proptable->objectfields ) );
+				$keys = array_keys( $proptable->objectfields );
+				$query->joinfield = $query->alias . '.' . $keys[0];
 				$objectfields = array( 's_id' => 'p' );
 				$valueindex = $labelindex = 3; // should normally not change, but let's be strict
 			} else { // no inverses supported for this property, stop here
@@ -627,7 +618,7 @@ class SMWSQLStore2QueryEngine {
 		if ( $proptable->fixedproperty == false ) {
 			$pid = $this->m_store->getSMWPropertyID( $property );
 
-			if ( !$property->getPropertyID() || ( $property->getPropertyTypeID() != '__err' ) ) {
+			if ( $property->isUserDefined() || ( $property->findPropertyTypeID() != '__err' ) ) {
 				// also make property hierarchy (may or may not be executed later on)
 				// exclude type-polymorphic properties _1, _2, ... (2nd check above suffices, but 1st is faster to check)
 				// we could also exclude other cases here, if desired
@@ -739,8 +730,8 @@ class SMWSQLStore2QueryEngine {
 		$where = '';
 
 		if ( $description instanceof SMWValueDescription ) {
-			$dv = $description->getDatavalue();
-			$keys = $dv->getDBkeys();
+			$dataItem = $description->getDataItem();
+			$keys = SMWCompatibilityHelpers::getDBkeysFromDataItem( $dataItem );
 
 			// Try comparison based on value field and comparator.
 			if ( $valueIndex >= 0 ) {
@@ -765,8 +756,10 @@ class SMWSQLStore2QueryEngine {
 
 						switch ( $description->getComparator() ) {
 							case SMW_CMP_EQ: $comparator = '='; break;
+							case SMW_CMP_LESS: $comparator = '<'; break;
+							case SMW_CMP_GRTR: $comparator = '>'; break;
 							case SMW_CMP_LEQ: $comparator = '<='; break;
-							case SMW_CMP_GEQ: $comparator = '>='; break;
+							case SMW_CMP_GEQ: $comparator = '>='; break;							
 							case SMW_CMP_NEQ: $comparator = '!='; break;
 							case SMW_CMP_LIKE: case SMW_CMP_NLKE:
 								$comparator = ' LIKE ';
@@ -788,9 +781,9 @@ class SMWSQLStore2QueryEngine {
 					if ( $i >= count( $keys ) ) break;
 
 					if ( $ftype == 'p' ) { // Special case: page id, resolve this in advance
-						$oid = $this->getSMWPageID( $keys[$i], $keys[$i + 1], $keys[$i + 2] );
-						$i += 3; // skip these additional values (sortkey not needed here)
+						$oid = $this->getSMWPageID( $dataItem->getDBkey(), $dataItem->getNamespace(), $dataItem->getInterwiki(), $dataItem->getSubobjectName() );
 						$where .= ( $where ? ' AND ' : '' ) . "{$query->alias}.$fname=" . $this->m_dbs->addQuotes( $oid );
+						break;
 					} elseif ( $ftype != 'l' ) { // plain value, but not a text blob
 						$where .= ( $where ? ' AND ' : '' ) . "{$query->alias}.$fname=" . $this->m_dbs->addQuotes( $keys[$i] );
 					}
@@ -978,7 +971,7 @@ class SMWSQLStore2QueryEngine {
 		$smwtable = $this->m_dbs->tableName( ( $query->type == SMW_SQL2_PROP_HIERARCHY ) ? 'smw_subp2':'smw_subs2' );
 
 		// Try to safe time (SELECT is cheaper than creating/dropping 3 temp tables):
-		$res = $this->m_dbs->select( $smwtable, 's_id', $valuecond, array( 'LIMIT' => 1 ) );
+		$res = $this->m_dbs->select( $smwtable, 's_id', $valuecond, __METHOD__, array( 'LIMIT' => 1 ) );
 
 		if ( !$this->m_dbs->fetchObject( $res ) ) { // no subobjects, we are done!
 			$this->m_dbs->freeResult( $res );
@@ -1067,7 +1060,7 @@ class SMWSQLStore2QueryEngine {
 					$sortprop = SMWPropertyValue::makeUserProperty( $propkey );
 
 					if ( $sortprop->isValid() ) {
-						$extraproperties[] = new SMWSomeProperty( $sortprop, new SMWThingDescription() );
+						$extraproperties[] = new SMWSomeProperty( $sortprop->getDataItem(), new SMWThingDescription() );
 					}
 				}
 			}
@@ -1156,7 +1149,7 @@ class SMWSQLStore2QueryEngine {
 			. "LANGUAGE 'plpgsql'; "
 			. "SELECT create_" . $tablename . "(); ";
 		} else { // MySQL_ just a temporary table, use INSERT IGNORE later
-			return "CREATE TEMPORARY TABLE " . $tablename . "( id INT UNSIGNED KEY ) TYPE=MEMORY";
+			return "CREATE TEMPORARY TABLE " . $tablename . "( id INT UNSIGNED KEY ) ENGINE=MEMORY";
 		}
 	}
 

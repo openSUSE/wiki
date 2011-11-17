@@ -2,6 +2,8 @@
 /**
  * Parser functions for Semantic Forms.
  *
+ * @file
+ * @ingroup SF
  * Four parser functions are defined: 'forminput', 'formlink', 'arraymap'
  * and 'arraymaptemplate'.
  *
@@ -107,6 +109,9 @@ class SFParserFunctions {
 	static $num_autocompletion_inputs = 0;
 
 	static function registerFunctions( &$parser ) {
+
+		global $wgOut;
+
 		$parser->setFunctionHook( 'forminput', array( 'SFParserFunctions', 'renderFormInput' ) );
 		$parser->setFunctionHook( 'formlink', array( 'SFParserFunctions', 'renderFormLink' ) );
 		if ( defined( get_class( $parser ) . '::SFH_OBJECT_ARGS' ) ) {
@@ -116,6 +121,14 @@ class SFParserFunctions {
 			$parser->setFunctionHook( 'arraymap', array( 'SFParserFunctions', 'renderArrayMap' ) );
 			$parser->setFunctionHook( 'arraymaptemplate', array( 'SFParserFunctions', 'renderArrayMapTemplate' ) );
 		}
+
+		$parser->setFunctionHook( 'autoedit', array( 'SFParserFunctions', 'renderAutoEdit' ) );
+
+		// load jQuery on MW 1.16
+		if ( is_callable( array( $wgOut, 'includeJQuery' ) ) ) {
+			$wgOut->includeJQuery();
+		}
+		
 		return true;
 	}
 
@@ -127,15 +140,20 @@ class SFParserFunctions {
 			$magicWords['formlink']	= array ( 0, 'formlink' );
 			$magicWords['arraymap']	= array ( 0, 'arraymap' );
 			$magicWords['arraymaptemplate'] = array ( 0, 'arraymaptemplate' );
+			$magicWords['autoedit'] = array( 0, 'autoedit' );
 		}
 		return true;
 	}
 
 	static function renderFormLink ( &$parser ) {
+
+		global $wgVersion;
+
 		$params = func_get_args();
 		array_shift( $params ); // don't need the parser
 		// set defaults
-		$inFormName = $inLinkStr = $inLinkType = $inQueryStr = '';
+		$inFormName = $inLinkStr = $inLinkType = $inQueryStr = $inTargetName = '';
+		$classStr = "";
 		// assign params - support unlabelled params, for backwards compatibility
 		foreach ( $params as $i => $param ) {
 			$elements = explode( '=', $param, 2 );
@@ -143,47 +161,64 @@ class SFParserFunctions {
 			$value = trim( $param );
 			if ( count( $elements ) > 1 ) {
 				$param_name = trim( $elements[0] );
-				$value = trim( $elements[1] );
+				$value = trim( $parser->recursiveTagParse( $elements[1] ) );
 			}
-			if ( $param_name == 'form' )
+			if ( $param_name == 'form' ) {
 				$inFormName = $value;
-			elseif ( $param_name == 'link text' )
+			} elseif ( $param_name == 'link text' ) {
 				$inLinkStr = $value;
-			elseif ( $param_name == 'link type' )
+			} elseif ( $param_name == 'link type' ) {
 				$inLinkType = $value;
-			elseif ( $param_name == 'query string' )
+			} elseif ( $param_name == 'query string' ) {
 				$inQueryStr = $value;
-			elseif ( $i == 0 )
+			} elseif ( $param_name == 'target' ) {
+				$inTargetName = $value;
+			} elseif ( $param_name == null && $value == 'popup'
+				&& version_compare( $wgVersion, '1.16', '>=' )) {
+				self::loadScriptsForPopupForm( $parser );
+				$classStr = 'popupformlink';
+			}
+			elseif ( $i == 0 ) {
 				$inFormName = $param;
-			elseif ( $i == 1 )
+			} elseif ( $i == 1 ) {
 				$inLinkStr = $param;
-			elseif ( $i == 2 )
+			} elseif ( $i == 2 ) {
 				$inLinkType = $param;
-			elseif ( $i == 3 )
+			} elseif ( $i == 3 ) {
 				$inQueryStr = $param;
+			}
 		}
 
 		$ad = SpecialPage::getPage( 'FormEdit' );
 		$link_url = $ad->getTitle()->getLocalURL() . "/$inFormName";
+		if ( ! empty( $inTargetName ) ) {
+			$link_url .= "/$inTargetName";
+		}
 		$link_url = str_replace( ' ', '_', $link_url );
+		$hidden_inputs = "";
 		if ( $inQueryStr != '' ) {
 			// special handling for 'post button' - query string
 			// has to be turned into hidden inputs
 			if ( $inLinkType == 'post button' ) {
-				$hidden_inputs = "";
+				// Change HTML-encoded ampersands to
+				// URL-encoded ampersands, so that the string
+				// doesn't get split up on the '&'.
+				$inQueryStr = str_replace( '&amp;', '%26', $inQueryStr );
 				$query_components = explode( '&', $inQueryStr );
 				foreach ( $query_components as $query_component ) {
 					$query_component = urldecode( $query_component );
 					$var_and_val = explode( '=', $query_component );
 					if ( count( $var_and_val ) == 2 ) {
-						$hidden_inputs .= '<input type="hidden" name="' . $var_and_val[0] . '" value="' . $var_and_val[1] . '" /> ';
+						$hidden_inputs .= SFFormUtils::hiddenFieldHTML( $var_and_val[0], $var_and_val[1] );
 					}
 				}
 			} else {
 				$link_url .= ( strstr( $link_url, '?' ) ) ? '&' : '?';
-				// URL-encode any spaces or plus-signs in the query string
-				$inQueryStr = str_replace( array( ' ', '+' ),
-					array( '%20', '%2B' ),
+				// URL-encode any spaces, plus-signs or
+				// ampersands in the query string
+				// (should this just be a general urlencode?)
+				$inQueryStr = str_replace( array( ' ', '+', '&amp;' ),
+					array( '%20', '%2B', '%26' ),
 					$inQueryStr );
 				$link_url .= $inQueryStr;
 			}
@@ -191,11 +226,26 @@ class SFParserFunctions {
 		if ( $inLinkType == 'button' ) {
 			$link_url = html_entity_decode( $link_url, ENT_QUOTES );
 			$link_url = str_replace( "'", "\'", $link_url );
-			$str = "<form><input type=\"button\" value=\"$inLinkStr\" onclick=\"window.location.href='$link_url'\"></form>";
+			$str = "<form class=\"$classStr\">";
+			$str .= Xml::element( 'input', array(
+				'type' => 'button',
+				'value' => $inLinkStr,
+				'onclick' => "window.location.href='$link_url'",
+			) ) . "</form>";
 		} elseif ( $inLinkType == 'post button' ) {
-			$str = "<form action=\"$link_url\" method=\"post\"><input type=\"submit\" value=\"$inLinkStr\" />$hidden_inputs</form>";
+			$str = "<form action=\"$link_url\" method=\"post\" class=\"$classStr\">";
+			$str .= Xml::element( 'input', array( 'type' => 'submit', 'value' => $inLinkStr ) );
+			$str .= "$hidden_inputs</form>";
 		} else {
-			$str = "<a href=\"$link_url\">$inLinkStr</a>";
+			// If a target page has been specified but it doesn't
+			// exist, make it a red link.
+			if ( ! empty( $inTargetName ) ) {
+				$targetTitle = Title::newFromText( $inTargetName );
+				if ( is_null( $targetTitle) || !$targetTitle->exists() ) {
+					$classStr .= " new";
+				}
+			}
+			$str = "<a href=\"$link_url\" class=\"$classStr\">$inLinkStr</a>";
 		}
 		// hack to remove newline from beginning of output, thanks to
 		// http://jimbojw.com/wiki/index.php?title=Raw_HTML_Output_from_a_MediaWiki_Parser_Function
@@ -203,12 +253,15 @@ class SFParserFunctions {
 	}
 
 	static function renderFormInput ( &$parser ) {
+		global $wgVersion;
+		
 		$params = func_get_args();
 		array_shift( $params ); // don't need the parser
 		// set defaults
 		$inFormName = $inValue = $inButtonStr = $inQueryStr = '';
 		$inAutocompletionSource = '';
 		$inSize = 25;
+		$classStr = "";
 		// assign params - support unlabelled params, for backwards compatibility
 		foreach ( $params as $i => $param ) {
 			$elements = explode( '=', $param, 2 );
@@ -216,7 +269,7 @@ class SFParserFunctions {
 			$value = trim( $param );
 			if ( count( $elements ) > 1 ) {
 				$param_name = trim( $elements[0] );
-				$value = trim( $elements[1] );
+				$value = trim( $parser->recursiveTagParse( $elements[1] ) );
 			}
 			if ( $param_name == 'form' )
 				$inFormName = $value;
@@ -234,6 +287,10 @@ class SFParserFunctions {
 			} elseif ( $param_name == 'autocomplete on namespace' ) {
 				$inAutocompletionSource = $value;
 				$autocompletion_type = 'namespace';
+			} elseif ( $param_name == null && $value == 'popup'
+				&& version_compare( $wgVersion, '1.16', '>=' )) {
+				self::loadScriptsForPopupForm( $parser );
+				$classStr = 'popupforminput';
 			}
 			elseif ( $i == 0 )
 				$inFormName = $param;
@@ -255,55 +312,61 @@ class SFParserFunctions {
 			// disable the cache (so the Javascript will show up) -
 			// if there's more than one autocompleted #forminput
 			// on the page, we only need to do this the first time
-			$autocompletion_javascript = '';
 			if ( $input_num == 1 ) {
 				$parser->disableCache();
 				SFUtils::addJavascriptAndCSS();
-				$autocompletion_javascript = SFFormUtils::autocompletionJavascript();
 			}
-			$autocompletion_str = SFFormInputs::createAutocompleteValuesString( $inAutocompletionSource, $autocompletion_type );
-			$javascript_text = <<<END
-		<script type="text/javascript"> 
-/*<![CDATA[*/ 
-$autocompletion_javascript
-autocompletemappings[$input_num] = 'input_{$input_num}';
-autocompletestrings['input_{$input_num}'] = $autocompletion_str;
- /*]]>*/</script>
-
-END;
-			global $wgOut;
-			$wgOut->addScript( $javascript_text );
+			$autocompletion_values = SFUtils::getAutocompleteValues( $inAutocompletionSource, $autocompletion_type );
+			global $sfgAutocompleteValues;
+			$sfgAutocompleteValues["input_$input_num"] = $autocompletion_values;
 		}
 
 		$fs = SpecialPage::getPage( 'FormStart' );
 		$fs_url = $fs->getTitle()->getLocalURL();
 		if ( empty( $inAutocompletionSource ) ) {
 			$str = <<<END
-			<form action="$fs_url" method="get">
-			<p><input type="text" name="page_name" size="$inSize" value="$inValue" />
+			<form action="$fs_url" method="get" class="$classStr">
+			<p>
 
 END;
+			$str .= Xml::element( 'input',
+				array( 'type' => 'text', 'name' => 'page_name', 'size' => $inSize, 'value' => $inValue, 'class' => 'formInput' ) );
 		} else {
 			$str = <<<END
-			<form name="createbox" action="$fs_url" method="get">
-			<p><input type="text" name="page_name" id="input_$input_num" size="$inSize" value="$inValue"  class="autocompleteInput createboxInput" />
+			<form name="createbox" action="$fs_url" method="get" class="$classStr">
+			<p>
 
 END;
+			$str .= Xml::element( 'input', array(
+				'type' => 'text',
+				'name' => 'page_name',
+				'id' => 'input_' . $input_num,
+				'size' => $inSize,
+				'value' => $inValue,
+				'class' => 'autocompleteInput createboxInput formInput',
+				'autocompletesettings' => 'input_' . $input_num
+			) );
 		}
 		// if the form start URL looks like "index.php?title=Special:FormStart"
 		// (i.e., it's in the default URL style), add in the title as a
 		// hidden value
 		if ( ( $pos = strpos( $fs_url, "title=" ) ) > - 1 ) {
-			$str .= '			<input type="hidden" name="title" value="' . urldecode( substr( $fs_url, $pos + 6 ) ) . '">' . "\n";
+			$str .= SFFormUtils::hiddenFieldHTML( "title", urldecode( substr( $fs_url, $pos + 6 ) ) );
 		}
 		if ( $inFormName == '' ) {
 			$str .= SFUtils::formDropdownHTML();
 		} else {
-			$str .= '			<input type="hidden" name="form" value="' . $inFormName . '">' . "\n";
+			$str .= SFFormUtils::hiddenFieldHTML( "form", $inFormName );
 		}
-		// recreate the passed-in query string as a set of hidden variables
+		// Recreate the passed-in query string as a set of hidden
+		// variables.
+		// Change HTML-encoded ampersands to URL-encoded ampersands, so
+		// that the string doesn't get split up on the '&'.
+		$inQueryStr = str_replace( '&amp;', '%26', $inQueryStr );
 		$query_components = explode( '&', $inQueryStr );
 		foreach ( $query_components as $component ) {
+			// change URL-encoded ampersands back
+			$component = str_replace( '%26', '&', $component );
 			$subcomponents = explode( '=', $component, 2 );
 			$key = ( isset( $subcomponents[0] ) ) ? $subcomponents[0] : '';
 			$val = ( isset( $subcomponents[1] ) ) ? $subcomponents[1] : '';
@@ -318,7 +381,7 @@ END;
 					) . "\n";
 			}
 		}
-		wfLoadExtensionMessages( 'SemanticForms' );
+		SFUtils::loadMessages();
 		$button_str = ( $inButtonStr != '' ) ? $inButtonStr : wfMsg( 'sf_formstart_createoredit' );
 		$str .= <<<END
 			<input type="submit" value="$button_str" /></p>
@@ -378,10 +441,10 @@ END;
 	 */
 	static function renderArrayMapObj( &$parser, $frame, $args ) {
 		# Set variables
-		$value         = isset( $args[0] ) ? trim( $frame->expand( $args[0] ) ) : '';
-		$delimiter     = isset( $args[1] ) ? trim( $frame->expand( $args[1] ) ) : ',';
-		$var           = isset( $args[2] ) ? trim( $frame->expand( $args[2], PPFrame::NO_ARGS | PPFrame::NO_TEMPLATES ) ) : 'x';
-		$formula       = isset( $args[3] ) ? $args[3] : 'x';
+		$value = isset( $args[0] ) ? trim( $frame->expand( $args[0] ) ) : '';
+		$delimiter = isset( $args[1] ) ? trim( $frame->expand( $args[1] ) ) : ',';
+		$var = isset( $args[2] ) ? trim( $frame->expand( $args[2], PPFrame::NO_ARGS | PPFrame::NO_TEMPLATES ) ) : 'x';
+		$formula = isset( $args[3] ) ? $args[3] : 'x';
 		$new_delimiter = isset( $args[4] ) ? trim( $frame->expand( $args[4] ) ) : ', ';
 		# Unstrip some
 		$delimiter = $parser->mStripState->unstripNoWiki( $delimiter );
@@ -402,8 +465,8 @@ END;
 			$old_value = trim( $old_value );
 			if ( $old_value == '' ) continue;
 			$result_value = $frame->expand( $formula, PPFrame::NO_ARGS | PPFrame::NO_TEMPLATES );
-			$result_value  = str_replace( $var, $old_value, $result_value );
-			$result_value  = $parser->preprocessToDom( $result_value, $frame->isTemplate() ? Parser::PTD_FOR_INCLUSION : 0 );
+			$result_value = str_replace( $var, $old_value, $result_value );
+			$result_value = $parser->preprocessToDom( $result_value, $frame->isTemplate() ? Parser::PTD_FOR_INCLUSION : 0 );
 			$result_value = trim( $frame->expand( $result_value ) );
 			if ( $result_value == '' ) continue;
 			$results_array[] = $result_value;
@@ -447,9 +510,9 @@ END;
 	 */
 	static function renderArrayMapTemplateObj( &$parser, $frame, $args ) {
 		# Set variables
-		$value         = isset( $args[0] ) ? trim( $frame->expand( $args[0] ) ) : '';
-		$template      = isset( $args[1] ) ? trim( $frame->expand( $args[1] ) ) : '';
-		$delimiter     = isset( $args[2] ) ? trim( $frame->expand( $args[2] ) ) : ',';
+		$value = isset( $args[0] ) ? trim( $frame->expand( $args[0] ) ) : '';
+		$template = isset( $args[1] ) ? trim( $frame->expand( $args[1] ) ) : '';
+		$delimiter = isset( $args[2] ) ? trim( $frame->expand( $args[2] ) ) : ',';
 		$new_delimiter = isset( $args[3] ) ? trim( $frame->expand( $args[3] ) ) : ', ';
 		# Unstrip some
 		$delimiter = $parser->mStripState->unstripNoWiki( $delimiter );
@@ -478,6 +541,146 @@ END;
 				implode( '', $bracketed_value ), $frame );
 		}
 		return implode( $new_delimiter, $results_array );
+	}
+
+
+	static function renderAutoEdit ( &$parser ) {
+
+		// set defaults
+		$formcontent = '';
+
+		$linkString = null;
+		$linkType = 'span';
+
+		$classString = 'autoedit-trigger';
+
+		// parse parameters
+		$params = func_get_args();
+		array_shift( $params ); // don't need the parser
+
+		foreach ( $params as $i => $param ) {
+
+			$elements = explode( '=', $param, 2 );
+
+			$key = trim( $elements[ 0 ] );
+			$value = ( count( $elements ) > 1 ) ? trim( $elements[ 1 ] ) : '';
+
+			switch ( $key ) {
+				case 'link text':
+					$linkString = $parser->recursiveTagParse( $value );
+					break;
+				case 'link type':
+					$linkType = $parser->recursiveTagParse( $value );
+					break;
+				case 'reload':
+					$classString .= ' reload';
+					break;
+				default :
+					$formcontent .=
+						Xml::input( $key, false, urldecode( $value ) , array( 'type' => 'hidden') );
+			}
+		}
+
+		if ( !$linkString ) return null;
+
+		if ( $linkType == 'button' ) {
+			$linkElement = Xml::tags( "button", array( 'class' => $classString ), $linkString );
+		} elseif ( $linkType == 'link' ) {
+			$linkElement = Xml::tags( "a", array( 'class' => $classString, 'href' => "#" ), $linkString );
+		} else {
+			$linkElement = Xml::tags( "span", array( 'class' => $classString ), $linkString );
+		}
+
+		$form = Xml::tags( 'form', array( 'class' => 'autoedit-data' ), $formcontent );
+
+		// ensure loading of jQuery and style sheets
+		self::loadScriptsForAutoEdit( $parser );
+
+		$output = Xml::tags( "div", array( 'class' => "autoedit" ),
+				$linkElement .
+				Xml::tags( "span", array( 'class' => "autoedit-result" ), null ) .
+				$form
+		);
+
+		// return output HTML
+		return $parser->insertStripItem( $output, $parser->mStripState );
+	}
+
+
+	static function loadScriptsForPopupForm ( &$parser ) {
+
+		global $sfgScriptPath;
+
+		if ( defined( 'MW_SUPPORTS_RESOURCE_MODULES' ) ) {
+
+			// on MW 1.17+ just request the ResourceLoader to include modules
+
+			$parser->getOutput()->addModules( 'ext.semanticforms.popupformedit' );
+
+		} else {
+
+			// on MW pre1.17 insert the necessary headers into the page head
+
+			static $loaded = false;
+
+			// load JavaScript and CSS files only once
+			if ( !$loaded ) {
+
+				// load extensions JavaScript
+				$parser->getOutput()->addHeadItem(
+					'<script type="text/javascript" src="' . $sfgScriptPath
+					. '/libs/SF_popupform.js"></script> ' . "\n",
+					'sf_popup_script'
+				);
+
+				// load extensions style sheet
+				$parser->getOutput()->addHeadItem(
+					'<link rel="stylesheet" href="' . $sfgScriptPath
+					. '/skins/SF_popupform.css"/> ' . "\n",
+					'sf_popup_style'
+				);
+
+				$loaded = true;
+			}
+
+		}
+
+		return true;
+	}
+	
+	// load scripts and style files for AutoEdit
+	private static function loadScriptsForAutoEdit ( &$parser ) {
+
+		global $sfgScriptPath;
+
+		if ( defined( 'MW_SUPPORTS_RESOURCE_MODULES' ) ) {
+			$parser->getOutput()->addModules( 'ext.semanticforms.autoedit' );
+		} else {
+
+			static $loaded = false;
+
+			// load JavaScript and CSS files only once
+			if ( !$loaded ) {
+
+				// load extensions JavaScript
+				$parser->getOutput()->addHeadItem(
+					'<script type="text/javascript" src="' . $sfgScriptPath
+					. '/libs/SF_autoedit.js"></script> ' ."\n",
+					'sf_autoedit_script'
+				);
+
+				// load extensions style sheet
+				$parser->getOutput()->addHeadItem(
+					'<link rel="stylesheet" href="' . $sfgScriptPath
+					. '/skins/SF_autoedit.css"/> ' ."\n",
+					'sf_autoedit_style'
+				);
+
+				$loaded = true;
+			}
+		}
+
+		return true;
 	}
 
 }

@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/svnroot/repos/opensuse/!svn/ver/9710/trunk/infrastructure/wiki.o.o/skins/opensuse/css/yaml/core
+END
+base.css
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svnroot/repos/opensuse/!svn/ver/9710/trunk/infrastructure/wiki.o.o/skins/opensuse/css/yaml/core/base.css
+END
+slim_print_base.css
+K 25
+svn:wc:ra_dav:version-url
+V 116
+/svnroot/repos/opensuse/!svn/ver/9710/trunk/infrastructure/wiki.o.o/skins/opensuse/css/yaml/core/slim_print_base.css
+END
+slim_iehacks.css
+K 25
+svn:wc:ra_dav:version-url
+V 113
+/svnroot/repos/opensuse/!svn/ver/9710/trunk/infrastructure/wiki.o.o/skins/opensuse/css/yaml/core/slim_iehacks.css
+END
+slim_base.css
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/svnroot/repos/opensuse/!svn/ver/9710/trunk/infrastructure/wiki.o.o/skins/opensuse/css/yaml/core/slim_base.css
+END
+print_base.css
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/svnroot/repos/opensuse/!svn/ver/9710/trunk/infrastructure/wiki.o.o/skins/opensuse/css/yaml/core/print_base.css
+END
+iehacks.css
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/svnroot/repos/opensuse/!svn/ver/9710/trunk/infrastructure/wiki.o.o/skins/opensuse/css/yaml/core/iehacks.css
+END

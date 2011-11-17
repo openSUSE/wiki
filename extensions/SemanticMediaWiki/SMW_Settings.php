@@ -45,8 +45,40 @@ $smwgIP = dirname( __FILE__ ) . '/';
 $smwgDefaultStore = "SMWSQLStore2";
 ##
 
+###
+# Configure SPARQL database connection for Semantic MediaWiki. This is used
+# when SPARQL-based features are enabled, e.g. when using SMWSparqlStore as
+# the $smwgDefaultStore.
+#
+# The default class SMWSparqlDatabase works with many databases that support
+# SPARQL and SPARQL Update. Three different endpoints (service URLs) are given
+# for query (reading queries like SELECT), update (SPARQL Update queries), and
+# data (SPARQL HTTP Protocol for Graph Management). The query endpoint is
+# necessary, but the update and data endpoints can be omitted if not supported.
+# This will lead to reduced functionality (e.g. the SMWSparqlStore will not
+# work if Update is not available). The data endpoint is always optional, but
+# in some SPARQL databases this method is more efficient than update.
+##
+$smwgSparqlDatabase = 'SMWSparqlDatabase';
+$smwgSparqlQueryEndpoint = 'http://localhost:8080/sparql/';
+$smwgSparqlUpdateEndpoint = 'http://localhost:8080/update/';
+$smwgSparqlDataEndpoint = 'http://localhost:8080/data/';
+##
+
 // load global constants and setup functions
 require_once( 'includes/SMW_Setup.php' );
+
+###
+# Setting this option to true before including this file to enable the old
+# Type: namespace that SMW used up to version 1.5.*. This should only be
+# done to make the pages of this namespace temporarily accessible in order to
+# move their content to other pages. If the namespace is not registered, then
+# existing pages in this namespace cannot be found in the wiki.
+##
+if ( !isset( $smwgHistoricTypeNamespace ) ) {
+	$smwgHistoricTypeNamespace = false;
+}
+##
 
 ###
 # If you already have custom namespaces on your site, insert
@@ -153,6 +185,7 @@ $smwgBrowseShowAll = true;
 # performance problems.
 ##
 $smwgSearchByPropertyFuzzy = true;
+##
 
 ###
 # Number results shown in the listings on pages in the namespaces Property,
@@ -198,17 +231,26 @@ $smwgQDefaultNamespaces = null; // Which namespaces should be searched by defaul
  * List of comparator characters supported by queries, separated by '|', for use in a regex.
  *
  * Available entries:
- * 	< (smaller than)
- * 	< (greater than)
+ * 	< (smaller than) if $smwStrictComparators is false, it's actually smaller than or equal to
+ * 	> (greater than) if $smwStrictComparators is false, it's actually bigger than or equal to
  * 	! (unequal to)
  * 	~ (pattern with '*' as wildcard, only for Type:String)
  * 	!~ (not a pattern with '*' as wildcard, only for Type:String, need to be placed before ! and ~ to work correctly)
+ * 	≤ (smaller than or equal to)
+ * 	≥ (greater than or equal to)
  *
  * If unsupported comparators are used, they are treated as part of the queried value
  *
  * @var string
  */
-$smwgQComparators = '<|>|!~|!|~';
+$smwgQComparators = '<|>|!~|!|~|≤|≥|<<|>>';
+
+###
+# Sets whether the > and < comparators should be strict or not. If they are strict,
+# values that are equal will not be accepted.
+##
+$smwStrictComparators = false;
+##
 
 ###
 # Further settings for queries. The following settings affect inline queries
@@ -286,7 +328,9 @@ $smwgResultFormats = array(
 	'debug'      => 'SMWListResultPrinter',
 	'rss'        => 'SMWRSSResultPrinter',
 	'csv'        => 'SMWCsvResultPrinter',
-	'json'       => 'SMWJSONResultPrinter'
+	'dsv'        => 'SMWDSVResultPrinter',
+	'json'       => 'SMWJSONResultPrinter',
+	'rdf'        => 'SMWRDFResultPrinter'
 );
 ##
 
@@ -446,4 +490,11 @@ $smwgAdminRefreshStore = true;
 # on property names.
 ##
 $smwgAutocompleteInSpecialAsk = true;
+##
+
+###
+# Sets whether or not to refresh the pages of which semantic data is stored.
+# Introduced in SMW 1.5.6
+##
+$smwgAutoRefreshSubject = true;
 ##

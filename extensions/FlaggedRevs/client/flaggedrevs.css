@@ -13,7 +13,9 @@ div.flaggedrevs_notice {
 	text-align: center;
 	clear: both;
 }
-
+div.flaggedrevs_short_basic img {
+	vertical-align: text-bottom;
+}
 div.flaggedrevs_basic {
 	background-color: #f0f8ff;
 }
@@ -27,18 +29,23 @@ div.flaggedrevs_notice {
 	background-color: #f9f9f9;
 }
 
-table.flaggedrevs_editnotice {
-	font-size: 90%;
+table.flaggedrevs_editnotice,
+table.flaggedrevs_viewnotice {
 	padding: 3px;
-	border: 2px solid #aaa;
+	border: 2px solid #6cc8f3;
 	background-color: #f9f9f9;
 	text-align: left;
 	width: 100%;
+	clear: both;
+}
+.rtl table.flaggedrevs_editnotice,
+.rtl table.flaggedrevs_viewnotice {
+	text-align: right;
 }
 
 div.flaggedrevs_diffnotice,
 div.flaggedrevs_preview {
-	border: 1px solid #aaa;
+	border: 1px solid #a7d7f9;
 	padding: 5px;
 	text-align: center;
 	clear: both;
@@ -48,8 +55,13 @@ div.flaggedrevs_diffnotice {
 	background-color: #f9f9f9;
 }
 div.flaggedrevs_preview {
-	background-color: #f9f9f9;
-	color: #8b0000;
+	background-color: #eaf2fd;
+	color: black;
+}
+
+span.flaggedrevs_important {
+	font-size: 115%;
+	font-weight: bold;
 }
 
 div.flaggedrevs_notes {
@@ -77,38 +89,55 @@ div.flaggedrevs_notes {
 }
 
 .fr-marker-20 {
-	background-image: url(../../FlaggedRevs/img/bar_20.png);
+	background-image: url(img/bar_20.png);
 }
 .fr-marker-40 {
-	background-image: url(../../FlaggedRevs/img/bar_40.png);
+	background-image: url(img/bar_40.png);
 }
 .fr-marker-60 {
-	background-image: url(../../FlaggedRevs/img/bar_60.png);
+	background-image: url(img/bar_60.png);
 }
 .fr-marker-80 {
-	background-image: url(../../FlaggedRevs/img/bar_80.png);
+	background-image: url(img/bar_80.png);
 }
 .fr-marker-100 {
-	background-image: url(../../FlaggedRevs/img/bar_100.png);
+	background-image: url(img/bar_100.png);
 }
 
 /* Short User Interface */
 div.flaggedrevs_short {
-	border: 0px;
-	background-color: #f9f9f9;
-	padding: 1px;
+	border: 1px solid #ccc;
+	background-color: #ffffff;
 	font-size: 95%;
 	font-weight: normal;
-	margin: 0em 0em 0em 1em;
-	float: right;
-	text-align: left;
-	max-width: 450px;
+	margin: 0 0 0 1em;
 	line-height: 16px;
+	padding: 2px;
+	float: right;
 }
 
 .rtl div.flaggedrevs_short {
 	float: left;
 	margin: 0 1em 0 0;
+}
+
+div.flaggedrevs_short_basic {
+	white-space: nowrap;
+}
+
+div.flaggedrevs_short_details {
+	border: 1px solid #aaa;
+	background-color: #ffffff;
+	padding: 5px;
+	position: absolute;
+	top: 0;
+	right: -2px;
+	width: 25em;
+}
+
+.rtl div.flaggedrevs_short_details {
+	right: auto;
+	left: -2px;
 }
 
 .fr-text {
@@ -135,19 +164,19 @@ div.flaggedrevs_short {
 }
 
 .fr-value20 {
-	background-image: url(../../FlaggedRevs/img/fr-marker-20.png);
+	background-image: url(img/fr-marker-20.png);
 }
 .fr-value40 {
-	background-image: url(../../FlaggedRevs/img/fr-marker-40.png);
+	background-image: url(img/fr-marker-40.png);
 }
 .fr-value60 {
-	background-image: url(../../FlaggedRevs/img/fr-marker-60.png);
+	background-image: url(img/fr-marker-60.png);
 }
 .fr-value80 {
-	background-image: url(../../FlaggedRevs/img/fr-marker-80.png);
+	background-image: url(img/fr-marker-80.png);
 }
 .fr-value100 {
-	background-image: url(../../FlaggedRevs/img/fr-marker-100.png);
+	background-image: url(img/fr-marker-100.png);
 }
 
 /* Both User Interfaces */
@@ -164,52 +193,39 @@ div.flaggedrevs_short {
 	background-color: #fffff0;
 }
 
-.flaggedrevs-unreviewed {
+.flaggedrevs-pending {
 	background-color: #ffeeaa;
 }
-
-.flaggedrevs-unreviewed2 {
+.flaggedrevs-unreviewed {
 	background-color: #faebd7;
 }
 
-a.flaggedrevs_toggle {
+a.fr-toggle-symbol {
 	color: blue;
 	white-space: nowrap;
-	cursor:pointer;
+	font-family: monospace;
+	font-weight: bold;
+	cursor: pointer;
+	margin: 0 .3em 0 .3em;
+}
+
+a.fr-toggle-text {
+	color: blue;
+	font-weight: bold;
+	cursor: pointer;
+}
+
+img.fr-toggle-arrow {
+	cursor: pointer;
 }
 
 li.fr-hist-stable-margin {
 	margin-top: 2em;
 }
 
-.fr-icon-current,
-.fr-icon-stable,
-.fr-icon-quality,
-.fr-icon-locked,
-.fr-icon-unlocked {
-	padding: 0px;
-	margin: 0em .2em 0em 0em;
-	width: 16px;
-	height: 16px;
-	float: left;
-	background-repeat: no-repeat;
-	background-position: center center;
-}
-.fr-icon-current {
-	background-image: url(../../FlaggedRevs/img/1.png);
-}
-.fr-icon-stable {
-	background-image: url(../../FlaggedRevs/img/2.png);
-}
-.fr-icon-quality {
-	background-image: url(../../FlaggedRevs/img/3.png);
-}
-.fr-icon-locked {
-	background-image: url(../../FlaggedRevs/img/lock-closed.png);
-}
-.fr-icon-unlocked {
-	width: 23px;
-	background-image: url(../../FlaggedRevs/img/lock-open.png);
+img.flaggedrevs-icon {
+	margin-right: .2em;
+	margin-left: .2em;
 }
 
 .fr-diff-ratings {
@@ -230,14 +246,8 @@ li.fr-hist-stable-margin {
 	font-weight: bold;
 }
 
-/* Site notices */
-.fr-backlognotice {
-	padding: 3px;
-	margin: 5px;
-	border: 1px solid #990000;
-	background-color: #f5ecec;
-}
-.fr-watchlist-old-notice {
+/* RC pending changes notice */
+.fr-watchlist-pending-notice {
 	padding: 3px;
 	margin: 5px;
 	border: 1px solid #990000;
@@ -259,8 +269,13 @@ li.fr-hist-stable-margin {
 	background-color: #faebd7;
 }
 
-.fr-under-review {
+span.fr-under-review {
 	background-color: yellow;
+	font-weight: bold;
+}
+
+.mw-fr-reviewlink {
+	font-weight: bold;
 }
 
 /* Review form */
@@ -273,7 +288,6 @@ li.fr-hist-stable-margin {
 .fr-rating-controls,
 .fr-rating-controls-disabled {
 	vertical-align: middle;
-	line-height: 1em;
 }
 
 .fr-rating-controls-disabled {
@@ -323,4 +337,23 @@ li.fr-hist-stable-margin {
 
 .fr-hiddenform {
 	display: none;
+}
+
+.loading { 
+	display: block;
+	color: #666666; 
+	padding-left: 40px;
+	height: 32px;
+}
+.spinner {
+	background-position: left center;
+	margin-left: 1em;
+	margin-top: -1.3em;
+	float: left;
+}
+
+div.langlinks {
+	margin-top: 1em;
+	padding: 5px;
+	border: 1px solid #aaa;
 }

@@ -1,4 +1,4 @@
-function historyRadios(parent) {
+window.historyRadios = function(parent) {
 	var inputs = parent.getElementsByTagName('input');
 	var radios = [];
 	for (var i = 0; i < inputs.length; i++) {
@@ -7,10 +7,10 @@ function historyRadios(parent) {
 		}
 	}
 	return radios;
-}
+};
 
 // check selection and tweak visibility/class onclick
-function diffcheck() {
+window.diffcheck = function() {
 	var dli = false; // the li where the diff radio is checked
 	var oli = false; // the li where the oldid radio is checked
 	var hf = document.getElementById('pagehistory');
@@ -67,29 +67,11 @@ function diffcheck() {
 				} else {
 					inputs[1].style.visibility = 'visible';
 				}
-				lis[i].className = lis[i].classNameOriginal;
+				if ( typeof lis[i].classNameOriginal != 'undefined' ) {
+					lis[i].className = lis[i].classNameOriginal;
+				}
 			}
 		}
 	}
 	return true;
-}
-
-// page history stuff
-// attach event handlers to the input elements on history page
-function histrowinit() {
-	var hf = document.getElementById('pagehistory');
-	if (!hf) {
-		return;
-	}
-	var lis = hf.getElementsByTagName('li');
-	for (var i = 0; i < lis.length; i++) {
-		var inputs = historyRadios(lis[i]);
-		if (inputs[0] && inputs[1]) {
-			inputs[0].onclick = diffcheck;
-			inputs[1].onclick = diffcheck;
-		}
-	}
-	diffcheck();
-}
-
-hookEvent("load", histrowinit);
+};

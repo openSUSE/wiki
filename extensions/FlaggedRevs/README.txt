@@ -21,8 +21,6 @@ It is important that the sha1 column is populated. This allows for image injecti
 rather than the (name,timestamp) pair. In the future, image moves may be supported by MediaWiki, 
 breaking the later method.
 
-Be sure to set the $wgReviewCodes variable as well. See FlaggedRevs.php for details.
-
 == Configuration ==
 There is a commented list of configurable variables in FlaggedRevs.php. The online documentation
 expains these further.

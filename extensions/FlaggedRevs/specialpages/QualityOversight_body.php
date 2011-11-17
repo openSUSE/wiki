@@ -7,7 +7,7 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 class QualityOversight extends SpecialPage
 {
     public function __construct() {
-        SpecialPage::SpecialPage( 'QualityOversight' );
+        parent::__construct( 'QualityOversight' );
     }
 
     public function execute( $par ) {
@@ -67,17 +67,17 @@ class QualityOversight extends SpecialPage
 			Xml::openElement( 'form', array( 'name' => 'qualityoversight',
 				'action' => $wgScript, 'method' => 'get' ) ) .
 			'<fieldset><legend>' . wfMsgHtml( 'qualityoversight-legend' ) . '</legend><p>' .
-			Xml::hidden( 'title', $this->getTitle()->getPrefixedDBKey() ) .
-			FlaggedRevsXML::getNamespaceMenu( $this->namespace ) . '&nbsp;' .
+			Html::hidden( 'title', $this->getTitle()->getPrefixedDBKey() ) .
+			FlaggedRevsXML::getNamespaceMenu( $this->namespace ) . '&#160;' .
 			( FlaggedRevs::qualityVersions()
 				? FlaggedRevsXML::getLevelMenu( $this->level, 'revreview-filter-all', 1 ) .
-					'&nbsp;'
+					'&#160;'
 				: ""
 			) .
 			Xml::inputLabel( wfMsg( 'specialloguserlabel' ), 'user', 'user', 20, $this->user ) .
 				'<br />' .
-			FlaggedRevsXML::getStatusFilterMenu( $this->status ) . '&nbsp;' .
-			FlaggedRevsXML::getAutoFilterMenu( $this->automatic ) . '&nbsp;' .
+			FlaggedRevsXML::getStatusFilterMenu( $this->status ) . '&#160;' .
+			FlaggedRevsXML::getAutoFilterMenu( $this->automatic ) . '&#160;' .
 			Xml::submitButton( wfMsg( 'go' ) ) .
 			'</p></fieldset>' . Xml::closeElement( 'form' )
 		);
@@ -90,7 +90,7 @@ class QualityOversight extends SpecialPage
 	private function getActions() {
 		$actions = array( 'approve' => 1, 'approve2' => 1, 'approve-a' => 1, 'approve-i' => 1,
 			'approve-ia' => 1, 'approve2-i' => 1, 'unapprove' => 1, 'unapprove2' => 1 );
-		if ( $this->level === 0 ) { // sighted revisions
+		if ( $this->level === 0 ) { // checked revisions
 			$actions['approve2'] = 0;
 			$actions['approve2-i'] = 0;
 			$actions['unapprove2'] = 0;

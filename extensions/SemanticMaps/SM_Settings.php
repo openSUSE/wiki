@@ -1,17 +1,18 @@
 <?php
 
 /**
- * File defining the settings for the Semantic Maps extension
+ * File defining the settings for the Semantic Maps extension.
  * More info can be found at http://www.mediawiki.org/wiki/Extension:Semantic_Maps#Settings
  *
  *                          NOTICE:
- * Changing one of these settings can be done by copieng or cutting it,
+ * Changing one of these settings can be done by copying or cutting it,
  * and placing it in LocalSettings.php, AFTER the inclusion of Semantic Maps.
  *
  * @file SM_Settings.php
  * @ingroup SemanticMaps
  *
- * @author Jeroen De Dauw
+ * @licence GNU GPL v3
+ * @author Jeroen De Dauw < jeroendedauw@gmail.com >
  */
 
 if ( !defined( 'MEDIAWIKI' ) ) {
@@ -20,52 +21,21 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 
 
 
-# Features configuration
-
-	# (named) Array of String. This array contains the available features for Maps.
-	# Commenting out the inclusion of any feature will make Maps completely ignore it, and so improve performance.
-	
-		# Query printers
-		include_once $smgDir . 'Features/QueryPrinters/SM_QueryPrinters.php';
-		# Form imputs
-		include_once $smgDir . 'Features/FormInputs/SM_FormInputs.php'; 
-
-
-
 # Mapping services configuration
-
-	# Include the mapping services that should be loaded into Semantic Maps. 
-	# Commenting or removing a mapping service will cause Semantic Maps to completely ignore it, and so improve performance.
-	# Google Maps API v2
-	include_once $smgDir . 'Services/GoogleMaps/SM_GoogleMaps.php';
-	# OpenLayers API
-	include_once $smgDir . 'Services/OpenLayers/SM_OpenLayers.php';
-	# Yahoo! Maps API
-	include_once $smgDir . 'Services/YahooMaps/SM_YahooMaps.php';
 
 	# Array of String. The default mapping service for each feature, which will be used when no valid service is provided by the user.
 	# Each service needs to be enabled, if not, the first one from the available services will be taken.
 	# Note: The default service needs to be available for the feature you set it for, since it's used as a fallback mechanism.
-	$egMapsDefaultServices['qp'] = 'googlemaps2';
-	$egMapsDefaultServices['fi'] = 'googlemaps2';
+	$egMapsDefaultServices['qp'] = $egMapsDefaultService;
+	$egMapsDefaultServices['fi'] = $egMapsDefaultService;
 	
 	
 
-# General
-
-	# Boolean. Indicates if spatial extensions should be used for coordinate storage.
-	# Spatial extensions significantly speed up querying, but are not present by default on postgres databases.
-	# If this value is false, coordinates will be stored in 2 float fields.
-	# You are unlikely to need to change this setting, so don't unless you know what you are doing!
-	$smgUseSpatialExtensions = false; // TODO: $wgDBtype != 'postgres';
-	
-	
-	
 # Queries
 
 	# Boolean. The default value for the forceshow parameter. Will force a map to be shown even when there are no query results
 	# when set to true. This value will only be used when the user does not provide one.
-	$smgQPForceShow = false;
+	$smgQPForceShow = true;
 	
 	# Boolean. The default value for the showtitle parameter. Will hide the title in the marker pop-ups when set to true. 
 	# This value will only be used when the user does not provide one.
@@ -86,7 +56,12 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 
 # Forms
 
+	$smgFIMulti = true;
+	
+	$smgFIFieldSize = 40;
+	
 	# Integer or string. The default width and height of maps in forms created by using Semantic Forms.
 	# These values only be used when the user does not provide them.
 	$smgFIWidth = 665;
 	$smgFIHeight = $egMapsMapHeight;
+	

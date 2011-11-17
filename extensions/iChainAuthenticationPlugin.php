@@ -40,7 +40,7 @@
      * at this point we fake a bit.the iChain sends us the username
      * in the HTTP header but mediawiki wants it in the $_REQUEST header.
      */
-    if (isset($_SERVER['HTTP_X_USERNAME'])) {
+    if (isset($_SERVER['HTTP_X_USERNAME']) && $_SERVER['HTTP_X_USERNAME'] != '') {
        global $wgRequest, $wgUser;
        #error_log('ichain username: ' . $_SERVER['HTTP_X_USERNAME']);
        $_POST['wpName'] = $_SERVER['HTTP_X_USERNAME'];
@@ -84,7 +84,7 @@
          * @access public
          */
         function authenticate( $username, $password ) {
-           if (isset($_SERVER['HTTP_X_USERNAME'])) {
+           if (isset($_SERVER['HTTP_X_USERNAME']) && $_SERVER['HTTP_X_USERNAME'] != '') {
                  return true;
            }
            return false;
@@ -116,7 +116,7 @@
             $template->set( 'usedomain', false );
             $template->set( 'create',    false );
             $template->set( 'useemail',  false );
-            if (isset($_SERVER['HTTP_X_USERNAME']) ) {
+            if (isset($_SERVER['HTTP_X_USERNAME']) && $_SERVER['HTTP_X_USERNAME'] != '' ) {
                $returnto  = 'Location: http://' . $_SERVER['SERVER_NAME'] . '/';
                $returnto .= isset($_REQUEST['returnto']) ? $_REQUEST['returnto'] : '/';
                // error_log($returnto);
@@ -176,7 +176,7 @@
         function updateUser( &$user ) {
            # Override this and do something
            //$user->setOption('skin','opensuse');
-           if (isset($_SERVER['HTTP_X_EMAIL'])) {
+           if (isset($_SERVER['HTTP_X_EMAIL']) && $_SERVER['HTTP_X_EMAIL'] != '' ) {
              $user->setEmail( $_SERVER['HTTP_X_EMAIL'] );
            } else {
              $user->setEmail( '' );
@@ -285,7 +285,7 @@
            // automatically creating a new wiki user on first login
            // $user->setPassword( '' );
            // $user->setOption('skin','opensuse');
-           if (isset($_SERVER['HTTP_X_EMAIL'])) {
+           if (isset($_SERVER['HTTP_X_EMAIL']) && $_SERVER['HTTP_X_USERNAME'] != '') {
              $user->setEmail( $_SERVER['HTTP_X_EMAIL'] );
            } else {
              $user->setEmail( '' );
@@ -298,7 +298,12 @@
     $wgHooks['UserLogoutComplete'][] = 'iChainLogout';
     function iChainLogout($user) {
       // http://de.opensuse.org/cmd/ICSLogout
-      $returnto  = 'Location: http://' . $_SERVER['SERVER_NAME'] . '/cmd/ICSLogout';
+        if (strpos($_SERVER['HTTP_HOST'],'stage') !== FALSE) {
+      	  $returnto  = 'Location: https://espstage.provo.novell.com/AGLogout';
+	}
+	else {
+      	  $returnto  = 'Location: https://esp.novell.com/cmd/ICSLogout';
+	}
       header ($returnto);
       exit (0);
 

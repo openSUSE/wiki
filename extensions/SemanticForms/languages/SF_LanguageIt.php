@@ -1,8 +1,13 @@
 <?php
 /**
  * @author Melos
+ * @file
+ * @ingroup SF
  */
 
+/**
+ * @ingroup SFLanguage
+ */
 class SF_LanguageIt extends SF_Language {
 
 	/* private */ var $m_SpecialProperties = array(

@@ -1,9 +1,9 @@
 BEGIN;
 
 CREATE TABLE flaggedpage_pending (
-  fpp_page_id INTEGER UNSIGNED NOT NULL,
+  fpp_page_id BIGINT NOT NULL,
   fpp_quality INTEGER NOT NULL,
-  fpp_rev_id  INTEGER UNSIGNED NOT NULL,
+  fpp_rev_id  BIGINT NOT NULL,
   fpp_pending_since TIMESTAMPTZ NULL,
   PRIMARY KEY (fpp_page_id,fpp_quality)
 );

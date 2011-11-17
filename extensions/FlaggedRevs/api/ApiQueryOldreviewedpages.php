@@ -17,7 +17,7 @@
  *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
- * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  * http://www.gnu.org/copyleft/gpl.html
  */
 
@@ -41,32 +41,32 @@ class ApiQueryOldreviewedpages extends ApiQueryGeneratorBase {
 	}
 
 	private function run( $resultPageSet = null ) {
-		global $wgUser;
+		global $wgUser, $wgMemc;
 		$params = $this->extractRequestParams();
 
 		// Construct SQL Query
 		$this->addTables( array( 'page', 'flaggedpages', 'revision' ) );
 		$this->addWhereFld( 'page_namespace', $params['namespace'] );
 		$useIndex = array( 'flaggedpages' => 'fp_pending_since' );
-		if( $params['filterredir'] == 'redirects' )
+		if ( $params['filterredir'] == 'redirects' )
 			$this->addWhereFld( 'page_is_redirect', 1 );
-		if( $params['filterredir'] == 'nonredirects' )
+		if ( $params['filterredir'] == 'nonredirects' )
 			$this->addWhereFld( 'page_is_redirect', 0 );
-		if( $params['maxsize'] !== null )
+		if ( $params['maxsize'] !== null )
 			# Get absolute difference for comparison. ABS(x-y)
 			# is broken due to mysql unsigned int design.
-			$this->addWhere( 'GREATEST(page_len,rev_len)-LEAST(page_len,rev_len) <= '.
-				intval($params['maxsize']) );
-		if( $params['filterwatched'] == 'watched' ) {
-			if( !($uid = $wgUser->getId()) ) {
-				$this->dieUsage('You must be logged-in to have a watchlist', 'notloggedin');
+			$this->addWhere( 'GREATEST(page_len,rev_len)-LEAST(page_len,rev_len) <= ' .
+				intval( $params['maxsize'] ) );
+		if ( $params['filterwatched'] == 'watched' ) {
+			if ( !( $uid = $wgUser->getId() ) ) {
+				$this->dieUsage( 'You must be logged-in to have a watchlist', 'notloggedin' );
 			}
 			$this->addTables( 'watchlist' );
 			$this->addWhereFld( 'wl_user', $uid );
 			$this->addWhere( 'page_namespace = wl_namespace' );
 			$this->addWhere( 'page_title = wl_title' );
 		}
-		if( $params['category'] != '' ) {
+		if ( $params['category'] != '' ) {
 			$this->addTables( 'categorylinks' );
 			$this->addWhere( 'cl_from = fp_page_id' );
 			$this->addWhereFld( 'cl_to', $params['category'] );
@@ -103,13 +103,12 @@ class ApiQueryOldreviewedpages extends ApiQueryGeneratorBase {
 		}
 
 		$limit = $params['limit'];
-		$this->addOption( 'LIMIT', $limit+1 );
+		$this->addOption( 'LIMIT', $limit + 1 );
 		$res = $this->select( __METHOD__ );
 
 		$data = array ();
 		$count = 0;
-		$db = $this->getDB();
-		while ( $row = $db->fetchObject( $res ) ) {
+		foreach( $res as $row ) {
 			if ( ++$count > $limit ) {
 				// We've reached the one extra which shows that there are
 				// additional pages to be had. Stop here...
@@ -122,6 +121,8 @@ class ApiQueryOldreviewedpages extends ApiQueryGeneratorBase {
 
 			if ( is_null( $resultPageSet ) ) {
 				$title = Title::newFromRow( $row );
+				$key = wfMemcKey( 'stableDiffs', 'underReview',
+					$row->fp_stable, $row->page_latest );
 				$data[] = array(
 					'pageid' => intval( $row->page_id ),
 					'ns' => intval( $title->getNamespace() ),
@@ -131,13 +132,13 @@ class ApiQueryOldreviewedpages extends ApiQueryGeneratorBase {
 					'pending_since' => wfTimestamp( TS_ISO_8601, $row->fp_pending_since ),
 					'flagged_level' => intval( $row->fp_quality ),
 					'flagged_level_text' => FlaggedRevs::getQualityLevelText( $row->fp_quality ),
-					'diff_size' => (int)$row->page_len - (int)$row->rev_len
+					'diff_size' => (int)$row->page_len - (int)$row->rev_len,
+					'under_review' => (bool)$wgMemc->get( $key )
 				);
 			} else {
 				$resultPageSet->processDbRow( $row );
 			}
 		}
-		$db->freeResult( $res );
 
 		if ( is_null(  $resultPageSet ) ) {
 			$result = $this->getResult();
@@ -214,7 +215,7 @@ class ApiQueryOldreviewedpages extends ApiQueryGeneratorBase {
 				'In which direction to list.',
 				'*newer: list the longest waiting pages first',
 				'*older: list the newest items first'
-			)				
+			)
 		);
 	}
 
@@ -241,6 +242,6 @@ class ApiQueryOldreviewedpages extends ApiQueryGeneratorBase {
 	}
 	
 	public function getVersion() {
-		return __CLASS__.': $Id: ApiQueryOldreviewedpages.php 69932 2010-07-26 08:03:21Z tstarling $';
+		return __CLASS__ . ': $Id: ApiQueryOldreviewedpages.php 75469 2010-10-26 20:32:03Z reedy $';
 	}
 }

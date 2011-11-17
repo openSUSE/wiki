@@ -38,7 +38,6 @@ class SMWSQLStoreLight extends SMWStore {
 		'__sps' => true, // Special string type
 		'__spu' => true, // Special uri type
 		'__spf' => true, // Special form type (for Semantic Forms)
-		'__lin' => true, // Special linear unit conversion type
 		'__imp' => true, // Special import vocabulary type
 	);
 
@@ -87,7 +86,7 @@ class SMWSQLStoreLight extends SMWStore {
 			}
 			$res = $db->select( $tablename, array( 'propname', 'value' ), array( 'pageid' => $sid ),
 			                    'SMW::getSemanticData', array( 'DISTINCT' ) );
-			while ( $row = $db->fetchObject( $res ) ) {
+			foreach ( $res as $row ) {
 				$value = ( $tablename == 'smwsimple_special' ) ? array( $row->value ) : unserialize( $row->value );
 				$this->m_semdata[$sid]->addPropertyStubValue( $row->propname, $value );
 			}
@@ -100,7 +99,7 @@ class SMWSQLStoreLight extends SMWStore {
 		return $this->m_semdata[$sid];
 	}
 
-	public function getPropertyValues( $subject, SMWPropertyValue $property, $requestoptions = null, $outputformat = '' ) {
+	public function getPropertyValues( $subject, SMWDIProperty $property, $requestoptions = null, $outputformat = '' ) {
 		wfProfileIn( "SMWSQLStoreLight::getPropertyValues (SMW)" );
 		if ( $property->isInverse() ) { // inverses are working differently
 			$noninverse = clone $property;
@@ -124,7 +123,7 @@ class SMWSQLStoreLight extends SMWStore {
 			$res = $db->select( $tablename, array( 'value' ), array( 'propname' => $property->getDBkey() ),
 			                    'SMW::getPropertyValues', $this->getSQLOptions( $requestoptions, 'value' ) + array( 'DISTINCT' ) );
 			$result = array();
-			while ( $row = $db->fetchObject( $res ) ) {
+			foreach ( $res as $row ) {
 				$dv = SMWDataValueFactory::newPropertyObjectValue( $property );
 				if ( $outputformat != '' ) $dv->setOutputFormat( $outputformat );
 				$dv->setDBkeys( ( $tablename == 'smwsimple_special' ) ? array( $row->value ) : unserialize( $row->value ) );
@@ -136,7 +135,7 @@ class SMWSQLStoreLight extends SMWStore {
 		return $result;
 	}
 
-	public function getPropertySubjects( SMWPropertyValue $property, $value, $requestoptions = null ) {
+	public function getPropertySubjects( SMWDIProperty $property, $value, $requestoptions = null ) {
 		wfProfileIn( "SMWSQLStoreLight::getPropertySubjects (SMW)" );
 		if ( $property->isInverse() ) { // inverses are working differently
 			$noninverse = clone $property;
@@ -162,7 +161,7 @@ class SMWSQLStoreLight extends SMWStore {
 		                    $where . $this->getSQLConditions( $requestoptions, 'p.page_title', 'p.page_title' ),
 							'SMW::getPropertySubjects',
 		                    $this->getSQLOptions( $requestoptions, 'p.page_title' ) + array( 'DISTINCT' ) );
-		while ( $row = $db->fetchObject( $res ) ) {
+		foreach ( $res as $row ) {
 			$result[] = SMWWikiPageValue::makePage( $row->title, $row->namespace, $row->title );
 		}
 		$db->freeResult( $res );
@@ -170,7 +169,7 @@ class SMWSQLStoreLight extends SMWStore {
 		return $result;
 	}
 
-	public function getAllPropertySubjects( SMWPropertyValue $property, $requestoptions = null ) {
+	public function getAllPropertySubjects( SMWDIProperty $property, $requestoptions = null ) {
 		wfProfileIn( "SMWSQLStoreLight::getAllPropertySubjects (SMW)" );
 		$result = $this->getPropertySubjects( $property, null, $requestoptions );
 		wfProfileOut( "SMWSQLStoreLight::getAllPropertySubjects (SMW)" );
@@ -201,8 +200,8 @@ class SMWSQLStoreLight extends SMWStore {
 			$res = $db->select( $tablename, 'DISTINCT propname',
 				'pageid=' . $db->addQuotes($sid) . $this->getSQLConditions( $suboptions, 'propname', 'propname' ),
 				'SMW::getProperties', $this->getSQLOptions( $suboptions, 'propname' ) );
-			while ( $row = $db->fetchObject( $res ) ) {
-				$result[] = SMWPropertyValue::makeProperty( $row->propname );
+			foreach ( $res as $row ) {
+				$result[] = new SMWDIProperty( $row->propname );
 			}
 			$db->freeResult( $res );
 		}
@@ -241,8 +240,8 @@ class SMWSQLStoreLight extends SMWStore {
 			$res = $db->select( $tablename, 'DISTINCT propname', // select sortkey since it might be used in ordering (needed by Postgres)
 								$where . $this->getSQLConditions( $suboptions, 'propname', 'propname' ),
 								'SMW::getInProperties', $this->getSQLOptions( $suboptions, 'propname' ) );
-			while ( $row = $db->fetchObject( $res ) ) {
-				$result[] = SMWPropertyValue::makeProperty( $row->propname );
+			foreach ( $res as $row ) {
+				$result[] = new SMWDIProperty( $row->propname );
 			}
 			$db->freeResult( $res );
 		}
@@ -264,7 +263,7 @@ class SMWSQLStoreLight extends SMWStore {
 		wfProfileOut( 'SMWSQLStoreLight::deleteSubject (SMW)' );
 	}
 
-	public function updateData( SMWSemanticData $data ) {
+	public function doDataUpdate( SMWSemanticData $data ) {
 		wfProfileIn( "SMWSQLStoreLight::updateData (SMW)" );
 		wfRunHooks( 'SMWSQLStoreLight::updateDataBefore', array( $this, $data ) );
 		$subject = $data->getSubject();
@@ -351,7 +350,6 @@ class SMWSQLStoreLight extends SMWStore {
 	 * when required.
 	 */
 	protected function setupTables( $verbose, $db ) {
-		global $wgDBtype;
 		$reportTo = $verbose ? $this : null; // Use $this to report back from static SMWSQLHelpers.
 
 		SMWSQLHelpers::setupTable( // table for most data
@@ -405,11 +403,6 @@ class SMWSQLStoreLight extends SMWStore {
 		}
 		$titles = Title::newFromIDs( $tids );
 		foreach ( $titles as $title ) {
-			// set $wgTitle, in case semantic data is set based
-			// on values not originating from the page (such as
-			// via the External Data extension)
-			global $wgTitle;
-			$wgTitle = $title;
 			if ( ( $namespaces == false ) || ( in_array( $title->getNamespace(), $namespaces ) ) ) {
 				$updatejobs[] = new SMWUpdateJob( $title );
 				$emptyrange = false;
@@ -425,6 +418,8 @@ class SMWSQLStoreLight extends SMWStore {
 				$job->run();
 			}
 		}
+
+		$db = wfGetDB( DB_SLAVE );
 		$nextpos = $index + $count;
 		if ( $emptyrange ) { // nothing found, check if there will be more pages later on
 			$nextpos = $db->selectField( 'page', 'page_id', "page_id >= $nextpos", __METHOD__, array( 'ORDER BY' => "page_id ASC" ) );

@@ -1,21 +1,15 @@
 <?php
 
-require_once 'PHPUnit\Framework\TestCase.php';
-
-// Trick MW into thinking this is a command line script.
-// This is obviously not a good approach, as it will not work on other setups then my own.
-unset( $_SERVER['REQUEST_METHOD'] );
-$argv = array( 'over9000failz' );
-require_once '../../../smw/maintenance/commandLine.inc';
-
 /**
  * MapsDistanceParser test case.
  * 
  * @ingroup Maps
  * @since 0.6.5
- * @author Jeroen De Dauw
+ * 
+ * @licence GNU GPL v3
+ * @author Jeroen De Dauw < jeroendedauw@gmail.com >
  */
-class MapsDistanceParserTest extends PHPUnit_Framework_TestCase {
+class MapsDistanceParserTest extends MediaWikiTestCase {
 	
 	public static $distances = array(
 		'1' => 1,
@@ -41,14 +35,14 @@ class MapsDistanceParserTest extends PHPUnit_Framework_TestCase {
 			'42.42 m' => 42.4242,
 		),		
 		'km' => array(
-			'0.001 km' => 1,
+			//'0.001 km' => 1,
 			'1 km' => 1000,
-			'4,24 km' => 4242,
+			'4.24 km' => 4242,
 		),
 		'kilometers' => array(
 			'0.001 kilometers' => 1,
 			'1 kilometers' => 1000,
-			'4,24 kilometers' => 4242,
+			'4.24 kilometers' => 4242,
 		),
 	);
 	
@@ -68,36 +62,6 @@ class MapsDistanceParserTest extends PHPUnit_Framework_TestCase {
 	);
 	
 	/**
-	 * @var MapsDistanceParser
-	 */
-	private $MapsDistanceParser;
-	
-	/**
-	 * Prepares the environment before running a test.
-	 */
-	protected function setUp() {
-		parent::setUp ();
-		
-		$this->MapsDistanceParser = new MapsDistanceParser(/* parameters */);
-	}
-	
-	/**
-	 * Cleans up the environment after running a test.
-	 */
-	protected function tearDown() {
-		$this->MapsDistanceParser = null;
-		
-		parent::tearDown ();
-	}
-	
-	/**
-	 * Constructs the test case.
-	 */
-	public function __construct() {
-		
-	}
-	
-	/**
 	 * Tests MapsDistanceParser::parseDistance()
 	 */
 	public function testParseDistance() {
@@ -114,7 +78,7 @@ class MapsDistanceParserTest extends PHPUnit_Framework_TestCase {
 	 * Tests MapsDistanceParser::formatDistance()
 	 */
 	public function testFormatDistance() {
-			foreach ( self::$distances['km'] as $rawValue => $parsedValue ) {
+		foreach ( self::$formatTests['km'] as $rawValue => $parsedValue ) {
 			$this->assertEquals( $rawValue, MapsDistanceParser::formatDistance( $parsedValue, 'km' ), "'$parsedValue' was not formatted to '$rawValue':" );
 		}
 	}
@@ -123,11 +87,15 @@ class MapsDistanceParserTest extends PHPUnit_Framework_TestCase {
 	 * Tests MapsDistanceParser::parseAndFormat()
 	 */
 	public function testParseAndFormat() {
-		// TODO Auto-generated MapsDistanceParserTest::testParseAndFormat()
-		$this->markTestIncomplete ( "parseAndFormat test not implemented" );
+		$conversions = array(
+			'42 km' => '42000 m'
+		);
 		
-		MapsDistanceParser::parseAndFormat(/* parameters */);
-	
+		foreach( array_merge( $conversions, array_reverse( $conversions ) ) as $source => $target ) {
+			$unit = explode( ' ', $target, 2 );
+			$unit = $unit[1];
+			$this->assertEquals( $target, MapsDistanceParser::parseAndFormat( $source, $unit ), "'$source' was not parsed and formatted to '$target':" );
+		}
 	}
 	
 	/**
@@ -147,33 +115,34 @@ class MapsDistanceParserTest extends PHPUnit_Framework_TestCase {
 	 * Tests MapsDistanceParser::getUnitRatio()
 	 */
 	public function testGetUnitRatio() {
-		// TODO Auto-generated MapsDistanceParserTest::testGetUnitRatio()
-		$this->markTestIncomplete ( "getUnitRatio test not implemented" );
-		
-		MapsDistanceParser::getUnitRatio(/* parameters */);
-	
+		foreach ( $GLOBALS['egMapsDistanceUnits'] as $unit => $ratio ) {
+			$r = MapsDistanceParser::getUnitRatio( $unit );
+			$this->assertEquals( $ratio, $r, "The ratio for '$unit' should be '$ratio' but was '$r'" );
+		}
 	}
 	
 	/**
 	 * Tests MapsDistanceParser::getValidUnit()
 	 */
 	public function testGetValidUnit() {
-		// TODO Auto-generated MapsDistanceParserTest::testGetValidUnit()
-		$this->markTestIncomplete ( "getValidUnit test not implemented" );
+		foreach ( $GLOBALS['egMapsDistanceUnits'] as $unit => $ratio ) {
+			$u = MapsDistanceParser::getValidUnit( $unit );
+			$this->assertEquals( $unit, $u, "The valid unit for '$unit' should be '$unit' but was '$u'" );			
+		}
 		
-		MapsDistanceParser::getValidUnit(/* parameters */);
-	
+		global $egMapsDistanceUnit;
+		
+		foreach ( array( '0', 'swfwdffdhy', 'dxwgdrfh' ) as $unit ) {
+			$u = MapsDistanceParser::getValidUnit( $unit );
+			$this->assertEquals( $egMapsDistanceUnit, $u, "The valid unit for '$unit' should be '$egMapsDistanceUnit' but was '$u'" );
+		}
 	}
 	
 	/**
 	 * Tests MapsDistanceParser::getUnits()
 	 */
 	public function testGetUnits() {
-		// TODO Auto-generated MapsDistanceParserTest::testGetUnits()
-		$this->markTestIncomplete ( "getUnits test not implemented" );
-		
-		MapsDistanceParser::getUnits(/* parameters */);
-	
+		$this->assertEquals( array_keys( $GLOBALS['egMapsDistanceUnits'] ), MapsDistanceParser::getUnits() );
 	}
 
 }

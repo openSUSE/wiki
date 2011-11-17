@@ -4,16 +4,18 @@
  * @ingroup SMW
  */
 
-/*
+/**
  * Protect against register_globals vulnerabilities.
  * This line must be present before any global variable is referenced.
  */
-if ( !defined( 'MEDIAWIKI' ) ) die();
+if ( !defined( 'MEDIAWIKI' ) ) {
+	die();
+}
 
 global $wgHooks;
 
-$wgHooks[ 'SkinTemplateTabs' ][] = 'smwfAddRefreshTab'; // basic tab addition
-$wgHooks[ 'SkinTemplateNavigation' ][] = 'smwfAddStructuredRefreshTab'; // structured version for "Vector"-type skins
+$wgHooks['SkinTemplateTabs'][] = 'smwfAddRefreshTab'; // basic tab addition
+$wgHooks['SkinTemplateNavigation'][] = 'smwfAddStructuredRefreshTab'; // structured version for "Vector"-type skins
 
 /**
  * Extends the provided array of content actions with an action that refreshes the article,
@@ -21,12 +23,14 @@ $wgHooks[ 'SkinTemplateNavigation' ][] = 'smwfAddStructuredRefreshTab'; // struc
  */
 function smwfAddRefreshTab( $skin, &$content_actions ) {
 	global $wgUser;
- 	if ( $wgUser->isAllowed( 'purge' ) ) {
+	if ( $wgUser->isAllowed( 'purge' ) ) {
 		smwfLoadExtensionMessages( 'SemanticMediaWiki' );
+		// Skin::getTitle() was added in MW 1.16
+		$title = is_callable( array( $skin, 'getTitle' ) ) ? $skin->getTitle() : $skin->mTitle;
 		$content_actions['purge'] = array(
 			'class' => false,
 			'text' => wfMsg( 'smw_purge' ),
-			'href' => $skin->mTitle->getLocalUrl( 'action=purge' )
+			'href' => $title->getLocalUrl( 'action=purge' )
 		);
  	}
 	return true; // always return true, in order not to stop MW's hook processing!

@@ -1,8 +1,13 @@
 <?php
 /**
  * @author Yaron Koren
+ * @file
+ * @ingroup SF
  */
 
+/**
+ * @ingroup SFLanguage
+ */
 class SF_LanguageCa extends SF_Language {
 
 	/* private */ var $m_SpecialProperties = array(

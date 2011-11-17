@@ -1,12 +1,104 @@
 For a documentation of all features, see http://www.mediawiki.org/wiki/Extension:Semantic_Maps
 
 == Semantic Maps change log ==
+
 This change log contains a list of completed to-do's (new features, bug fixes, refactoring) for every
 version of Semantic Maps. You can find the most upt-do-date version at
 http://www.mediawiki.org/wiki/Extension:Semantic_Maps/Version_history#Semantic_Maps_change_log
 
 
-=== Maps 0.6.6 ===
+=== Semantic Maps 1.0.4 ===
+(2011-10-15)
+
+* Added compatibility with SMW 1.7 and later.
+* Removed compatibility with SMW 1.6.1 and earlier.
+* Improved default map format handling.
+
+=== Semantic Maps 1.0.3 ===
+(2011-09-14)
+
+* Added geocodecontrol parameter for the form inputs.
+
+=== Semantic Maps 1.0.2 ===
+(2011-08-24)
+
+* Matching Maps 1.0.2 release. 
+
+=== Semantic Maps 1.0.1 ===
+(2011-08-17)
+
+* Fixed handling of the semantic link caption in the geographical coordinate datavalue class. 
+
+=== Semantic Maps 1.0 ===
+(2011-07-19)
+
+This version branched from Semantic Maps 0.7.x at version 0.7.3.
+See the maps release notes for all changes not specific to Semantic Maps.
+
+* Improved map query parameter support in the Special:Ask GUI
+
+* Fixed fatal error occurring when running maintenance/refreshLinks.php.
+
+* Rewrote all the form inputs to jQuery plugins.
+
+* Rewrote the map printers to use the SMQueryHandler class.
+
+* Added geocoding capability to the OpenLayers form input when having a GeoNames API account.
+
+* Added 'update map' button to all form inputs.
+
+* Fixed PostGres support for distance queries.
+
+* Use of the DataItems introduces in Semantic MediaWiki 1.6.
+
+=== Semantic Maps 0.7.3 ===
+(2010-11-30)
+
+==== new features ====
+
+* Added KML result format that allows the export of geographical data queried via SMW in the form of .kml files.
+
+=== Semantic Maps 0.7.2 ===
+(2010-10-28)
+
+==== Bug fixes ====
+
+* Fixed small layout issue in query pop-ups when property names are blank.
+
+=== Semantic Maps 0.7.1 ===
+(2010-10-20)
+
+==== New features ====
+
+* Image layers for OpenLayers maps, defined via pages in the Layer namespace.
+
+==== Bug fixes ====
+
+* Support for images without namespace prefix in the statispoints parameter in map ask queries.
+
+* Fixed several issue with the OpenLayers form input.
+
+* Fixed fatal error for Google Maps v2 options on Special:Ask. 
+
+=== Semantic Maps 0.7 ===
+(2010-10-15)
+
+==== New features ====
+
+* Added 'locations' parameter to the map query printers that allows for displaying static locations
+  in addition to query results in queries. It behaves the same as the locations parameter in display_points.
+
+==== Bug fixes ====
+
+* Fixed compatibility with the MW 1.17 resource loader.
+
+==== Internal improvements ====
+
+* Use of Validator 0.4, allowing for more robust and consistent error reporting.
+
+* Restructured the directory structure of the extension to better match it's architecture.
+
+=== Semantic Maps 0.6.6 ===
 (2010-08-26)
 
 === New features ===

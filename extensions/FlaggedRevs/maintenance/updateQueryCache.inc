@@ -29,7 +29,7 @@ function update_flaggedrevs_querycache() {
 	if( $dbr->numRows( $res ) ) {
 		$first = true;
 		$insertSql = "INSERT INTO $querycache (qc_type,qc_namespace,qc_title,qc_value) VALUES ";
-		while( $row = $dbr->fetchObject( $res ) ) {
+		foreach ( $res as $row ) {
 			if( $first ) {
 				$first = false;
 			} else {
@@ -70,7 +70,7 @@ function update_flaggedrevs_querycache() {
 	if( $dbr->numRows( $res ) ) {
 		$first = true;
 		$insertSql = "INSERT INTO $querycache (qc_type,qc_namespace,qc_title,qc_value) VALUES ";
-		while( $row = $dbr->fetchObject( $res ) ) {
+		foreach( $res as $row ) {
 			if( $first ) {
 				$first = false;
 			} else {

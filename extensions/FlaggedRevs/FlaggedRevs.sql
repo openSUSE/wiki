@@ -26,7 +26,7 @@ CREATE INDEX /*i*/fp_pending_since ON /*_*/flaggedpages (fp_pending_since);
 CREATE TABLE IF NOT EXISTS /*_*/flaggedpage_pending (
   -- Foreign key to page.page_id
   fpp_page_id integer unsigned NOT NULL,
-  -- The quality tier (0=stable, 1=quality, 2=pristine)
+  -- The quality tier (0=checked, 1=quality, 2=pristine)
   fpp_quality tinyint(1) NOT NULL,
   -- The last rev ID with this quality
   fpp_rev_id integer unsigned NOT NULL,
@@ -46,7 +46,7 @@ CREATE TABLE IF NOT EXISTS /*_*/flaggedrevs (
   -- Foreign key to revision.rev_id
   fr_rev_id integer unsigned NOT NULL,
   -- Foreign key to user.user_id
-  fr_user int(5) NOT NULL,
+  fr_user integer unsigned NOT NULL,
   fr_timestamp char(14) NOT NULL,
   fr_comment mediumblob NOT NULL,
   -- Store the precedence level
@@ -94,7 +94,7 @@ CREATE TABLE IF NOT EXISTS /*_*/flaggedimages (
   -- Name of included image
   fi_name varchar(255) binary NOT NULL default '',
   -- Timestamp of image used when reviewed
-  fi_img_timestamp char(14) NOT NULL default '',
+  fi_img_timestamp char(14) NULL,
   -- Statistically unique SHA-1 key
   fi_img_sha1 varbinary(32) NOT NULL default '',
   
@@ -112,7 +112,7 @@ CREATE TABLE IF NOT EXISTS /*_*/flaggedpage_config (
   fpc_select integer NOT NULL,
   -- Override the page?
   fpc_override bool NOT NULL,
-  -- The protection level (Sysop, etc) for autoreview
+  -- The protection level (Sysop, etc) for autoreview/review
   fpc_level varbinary(60) NULL,
   -- Field for time-limited settings
   fpc_expiry varbinary(14) NOT NULL default 'infinity'
@@ -135,4 +135,18 @@ CREATE TABLE IF NOT EXISTS /*_*/flaggedrevs_promote (
   -- Foreign key to user.user_id
   frp_user_id integer unsigned NOT NULL PRIMARY KEY,
   frp_user_params mediumblob NOT NULL
+) /*$wgDBTableOptions*/;
+
+CREATE TABLE /*_*/flaggedrevs_stats (
+	namespace int unsigned NOT NULL DEFAULT 0 PRIMARY KEY,
+	total     int unsigned NOT NULL DEFAULT 0,
+	reviewed  int unsigned NOT NULL DEFAULT 0,
+	synced    int unsigned NOT NULL DEFAULT 0
+) /*$wgDBTableOptions*/;
+
+CREATE TABLE /*_*/flaggedrevs_stats2 (
+	stat_id          int unsigned NOT NULL DEFAULT 1 PRIMARY KEY,
+	ave_review_time  int unsigned NOT NULL DEFAULT 0,
+	med_review_time  int unsigned NOT NULL DEFAULT 0,
+	ave_pending_time int unsigned NOT NULL DEFAULT 0
 ) /*$wgDBTableOptions*/;

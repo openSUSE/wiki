@@ -21,7 +21,7 @@
 
  You should have received a copy of the GNU General Public License along
  with this program; if not, write to the Free Software Foundation, Inc.,
- 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  http://www.gnu.org/copyleft/gpl.html
 
  Current feature request list
@@ -43,7 +43,6 @@ $wgHooks['ParserFirstCallInit'][] = 'wfDynamicPageList';
 $wgExtensionCredits['parserhook'][] = array(
 	'path'           => __FILE__,
 	'name'           => 'DynamicPageList',
-	'description'    => 'outputs a bulleted list of the most recent items residing in a category, or a union of several categories',
 	'descriptionmsg' => 'intersection-desc',
 	'url'            => 'http://www.mediawiki.org/wiki/Extension:Intersection',
 	'author'         => array( '[http://en.wikinews.org/wiki/User:Amgine Amgine]', '[http://en.wikinews.org/wiki/User:IlyaHaykinson IlyaHaykinson]' ),
@@ -53,7 +52,6 @@ $dir = dirname(__FILE__) . '/';
 $wgExtensionMessagesFiles['DynamicPageList'] = $dir . 'DynamicPageList.i18n.php';
 
 function wfDynamicPageList( &$parser ) {
-	wfLoadExtensionMessages( 'DynamicPageList' );
 	$parser->setHook( "DynamicPageList", "DynamicPageList" );
 	return true;
 }
@@ -67,13 +65,13 @@ function DynamicPageList( $input ) {
 	global $wgDLPmaxCategories, $wgDLPMaxResultCount;
 	global $wgDLPAllowUnlimitedResults, $wgDLPAllowUnlimitedCategories;
 
-	$aParams = array();
 	$bCountSet = false;
 
 	$sStartList = '<ul>';
 	$sEndList = '</ul>';
 	$sStartItem = '<li>';
 	$sEndItem = '</li>';
+	$bInlineMode = false;
 
 	$bUseGallery = false;
 	$bGalleryFileSize = false;
@@ -178,12 +176,21 @@ function DynamicPageList( $input ) {
 						$sEndList = '';
 						$sStartItem = '';
 						$sEndItem = '<br />';
+						$bInlineMode = false;
 						break;
 					case 'ordered':
 						$sStartList = '<ol>';
 						$sEndList = '</ol>';
 						$sStartItem = '<li>';
 						$sEndItem = '</li>';
+						$bInlineMode = false;
+						break;
+					case 'inline':
+						//aka comma seperated list
+						$sStartList = '';
+						$sEndList = '';
+						$sStartItem = '';
+						$bInlineMode = true;
 						break;
 					case 'unordered':
 					default:
@@ -191,6 +198,7 @@ function DynamicPageList( $input ) {
 						$sEndList = '</ul>';
 						$sStartItem = '<li>';
 						$sEndItem = '</li>';
+						$bInlineMode = false;
 						break;
 				}
 				break;
@@ -489,7 +497,7 @@ function DynamicPageList( $input ) {
 			$sSqlSort = 'page_id'; # Since they're never reused and increasing
 			break;
 		case 'categorysortkey':
-			$sSqlSort = 'c1.cl_sortkey';
+			$sSqlSort = "c1.cl_type $sSqlOrder, c1.cl_sortkey";
 			break;
 		case 'popularity':
 			$sSqlSort = 'page_counter';
@@ -532,9 +540,9 @@ function DynamicPageList( $input ) {
 
 	//process results of query, outputing equivalent of <li>[[Article]]</li> for each result,
 	//or something similar if the list uses other startlist/endlist
-	while ($row = $dbr->fetchObject( $res ) ) {
+	$articleList = Array();
+	foreach ( $res as $row ) {
 		$title = Title::makeTitle( $row->page_namespace, $row->page_title);
-		$output .= $sStartItem;
 		if ( true == $bAddFirstCategoryDate ) {
 			if ( $sDateFormat != '' ) {
 				# this is a tad ugly
@@ -575,9 +583,8 @@ function DynamicPageList( $input ) {
 				# would come from the dateformatter <span>.
 				$gallery->add( $title, $categoryDate );
 		} else {
-			$output .= $categoryDate;
-			$output .= $sk->link( $title, htmlspecialchars( $titleText ), $aLinkOptions, $query, array( 'forcearticlepath', 'known' ) );
-			$output .= $sEndItem . "\n";
+			$articleList[] = $categoryDate
+				. $sk->link( $title, htmlspecialchars( $titleText ), $aLinkOptions, $query, array( 'forcearticlepath', 'known' ) );
 		}
 	}
 
@@ -596,6 +603,13 @@ function DynamicPageList( $input ) {
 			$gallery->setCaption( $sGalleryCaption ); # gallery class escapes string
 		$output = $gallery->toHtml();
 	} else {
+		$output .= $sStartItem;
+		if ( $bInlineMode ) {
+			$output .= $wgContLang->commaList( $articleList );
+		} else { 
+			$output .= implode( "$sEndItem \n $sStartItem", $articleList ); 
+		}
+		$output .= $sEndItem;
 		$output .= $sEndList . "\n";
 	}
 	return $output;

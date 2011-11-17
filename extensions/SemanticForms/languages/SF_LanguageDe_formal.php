@@ -1,8 +1,13 @@
 <?php
 /**
  * @author Dominik Rodler
+ * @file
+ * @ingroup SF
  */
 
+/**
+ * @ingroup SFLanguage
+ */
 class SF_LanguageDe_formal extends SF_Language {
 
 	/* private */ var $m_SpecialProperties = array(

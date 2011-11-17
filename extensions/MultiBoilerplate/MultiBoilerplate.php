@@ -5,9 +5,9 @@
  * edit form when editing non-exstant pages or, optionally (based upon
  * configuration variable $wgMultiBoilerplateOverwrite), load the template
  * over the current contents. 
- * 
  *
- * @addtogroup Extensions
+ * @file
+ * @ingroup Extensions
  *
  * @link http://www.mediawiki.org/wiki/Extension:MultiBoilerplate
  *
@@ -24,7 +24,6 @@ if( !defined( 'MEDIAWIKI' ) ) die( 'Invalid entry point.' );
 $wgExtensionCredits[ 'other' ][] = array(
 	'path'           => __FILE__,
 	'name'           => 'MultiBoilerplate',
-	'description'    => 'Allows a boilerplate to be selected from a drop down box located above the edit form when editing pages.',
 	'descriptionmsg' => 'multiboilerplate-desc',
 	'author'         => array( 'Robert Leverington', 'Al Maghi' ),
 	'url'            => 'http://www.mediawiki.org/wiki/Extension:MultiBoilerplate',
@@ -49,7 +48,7 @@ $wgSpecialPageGroups['Boilerplates'] = 'wiki'; //section of [[Special:SpecialPag
  * boilerplates in the format of:
  * "* Boilerplate Name|Template:Boilerplate Template"
  */
-$wgMultiBoilerplateOptions = false; 
+$wgMultiBoilerplateOptions = array(); 
 /* Whether or not to show the form when editing pre-existing pages. */
 $wgMultiBoilerplateOverwrite = false;
 /* Whether or not to display a special page listing boilerplates.
@@ -66,13 +65,6 @@ function efBoilerplateDisplaySpecialPage( &$aSpecialPages ) {
 }
 
 
-/* Whether or not to use per-namespace boilerplates. Uses Mediawiki:Multiboilerplate-<namespacenumber>,
- * for example -12 for the help namespace. No -0 suffix for main namespace.
- * Requires $wgMultiBoilerplateOptions = false to work.
- */
-$wgMultiBoilerplatePerNamespace = false;
-
-
 /**
  * Generate the form to be displayed at the top of the edit page and insert it.
  * @param $form EditPage object.
@@ -81,10 +73,7 @@ $wgMultiBoilerplatePerNamespace = false;
 function efMultiBoilerplate( $form ) {
 
 	// Get various variables needed for this extension.
-	global $wgMultiBoilerplateOptions, $wgMultiBoilerplateOverwrite, $wgTitle, $wgRequest, $wgMultiBoilerplatePerNamespace;
-
-	// Load messages into the message cache.
-	wfLoadExtensionMessages( 'MultiBoilerplate' );
+	global $wgMultiBoilerplateOptions, $wgMultiBoilerplateOverwrite, $wgTitle, $wgRequest;
 
 	// If $wgMultiBoilerplateOverwrite is true then detect whether
 	// the current page exists or not and if it does return true
@@ -102,12 +91,7 @@ function efMultiBoilerplate( $form ) {
 			$options .= Xml::option( $name, $template, $selected );
 		}
 	} else {
-		$boilerplatepage = 'multiboilerplate';
-		if ($wgMultiBoilerplatePerNamespace) {
-			$namespace = $wgTitle->getNamespace();
-			if ($namespace <> 0) $boilerplatepage .= '-' . $namespace;
-		}
-		$things = wfMsgForContent( $boilerplatepage );
+		$things = wfMsgForContent( 'multiboilerplate' );
 		$options = '';
 		$things = explode( "\n", str_replace( "\r", "\n", str_replace( "\r\n", "\n", $things ) ) ); // Ensure line-endings are \n
 		foreach( $things as $row ) {
@@ -137,8 +121,8 @@ function efMultiBoilerplate( $form ) {
 					Xml::closeElement( 'select' ) .
 				Xml::closeElement( 'label' ) .
 				' ' .
-				Xml::hidden( 'action', 'edit' ) .
-				Xml::hidden( 'title', $wgRequest->getText( 'title' ) ) .
+				Html::Hidden( 'action', 'edit' ) .
+				Html::Hidden( 'title', $wgRequest->getText( 'title' ) ) .
 				Xml::submitButton( wfMsg( 'multiboilerplate-submit' ) ) .
 			Xml::closeElement( 'fieldset' ) .
 		Xml::closeElement( 'form' );

@@ -2,7 +2,8 @@
 /**
  * Internationalisation file for FlaggedRevs extension, section QualityOversight
  *
- * @addtogroup Extensions
+ * @file
+ * @ingroup Extensions
  */
 
 $messages = array();
@@ -26,9 +27,9 @@ $messages['qqq'] = array(
  * @author Juanpabl
  */
 $messages['an'] = array(
-	'qualityoversight' => 'Superbisión de calidat',
-	'qualityoversight-list' => "Ista pachina amuestra as zagueras aprebazions y depreziazions d'as rebisions.",
-	'qualityoversight-legend' => "Mirar en os rechistros d'as zagueras rebisions",
+	'qualityoversight' => 'Rechistro de versions abanzato',
+	'qualityoversight-list' => "Ista pachina amuestra as zagueras aprebacions y depreciacions d'as revisions.",
+	'qualityoversight-legend' => "Mirar en os rechistros d'as zagueras revisions",
 );
 
 /** Arabic (العربية)
@@ -56,6 +57,15 @@ $messages['bcc'] = array(
 	'qualityoversight' => 'کیفیت بازرویت',
 	'qualityoversight-list' => 'ای صفحه نوکین تاییدات کیفیت بازبینی ان و نسخ کیفیت بازبینی ان لیست کنت.',
 	'qualityoversight-legend' => 'گردگ په آماران نوکین بازبینی',
+);
+
+/** Belarusian (Беларуская)
+ * @author Хомелка
+ */
+$messages['be'] = array(
+	'qualityoversight' => 'Журнал пашыраных праверак',
+	'qualityoversight-list' => 'Гэтая старонка ўтрымлівае пералік нядаўніх пацверджанняў і здыманняў узроўняў якасці версій.',
+	'qualityoversight-legend' => 'Пошук па журналу праверак',
 );
 
 /** Belarusian (Taraškievica orthography) (Беларуская (тарашкевіца))
@@ -89,17 +99,18 @@ $messages['br'] = array(
  * @author CERminator
  */
 $messages['bs'] = array(
-	'qualityoversight' => 'Nadzor kvalitete',
+	'qualityoversight' => 'Napredni zapisnik pregleda',
 	'qualityoversight-list' => 'Ova stranica prikazuje nedavna odobrenja i uklanjanja revizija.',
 	'qualityoversight-legend' => 'Traži nedavne zapise pregleda',
 );
 
 /** Catalan (Català)
+ * @author Davidpar
  * @author SMP
  * @author Solde
  */
 $messages['ca'] = array(
-	'qualityoversight' => 'Visió de la qualitat',
+	'qualityoversight' => 'Revisió de registre avançada',
 	'qualityoversight-list' => 'Aquesta pàgina llista les aprovacions i depreciacions recents de revisions.',
 	'qualityoversight-legend' => 'Cerca els registres de revisions recents',
 );
@@ -114,11 +125,12 @@ $messages['cs'] = array(
 );
 
 /** German (Deutsch)
+ * @author Kghbln
  * @author Raimond Spekking
  * @author Umherirrender
  */
 $messages['de'] = array(
-	'qualityoversight' => 'Übersicht über markierte Versionen',
+	'qualityoversight' => 'Erweitertes Versionsmarkierungs-Logbuch',
 	'qualityoversight-list' => 'Diese Seite zeigt die aktuellen Freigaben sowie den Widerruf markierter Versionen.',
 	'qualityoversight-legend' => 'Suche in Versionsmarkierungen',
 );
@@ -127,7 +139,7 @@ $messages['de'] = array(
  * @author Xoser
  */
 $messages['diq'] = array(
-	'qualityoversight' => 'Oversightê kaliteyî',
+	'qualityoversight' => 'Loge kontrele kaliteyî',
 	'qualityoversight-list' => 'Ena pel de revizyonan u testiqanê penî ser yew liste esto.',
 	'qualityoversight-legend' => 'Loganê kontrol penî de bigêre',
 );
@@ -136,7 +148,7 @@ $messages['diq'] = array(
  * @author Michawiki
  */
 $messages['dsb'] = array(
-	'qualityoversight' => 'Kontrola kwality',
+	'qualityoversight' => 'Rozšyrjony pśeglědowański protokol',
 	'qualityoversight-list' => 'Toś ten bok nalistujo aktualne pśizwólenja a póroki za wersije',
 	'qualityoversight-legend' => 'W aktualnych protokolach kontrolow pytaś',
 );
@@ -154,7 +166,7 @@ $messages['el'] = array(
  * @author Yekrats
  */
 $messages['eo'] = array(
-	'qualityoversight' => 'Atentado de bonkvalito',
+	'qualityoversight' => 'Protokolo de progresa kontrolo',
 	'qualityoversight-list' => 'Ĉi tiu paĝo montras kaj lastatempajn aprobojn kaj malvalidigojn de versioj.',
 	'qualityoversight-legend' => 'Serĉi lastajn protokolerojn',
 );
@@ -169,19 +181,31 @@ $messages['es'] = array(
 	'qualityoversight-legend' => 'Buscar lista de revisiones recientes',
 );
 
+/** Estonian (Eesti)
+ * @author Pikne
+ */
+$messages['et'] = array(
+	'qualityoversight' => 'Täpne ülevaatuslogi',
+	'qualityoversight-list' => 'See lehekülg loetleb uusimad redaktsioonide heakskiitmised ja iganenuks märkimised.',
+	'qualityoversight-legend' => 'Viimastest ülevaatuslogidest otsimine',
+);
+
 /** Persian (فارسی)
+ * @author Ebraminio
  * @author Huji
  */
 $messages['fa'] = array(
-	'qualityoversight' => 'ناظر کیفیت',
+	'qualityoversight' => 'سیاههٔ پیشرفتهٔ بازبینی',
 	'qualityoversight-list' => 'این صفحه آخرین موارد تایید نسخه‌های با کیفیت و نیز مستهلک شدن نسخه‌های با کیفیت را فهرست می‌کند.',
 	'qualityoversight-legend' => 'جستجوی سیاهه‌های بازبینی اخیر',
 );
 
 /** Finnish (Suomi)
+ * @author Olli
  * @author ZeiP
  */
 $messages['fi'] = array(
+	'qualityoversight' => 'Kehittynyt arviointiloki',
 	'qualityoversight-list' => 'Tämä sivu listaa versioiden tuoreimmat hyväksynnät ja vanhenemiset.',
 	'qualityoversight-legend' => 'Hae tuoreista arviointilokeista',
 );
@@ -233,10 +257,11 @@ $messages['gsw'] = array(
 );
 
 /** Hebrew (עברית)
+ * @author DoviJ
  * @author Rotemliss
  */
 $messages['he'] = array(
-	'qualityoversight' => 'בקרת איכות',
+	'qualityoversight' => 'יומן לבקרת איכות מתקדמת',
 	'qualityoversight-list' => 'בדף זה רשומים האישורים החדשים ביותר של גרסאות וכן הסימונים האחרונים של גרסאות כבעייתיות.',
 	'qualityoversight-legend' => 'חיפוש ביומני הבדיקה האחרונים',
 );
@@ -251,10 +276,10 @@ $messages['hi'] = array(
 
 /** Croatian (Hrvatski)
  * @author Ex13
- * @author Suradnik13
+ * @author SpeedyGonsales
  */
 $messages['hr'] = array(
-	'qualityoversight' => 'Nadzor kvalitete',
+	'qualityoversight' => 'Detaljna evidencija ocjenjivanja',
 	'qualityoversight-list' => 'Ova stranica navodi najnovija odobrenja i snižavanja ocjena inačica.',
 	'qualityoversight-legend' => 'Pretraži evidencije nedavnih ocjena',
 );
@@ -263,17 +288,18 @@ $messages['hr'] = array(
  * @author Michawiki
  */
 $messages['hsb'] = array(
-	'qualityoversight' => 'Kwalitna kontrola',
+	'qualityoversight' => 'Protokol rozšěrjeneje kontrole',
 	'qualityoversight-list' => 'Tuta strona nalistuje aktulane schwalenja a njeschwalenja skontrolowanych wersijow.',
 	'qualityoversight-legend' => 'Aktualne kontrolowe zapiski přepytać',
 );
 
 /** Hungarian (Magyar)
  * @author Dani
+ * @author Glanthor Reviol
  */
 $messages['hu'] = array(
-	'qualityoversight' => 'Minőségellenőrzés',
-	'qualityoversight-list' => 'Ez a lap a legutóbb végzett értékeléseket listázza.',
+	'qualityoversight' => 'Haladó ellenőrzési napló',
+	'qualityoversight-list' => 'A lapváltozatok legutóbb végzett ellenőrzöttnek jelöléseit és ellenőrzöttnek jelölések megvonásait listázza.',
 	'qualityoversight-legend' => 'Keresés a legutóbbi ellenőrzések naplójában',
 );
 
@@ -287,30 +313,33 @@ $messages['ia'] = array(
 );
 
 /** Indonesian (Bahasa Indonesia)
+ * @author Iwan Novirion
  * @author Rex
  */
 $messages['id'] = array(
-	'qualityoversight' => 'Pemeriksaan kelayakan',
+	'qualityoversight' => 'Catatan peninjauan lebih lanjut',
 	'qualityoversight-list' => 'Berikut adalah daftar persetujuan dan penurunan tingkat kualitas revisi-revisi.',
 	'qualityoversight-legend' => 'Cari log peninjauan terkini',
 );
 
 /** Italian (Italiano)
+ * @author Beta16
  * @author Darth Kule
  * @author Pietrodn
  */
 $messages['it'] = array(
-	'qualityoversight' => 'Supervisione della qualità',
+	'qualityoversight' => 'Registro avanzato delle revisioni',
 	'qualityoversight-list' => 'Questa pagina elenca le più recenti approvazioni e deprezzamenti delle revisioni.',
 	'qualityoversight-legend' => 'Cerca i log delle revisioni recenti',
 );
 
 /** Japanese (日本語)
+ * @author Aotake
  * @author Fryed-peach
  * @author Hosiryuhosi
  */
 $messages['ja'] = array(
-	'qualityoversight' => '品質監督',
+	'qualityoversight' => '詳細な査読記録',
 	'qualityoversight-list' => 'このページでは最近の特定版承認および棄却を一覧しています。',
 	'qualityoversight-legend' => '最近の査読記録を検索',
 );
@@ -322,7 +351,16 @@ $messages['km'] = array(
 	'qualityoversight-legend' => 'ស្វែងរក​បញ្ជី​ត្រួតពិនិត្យ​ថ្មីៗ',
 );
 
-/** Ripoarisch (Ripoarisch)
+/** Korean (한국어)
+ * @author Kwj2772
+ */
+$messages['ko'] = array(
+	'qualityoversight' => '고급 검토 기록',
+	'qualityoversight-list' => '이 문서는 최근의 문서 편집 승인과 거부에 관한 내역입니다.',
+	'qualityoversight-legend' => '최근 검토 기록 찾기',
+);
+
+/** Colognian (Ripoarisch)
  * @author Purodha
  */
 $messages['ksh'] = array(
@@ -338,6 +376,15 @@ $messages['lb'] = array(
 	'qualityoversight' => 'Erweidert Logbuch vun den nogekuckte Versiounen',
 	'qualityoversight-list' => 'Op dëser Säit stinn déi rezenste Säiten déi fräigi goufen an denen hir Markéierung opgehuewe gouf.',
 	'qualityoversight-legend' => 'Am Logbuch vun den nogekuckte Säite sichen',
+);
+
+/** Limburgish (Limburgs)
+ * @author Ooswesthoesbes
+ */
+$messages['li'] = array(
+	'qualityoversight' => 'Kwaliteitscontrolelogbook',
+	'qualityoversight-list' => "Op dees pagina's waere recent gecontroleerde kwaliteitsversies weergegaeve en pagina's woveur de kwaliteit leger is ingesteld.",
+	'qualityoversight-legend' => 'Doorzeuk recente contrologbeuk',
 );
 
 /** Macedonian (Македонски)
@@ -416,9 +463,10 @@ $messages['oc'] = array(
 
 /** Polish (Polski)
  * @author Leinad
+ * @author Sp5uhe
  */
 $messages['pl'] = array(
-	'qualityoversight' => 'Rejestr oznaczania wersji',
+	'qualityoversight' => 'Szczegółowy rejestr oznaczania',
 	'qualityoversight-list' => 'Poniżej znajduje się lista ostatnio oznaczonych i wycofanych oznaczeń wersji.',
 	'qualityoversight-legend' => 'Szukaj w rejestrze oznaczania wersji',
 );
@@ -438,15 +486,16 @@ $messages['pms'] = array(
  */
 $messages['pt'] = array(
 	'qualityoversight' => 'Registo avançado de revisões',
-	'qualityoversight-list' => 'Esta página lista as mais recentes aprovações e despromoções de revisões.',
-	'qualityoversight-legend' => 'Pesquisar nos registos de análises recentes',
+	'qualityoversight-list' => 'Esta página lista as mais recentes aprovações e reprovações de edições.',
+	'qualityoversight-legend' => 'Pesquisar registos das revisões recentes',
 );
 
 /** Brazilian Portuguese (Português do Brasil)
  * @author Eduardo.mps
+ * @author Giro720
  */
 $messages['pt-br'] = array(
-	'qualityoversight' => 'Observatório da qualidade',
+	'qualityoversight' => 'Registro avançado de revisões',
 	'qualityoversight-list' => 'Esta página lista aprovações e depreciações recentes de edições confiáveis.',
 	'qualityoversight-legend' => 'Pesquisar nos registros de análises recentes',
 );
@@ -455,8 +504,8 @@ $messages['pt-br'] = array(
  * @author Mihai
  */
 $messages['ro'] = array(
-	'qualityoversight-list' => 'Această pagină afişează cele mai recente aprobări şi deprecieri ale reviziilor.',
-	'qualityoversight-legend' => 'Căutaţi jurnalele recente ale revizuirilor',
+	'qualityoversight-list' => 'Această pagină afișează cele mai recente aprobări și deprecieri ale reviziilor.',
+	'qualityoversight-legend' => 'Căutați jurnalele recente ale revizuirilor',
 );
 
 /** Tarandíne (Tarandíne)
@@ -473,7 +522,7 @@ $messages['roa-tara'] = array(
  */
 $messages['ru'] = array(
 	'qualityoversight' => 'Журнал расширенных проверок',
-	'qualityoversight-list' => 'Эта страница содержит список недавних утверждений и снятий уровней качества версий.',
+	'qualityoversight-list' => 'Эта страница содержит список недавних подтверждений и снятий уровней качества версий.',
 	'qualityoversight-legend' => 'Поиск по журналу проверок',
 );
 
@@ -481,25 +530,35 @@ $messages['ru'] = array(
  * @author Helix84
  */
 $messages['sk'] = array(
-	'qualityoversight' => 'kvalitný dozor',
+	'qualityoversight' => 'Pokročilý záznam kontrol',
 	'qualityoversight-list' => 'Táto stránka obsahuje zoznam všetkých posledných schválení kvalitných verzií ako aj zavrhnutí revízií.',
 	'qualityoversight-legend' => 'Hľadať v posledných záznamoch kontrol',
 );
 
+/** Slovenian (Slovenščina)
+ * @author Dbc334
+ */
+$messages['sl'] = array(
+	'qualityoversight' => 'Dnevnik naprednih pregledov',
+	'qualityoversight-list' => 'Ta stran navaja najnovejše odobritve in zavrnitve redakcij.',
+	'qualityoversight-legend' => 'Iskanje nedavnih dnevnikov pregledov',
+);
+
 /** Serbian Cyrillic ekavian (Српски (ћирилица))
+ * @author Charmed94
  * @author Millosh
  */
 $messages['sr-ec'] = array(
-	'qualityoversight' => 'Надгледање квалитета',
-	'qualityoversight-list' => 'На овој страни се налази списак скоро одобрених и потиснутих верзија.',
-	'qualityoversight-legend' => 'Претрага лога скорих прегледа.',
+	'qualityoversight' => 'Напредни преглед извештаја',
+	'qualityoversight-list' => 'На овој страни се налази списак недавно одобрених и потиснутих ревизија.',
+	'qualityoversight-legend' => 'Претрага извештаја недавних прегледа',
 );
 
 /** Serbian Latin ekavian (Srpski (latinica))
  * @author Michaello
  */
 $messages['sr-el'] = array(
-	'qualityoversight' => 'Nadgledanje kvaliteta',
+	'qualityoversight' => 'Napredni pregled izveštaja',
 	'qualityoversight-list' => 'Na ovoj strani se nalazi spisak skoro odobrenih i potisnutih verzija.',
 	'qualityoversight-legend' => 'Pretraga loga skorih pregleda.',
 );
@@ -534,7 +593,7 @@ $messages['tk'] = array(
  * @author AnakngAraw
  */
 $messages['tl'] = array(
-	'qualityoversight' => 'Pagiingat na pangkaantasan ng uri (kalidad)',
+	'qualityoversight' => 'Masulong na talaan ng pagsusuri',
 	'qualityoversight-list' => 'Nagtatala ang pahinang ito ng pinakakamakailan lamang na mga pagpayag at pagbaba ng halaga/katururan ng mga pagbabago.',
 	'qualityoversight-legend' => 'Maghanap sa mga talaan ng mga kamakailang pagsusuri',
 );
@@ -570,7 +629,7 @@ $messages['vec'] = array(
  * @author Игорь Бродский
  */
 $messages['vep'] = array(
-	'qualityoversight' => 'Ladun revizor',
+	'qualityoversight' => 'Levitadud kodvindoiden aiglehtez',
 	'qualityoversight-list' => 'Necil lehtolel om tantoižiden vahvištusiden da ladunpindoiden heitmižiden nimikirjutez.',
 	'qualityoversight-legend' => 'Ecmine kodvindoiden aigkirjas',
 );
@@ -580,12 +639,12 @@ $messages['vep'] = array(
  * @author Vinhtantran
  */
 $messages['vi'] = array(
-	'qualityoversight' => 'Giám sát chất lượng',
+	'qualityoversight' => 'Nhật trình duyệt nâng cao',
 	'qualityoversight-list' => 'Trang này liệt kê những lần phê chuẩn các phiên bản chất lượng gần nhất cũng như sự giảm giá trị của những phiên bản chất lượng.',
 	'qualityoversight-legend' => 'Tìm kiếm trong các nhật trình duyệt gần đây',
 );
 
-/** Yue (粵語)
+/** Cantonese (粵語)
  * @author Shinjiman
  */
 $messages['yue'] = array(
@@ -598,17 +657,18 @@ $messages['yue'] = array(
  * @author Shinjiman
  */
 $messages['zh-hans'] = array(
-	'qualityoversight' => '品质管理',
+	'qualityoversight' => '品质管理日志',
 	'qualityoversight-list' => '这个页面列示出最近核准修订以及最近品质修订之折旧。',
 	'qualityoversight-legend' => '搜索最近审核记录',
 );
 
 /** Traditional Chinese (‪中文(繁體)‬)
+ * @author Horacewai2
  * @author Liangent
  * @author Shinjiman
  */
 $messages['zh-hant'] = array(
-	'qualityoversight' => '品質管理',
+	'qualityoversight' => '品質管理日誌',
 	'qualityoversight-list' => '這個頁面列示出最近核准修訂以及最近品質修訂之折舊。',
 	'qualityoversight-legend' => '搜索最近審核記錄',
 );

@@ -2,25 +2,33 @@
 
 /**
  * Initialization file for the Maps extension.
- * Extension documentation: http://www.mediawiki.org/wiki/Extension:Maps
+ * 
+ * On MediaWiki.org: 		http://www.mediawiki.org/wiki/Extension:Maps
+ * Official documentation: 	http://mapping.referata.com/wiki/Maps
+ * Examples/demo's: 		http://mapping.referata.com/wiki/Maps_examples
  *
  * @file Maps.php
  * @ingroup Maps
  *
- * @author Jeroen De Dauw
+ * @licence GNU GPL v3
+ * @author Jeroen De Dauw < jeroendedauw@gmail.com >
  */
 
 /**
  * This documenation group collects source code files belonging to Maps.
  *
  * Please do not use this group name for other code. If you have an extension to
- * Maps, please use your own group defenition.
+ * Maps, please use your own group definition.
  *
  * @defgroup Maps Maps
  */
 
 if ( !defined( 'MEDIAWIKI' ) ) {
 	die( 'Not an entry point.' );
+}
+
+if ( version_compare( $wgVersion, '1.17', '<' ) ) {
+	die( '<b>Error:</b> This version of Maps requires MediaWiki 1.17 or above; use Maps 0.7.x for older versions.' );
 }
 
 // Include the Validator extension if that hasn't been done yet, since it's required for Maps to work.
@@ -30,52 +38,250 @@ if ( !defined( 'Validator_VERSION' ) ) {
 
 // Only initialize the extension when all dependencies are present.
 if ( ! defined( 'Validator_VERSION' ) ) {
-	echo '<b>Warning:</b> You need to have <a href="http://www.mediawiki.org/wiki/Extension:Validator">Validator</a> installed in order to use <a href="http://www.mediawiki.org/wiki/Extension:Maps">Maps</a>.';
+	die( '<b>Error:</b> You need to have <a href="http://www.mediawiki.org/wiki/Extension:Validator">Validator</a> installed in order to use <a href="http://www.mediawiki.org/wiki/Extension:Maps">Maps</a>.<br />' );
 }
-else {
-	define( 'Maps_VERSION', '0.6.6' );
 
-	// The different coordinate notations.
-	define( 'Maps_COORDS_FLOAT', 'float' );
-	define( 'Maps_COORDS_DMS', 'dms' );
-	define( 'Maps_COORDS_DM', 'dm' );
-	define( 'Maps_COORDS_DD', 'dd' );
+define( 'Maps_VERSION', '1.0.3' );
 
-	// The symbols to use for degrees, minutes and seconds.
-	define( 'Maps_GEO_DEG', '°' );
-	define( 'Maps_GEO_MIN', "'" );
-	define( 'Maps_GEO_SEC', '"' );
+$wgExtensionCredits['parserhook'][] = array(
+	'path' => __FILE__,
+	'name' => 'Maps',
+	'version' => Maps_VERSION,
+	'author' => array(
+		'[http://www.mediawiki.org/wiki/User:Jeroen_De_Dauw Jeroen De Dauw]'
+	),
+	'url' => 'http://www.mediawiki.org/wiki/Extension:Maps',
+	'descriptionmsg' => 'maps-desc'
+);
 
-	$useExtensionPath = version_compare( $wgVersion, '1.16', '>=' ) && isset( $wgExtensionAssetsPath ) && $wgExtensionAssetsPath;
-	$egMapsScriptPath 	= ( $useExtensionPath ? $wgExtensionAssetsPath : $wgScriptPath . '/extensions' ) . '/Maps';
-	$egMapsDir 			= dirname( __FILE__ ) . '/';
-	unset( $useExtensionPath );
+// The different coordinate notations.
+define( 'Maps_COORDS_FLOAT', 'float' );
+define( 'Maps_COORDS_DMS', 'dms' );
+define( 'Maps_COORDS_DM', 'dm' );
+define( 'Maps_COORDS_DD', 'dd' );
 
-	// To ensure Maps remains compatible with pre 1.16.
-	if ( version_compare( $wgVersion, '1.16', '<' ) ) {
-		$wgAutoloadClasses['Html'] = $egMapsDir . 'Compat/Html.php';
-	}
+$egMapsScriptPath 	= ( $wgExtensionAssetsPath === false ? $wgScriptPath . '/extensions' : $wgExtensionAssetsPath ) . '/Maps';
+$egMapsDir 			= dirname( __FILE__ ) . '/';
 
-	$egMapsStyleVersion = $wgStyleVersion . '-' . Maps_VERSION;
+$egMapsStyleVersion = $wgStyleVersion . '-' . Maps_VERSION;
 
-	$egMapsFeatures = array();
+$wgAutoloadClasses['MapsHooks'] = dirname( __FILE__ ) . '/Maps.hooks.php';
 
-	// Include the settings file.
-	require_once $egMapsDir . 'Maps_Settings.php';
+// Autoload the "includes/" classes and interfaces.
+$incDir = dirname( __FILE__ ) . '/includes/';
+$wgAutoloadClasses['MapsMapper'] 				= $incDir . 'Maps_Mapper.php';
+$wgAutoloadClasses['MapsCoordinateParser'] 		= $incDir . 'Maps_CoordinateParser.php';
+$wgAutoloadClasses['MapsDistanceParser'] 		= $incDir . 'Maps_DistanceParser.php';
+$wgAutoloadClasses['MapsGeoFunctions'] 			= $incDir . 'Maps_GeoFunctions.php';
+$wgAutoloadClasses['MapsGeocoders'] 			= $incDir . 'Maps_Geocoders.php';
+$wgAutoloadClasses['MapsGeocoder'] 				= $incDir . 'Maps_Geocoder.php';
+$wgAutoloadClasses['MapsKMLFormatter'] 			= $incDir . 'Maps_KMLFormatter.php';
+$wgAutoloadClasses['MapsLayer'] 				= $incDir . 'Maps_Layer.php';
+$wgAutoloadClasses['MapsLayerPage'] 			= $incDir . 'Maps_LayerPage.php';
+$wgAutoloadClasses['MapsLayers'] 				= $incDir . 'Maps_Layers.php';
+$wgAutoloadClasses['MapsLocation'] 				= $incDir . 'Maps_Location.php';
+$wgAutoloadClasses['iMappingService'] 			= $incDir . 'iMappingService.php';
+$wgAutoloadClasses['MapsMappingServices'] 		= $incDir . 'Maps_MappingServices.php';
+$wgAutoloadClasses['MapsMappingService'] 		= $incDir . 'Maps_MappingService.php';
 
-	$wgExtensionMessagesFiles['Maps'] = $egMapsDir . 'Maps.i18n.php';
+$wgAutoloadClasses['ApiGeocode'] 				= $incDir . 'api/ApiGeocode.php';
 
-	if ( version_compare( $wgVersion, '1.16alpha', '>=' ) ) {
-		$wgExtensionMessagesFiles['MapsMagic'] = $egMapsDir . 'Maps.i18n.magic.php';
-	}
+// Autoload the "includes/criteria/" classes.
+$criDir = $incDir . 'criteria/';
+$wgAutoloadClasses['CriterionIsDistance'] 		= $criDir . 'CriterionIsDistance.php';
+$wgAutoloadClasses['CriterionIsImage'] 			= $criDir . 'CriterionIsImage.php';
+$wgAutoloadClasses['CriterionIsLocation'] 		= $criDir . 'CriterionIsLocation.php';
+$wgAutoloadClasses['CriterionMapDimension'] 	= $criDir . 'CriterionMapDimension.php';
+$wgAutoloadClasses['CriterionMapLayer'] 		= $criDir . 'CriterionMapLayer.php';
+unset( $criDir );
 
-	// Register the initialization function of Maps.
-	$wgExtensionFunctions[] = 'efMapsSetup';
+// Autoload the "includes/features/" classes.
+$ftDir = $incDir . '/features/';
+$wgAutoloadClasses['MapsBaseMap'] 				= $ftDir . 'Maps_BaseMap.php';
+$wgAutoloadClasses['MapsBasePointMap'] 			= $ftDir . 'Maps_BasePointMap.php';	
+unset( $ftDir );
 
-	$wgHooks['AdminLinks'][] = 'efMapsAddToAdminLinks';
+// Autoload the "includes/geocoders/" classes.
+$geoDir = $incDir . 'geocoders/';
+$wgAutoloadClasses['MapsGeonamesGeocoder'] 		= $geoDir . 'Maps_GeonamesGeocoder.php';
+$wgAutoloadClasses['MapsGeonamesOldGeocoder'] 	= $geoDir . 'Maps_GeonamesOldGeocoder.php';
+$wgAutoloadClasses['MapsGoogleGeocoder'] 		= $geoDir . 'Maps_GoogleGeocoder.php';
+$wgAutoloadClasses['MapsYahooGeocoder'] 		= $geoDir . 'Maps_YahooGeocoder.php';
+unset( $geoDir );
+
+// Autoload the "includes/layers/" classes.
+$lyrDir = $incDir . 'layers/';
+$wgAutoloadClasses['MapsImageLayer'] 			= $lyrDir . 'Maps_ImageLayer.php';
+$wgAutoloadClasses['MapsKMLLayer'] 				= $lyrDir . 'Maps_KMLLayer.php';
+unset( $lyrDir );
+
+// Autoload the "includes/manipulations/" classes.
+$manDir = $incDir . 'manipulations/';
+$wgAutoloadClasses['MapsParamDimension'] 		= $manDir . 'Maps_ParamDimension.php';
+$wgAutoloadClasses['MapsParamFile'] 			= $manDir . 'Maps_ParamFile.php';
+$wgAutoloadClasses['MapsParamGeoService'] 		= $manDir . 'Maps_ParamGeoService.php';
+$wgAutoloadClasses['MapsParamLocation'] 		= $manDir . 'Maps_ParamLocation.php';
+$wgAutoloadClasses['MapsParamService'] 			= $manDir . 'Maps_ParamService.php';
+$wgAutoloadClasses['MapsParamZoom'] 			= $manDir . 'Maps_ParamZoom.php';
+unset( $manDir );
+
+// Autoload the "includes/parserHooks/" classes.
+$phDir = $incDir . '/parserHooks/';
+$wgAutoloadClasses['MapsCoordinates'] 			= $phDir . 'Maps_Coordinates.php';
+$wgAutoloadClasses['MapsDisplayMap'] 			= $phDir . 'Maps_DisplayMap.php';
+$wgAutoloadClasses['MapsDisplayPoint'] 			= $phDir . 'Maps_DisplayPoint.php';
+$wgAutoloadClasses['MapsDistance'] 				= $phDir . 'Maps_Distance.php';
+$wgAutoloadClasses['MapsFinddestination'] 		= $phDir . 'Maps_Finddestination.php';
+$wgAutoloadClasses['MapsGeocode'] 				= $phDir . 'Maps_Geocode.php';
+$wgAutoloadClasses['MapsGeodistance'] 			= $phDir . 'Maps_Geodistance.php';
+$wgAutoloadClasses['MapsMapsDoc'] 				= $phDir . 'Maps_MapsDoc.php';
+unset( $phDir );
+unset( $incDir );
+
+$wgAPIModules['geocode'] 						= 'ApiGeocode';
+
+$wgExtensionMessagesFiles['MapsMagic'] = $egMapsDir . 'Maps.i18n.magic.php';
 	
-	$wgHooks['UnitTestsList'][] = 'efMapsUnitTests';
+$wgExtensionMessagesFiles['Maps'] = $egMapsDir . 'Maps.i18n.php';
+
+// Register the initialization function of Maps.
+$wgExtensionFunctions[] = 'efMapsSetup';
+
+// Since 0.2
+$wgHooks['AdminLinks'][] = 'MapsHooks::addToAdminLinks';
+
+// Since 0.6.5
+$wgHooks['UnitTestsList'][] = 'MapsHooks::registerUnitTests';
+	
+// Since 0.7.1
+$wgHooks['ArticleFromTitle'][] = 'MapsHooks::onArticleFromTitle';	
+
+// Since 1.0
+$wgHooks['MakeGlobalVariablesScript'][] = 'MapsHooks::onMakeGlobalVariablesScript';
+
+$egMapsFeatures = array();
+
+$egMapsFeatures['pf'][]	= 'MapsDisplayMap::initialize';
+$egMapsFeatures['pf'][]	= 'MapsDisplayPoint::initialize';
+
+# Parser hooks
+
+	# Required for #coordinates.
+	$wgHooks['ParserFirstCallInit'][] = 'MapsCoordinates::staticInit';
+	$wgHooks['LanguageGetMagic'][] = 'MapsCoordinates::staticMagic';
+	# Required for #display_map.
+	$wgHooks['ParserFirstCallInit'][] = 'MapsDisplayMap::staticInit';
+	$wgHooks['LanguageGetMagic'][] = 'MapsDisplayMap::staticMagic';	
+	# Required for #display_point.
+	$wgHooks['ParserFirstCallInit'][] = 'MapsDisplayPoint::staticInit';
+	$wgHooks['LanguageGetMagic'][] = 'MapsDisplayPoint::staticMagic';				
+	# Required for #distance.
+	$wgHooks['ParserFirstCallInit'][] = 'MapsDistance::staticInit';
+	$wgHooks['LanguageGetMagic'][] = 'MapsDistance::staticMagic';
+	# Required for #finddestination.
+	$wgHooks['ParserFirstCallInit'][] = 'MapsFinddestination::staticInit';
+	$wgHooks['LanguageGetMagic'][] = 'MapsFinddestination::staticMagic';
+	# Required for #geocode.
+	$wgHooks['ParserFirstCallInit'][] = 'MapsGeocode::staticInit';
+	$wgHooks['LanguageGetMagic'][] = 'MapsGeocode::staticMagic';		
+	# Required for #geodistance.
+	$wgHooks['ParserFirstCallInit'][] = 'MapsGeodistance::staticInit';
+	$wgHooks['LanguageGetMagic'][] = 'MapsGeodistance::staticMagic';
+	# Required for #mapsdoc.
+	$wgHooks['ParserFirstCallInit'][] = 'MapsMapsDoc::staticInit';
+	$wgHooks['LanguageGetMagic'][] = 'MapsMapsDoc::staticMagic';
+	
+# Geocoders
+	
+	# Registration of the GeoNames service geocoder.
+	$wgHooks['GeocoderFirstCallInit'][] = 'MapsGeonamesGeocoder::register';	
+	
+	# Registration of the legacy GeoNames service geocoder.
+	$wgHooks['GeocoderFirstCallInit'][] = 'MapsGeonamesOldGeocoder::register';
+	
+	# Registration of the Google Geocoding (v2) service geocoder.
+	$wgHooks['GeocoderFirstCallInit'][] = 'MapsGoogleGeocoder::register';
+	
+	# Registration of the Yahoo! Geocoding service geocoder.
+	$wgHooks['GeocoderFirstCallInit'][] = 'MapsYahooGeocoder::register';
+	
+# Layers
+
+	# Registration of the image layer type.
+	$wgHooks['MappingLayersInitialization'][] = 'MapsImageLayer::register';
+	
+	# Registration of the KML layer type.
+	$wgHooks['MappingLayersInitialization'][] = 'MapsKMLLayer::register';
+
+# Mapping services
+	
+	# Include the mapping services that should be loaded into Maps.
+	# Commenting or removing a mapping service will make Maps completely ignore it, and so improve performance.
+	
+	# Google Maps API v2
+	include_once $egMapsDir . 'includes/services/GoogleMaps/GoogleMaps.php';
+	
+	# Google Maps API v3
+	include_once $egMapsDir . 'includes/services/GoogleMaps3/GoogleMaps3.php';
+	
+	# OpenLayers API
+	include_once $egMapsDir . 'includes/services/OpenLayers/OpenLayers.php';
+	
+	# Yahoo! Maps API
+	include_once $egMapsDir . 'includes/services/YahooMaps/YahooMaps.php';
+	
+	# WMF OSM
+	include_once $egMapsDir . 'includes/services/OSM/OSM.php';		
+
+$egMapsSettings = array();
+	
+// Include the settings file.
+require_once $egMapsDir . 'Maps_Settings.php';
+
+define( 'Maps_NS_LAYER', 		$egMapsNamespaceIndex + 0 );
+define( 'Maps_NS_LAYER_TALK', 	$egMapsNamespaceIndex + 1 );
+
+$wgResourceModules['ext.maps.common'] = array(
+	'localBasePath' => dirname( __FILE__ ) . '/includes',
+	'remoteBasePath' => $egMapsScriptPath . '/includes',	
+	'group' => 'ext.maps',
+	'messages' => array(
+		'maps-load-failed',
+	),
+	'scripts' => array(
+		'ext.maps.common.js'
+	)
+);
+
+$wgResourceModules['ext.maps.coord'] = array(
+	'localBasePath' => dirname( __FILE__ ) . '/includes',
+	'remoteBasePath' => $egMapsScriptPath . '/includes',	
+	'group' => 'ext.maps',
+	'messages' => array(
+		'maps-abb-north',
+		'maps-abb-east',
+		'maps-abb-south',
+		'maps-abb-west',
+	),
+	'scripts' => array(
+		'ext.maps.coord.js'
+	)
+);
+
+$wgResourceModules['ext.maps.resizable'] = array(
+	'dependencies' => 'jquery.ui.resizable'
+);
+
+$wgAvailableRights[] = 'geocode';
+
+# Users that can geocode. By default the same as those that can edit.
+foreach ( $wgGroupPermissions as $group => $rights ) {
+	if ( array_key_exists( 'edit', $rights ) ) {
+		$wgGroupPermissions[$group]['geocode'] = $wgGroupPermissions[$group]['edit'];
+	}
 }
+
+$egMapsGlobalJSVars = array();
 
 /**
  * Initialization function for the Maps extension.
@@ -85,86 +291,24 @@ else {
  * @return true
  */
 function efMapsSetup() {
-	global $wgExtensionCredits, $wgLang, $wgAutoloadClasses;
-	global $egMapsDefaultService, $egMapsAvailableServices;
-	global $egMapsDir, $egMapsUseMinJs, $egMapsJsExt;
+	global $wgExtraNamespaces, $wgNamespaceAliases;
 
-	// Autoload the "includes/" classes.
-	$wgAutoloadClasses['MapsMapper'] 				= $egMapsDir . 'Includes/Maps_Mapper.php';
-	$wgAutoloadClasses['MapsCoordinateParser'] 		= $egMapsDir . 'Includes/Maps_CoordinateParser.php';
-	$wgAutoloadClasses['MapsDistanceParser'] 		= $egMapsDir . 'Includes/Maps_DistanceParser.php';
-	
-	// This function has been deprecated in 1.16, but needed for earlier versions.
-	// It's present in 1.16 as a stub, but lets check if it exists in case it gets removed at some point.
-	if ( function_exists( 'wfLoadExtensionMessages' ) ) {
-		wfLoadExtensionMessages( 'Maps' );
+	if ( is_null( $wgExtraNamespaces ) ) {
+		$wgExtraNamespaces = array();
 	}
-
-	// Load the "service/" classes and interfaces.
-	require_once $egMapsDir . 'Services/iMappingService.php';
-	$wgAutoloadClasses['MapsMappingServices'] = $egMapsDir . 'Services/Maps_MappingServices.php';
-	$wgAutoloadClasses['MapsMappingService'] = $egMapsDir . 'Services/Maps_MappingService.php';
+	
+	$wgExtraNamespaces += array(
+		Maps_NS_LAYER => 'Layer',
+		Maps_NS_LAYER_TALK => 'Layer talk'
+	);
+	
+	$wgNamespaceAliases += array(
+		wfMsg( 'maps-ns-layer' ) => Maps_NS_LAYER,
+		wfMsg( 'maps-ns-layer-talk' ) => Maps_NS_LAYER_TALK
+	);
 	
 	wfRunHooks( 'MappingServiceLoad' );
-	
-	// Load the "feature/" classes and interfaces.
-	require_once $egMapsDir . 'Features/iMappingFeature.php';
-	
 	wfRunHooks( 'MappingFeatureLoad' );
 
-	// Creation of a list of internationalized service names.
-	$services = array();
-	foreach ( MapsMappingServices::getServiceIdentifiers() as $identifier ) $services[] = wfMsg( 'maps_' . $identifier );
-	$servicesList = $wgLang->listToText( $services );
-
-	$wgExtensionCredits['parserhook'][] = array(
-		'path' => __FILE__,
-		'name' => wfMsg( 'maps_name' ),
-		'version' => Maps_VERSION,
-		'author' => array(
-			'[http://www.mediawiki.org/wiki/User:Jeroen_De_Dauw Jeroen De Dauw]',
-			'[http://www.mediawiki.org/wiki/Extension:Maps/Credits others]'
-		),
-		'url' => 'http://www.mediawiki.org/wiki/Extension:Maps',
-		'description' => wfMsgExt( 'maps_desc', 'parsemag', $servicesList ),
-	);
-
-	MapsMapper::initialize();
-
-	$egMapsJsExt = $egMapsUseMinJs ? '.min.js' : '.js';
-
-	return true;
-}
-
-/**
- * Adds a link to Admin Links page.
- * 
- * @since 0.2
- * 
- * @return true
- */
-function efMapsAddToAdminLinks( &$admin_links_tree ) {
-    $displaying_data_section = $admin_links_tree->getSection( wfMsg( 'smw_adminlinks_displayingdata' ) );
-
-    // Escape if SMW hasn't added links.
-    if ( is_null( $displaying_data_section ) ) return true;
-    $smw_docu_row = $displaying_data_section->getRow( 'smw' );
-
-    $maps_docu_label = wfMsg( 'adminlinks_documentation', wfMsg( 'maps_name' ) );
-    $smw_docu_row->addItem( AlItem::newFromExternalLink( 'http://mapping.referata.com/wiki/Maps', $maps_docu_label ) );
-
-    return true;
-}
-
-/**
- * Hook to add PHPUnit test cases.
- * 
- * @since 0.6.5
- * 
- * @param array $files
- */
-function efMapsUnitTests( array &$files ) {
-	$testDir = dirname( __FILE__ ) . '/test/';
-	//$files[] = $testDir . 'MapsCoordinateParserTest.php';
 	return true;
 }

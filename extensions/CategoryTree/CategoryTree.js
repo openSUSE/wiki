@@ -2,161 +2,161 @@
  * JavaScript functions for the CategoryTree extension, an AJAX based gadget
  * to display the category structure of a wiki
  *
- * @package MediaWiki
- * @subpackage Extensions
+ * @file
+ * @ingroup Extensions
  * @author Daniel Kinzler, brightbyte.de
  * @copyright © 2006 Daniel Kinzler
  * @licence GNU General Public Licence 2.0 or later
  *
- * NOTE: if you change this, increment $wgCategoryTreeVersion 
+ * NOTE: if you change this, increment $wgCategoryTreeVersion
  *       in CategoryTree.php to avoid users getting stale copies from cache.
-*/
+ */
 
 // Default messages if new code loaded with old cached page
 var categoryTreeErrorMsg = "Problem loading data.";
 var categoryTreeRetryMsg = "Please wait a moment and try again.";
 
-    function categoryTreeNextDiv(e) {
-      var n= e.nextSibling;
-      while ( n && ( n.nodeType != 1 || n.nodeName != 'DIV') ) {
-          //alert('nodeType: ' + n.nodeType + '; nodeName: ' + n.nodeName);
-          n= n.nextSibling;
-      }
+function categoryTreeNextDiv(e) {
+	var n= e.nextSibling;
+	while ( n && ( n.nodeType != 1 || n.nodeName != 'DIV') ) {
+		//alert('nodeType: ' + n.nodeType + '; nodeName: ' + n.nodeName);
+		n= n.nextSibling;
+	}
 
-      return n;
-    }
+	return n;
+}
 
-    function categoryTreeExpandNode(cat, options, lnk) {
-      var div= categoryTreeNextDiv( lnk.parentNode.parentNode );
+function categoryTreeExpandNode(cat, options, lnk) {
+	var div= categoryTreeNextDiv( lnk.parentNode.parentNode );
 
-      div.style.display= 'block';
-      lnk.innerHTML= categoryTreeCollapseBulletMsg;
-      lnk.title= categoryTreeCollapseMsg;
-      lnk.onclick= function() { categoryTreeCollapseNode(cat, options, lnk) }
+	div.style.display= 'block';
+	lnk.innerHTML= categoryTreeCollapseBulletMsg;
+	lnk.title= categoryTreeCollapseMsg;
+	lnk.onclick= function() { categoryTreeCollapseNode(cat, options, lnk) }
 
-      if (!lnk.className.match(/(^| )CategoryTreeLoaded($| )/)) {
-        categoryTreeLoadNode(cat, options, lnk, div);
-      }
-    }
+	if (!lnk.className.match(/(^| )CategoryTreeLoaded($| )/)) {
+		categoryTreeLoadNode(cat, options, lnk, div);
+	}
+}
 
-    function categoryTreeCollapseNode(cat, options, lnk) {
-      var div= categoryTreeNextDiv( lnk.parentNode.parentNode );
+function categoryTreeCollapseNode(cat, options, lnk) {
+	var div= categoryTreeNextDiv( lnk.parentNode.parentNode );
 
-      div.style.display= 'none';
-      lnk.innerHTML= categoryTreeExpandBulletMsg;
-      lnk.title= categoryTreeExpandMsg;
-      lnk.onclick= function() { categoryTreeExpandNode(cat, options, lnk) }
-    }
+	div.style.display= 'none';
+	lnk.innerHTML= categoryTreeExpandBulletMsg;
+	lnk.title= categoryTreeExpandMsg;
+	lnk.onclick= function() { categoryTreeExpandNode(cat, options, lnk) }
+}
 
-    function categoryTreeLoadNode(cat, options, lnk, div) {
-      div.style.display= 'block';
-      lnk.className= 'CategoryTreeLoaded';
-      lnk.innerHTML= categoryTreeCollapseBulletMsg;
-      lnk.title= categoryTreeCollapseMsg;
-      lnk.onclick= function() { categoryTreeCollapseNode(cat, options, lnk) }
+function categoryTreeLoadNode(cat, options, lnk, div) {
+	div.style.display= 'block';
+	lnk.className= 'CategoryTreeLoaded';
+	lnk.innerHTML= categoryTreeCollapseBulletMsg;
+	lnk.title= categoryTreeCollapseMsg;
+	lnk.onclick= function() { categoryTreeCollapseNode(cat, options, lnk) }
 
-      categoryTreeLoadChildren(cat, options, div)
-    }
+	categoryTreeLoadChildren(cat, options, div)
+}
 
-	// FIXME Why can't this just use uneval()?
-    function categoryTreeEncodeValue(value) {
-          switch (typeof value) {
-              case 'function': 
-                  throw new Error("categoryTreeEncodeValue encountered a function");
-                  break;
+// FIXME Why can't this just use uneval()?
+function categoryTreeEncodeValue(value) {
+	switch (typeof value) {
+		case 'function':
+			throw new Error("categoryTreeEncodeValue encountered a function");
+			break;
+		case 'string':
+			s = '"' + value.replace(/([\\"'])/g, "\\$1") + '"';
+			break;
+		case 'number':
+		case 'boolean':
+		case 'null':
+			s = String(value);
+			break;
+		case 'object':
+			if ( !value ) {
+				s = 'null';
+			} else if (typeof value.length === 'number' && !(value.propertyIsEnumerable('length'))) {
+				s = '';
+				for (i = 0; i<value.length; i++) {
+					v = value[i];
+					if ( s!='' ) s += ', ';
+					s += categoryTreeEncodeValue( v );
+				}
+				s = '[' + s + ']';
+			} else {
+				s = '';
+				for (k in value) {
+					v = value[k];
+					if ( s!='' ) s += ', ';
+					s += categoryTreeEncodeValue( k );
+					s += ': ';
+					s += categoryTreeEncodeValue( v );
+				}
+				s = '{' + s + '}';
+			}
+			break;
+		default:
+			throw new Error("categoryTreeEncodeValue encountered strange variable type " + (typeof value));
+	}
 
-              case 'string': 
-                  s = '"' + value.replace(/([\\"'])/g, "\\$1") + '"';
-                  break;
+	return s;
+}
 
-              case 'number':
-              case 'boolean':
-              case 'null':
-                  s = String(value);
-                  break;
+function categoryTreeLoadChildren(cat, options, div) {
+	div.innerHTML= '<i class="CategoryTreeNotice">' + categoryTreeLoadingMsg + '</i>';
 
-              case 'object':
-                  if ( !value ) {
-                      s = 'null';
-                  }
-                  else if (typeof value.length === 'number' && !(value.propertyIsEnumerable('length'))) {
-                      s = '';
-                      for (i = 0; i<value.length; i++) {
-                          v = value[i];
-                          if ( s!='' ) s += ', ';
-                          s += categoryTreeEncodeValue( v );
-                      }
-                      s = '[' + s + ']';
-                  }
-                  else {
-                      s = '';
-                      for (k in value) {
-                          v = value[k];
-                          if ( s!='' ) s += ', ';
-                          s += categoryTreeEncodeValue( k );
-                          s += ': ';
-                          s += categoryTreeEncodeValue( v );
-                      }
-                      s = '{' + s + '}';
-                  }
-                  break;
-              default:
-                  throw new Error("categoryTreeEncodeValue encountered strange variable type " + (typeof value));
-          }
+	if ( typeof options == "string" ) { //hack for backward compatibility
+		options = { mode : options };
+	}
 
-      return s;
-    }
+	function f( request ) {
+		if (request.status != 200) {
+			div.innerHTML = '<i class="CategoryTreeNotice">' + categoryTreeErrorMsg + ' </i>';
+			var retryLink = document.createElement('a');
+			retryLink.innerHTML = categoryTreeRetryMsg;
+			retryLink.onclick = function() {
+				categoryTreeLoadChildren(cat, options, div, enc);
+			}
+			div.appendChild(retryLink);
+			return;
+		}
 
-    function categoryTreeLoadChildren(cat, options, div) {
-      div.innerHTML= '<i class="CategoryTreeNotice">' + categoryTreeLoadingMsg + '</i>';
+		result= request.responseText;
+		result= result.replace(/^\s+|\s+$/, '');
 
-      if ( typeof options == "string" ) { //hack for backward compatibility
-          options = { mode : options };
-      }
+		if ( result == '' ) {
+			result= '<i class="CategoryTreeNotice">';
 
-      function f( request ) {
-          if (request.status != 200) {
-              div.innerHTML = '<i class="CategoryTreeNotice">' + categoryTreeErrorMsg + ' </i>';
-              var retryLink = document.createElement('a');
-              retryLink.innerHTML = categoryTreeRetryMsg;
-              retryLink.onclick = function() {
-                  categoryTreeLoadChildren(cat, options, div, enc);
-              }
-              div.appendChild(retryLink);
-              return;
-          }
+			if ( options.mode == 0 ) {
+				result= categoryTreeNoSubcategoriesMsg;
+			} else if ( options.mode == 10 ) {
+				result= categoryTreeNoPagesMsg;
+			} else if ( options.mode == 100 ) {
+					result= categoryTreeNoParentCategoriesMsg;
+			} else {
+				result= categoryTreeNothingFoundMsg;
+			}
 
-          result= request.responseText;
-          result= result.replace(/^\s+|\s+$/, '');
+			result+= '</i>';
+		}
 
-          if ( result == '' ) {
-                    result= '<i class="CategoryTreeNotice">';
+		result = result.replace(/##LOAD##/g, categoryTreeExpandMsg);
+		div.innerHTML= result;
 
-                    if ( options.mode == 0 ) result= categoryTreeNoSubcategoriesMsg;
-                    else if ( options.mode == 10 ) result= categoryTreeNoPagesMsg;
-                    else if ( options.mode == 100 ) result= categoryTreeNoParentCategoriesMsg;
-                    else result= categoryTreeNothingFoundMsg;
+		categoryTreeShowToggles();
+	}
 
-                    result+= '</i>';
-          }
+	var opt = categoryTreeEncodeValue(options);
+	sajax_do_call( "efCategoryTreeAjaxWrapper", [cat, opt, 'json'] , f );
+}
 
-          result = result.replace(/##LOAD##/g, categoryTreeExpandMsg);
-          div.innerHTML= result;
+function categoryTreeShowToggles() {
+	var toggles = getElementsByClassName( document, 'span', 'CategoryTreeToggle' );
 
-          categoryTreeShowToggles();
-      }
+	for( var i = 0; i<toggles.length; ++i ) {
+		toggles[i].style.display = 'inline';
+	}
+}
 
-      var opt = categoryTreeEncodeValue(options);
-      sajax_do_call( "efCategoryTreeAjaxWrapper", [cat, opt, 'json'] , f );
-    }
-
-    function categoryTreeShowToggles() {
-      var toggles = getElementsByClassName( document, 'span', 'CategoryTreeToggle' );
-
-      for( var i = 0; i<toggles.length; ++i ) {
-        toggles[i].style.display = 'inline';
-      }
-    }
-
-    // Re-show the CategoryTreeToggles
-    addOnloadHook(categoryTreeShowToggles);
+// Re-show the CategoryTreeToggles
+addOnloadHook(categoryTreeShowToggles);

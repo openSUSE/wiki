@@ -79,7 +79,6 @@ input#wpSave, input#wpDiff {
 }
 
 #userlogin {
-	float: right;
 	margin: 0 0 1em 3em;
 }
 /* Convenience links to edit block, delete and protect reasons */
@@ -108,8 +107,8 @@ table.filehistory th {
 }
 
 .portlet ul {
-        margin: 0 1.5em 0 0;
-        padding: 0 0 0 0;
+	margin: 0 1.5em 0 0;
+	padding: 0 0 0 0;
 }
 
 .portlet h5 {
@@ -152,8 +151,12 @@ html > body div#mw_contentholder ul#filetoc {
 	display: block;
 }
 
-/* Special:Prefixindex styling */
-td#mw-prefixindex-nav-form  {
+/* Special:Allpages styling */
+td.mw-allpages-nav, p.mw-allpages-nav, td.mw-allpages-alphaindexline {
 	text-align: left;
 }
 
+/* Special:PrefixIndex styling */
+td#mw-prefixindex-nav-form {
+	text-align: left;
+}

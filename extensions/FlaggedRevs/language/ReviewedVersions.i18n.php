@@ -2,13 +2,14 @@
 /**
  * Internationalisation file for FlaggedRevs extension, section ReviewedVersions
  *
- * @addtogroup Extensions
+ * @file
+ * @ingroup Extensions
  */
 
 $messages = array();
 
 $messages['en'] = array(
-	'reviewedversions' => 'View reviewed versions',
+	'reviewedversions' => 'Reviewed versions',
 	'reviewedversions-leg1' => 'List reviewed revisions for a page',
 	'reviewedversions-page' => 'Page name:',
 	'reviewedversions-none' => '"[[:$1]]" has no reviewed revisions.',
@@ -49,16 +50,25 @@ $messages['af'] = array(
 	'reviewedversions-page' => 'Bladsynaam:',
 );
 
+/** Gheg Albanian (Gegë)
+ * @author Mdupont
+ */
+$messages['aln'] = array(
+	'reviewedversions' => 'versionet shqyrtoi',
+	'reviewedversions-leg1' => 'Lista shqyrtoi shqyrtime për një faqe të',
+	'reviewedversions-page' => 'Emri i faqes:',
+);
+
 /** Aragonese (Aragonés)
  * @author Juanpabl
  */
 $messages['an'] = array(
-	'reviewedversions' => 'Amostrar bersions estables',
-	'reviewedversions-leg1' => "Amostrar a lista de bersions rebisatas d'una pachina",
+	'reviewedversions' => 'versions revisatas',
+	'reviewedversions-leg1' => "Amostrar a lista de versions revisatas d'una pachina",
 	'reviewedversions-page' => "Nombre d'a pachina:",
-	'reviewedversions-none' => '"[[:$1]]" no tiene bersions rebisatas.',
-	'reviewedversions-list' => "A siguient ye una lista de bersions de [[:$1]] que s'han rebisato:",
-	'reviewedversions-review' => 'Rebisata por $2 o <i>$1</i>',
+	'reviewedversions-none' => '"[[:$1]]" no tiene versions revisatas.',
+	'reviewedversions-list' => "A siguient ye una lista con {{PLURAL:%2|a sola versión|as versions}} de [[:$1]] que s'han revisato:",
+	'reviewedversions-review' => 'Revisata por $2 o <i>$1</i>',
 );
 
 /** Arabic (العربية)
@@ -66,7 +76,7 @@ $messages['an'] = array(
  * @author OsamaK
  */
 $messages['ar'] = array(
-	'reviewedversions' => 'عرض النسخ المستقرة',
+	'reviewedversions' => 'النسخ المُراجعة',
 	'reviewedversions-leg1' => 'عرض المراجعات المراجعة لصفحة',
 	'reviewedversions-page' => 'اسم الصفحة:',
 	'reviewedversions-none' => '"[[:$1]]" لا يوجد بها مراجعات مراجعة.',
@@ -124,11 +134,23 @@ $messages['bcl'] = array(
 	'reviewedversions-page' => 'Pangaran kan pahina',
 );
 
+/** Belarusian (Беларуская)
+ * @author Хомелка
+ */
+$messages['be'] = array(
+	'reviewedversions' => 'Правераныя версіі',
+	'reviewedversions-leg1' => 'Пералік правераных версій старонкі',
+	'reviewedversions-page' => 'Назва старонкі:',
+	'reviewedversions-none' => '«[[:$1]]» не мае правераных версій.',
+	'reviewedversions-list' => '{{PLURAL:$2|Была праверана наступная версія|Былі правераны наступныя версіі}} старонкі «[[:$1]]»:',
+	'reviewedversions-review' => 'Праверана <i>$1</i> ўдзельнікам $2',
+);
+
 /** Belarusian (Taraškievica orthography) (Беларуская (тарашкевіца))
  * @author EugeneZelenko
  */
 $messages['be-tarask'] = array(
-	'reviewedversions' => 'Паказаць рэцэнзаваныя вэрсіі',
+	'reviewedversions' => 'Рэцэнзаваныя вэрсіі',
 	'reviewedversions-leg1' => 'Сьпіс правераных вэрсіяў старонкі',
 	'reviewedversions-page' => 'Назва старонкі:',
 	'reviewedversions-none' => '«[[:$1]]» ня мае правераных вэрсіяў.',
@@ -163,7 +185,7 @@ $messages['bn'] = array(
  * @author Y-M D
  */
 $messages['br'] = array(
-	'reviewedversions' => 'Gwelet ar stummoù stabil',
+	'reviewedversions' => 'Stummoù adwelet',
 	'reviewedversions-leg1' => 'Adweladennoù diwezhañ ur bajenn',
 	'reviewedversions-page' => 'Anv ar bajenn :',
 	'reviewedversions-none' => '"[[:$1]]" n\'eus stumm adwelet ebet dioutañ',
@@ -175,7 +197,7 @@ $messages['br'] = array(
  * @author CERminator
  */
 $messages['bs'] = array(
-	'reviewedversions' => 'Pogledaj pregledane verzije',
+	'reviewedversions' => 'Pregledane verzije',
 	'reviewedversions-leg1' => 'Spisak pregledanih revizija stranice',
 	'reviewedversions-page' => 'Naslov stranice:',
 	'reviewedversions-none' => '"[[:$1]]" nema pregledanih revizija.',
@@ -184,13 +206,14 @@ $messages['bs'] = array(
 );
 
 /** Catalan (Català)
+ * @author Paucabot
  * @author SMP
  * @author Solde
  * @author Ssola
  * @author Toniher
  */
 $messages['ca'] = array(
-	'reviewedversions' => 'Vegeu les versions estables',
+	'reviewedversions' => 'Versions estables',
 	'reviewedversions-leg1' => "Llista d'edicions revisades per una pàgina",
 	'reviewedversions-page' => 'Nom de la pàgina:',
 	'reviewedversions-none' => '«[[:$1]]» no té edicions revisades.',
@@ -218,8 +241,17 @@ $messages['cu'] = array(
 	'reviewedversions-page' => 'страни́цѧ и́мѧ',
 );
 
+/** Danish (Dansk)
+ * @author Froztbyte
+ */
+$messages['da'] = array(
+	'reviewedversions-page' => 'Sidenavn:',
+);
+
 /** German (Deutsch)
+ * @author Giftpflanze
  * @author Imre
+ * @author Merlissimo
  * @author Umherirrender
  */
 $messages['de'] = array(
@@ -228,14 +260,15 @@ $messages['de'] = array(
 	'reviewedversions-page' => 'Seitenname:',
 	'reviewedversions-none' => '„[[:$1]]“ hat keine markierten Versionen.',
 	'reviewedversions-list' => 'Dies ist die Liste der {{PLURAL:$2|einzigen Version|Versionen}} von [[:$1]], die markiert {{PLURAL:$2|wurde|wurden}}:',
-	'reviewedversions-review' => 'Geprüft am <i>$1</i> durch $2',
+	'reviewedversions-review' => 'Markiert am <i>$1</i> durch $2',
 );
 
 /** Zazaki (Zazaki)
  * @author Aspar
+ * @author Xoser
  */
 $messages['diq'] = array(
-	'reviewedversions' => 'versiyonan ramocın',
+	'reviewedversions' => 'Versiyonan ke kontrol biye',
 	'reviewedversions-leg1' => 'qey yew peli revizyonê kontrol biyayeyan liste bıker',
 	'reviewedversions-page' => 'nameyê peli:',
 	'reviewedversions-none' => '"[[:$1]]" wayirê revizyonê konrol biyayeyan niyo.',
@@ -247,7 +280,7 @@ $messages['diq'] = array(
  * @author Michawiki
  */
 $messages['dsb'] = array(
-	'reviewedversions' => 'Stabilne wersije se woglědaś',
+	'reviewedversions' => 'Pśeglědane wersiej',
 	'reviewedversions-leg1' => 'Lisćina pśeglědanych wersijow za bok',
 	'reviewedversions-page' => 'Mě boka:',
 	'reviewedversions-none' => '"[[:$1]]" njama pśeglědane wersije.',
@@ -273,7 +306,7 @@ $messages['el'] = array(
  * @author Yekrats
  */
 $messages['eo'] = array(
-	'reviewedversions' => 'Rigardi stabilajn versiojn',
+	'reviewedversions' => 'Kontrolitaj versioj',
 	'reviewedversions-leg1' => 'Listigi kontrolitajn versiojn por paĝo',
 	'reviewedversions-page' => 'Nomo de paĝo:',
 	'reviewedversions-none' => '"[[:$1]]" havas neniujn kontrolitajn revizojn.',
@@ -286,7 +319,7 @@ $messages['eo'] = array(
  * @author Imre
  */
 $messages['es'] = array(
-	'reviewedversions' => 'Ver versiones estables',
+	'reviewedversions' => 'Versiones revisadas',
 	'reviewedversions-leg1' => 'lista de revisiones verificadas para una página',
 	'reviewedversions-page' => 'Nombre de la página:',
 	'reviewedversions-none' => '"[[:$1]]" no tiene revisiones verificadas.',
@@ -299,16 +332,20 @@ $messages['es'] = array(
  * @author Pikne
  */
 $messages['et'] = array(
+	'reviewedversions' => 'Ülevaadatud versioonid',
+	'reviewedversions-leg1' => 'Lehekülje ülevaadatud redaktsioonide loetlemine',
 	'reviewedversions-page' => 'Lehekülje nimi:',
 	'reviewedversions-none' => 'Leheküljel "[[:$1]]" pole ülevaadatud redaktsioone.',
+	'reviewedversions-list' => 'Järgnev on {{PLURAL:$2|ainus lehekülje [[:$1]] redaktsioon|loend lehekülje [[:$1]] redaktsioonidest}}, mis on ülevaadatud:',
 	'reviewedversions-review' => '$2 vaatas lehekülje üle kuupäeval <i>$1</i>',
 );
 
 /** Basque (Euskara)
+ * @author An13sa
  * @author Kobazulo
  */
 $messages['eu'] = array(
-	'reviewedversions' => 'Bertsio egonkorrak ikusi',
+	'reviewedversions' => 'Berrikusitako bertsioak',
 	'reviewedversions-page' => 'Orrialdearen izenburua:',
 );
 
@@ -320,14 +357,17 @@ $messages['ext'] = array(
 );
 
 /** Persian (فارسی)
+ * @author Ebraminio
  * @author Huji
+ * @author Sahim
+ * @author Wayiran
  */
 $messages['fa'] = array(
-	'reviewedversions' => 'نمایش نسخه‌های پایدار',
+	'reviewedversions' => 'نسخهٔ بازبینی شده',
 	'reviewedversions-leg1' => 'فهرست کردن نسخه‌های بررسی شده یک صفحه',
 	'reviewedversions-page' => 'نام صفحه:',
-	'reviewedversions-none' => '"[[:$1]]" هیچ نسخه بررسی‌ شده‌ای ندارد.',
-	'reviewedversions-list' => 'در زیر فهرستی از نسخه‌ةای بررسی شده «[[:$1]]» را می‌بینید:',
+	'reviewedversions-none' => '«[[:$1]]» هیچ نسخه بررسی‌ شده‌ای ندارد.',
+	'reviewedversions-list' => 'در زیر فهرستی از {{PLURAL:$2|تنها نسخهٔ|نسخه‌های}} [[:$1]] که بازبینی {{PLURAL:$2|شده‌است|شده‌اند}} می‌باشد:',
 	'reviewedversions-review' => 'بررسی شده در <i>$1</i> توسط $2',
 );
 
@@ -337,7 +377,7 @@ $messages['fa'] = array(
  * @author Nike
  */
 $messages['fi'] = array(
-	'reviewedversions' => 'Näytä vakaat versiot',
+	'reviewedversions' => 'Tarkastetut versiot',
 	'reviewedversions-leg1' => 'Näytä sivun tarkastetut versiot',
 	'reviewedversions-page' => 'Sivun nimi',
 	'reviewedversions-none' => 'Sivusta ”[[:$1]]” ei ole tarkastettuja versioita.',
@@ -348,11 +388,12 @@ $messages['fi'] = array(
 /** French (Français)
  * @author Grondin
  * @author IAlex
+ * @author Peter17
  * @author PieRRoMaN
  * @author Sherbrooke
  */
 $messages['fr'] = array(
-	'reviewedversions' => 'Visionner les versions relues',
+	'reviewedversions' => 'Versions passées en revue',
 	'reviewedversions-leg1' => "Dernières révisions revues d'une page",
 	'reviewedversions-page' => 'Nom de la page :',
 	'reviewedversions-none' => "« [[:$1]] » n'a pas de version révisée.",
@@ -364,7 +405,7 @@ $messages['fr'] = array(
  * @author ChrisPtDe
  */
 $messages['frp'] = array(
-	'reviewedversions' => 'Vêre les vèrsions stâbles',
+	'reviewedversions' => 'Vèrsions revues',
 	'reviewedversions-leg1' => 'Montre una lista de les dèrriéres vèrsions revues d’una pâge.',
 	'reviewedversions-page' => 'Nom de la pâge :',
 	'reviewedversions-none' => '« [[:$1]] » at gins de vèrsion revua.',
@@ -385,7 +426,7 @@ $messages['fy'] = array(
  * @author Xosé
  */
 $messages['gl'] = array(
-	'reviewedversions' => 'Ver as versións revisadas',
+	'reviewedversions' => 'Versións revisadas',
 	'reviewedversions-leg1' => 'Listar as revisións revisadas dunha páxina',
 	'reviewedversions-page' => 'Nome da páxina:',
 	'reviewedversions-none' => '"[[:$1]]" non ten revisións examinadas.',
@@ -409,7 +450,7 @@ $messages['grc'] = array(
  * @author Als-Holder
  */
 $messages['gsw'] = array(
-	'reviewedversions' => 'Priefti Versione aaluege',
+	'reviewedversions' => 'Priefti Versione',
 	'reviewedversions-leg1' => 'Lischt vu dr Versione fir e Artikel, wu vum Fäldhieter gsäh sin',
 	'reviewedversions-page' => 'Artikelname:',
 	'reviewedversions-none' => '„[[:$1]]“ het kei Versione, wu vum Fäldhieter gsäh sin.',
@@ -418,11 +459,12 @@ $messages['gsw'] = array(
 );
 
 /** Hebrew (עברית)
+ * @author DoviJ
  * @author Rotemliss
  * @author דניאל ב.
  */
 $messages['he'] = array(
-	'reviewedversions' => 'צפייה בגרסאות יציבות',
+	'reviewedversions' => 'גרסאות שאושרו',
 	'reviewedversions-leg1' => 'רשימת גרסאות הדף שנבדקו',
 	'reviewedversions-page' => 'שם הדף:',
 	'reviewedversions-none' => 'בדף "[[:$1]]" אין גרסאות שנבדקו.',
@@ -446,10 +488,9 @@ $messages['hi'] = array(
  * @author Dalibor Bosits
  * @author Dnik
  * @author SpeedyGonsales
- * @author Suradnik13
  */
 $messages['hr'] = array(
-	'reviewedversions' => 'Pregled važeće inačice',
+	'reviewedversions' => 'Pregledane inačice',
 	'reviewedversions-leg1' => 'Popis ocijenjenih inačica stranice',
 	'reviewedversions-page' => 'Ime stranice:',
 	'reviewedversions-none' => 'Članak "[[:$1]]" nema ocijenjenih inačica.',
@@ -461,7 +502,7 @@ $messages['hr'] = array(
  * @author Michawiki
  */
 $messages['hsb'] = array(
-	'reviewedversions' => 'Stabilne wersije wobhladać',
+	'reviewedversions' => 'Přepruwowane wersije',
 	'reviewedversions-leg1' => 'Přepruwowane wersije za nastawk nalistować',
 	'reviewedversions-page' => 'Mjeno nastawka',
 	'reviewedversions-none' => '[[:$1]] přepruwowane wersije nima.',
@@ -475,7 +516,7 @@ $messages['hsb'] = array(
  * @author Samat
  */
 $messages['hu'] = array(
-	'reviewedversions' => 'Stabil változatok megjelenítése',
+	'reviewedversions' => 'Ellenőrzött változatok',
 	'reviewedversions-leg1' => 'Oldal ellenőrzött változatainak listája',
 	'reviewedversions-page' => 'A lap címe:',
 	'reviewedversions-none' => 'A(z) „[[:$1]]” lapnak nincsenek ellenőrzött változatai.',
@@ -487,7 +528,7 @@ $messages['hu'] = array(
  * @author McDutchie
  */
 $messages['ia'] = array(
-	'reviewedversions' => 'Vider versiones stabile',
+	'reviewedversions' => 'Versiones revidite',
 	'reviewedversions-leg1' => 'Listar le versiones revidite de un pagina',
 	'reviewedversions-page' => 'Nomine del pagina:',
 	'reviewedversions-none' => '"[[:$1]]" non ha versiones revidite.',
@@ -496,15 +537,24 @@ $messages['ia'] = array(
 );
 
 /** Indonesian (Bahasa Indonesia)
+ * @author Iwan Novirion
  * @author Rex
  */
 $messages['id'] = array(
-	'reviewedversions' => 'Tampilkan versi stabil',
+	'reviewedversions' => 'Versi yang telah ditinjau',
 	'reviewedversions-leg1' => 'Menampilkan revisi tertinjau dari suatu halaman',
 	'reviewedversions-page' => 'Nama halaman:',
 	'reviewedversions-none' => '"[[:$1]]" tidak memiliki revisi tertinjau.',
 	'reviewedversions-list' => 'Berikut adalah daftar {{PLURAL:$2|revisi|revisi-revisi}} dari [[:$1]] yang {{PLURAL:$2|telah|telah}} ditinjau:',
 	'reviewedversions-review' => 'Ditinjau pada <i>$1</i> oleh $2',
+);
+
+/** Igbo (Igbo)
+ * @author Ukabia
+ */
+$messages['ig'] = array(
+	'reviewedversions-leg1' => 'Dètú orübà hé lèrè màkà ótù ihü',
+	'reviewedversions-page' => 'Áhà ihü:',
 );
 
 /** Icelandic (Íslenska)
@@ -516,10 +566,11 @@ $messages['is'] = array(
 );
 
 /** Italian (Italiano)
+ * @author Beta16
  * @author Darth Kule
  */
 $messages['it'] = array(
-	'reviewedversions' => 'Visualizza versioni stabili',
+	'reviewedversions' => 'Versioni revisionate',
 	'reviewedversions-leg1' => 'Elenco delle versioni revisionate per una pagina',
 	'reviewedversions-page' => 'Nome della pagina:',
 	'reviewedversions-none' => '"[[:$1]]" non ha versioni revisionate.',
@@ -533,7 +584,7 @@ $messages['it'] = array(
  * @author JtFuruhata
  */
 $messages['ja'] = array(
-	'reviewedversions' => '査読済みの版を表示',
+	'reviewedversions' => '査読済みの版',
 	'reviewedversions-leg1' => 'ページの査読済み版を一覧表示する',
 	'reviewedversions-page' => 'ページ名:',
 	'reviewedversions-none' => '「[[:$1]]」には査読済みの版がありません。',
@@ -547,6 +598,13 @@ $messages['ja'] = array(
 $messages['jut'] = array(
 	'reviewedversions' => 'Stabiil versje',
 	'reviewedversions-page' => 'Pægenavn:',
+);
+
+/** Georgian (ქართული)
+ * @author BRUTE
+ */
+$messages['ka'] = array(
+	'reviewedversions-page' => 'გვერდის სახელი:',
 );
 
 /** Kazakh (Arabic script) (‫قازاقشا (تٴوتە)‬) */
@@ -587,21 +645,23 @@ $messages['km'] = array(
 );
 
 /** Korean (한국어)
+ * @author Devunt
  * @author Kwj2772
  */
 $messages['ko'] = array(
-	'reviewedversions' => '안정 버전 보기',
+	'reviewedversions' => '검토된 버전',
+	'reviewedversions-leg1' => '문서의 검토된 판의 목록',
 	'reviewedversions-page' => '문서 이름:',
 	'reviewedversions-none' => '"[[:$1]]"의 검토된 판이 없습니다.',
 	'reviewedversions-list' => '다음은 [[:$1]] 문서의 검토된 {{PLURAL:$2|편집}}의 목록입니다:',
 	'reviewedversions-review' => '<i>$1</i>에 $2에게 검토됨',
 );
 
-/** Ripoarisch (Ripoarisch)
+/** Colognian (Ripoarisch)
  * @author Purodha
  */
 $messages['ksh'] = array(
-	'reviewedversions' => 'Beshtändeje Versione aanloore',
+	'reviewedversions' => 'Nohjekik Versione',
 	'reviewedversions-leg1' => 'De Leß met de nohjekik Versione för en Sigg.',
 	'reviewedversions-page' => 'Sigge-Tittel:',
 	'reviewedversions-none' => 'De Sigg „[[:$1]]“ hät kei nohjekik Versione.',
@@ -620,7 +680,7 @@ $messages['la'] = array(
  * @author Robby
  */
 $messages['lb'] = array(
-	'reviewedversions' => 'Weis déi stabil Versiounen',
+	'reviewedversions' => 'nogekuckte Versiounen',
 	'reviewedversions-leg1' => 'Lëscht vun den nogekuckte Versioune vun enger Säit',
 	'reviewedversions-page' => 'Säitenumm:',
 	'reviewedversions-none' => '"[[:$1]]" huet keng nogekuckte Versiounen.',
@@ -633,11 +693,11 @@ $messages['lb'] = array(
  * @author Ooswesthoesbes
  */
 $messages['li'] = array(
-	'reviewedversions' => 'Stabiel versies bekieke',
+	'reviewedversions' => 'Gecontroleerde versies',
 	'reviewedversions-leg1' => 'Lijst van beoordeelde versies voor een pagina',
 	'reviewedversions-page' => 'Pazjenanaam:',
 	'reviewedversions-none' => '[[:$1]] haet gein beoordeilde versies.',
-	'reviewedversions-list' => 'Hieronder staat een lijst met versies van [[:$1]] waarvoor een beoordeling is uitgevoerd:',
+	'reviewedversions-list' => "Hieonger steit {{PLURAL:$2|de versie|'n lies mit gecontroleerde versies}} van [[:$1]]:",
 	'reviewedversions-review' => 'Beoordeiling oetgeveurd op <i>$1</i> door $2',
 );
 
@@ -660,11 +720,11 @@ $messages['mhr'] = array(
  * @author Brest
  */
 $messages['mk'] = array(
-	'reviewedversions' => 'Преглед на стабилни верзии',
-	'reviewedversions-leg1' => 'Листа на прегледани ревизии за страница',
+	'reviewedversions' => 'Проверени верзии',
+	'reviewedversions-leg1' => 'Список на прегледани ревизии за страница',
 	'reviewedversions-page' => 'Наслов на страница:',
 	'reviewedversions-none' => '"[[:$1]]" нема прегледани ревизии.',
-	'reviewedversions-list' => 'Ова е листа на {{PLURAL:$2|единствената ревизија|ревизиите}} на [[:$1]] {{PLURAL:$2|која е прегледана|кои се прегледани}}:',
+	'reviewedversions-list' => 'Ова е список на {{PLURAL:$2|единствената ревизија|ревизиите}} на [[:$1]] {{PLURAL:$2|која е прегледана|кои се прегледани}}:',
 	'reviewedversions-review' => 'Прегледано на <i>$1</i> од страна на $2',
 );
 
@@ -673,12 +733,12 @@ $messages['mk'] = array(
  * @author Shijualex
  */
 $messages['ml'] = array(
-	'reviewedversions' => 'സംശോധനം ചെയ്ത പതിപ്പുകള്‍ കാണുക',
+	'reviewedversions' => 'സംശോധനം ചെയ്ത പതിപ്പുകൾ',
 	'reviewedversions-leg1' => 'ഒരു താളിന്റെ സം‌ശോധനം ചെയ്യപ്പെട്ട പതിപ്പുകള്‍ പ്രദര്‍ശിപ്പിക്കുക',
 	'reviewedversions-page' => 'താളിന്റെ പേര്‌:',
-	'reviewedversions-none' => '"[[:$1]]"നു സംശോധനം നിര്‍‌വഹിച്ച പതിപ്പുകള്‍ ഒന്നുമില്ല.',
+	'reviewedversions-none' => '"[[:$1]]"നു സംശോധനം നിർവഹിച്ച പതിപ്പുകൾ ഒന്നുമില്ല.',
 	'reviewedversions-list' => '[[:$1]] എന്ന താളിന്റെ സം‌ശോധനം ചെയ്യപ്പെട്ട {{PLURAL:$2|ഒരു നാൾപ്പതിപ്പിന്റെ|നാൾപ്പതിപ്പുകളുടെ}} പട്ടികയാണ് താഴെ പ്രദര്‍ശിപ്പിച്ചിരിക്കുന്നത്:',
-	'reviewedversions-review' => "''$1''നു $2 സം‌ശോധനം നിര്‍‌വ്വഹിച്ചു",
+	'reviewedversions-review' => "''$1''നു $2 സം‌ശോധനം നിർവ്വഹിച്ചു",
 );
 
 /** Marathi (मराठी)
@@ -728,11 +788,12 @@ $messages['nds'] = array(
 );
 
 /** Dutch (Nederlands)
+ * @author McDutchie
  * @author SPQRobin
  * @author Siebrand
  */
 $messages['nl'] = array(
-	'reviewedversions' => 'Gecontroleerde versies bekijken',
+	'reviewedversions' => 'Gecontroleerde versies',
 	'reviewedversions-leg1' => 'Lijst van gecontroleerde versies voor een pagina',
 	'reviewedversions-page' => 'Paginanaam:',
 	'reviewedversions-none' => '"[[:$1]]" heeft geen gecontroleerde versies',
@@ -758,7 +819,7 @@ $messages['nn'] = array(
  * @author Nghtwlkr
  */
 $messages['no'] = array(
-	'reviewedversions' => 'Vis stabile versjoner',
+	'reviewedversions' => 'Reviderte versjoner',
 	'reviewedversions-leg1' => 'List anmeldte versjoner av en side',
 	'reviewedversions-page' => 'Sidenavn:',
 	'reviewedversions-none' => '«[[:$1]]» har ingen anmeldte versjoner.',
@@ -777,7 +838,7 @@ $messages['nso'] = array(
  * @author Cedric31
  */
 $messages['oc'] = array(
-	'reviewedversions' => 'Visionar las versions establas',
+	'reviewedversions' => 'Versions repassadas',
 	'reviewedversions-leg1' => "Darrièras revisions revistas d'una pagina",
 	'reviewedversions-page' => 'Nom de la pagina :',
 	'reviewedversions-none' => 'La lista que seguís conten de versions de « [[:$1]] » que son estadas revisadas :',
@@ -798,7 +859,7 @@ $messages['pdc'] = array(
  * @author Sp5uhe
  */
 $messages['pl'] = array(
-	'reviewedversions' => 'Pokaż wersje oznaczone',
+	'reviewedversions' => 'Wersje oznaczone',
 	'reviewedversions-leg1' => 'Pokaż oznaczone wersje strony',
 	'reviewedversions-page' => 'Nazwa strony:',
 	'reviewedversions-none' => '„[[:$1]]” nie posiada wersji oznaczonych.',
@@ -807,11 +868,12 @@ $messages['pl'] = array(
 );
 
 /** Piedmontese (Piemontèis)
+ * @author Borichèt
  * @author Bèrto 'd Sèra
  * @author Dragonòt
  */
 $messages['pms'] = array(
-	'reviewedversions' => 'Varda le version revisionà',
+	'reviewedversions' => 'Version revisionà',
 	'reviewedversions-leg1' => 'Fé na lista dle version aprovà ëd na pàgina',
 	'reviewedversions-page' => 'Nòm dla pàgina',
 	'reviewedversions-none' => "[[:$1]] a l'ha pa gnun-a version revisionà.",
@@ -828,22 +890,24 @@ $messages['ps'] = array(
 
 /** Portuguese (Português)
  * @author 555
+ * @author Hamilton Abreu
  * @author Waldir
  */
 $messages['pt'] = array(
-	'reviewedversions' => 'Ver edições estáveis',
+	'reviewedversions' => 'Edições revistas',
 	'reviewedversions-leg1' => 'Listar as edições revistas de uma página',
-	'reviewedversions-page' => 'Título da página:',
-	'reviewedversions-none' => '[[:$1]] não possui edições analisadas.',
-	'reviewedversions-list' => 'A seguir, {{PLURAL:$2|A única edição|uma lista das edições}} de "[[:$1]]" que {{PLURAL:$2|foi analisada|foram analisadas}}:',
-	'reviewedversions-review' => 'Analisada às <i>$1</i> por $2',
+	'reviewedversions-page' => 'Nome da página:',
+	'reviewedversions-none' => '[[:$1]] não tem edições revistas.',
+	'reviewedversions-list' => 'Encontra abaixo {{PLURAL:$2|a única edição|uma lista das edições}} da página [[:$1]], que {{PLURAL:$2|foi revista|foram revistas}}:',
+	'reviewedversions-review' => 'Revista às <i>$1</i> por $2',
 );
 
 /** Brazilian Portuguese (Português do Brasil)
  * @author Eduardo.mps
+ * @author Giro720
  */
 $messages['pt-br'] = array(
-	'reviewedversions' => 'Ver edições estáveis',
+	'reviewedversions' => 'Versões revisadas',
 	'reviewedversions-leg1' => 'Listar as edições analisadas de uma página',
 	'reviewedversions-page' => 'Título da página:',
 	'reviewedversions-none' => '[[:$1]] não possui edições analisadas.',
@@ -852,12 +916,13 @@ $messages['pt-br'] = array(
 );
 
 /** Romanian (Română)
+ * @author Firilacroco
  * @author KlaudiuMihaila
  * @author Mihai
  */
 $messages['ro'] = array(
-	'reviewedversions' => 'Vizualizaţi versiunile stabile',
-	'reviewedversions-leg1' => 'Afişează reviziile revizuite pentru o pagină',
+	'reviewedversions' => 'Versiuni revizuite',
+	'reviewedversions-leg1' => 'Afișează reviziile revizuite pentru o pagină',
 	'reviewedversions-page' => 'Numele paginii:',
 	'reviewedversions-none' => '"[[:$1]]" nu are revizii revizuite.',
 );
@@ -866,7 +931,7 @@ $messages['ro'] = array(
  * @author Joetaras
  */
 $messages['roa-tara'] = array(
-	'reviewedversions' => 'Vide le versione sicure',
+	'reviewedversions' => 'Revisiune reviste',
 	'reviewedversions-leg1' => "Liste de le revisiune riviste pe 'na pàgene",
 	'reviewedversions-page' => "Nome d'a vôsce:",
 	'reviewedversions-none' => '"[[:$1]]" non ge tène revisiune de rivisitaminde.',
@@ -879,12 +944,23 @@ $messages['roa-tara'] = array(
  * @author Александр Сигачёв
  */
 $messages['ru'] = array(
-	'reviewedversions' => 'Показать проверенные версии',
+	'reviewedversions' => 'Проверенные версии',
 	'reviewedversions-leg1' => 'Список проверенных версий страницы',
 	'reviewedversions-page' => 'Название страницы:',
 	'reviewedversions-none' => '«[[:$1]]» не имеет проверенных версий.',
 	'reviewedversions-list' => '{{PLURAL:$2|Была проверена следующая версия|Были проверены следующие версии}} страницы «[[:$1]]»:',
 	'reviewedversions-review' => 'Проверена <i>$1</i> участником $2',
+);
+
+/** Rusyn (Русиньскый)
+ * @author Gazeb
+ */
+$messages['rue'] = array(
+	'reviewedversions' => 'Рецензованы верзії',
+	'reviewedversions-leg1' => 'Список перевіреных ревізій сторінкы',
+	'reviewedversions-page' => 'Назва сторінкы:',
+	'reviewedversions-none' => '«[[:$1]]» не має перевіреных ревізій.',
+	'reviewedversions-review' => 'Перевірена <i>$1</i> хоснователём $2',
 );
 
 /** Yakut (Саха тыла)
@@ -899,6 +975,20 @@ $messages['sah'] = array(
 	'reviewedversions-review' => '$2 кыттааччы ырыппыт <i>$1</i>',
 );
 
+/** Sardinian (Sardu)
+ * @author Andria
+ */
+$messages['sc'] = array(
+	'reviewedversions-page' => 'Nùmene pàgina:',
+);
+
+/** Sicilian (Sicilianu)
+ * @author Aushulz
+ */
+$messages['scn'] = array(
+	'reviewedversions-page' => 'Nnomu dâ pàggina:',
+);
+
 /** Slovak (Slovenčina)
  * @author Helix84
  */
@@ -911,25 +1001,38 @@ $messages['sk'] = array(
 	'reviewedversions-review' => 'Skontroloval <i>$1</i> $2',
 );
 
+/** Slovenian (Slovenščina)
+ * @author Dbc334
+ */
+$messages['sl'] = array(
+	'reviewedversions' => 'Pregledane različice',
+	'reviewedversions-leg1' => 'Navedi pregledane redakcije za stran',
+	'reviewedversions-page' => 'Naslov strani:',
+	'reviewedversions-none' => '»[[:$1]]« nima pregledanih redakcij.',
+	'reviewedversions-list' => 'Sledi seznam {{PLURAL:$2|redakcije|redakcij}} strani [[:$1]], ki {{PLURAL:$2|je bila pregledana|sta bili pregledani|so bile pregledane}}:',
+	'reviewedversions-review' => 'Pregledano <i>$1</i> s strani $2',
+);
+
 /** Serbian Cyrillic ekavian (Српски (ћирилица))
+ * @author Charmed94
  * @author Millosh
  * @author Sasa Stefanovic
  * @author Михајло Анђелковић
  */
 $messages['sr-ec'] = array(
-	'reviewedversions' => 'Погледај стабилне верзије',
-	'reviewedversions-leg1' => 'Списак прегледаних верзија за страну.',
-	'reviewedversions-page' => 'Име странице:',
-	'reviewedversions-none' => '"[[:$1]]" нема прегледаних верзија.',
+	'reviewedversions' => 'Прегледана издања',
+	'reviewedversions-leg1' => 'Списак прегледаних ревизија за страну',
+	'reviewedversions-page' => 'Назив странице:',
+	'reviewedversions-none' => '"[[:$1]]" нема прегледаних ревизија.',
 	'reviewedversions-list' => 'Следи списак {{PLURAL:$2|једине ревизије|ревизија}} из [[:$1]], {{PLURAL:$2|која је прегледана|које су прегледане}}:',
-	'reviewedversions-review' => 'Прегледано на <i>$1</i> од стране сарадника $2.',
+	'reviewedversions-review' => 'Прегледано на <i>$1</i> од стране $2',
 );
 
 /** Serbian Latin ekavian (Srpski (latinica))
  * @author Michaello
  */
 $messages['sr-el'] = array(
-	'reviewedversions' => 'Pogledaj stabilne verzije',
+	'reviewedversions' => 'Pregledana izdanja',
 	'reviewedversions-leg1' => 'Spisak pregledanih verzija za stranu.',
 	'reviewedversions-page' => 'Ime stranice:',
 	'reviewedversions-none' => '"[[:$1]]" nema pregledanih verzija.',
@@ -958,12 +1061,13 @@ $messages['su'] = array(
 );
 
 /** Swedish (Svenska)
+ * @author Dafer45
  * @author Lejonel
  * @author M.M.S.
  * @author Najami
  */
 $messages['sv'] = array(
-	'reviewedversions' => 'Visa stabila versioner',
+	'reviewedversions' => 'Granskade versioner',
 	'reviewedversions-leg1' => 'Lista granskade versioner av en sida',
 	'reviewedversions-page' => 'Sidnamn:',
 	'reviewedversions-none' => '"[[:$1]]" har inga granskade versioner.',
@@ -983,7 +1087,7 @@ $messages['ta'] = array(
  * @author Veeven
  */
 $messages['te'] = array(
-	'reviewedversions' => 'సుస్థిర కూర్పులను చూడండి',
+	'reviewedversions' => 'సమీక్షిత కూర్పులు',
 	'reviewedversions-leg1' => 'పేజీ యొక్క సమీక్షిత కూర్పులను చూపించు',
 	'reviewedversions-page' => 'పేజీ పేరు:',
 	'reviewedversions-none' => '"[[:$1]]"కి సమీక్షిత కూర్పులేమీ లేవు.',
@@ -1045,11 +1149,11 @@ $messages['tk'] = array(
  * @author AnakngAraw
  */
 $messages['tl'] = array(
-	'reviewedversions' => 'Tingnan ang matatatag na mga bersyon',
+	'reviewedversions' => 'Nasuring mga bersyon',
 	'reviewedversions-leg1' => 'Talaan ng nasuring mga pagbabago para sa isang pahina',
 	'reviewedversions-page' => 'Pangalan ng pahina:',
 	'reviewedversions-none' => 'Wala pang nasusuring mga pagbabago sa/ang "[[:$1]]".',
-	'reviewedversions-list' => 'Ang sumusuunod ay isang talaan ng pagbabago sa/ng [[:$1]] na nasuri na:',
+	'reviewedversions-list' => 'Ang sumusunod ay isang talaan ng {{PLURAL:$2|nag-iisang pagbabago|mga pagbabago}} sa [[:$1]] na {{PLURAL:$2|may|may mga}} nasuri na:',
 	'reviewedversions-review' => 'Nasuri na noong <i>$1</i> ni $2',
 );
 
@@ -1058,7 +1162,7 @@ $messages['tl'] = array(
  * @author Karduelis
  */
 $messages['tr'] = array(
-	'reviewedversions' => 'Kararlı sürümleri görüntüle',
+	'reviewedversions' => 'Gözden geçirilmiş sürümler',
 	'reviewedversions-leg1' => 'Bir sayfa için gözden geçirilmiş revizyonları listele',
 	'reviewedversions-page' => 'Sayfa adı:',
 	'reviewedversions-none' => '"[[:$1]]" hiç gözden geçirilmiş revizyona sahip değil.',
@@ -1068,9 +1172,10 @@ $messages['tr'] = array(
 
 /** Ukrainian (Українська)
  * @author Ahonc
+ * @author Prima klasy4na
  */
 $messages['uk'] = array(
-	'reviewedversions' => 'Переглянути стабільні версії',
+	'reviewedversions' => 'Рецензовані версії',
 	'reviewedversions-leg1' => 'Список перевірених версій сторінки',
 	'reviewedversions-page' => 'Назва сторінки:',
 	'reviewedversions-none' => '«[[:$1]]» не має перевірених версій.',
@@ -1082,7 +1187,7 @@ $messages['uk'] = array(
  * @author Candalua
  */
 $messages['vec'] = array(
-	'reviewedversions' => 'Varda le version riesaminà',
+	'reviewedversions' => 'Version riesaminà',
 	'reviewedversions-leg1' => 'Elenca le version riesaminà de na pagina',
 	'reviewedversions-page' => 'Nome de la pagina:',
 	'reviewedversions-none' => '"[[:$1]]" no la gà version riesaminà.',
@@ -1107,7 +1212,7 @@ $messages['vep'] = array(
  * @author Vinhtantran
  */
 $messages['vi'] = array(
-	'reviewedversions' => 'Xem các phiên bản ổn định',
+	'reviewedversions' => 'Phiên bản đã duyệt',
 	'reviewedversions-leg1' => 'Liệt kê những bản đã được duyệt của một trang',
 	'reviewedversions-page' => 'Tên trang:',
 	'reviewedversions-none' => '"[[:$1]]" không có bản nào được duyệt.',
@@ -1135,7 +1240,7 @@ $messages['yi'] = array(
 	'reviewedversions-page' => 'בלאט נאמען:',
 );
 
-/** Yue (粵語) */
+/** Cantonese (粵語) */
 $messages['yue'] = array(
 	'reviewedversions' => '穩定版',
 	'reviewedversions-leg1' => '列示一版複審過嘅修訂',
@@ -1150,7 +1255,7 @@ $messages['yue'] = array(
  * @author Liangent
  */
 $messages['zh-hans'] = array(
-	'reviewedversions' => '稳定版',
+	'reviewedversions' => '稳定版本',
 	'reviewedversions-leg1' => '列示一版已复审的修订',
 	'reviewedversions-page' => '页面名',
 	'reviewedversions-none' => '[[:$1]]没有已复审过的修订。',
@@ -1159,14 +1264,15 @@ $messages['zh-hans'] = array(
 );
 
 /** Traditional Chinese (‪中文(繁體)‬)
+ * @author Horacewai2
  * @author Liangent
  */
 $messages['zh-hant'] = array(
-	'reviewedversions' => '穩定版',
+	'reviewedversions' => '穩定版本',
 	'reviewedversions-leg1' => '列示一版已複審的修訂',
 	'reviewedversions-page' => '頁面名',
 	'reviewedversions-none' => '[[:$1]]沒有已複審過的修訂。',
-	'reviewedversions-list' => '以下是[[:$1]]已複審的修訂列表：',
+	'reviewedversions-list' => '以下是[[:$1]]的{{PLURAL:$2|此唯一|此}}版本{{PLURAL:$2|已|已}}複審的修訂列表：',
 	'reviewedversions-review' => '由$2於<i>$1</i>進行了複審',
 );
 

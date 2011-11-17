@@ -1,6 +1,5 @@
 <?php
 
-
 function update_autopromote() {
 	global $wgContentNamespaces, $wgFlaggedRevsAutopromote;
 	$batchSize = 50;
@@ -23,12 +22,12 @@ function update_autopromote() {
 		# Go through and clean up missing items, as well as correct fr_quality...
 		foreach( $res as $row ) {
 			$user = User::newFromRow( $row );
-			$p = FlaggedRevs::getUserParams( $user->getId() );
+			$p = FRUserCounters::getUserParams( $user->getId(), FR_FOR_UPDATE );
 			$oldp = $p;
 			# Get edit comments used
 			$sres = $db->select( 'revision', '1',
 				array( 'rev_user' => $user->getID(),
-					'rev_comment != ""' ),
+					"rev_comment NOT LIKE '/*%*/'" ), // manual comments only
 				__METHOD__,
 				array( 'LIMIT' => max($wgFlaggedRevsAutopromote['editComments'],500) )
 			);
@@ -50,14 +49,13 @@ function update_autopromote() {
 				__METHOD__,
 				array( 'LIMIT' => max($wgFlaggedRevsAutopromote['uniqueContentPages'],50) )
 			);
-			$uniquePages = array();
+			$p['uniqueContentPages'] = array();
 			foreach( $sres as $row ) {
-				$uniquePages[] = $row->rev_page;
+				$p['uniqueContentPages'][] = (int)$row->rev_page;
 			}
-			$p['uniqueContentPages'] = implode($uniquePages,',');
-		
+			# Save the new params...
 			if( $oldp != $p ) {
-				FlaggedRevs::saveUserParams( $user->getId(), $p );
+				FRUserCounters::saveUserParams( $user->getId(), $p );
 				$changed++;
 			}
 		

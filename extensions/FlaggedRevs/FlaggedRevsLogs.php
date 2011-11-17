@@ -2,41 +2,121 @@
 
 class FlaggedRevsLogs {
 	/**
-	* @returns bool
 	* $action is a valid review log action
+	* @returns bool
 	*/
 	public static function isReviewAction( $action ) {
 		return preg_match( '/^(approve2?(-i|-a|-ia)?|unapprove2?)$/', $action );
 	}
 
 	/**
+	* $action is a valid stability log action
 	* @returns bool
+	*/
+	public static function isStabilityAction( $action ) {
+		return preg_match( '/^(config|modify|reset)$/', $action );
+	}
+
+	/**
 	* $action is a valid review log deprecate action
+	* @returns bool
 	*/
 	public static function isReviewDeapproval( $action ) {
 		return ( $action == 'unapprove' || $action == 'unapprove2' );
 	}
 
+	/**	
+	* Add setting change description to log line
+	* @returns string
+	*/
+	public static function stabilityLogText(
+		$type, $action, $title = null, $skin = null, $params = array()
+	) {
+		if ( !$title ) {
+			return ''; // sanity check
+		}
+		if ( $skin ) {
+			$titleLink = $skin->link( $title, $title->getPrefixedText() );
+			$text = wfMsgHtml( "stable-logentry-{$action}", $titleLink );
+		} else { // for content (e.g. IRC...)
+			$text = wfMsgExt( "stable-logentry-{$action}",
+				array( 'parsemag', 'escape', 'replaceafter', 'content' ),
+				$title->getPrefixedText() );
+		}
+		$pars = self::expandParams( $params ); // list -> assoc array
+		$details = self::stabilitySettings( $pars, !$skin ); // list of setting values
+		$text .= " $details";
+		return $text;
+	}
+
 	/**
+	* Add history page link to log line
+	*
 	* @param Title $title
 	* @param string $timestamp
+	* @param array $params
 	* @returns string
-	* Create history links for log line entry
 	*/
-	public static function stabilityLogLinks( $title, $timestamp ) {
+	public static function stabilityLogLinks( $title, $timestamp, $params ) {
 		global $wgUser;
 		# Add history link showing edits right before the config change
-		$links = ' (';
-		$links .= $wgUser->getSkin()->link(
+		$hist = $wgUser->getSkin()->link(
 			$title,
 			wfMsgHtml( 'hist' ),
 			array(),
 			array( 'action' => 'history', 'offset' => $timestamp )
 		);
-		$links .= ')';
-		return $links;
+		$hist = wfMsgHtml( 'parentheses', $hist );
+		return $hist;
 	}
-	
+
+	/**
+	* Make a list of stability settings for display
+	*
+	* @param array $pars assoc array
+	* @param bool $forContent
+	* @returns string
+	*/
+	public static function stabilitySettings( Array $pars, $forContent ) {
+		global $wgLang, $wgContLang;
+		$set = array();
+		$settings = '';
+		$wfMsg = $forContent ? 'wfMsgForContent' : 'wfMsg';
+		$langObj = $forContent ? $wgContLang : $wgLang;
+		// Protection-based configs (precedence never changed)...
+		if ( !isset( $pars['precedence'] ) ) {
+			if ( isset( $pars['autoreview'] ) && strlen( $pars['autoreview'] ) ) {
+				$set[] = $wfMsg( 'stable-log-restriction', $pars['autoreview'] );
+			}
+		// General case...
+		} else {
+			// Default version shown on page view
+			if ( isset( $pars['override'] ) ) {
+				$set[] = $wfMsg( 'stabilization-def-short' ) .
+					$wfMsg( 'colon-separator' ) .
+					$wfMsg( 'stabilization-def-short-' . $pars['override'] );
+			}
+			// Autoreview restriction
+			if ( isset( $pars['autoreview'] ) && strlen( $pars['autoreview'] ) ) {
+				$set[] = 'autoreview=' . $pars['autoreview'];
+			}
+		}
+		if ( $set ) {
+			$settings = '[' . $langObj->commaList( $set ) . ']';
+		}
+		# Expiry is a MW timestamp or 'infinity'
+		if ( isset( $pars['expiry'] ) && $pars['expiry'] != 'infinity' ) {
+			$expiry_description = $wfMsg( 'stabilize-expiring',
+				$langObj->timeanddate( $pars['expiry'], false, false ) ,
+				$langObj->date( $pars['expiry'], false, false ) ,
+				$langObj->time( $pars['expiry'], false, false )
+			);
+			if ( $settings != '' ) $settings .= ' ';
+			$settings .= $wfMsg( 'parentheses', $expiry_description );
+		}
+		return htmlspecialchars( $settings );
+	}
+
 	/**
 	* Create revision, diff, and history links for log line entry
 	*/
@@ -65,7 +145,7 @@ class FlaggedRevsLogs {
 			$ts = empty( $params[2] )
 				? Revision::getTimestampFromId( $title, $revId )
 				: $params[2];
-			$time = $wgLang->timeanddate( $ts );
+			$time = $wgLang->timeanddate( $ts, true );
 			$links .= ' (';
 			$links .= $wgUser->getSkin()->makeKnownLinkObj(
 				$title,
@@ -91,9 +171,8 @@ class FlaggedRevsLogs {
 	public static function updateLog( $title, $dims, $oldDims, $comment,
 		$revId, $stableId, $approve, $auto = false )
 	{
-		global $wgFlaggedRevsLogInRC;
 		$log = new LogPage( 'review',
-			$auto ? false : $wgFlaggedRevsLogInRC, // RC logging
+			false /* $rc */,
 			$auto ? "skipUDP" : "UDP" // UDP logging
 		);
 		# Tag rating list (e.g. accuracy=x, depth=y, style=z)
@@ -134,7 +213,40 @@ class FlaggedRevsLogs {
 				'unapprove2' : 'unapprove';
 		}
 		$ts = Revision::getTimestampFromId( $title, $revId );
-		# Param format is <rev id,old stable id, rev timestamp>
+		# Param format is <rev id, old stable id, rev timestamp>
 		$log->addEntry( $action, $title, $comment, array( $revId, $stableId, $ts ) );
+	}
+
+	/**
+	 * Collapse an associate array into a string
+	 * @param array $pars
+	 * @returns string
+	 */
+	public static function collapseParams( Array $pars ) {
+		$res = array();
+		foreach ( $pars as $param => $value ) {
+			// Sanity check...
+			if ( strpos( $param, '=' ) !== false || strpos( $value, '=' ) !== false ) {
+				throw new MWException( "collapseParams() - cannot use equal sign" );
+			} elseif ( strpos( $param, "\n" ) !== false || strpos( $value, "\n" ) !== false ) {
+				throw new MWException( "collapseParams() - cannot use newline" );
+			}
+			$res[] = "{$param}={$value}";
+		}
+		return implode( "\n", $res );
+	}
+
+	/**
+	 * Expand a list of log params into an associative array
+	 * @params array $pars
+	 * @returns array (associative)
+	 */
+	public static function expandParams( Array $pars ) {
+		$res = array();
+		foreach ( $pars as $paramAndValue ) {
+			list( $param, $value ) = explode( '=', $paramAndValue, 2 );
+			$res[$param] = $value;
+		}
+		return $res;
 	}
 }

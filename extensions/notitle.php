@@ -1,9 +1,9 @@
 <?php
  
-$wgExtensionCredits['parserfunction'][] = array(
-	'name' => 'No title',
-	'author' => '[http://www.mediawiki.org/wiki/User:Nx Nx]',
-	'description' => 'Adds a magic word to hide the title heading.'
+$wgExtensionCredits['parserhook'][] = array(
+        'name' => 'No title',
+        'author' => '[http://www.mediawiki.org/wiki/User:Nx Nx]',
+        'description' => 'Adds a magic word to hide the title heading.'
 );
  
 $wgHooks['LanguageGetMagic'][] = 'NoTitle::addMagicWordLanguage';
@@ -30,5 +30,3 @@ class NoTitle
   }
  
 }
-
-?>

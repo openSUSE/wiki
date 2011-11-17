@@ -44,7 +44,8 @@ class SMWQuery {
 	protected $m_inline; // query used inline? (required for finding right default parameters)
 	protected $m_concept; // query used in concept? (required for finding right default parameters)
 	protected $m_extraprintouts = array(); // SMWPrintoutRequest objects supplied outside querystring
-
+	protected $m_mainlabel = ''; // Since 1.6
+	
 	/**
 	 * Constructor.
 	 * @param $description Optional SMWDescription object describing the query conditions
@@ -55,15 +56,33 @@ class SMWQuery {
 	 */
 	public function __construct( $description = null, $inline = false, $concept = false ) {
 		global $smwgQMaxLimit, $smwgQMaxInlineLimit;
-		if ( $inline ) {
-			$this->m_limit = $smwgQMaxInlineLimit;
-		} else {
-			$this->m_limit = $smwgQMaxLimit;
-		}
+		$this->m_limit = $inline ? $smwgQMaxInlineLimit : $smwgQMaxLimit;
 		$this->m_inline = $inline;
 		$this->m_concept = $concept;
 		$this->m_description = $description;
 		$this->applyRestrictions();
+	}
+	
+	/**
+	 * Sets the mainlabel.
+	 * 
+	 * @since 1.6.
+	 * 
+	 * @param string $mainlabel
+	 */
+	public function setMainLabel( $mainlabel ) {
+		$this->m_mainlabel = $mainlabel; 
+	}
+
+	/**
+	 * Gets the mainlabel.
+	 * 
+	 * @since 1.6.
+	 * 
+	 * @return string
+	 */
+	public function getMainLabel() {
+		return $this->m_mainlabel; 
 	}
 
 	public function setDescription( SMWDescription $description ) {
@@ -145,12 +164,8 @@ class SMWQuery {
 	 */
 	public function setLimit( $limit, $restrictinline = true ) {
 		global $smwgQMaxLimit, $smwgQMaxInlineLimit;
-		if ( $this->m_inline && $restrictinline ) {
-			$maxlimit = $smwgQMaxInlineLimit;
-		} else {
-			$maxlimit = $smwgQMaxLimit;
-		}
-		$this->m_limit = min( $maxlimit - $this->m_offset, $limit );
+		$maxlimit = ( $this->m_inline && $restrictinline ) ? $smwgQMaxInlineLimit : $smwgQMaxLimit;
+		$this->m_limit = min( $smwgQMaxLimit - $this->m_offset, $limit, $maxlimit );
 		return $this->m_limit;
 	}
 

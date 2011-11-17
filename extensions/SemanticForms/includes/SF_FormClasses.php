@@ -4,33 +4,58 @@
  * form and a template contained within that form, respectively.
  *
  * @author Yaron Koren
+ * @file
+ * @ingroup SF
  */
 
+/**
+ * Represents a user-defined form.
+ * @ingroup SF
+ */
 class SFForm {
-	var $form_name;
-	var $templates;
+	private $mFormName;
+	private $mTemplates;
+	private $mPageNameFormula;
+	private $mCreateTitle;
+	private $mEditTitle;
 
-	static function create( $form_name, $templates ) {
+	static function create( $formName, $templates ) {
 		$form = new SFForm();
-		$form->form_name = ucfirst( str_replace( '_', ' ', $form_name ) );
-		$form->templates = $templates;
+		$form->mFormName = ucfirst( str_replace( '_', ' ', $formName ) );
+		$form->mTemplates = $templates;
 		return $form;
+	}
+
+	function getFormName() {
+		return $this->mFormName;
+	}
+
+	function setPageNameFormula( $pageNameFormula ) {
+		$this->mPageNameFormula = $pageNameFormula;
+	}
+
+	function setCreateTitle( $createTitle ) {
+		$this->mCreateTitle = $createTitle;
+	}
+
+	function setEditTitle( $editTitle ) {
+		$this->mEditTitle = $editTitle;
 	}
 
 	function creationHTML() {
 		$text = "";
-		foreach ( $this->templates as $i => $ft ) {
+		foreach ( $this->mTemplates as $i => $ft ) {
 			$text .= $ft->creationHTML( $i );
 		}
 		return $text;
 	}
 
 	function createMarkup() {
-		$title = Title::makeTitle( SF_NS_FORM, $this->form_name );
+		$title = Title::makeTitle( SF_NS_FORM, $this->mFormName );
 		$fs = SpecialPage::getPage( 'FormStart' );
-		$form_start_url = SFLinkUtils::titleURLString( $fs->getTitle() ) . "/" . $title->getPartialURL();
-		$form_description = wfMsgForContent( 'sf_form_docu', $this->form_name, $form_start_url );
-		$form_input = "{{#forminput:form=" . $this->form_name . "}}\n";
+		$form_start_url = SFUtils::titleURLString( $fs->getTitle() ) . "/" . $title->getPartialURL();
+		$form_description = wfMsgForContent( 'sf_form_docu', $this->mFormName, $form_start_url );
+		$form_input = "{{#forminput:form=" . $this->mFormName . "}}\n";
 		$text = <<<END
 <noinclude>
 $form_description
@@ -38,10 +63,26 @@ $form_description
 
 $form_input
 </noinclude><includeonly>
+
+END;
+		if ( !empty( $this->mPageNameFormula ) || !empty( $this->mCreateTitle ) || !empty( $this->mEditTitle ) ) {
+			$text .= "{{{info";
+			if ( !empty( $this->mPageNameFormula ) ) {
+				$text .= "|page name=" . $this->mPageNameFormula;
+			}
+			if ( !empty( $this->mCreateTitle ) ) {
+				$text .= "|create title=" . $this->mCreateTitle;
+			}
+			if ( !empty( $this->mEditTitle ) ) {
+				$text .= "|edit title=" . $this->mEditTitle;
+			}
+			$text .= "}}}\n";
+		}
+		$text .= <<<END
 <div id="wikiPreview" style="display: none; padding-bottom: 25px; margin-bottom: 25px; border-bottom: 1px solid #AAAAAA;"></div>
 
 END;
-		foreach ( $this->templates as $template ) {
+		foreach ( $this->mTemplates as $template ) {
 			$text .= $template->createMarkup() . "\n";
 		}
 		$free_text_label = wfMsgForContent( 'sf_form_freetextlabel' );
@@ -65,147 +106,203 @@ END;
 
 }
 
+/**
+ * Represents a template in a user-defined form.
+ * @ingroup SF
+ */
 class SFTemplateInForm {
-	var $template_name;
-	var $label;
-	var $allow_multiple;
-	var $max_allowed;
-	var $fields;
+	private $mTemplateName;
+	private $mLabel;
+	private $mAllowMultiple;
+	private $mMaxAllowed;
+	private $mFields;
 
+	/**
+	 * For a field name and its attached property name located in the
+	 * template text, create an SFTemplateField object out of it, and
+	 * add it to the $templateFields array.
+	 */
+	function handlePropertySettingInTemplate( $fieldName, $propertyName, $isList, &$templateFields, $templateText ) {
+		global $wgContLang;
+		$templateField = SFTemplateField::create( $fieldName, $wgContLang->ucfirst( $fieldName ), $propertyName, $isList );
+		$cur_pos = stripos( $templateText, $fieldName );
+		$templateFields[$cur_pos] = $templateField;
+	}
+
+	/**
+	 * Get the fields of the template, along with the semantic property
+	 * attached to each one (if any), by parsing the text of the template.
+	 */
 	function getAllFields() {
 		global $wgContLang;
-		$template_fields = array();
-		$field_names_array = array();
+		$templateFields = array();
+		$fieldNamesArray = array();
 
-		// Get the fields of the template, both semantic and otherwise, by parsing
-		// the text of the template.
-		// The way this works is that fields are found and then stored in an
-		// array based on their location in the template text, so that they
-		// can be returned in the order in which they appear in the template, even
-		// though they were found in a different order.
-		// Some fields can be found more than once (especially if they're part
-		// of an "#if" statement), so they're only recorded the first time they're
-		// found. Also, every field gets replaced with a string of x's after
-		// being found, so it doesn't interfere with future parsing.
-		$template_title = Title::makeTitleSafe( NS_TEMPLATE, $this->template_name );
+		// The way this works is that fields are found and then stored
+		// in an array based on their location in the template text, so
+		// that they can be returned in the order in which they appear
+		// in the template, not the order in which they were found.
+		// Some fields can be found more than once (especially if
+		// they're part of an "#if" statement), so they're only
+		// recorded the first time they're found.
+		$template_title = Title::makeTitleSafe( NS_TEMPLATE, $this->mTemplateName );
 		$template_article = null;
 		if ( isset( $template_title ) ) $template_article = new Article( $template_title );
 		if ( isset( $template_article ) ) {
-			$template_text = $template_article->getContent();
-			// ignore 'noinclude' sections and 'includeonly' tags
-			$template_text = StringUtils::delimiterReplace( '<noinclude>', '</noinclude>', '', $template_text );
-			$template_text = strtr( $template_text, array( '<includeonly>' => '', '</includeonly>' => '' ) );
+			$templateText = $template_article->getContent();
+			// Ignore 'noinclude' sections and 'includeonly' tags.
+			$templateText = StringUtils::delimiterReplace( '<noinclude>', '</noinclude>', '', $templateText );
+			$templateText = strtr( $templateText, array( '<includeonly>' => '', '</includeonly>' => '' ) );
 	
-			// first, look for "arraymap" parser function calls that map a
-			// property onto a list
-			if ( preg_match_all( '/{{#arraymap:{{{([^|}]*:?[^|}]*)[^\[]*\[\[([^:=]*:?[^:=]*)(:[:=])/mis', $template_text, $matches ) ) {
-				// this is a two-dimensional array; we need the last three of the four
-				// sub-arrays; we also have to remove redundant values
+			// First, look for "arraymap" parser function calls
+			// that map a property onto a list.
+			if ( $ret = preg_match_all( '/{{#arraymap:{{{([^|}]*:?[^|}]*)[^\[]*\[\[([^:]*:?[^:]*)::/mis', $templateText, $matches ) ) {
 				foreach ( $matches[1] as $i => $field_name ) {
-					$semantic_property = $matches[2][$i];
-					$full_field_text = $matches[0][$i];
-					if ( ! in_array( $field_name, $field_names_array ) ) {
-						$template_field = SFTemplateField::create( $field_name, $wgContLang->ucfirst( $field_name ) );
-						$template_field->setSemanticProperty( $semantic_property );
-						$template_field->is_list = true;
-						$cur_pos = stripos( $template_text, $full_field_text );
-						$template_fields[$cur_pos] = $template_field;
-						$field_names_array[] = $field_name;
-						$replacement = str_repeat( "x", strlen( $full_field_text ) );
-						$template_text = str_replace( $full_field_text, $replacement, $template_text );
+					if ( ! in_array( $field_name, $fieldNamesArray ) ) {
+						$propertyName = $matches[2][$i];
+						$this->handlePropertySettingInTemplate( $field_name, $propertyName, true, $templateFields, $templateText );
+						$fieldNamesArray[] = $field_name;
+					}
+				}
+			} elseif ( $ret === false ) {
+				// There was an error in the preg_match_all()
+				// call - let the user know about it.
+				if ( preg_last_error() == PREG_BACKTRACK_LIMIT_ERROR ) {
+					print 'Semantic Forms error: backtrace limit exceeded during parsing! Please increase the value of <a href="http://www.php.net/manual/en/pcre.configuration.php#ini.pcre.backtrack-limit">pcre.backtrack-limit</a> in the PHP settings.';
+				}
+			}
+	
+			// Second, look for normal property calls.
+			if ( preg_match_all( '/\[\[([^:|\[\]]*:*?[^:|\[\]]*)::{{{([^\]\|}]*).*?\]\]/mis', $templateText, $matches ) ) {
+				foreach ( $matches[1] as $i => $propertyName ) {
+					$field_name = trim( $matches[2][$i] );
+					if ( ! in_array( $field_name, $fieldNamesArray ) ) {
+						$propertyName = trim( $propertyName );
+						$this->handlePropertySettingInTemplate( $field_name, $propertyName, false, $templateFields, $templateText );
+						$fieldNamesArray[] = $field_name;
+					}
+				}
+			}
+
+			// Then, get calls to #set and #set_internal
+			// (thankfully, they have basically the same syntax).
+			if ( preg_match_all( '/#(set|set_internal):(.*?}}})\s*}}/mis', $templateText, $matches ) ) {
+				foreach ( $matches[2] as $i => $match ) {
+					if ( preg_match_all( '/([^|{]*?)=\s*{{{([^|}]*)/mis', $match, $matches2 ) ) {
+						foreach ( $matches2[1] as $i => $propertyName ) {
+							$fieldName = trim( $matches2[2][$i] );
+							if ( ! in_array( $fieldName, $fieldNamesArray ) ) {
+								$propertyName = trim( $propertyName );
+								$this->handlePropertySettingInTemplate( $fieldName, $propertyName, false, $templateFields, $templateText );
+								$fieldNamesArray[] = $fieldName;
+							}
+						}
+					}
+				}
+			}
+
+			// Then, get calls to #declare.
+			if ( preg_match_all( '/#declare:(.*?)}}/mis', $templateText, $matches ) ) {
+				foreach ( $matches[1] as $i => $match ) {
+					$setValues = explode( '|', $match );
+					foreach( $setValues as $valuePair ) {
+						$keyAndVal = explode( '=', $valuePair );
+						if ( count( $keyAndVal ) == 2) {
+							$propertyName = trim( $keyAndVal[0] );
+							$fieldName = trim( $keyAndVal[1] );
+							if ( ! in_array( $fieldName, $fieldNamesArray ) ) {
+								$this->handlePropertySettingInTemplate( $fieldName, $propertyName, false, $templateFields, $templateText );
+								$fieldNamesArray[] = $fieldName;
+							}
+						}
 					}
 				}
 			}
 	
-			// second, look for normal property calls
-			if ( preg_match_all( '/\[\[([^:=]*:*?[^:=]*)(:[:=]){{{([^\]\|}]*).*?\]\]/mis', $template_text, $matches ) ) {
-				// this is a two-dimensional array; we need the last three of the four
-				// sub-arrays; we also have to remove redundant values
-				foreach ( $matches[1] as $i => $semantic_property ) {
-					$field_name = $matches[3][$i];
-					$full_field_text = $matches[0][$i];
-					if ( ! in_array( $field_name, $field_names_array ) ) {
-						$template_field = SFTemplateField::create( $field_name, $wgContLang->ucfirst( $field_name ) );
-						$template_field->setSemanticProperty( $semantic_property );
-						$cur_pos = stripos( $template_text, $full_field_text );
-						$template_fields[$cur_pos] = $template_field;
-						$field_names_array[] = $field_name;
-						$replacement = str_repeat( "x", strlen( $full_field_text ) );
-						$template_text = str_replace( $full_field_text, $replacement, $template_text );
-					}
-				}
-			}
-	
-			// finally, get any non-semantic fields defined
-			if ( preg_match_all( '/{{{([^|}]*)/mis', $template_text, $matches ) ) {
-				foreach ( $matches[1] as $i => $field_name ) {
-					$full_field_text = $matches[0][$i];
-					if ( ( $full_field_text != '' ) && ( ! in_array( $field_name, $field_names_array ) ) ) {
-						$cur_pos = stripos( $template_text, $full_field_text );
-						$template_fields[$cur_pos] = SFTemplateField::create( $field_name, $wgContLang->ucfirst( $field_name ) );
-						$field_names_array[] = $field_name;
+			// Finally, get any non-semantic fields defined.
+			if ( preg_match_all( '/{{{([^|}]*)/mis', $templateText, $matches ) ) {
+				foreach ( $matches[1] as $i => $fieldName ) {
+					$fieldName = trim( $fieldName );
+					if ( !empty( $fieldName ) && ( ! in_array( $fieldName, $fieldNamesArray ) ) ) {
+						$cur_pos = stripos( $templateText, $fieldName );
+						$templateFields[$cur_pos] = SFTemplateField::create( $fieldName, $wgContLang->ucfirst( $fieldName ) );
+						$fieldNamesArray[] = $fieldName;
 					}
 				}
 			}
 		}
-		ksort( $template_fields );
-		return $template_fields;
+		ksort( $templateFields );
+		return $templateFields;
 	}
 
-	static function create( $name, $label, $allow_multiple, $max_allowed = null ) {
+	static function create( $name, $label = null, $allowMultiple = null, $maxAllowed = null ) {
 		$tif = new SFTemplateInForm();
-		$tif->template_name = str_replace( '_', ' ', $name );
-		$tif->fields = array();
+		$tif->mTemplateName = str_replace( '_', ' ', $name );
+		$tif->mFields = array();
 		$fields = $tif->getAllFields();
 		$field_num = 0;
 		foreach ( $fields as $field ) {
-			$tif->fields[] = SFFormField::create( $field_num++, $field );
+			$tif->mFields[] = SFFormField::create( $field_num++, $field );
 		}
-		$tif->label = $label;
-		$tif->allow_multiple = $allow_multiple;
-		$tif->max_allowed = $max_allowed;
+		$tif->mLabel = $label;
+		$tif->mAllowMultiple = $allowMultiple;
+		$tif->mMaxAllowed = $maxAllowed;
 		return $tif;
 	}
 
+	function getTemplateName() {
+		return $this->mTemplateName;
+	}
+
+	function getFields() {
+		return $this->mFields;
+	}
+
 	function creationHTML( $template_num ) {
-		$checked_str = ( $this->allow_multiple ) ? "checked" : "";
+		$checked_str = ( $this->mAllowMultiple ) ? "checked" : "";
 		$template_str = wfMsg( 'sf_createform_template' );
 		$template_label_input = wfMsg( 'sf_createform_templatelabelinput' );
 		$allow_multiple_text = wfMsg( 'sf_createform_allowmultiple' );
 		$text = <<<END
-	<input type="hidden" name="template_$template_num" value="$this->template_name">
+	<input type="hidden" name="template_$template_num" value="$this->mTemplateName">
 	<div class="templateForm">
-	<h2>$template_str '$this->template_name'</h2>
-	<p>$template_label_input <input size=25 name="label_$template_num" value="$this->label"></p>
+	<h2>$template_str '$this->mTemplateName'</h2>
+	<p>$template_label_input <input size=25 name="label_$template_num" value="$this->mLabel"></p>
 	<p><input type="checkbox" name="allow_multiple_$template_num" $checked_str> $allow_multiple_text</p>
 	<hr>
 
 END;
-		foreach ( $this->fields as $field ) {
+		foreach ( $this->mFields as $field ) {
 			$text .= $field->creationHTML( $template_num );
 		}
-		$text .= '	<p><input type="submit" name="del_' . $template_num .
-		  '" value="' . wfMsg( 'sf_createform_removetemplate' ) . '"></p>' . "\n";
+		$removeTemplateButton = Xml::element( 'input', array(
+			'type' => 'submit',
+			'name' => 'del_' . $template_num,
+			'value' => wfMsg( 'sf_createform_removetemplate' )
+		) );
+		$text .= "\t" . Xml::tags( 'p', null, $removeTemplateButton ) . "\n";
 		$text .= "	</div>\n";
 		return $text;
 	}
 
 	function createMarkup() {
-		$text = "";
-		$text .= "{{{for template|" . $this->template_name;
-		if ( $this->allow_multiple )
+		$text = "{{{for template|" . $this->mTemplateName;
+		if ( $this->mAllowMultiple ) {
 			$text .= "|multiple";
-		if ( $this->label != '' )
-			$text .= "|label=" . $this->label;
-		$text .= "}}}\n";
-		// for now, HTML for templates differs for multiple-instance templates;
-		// this may change if handling of form definitions gets more sophisticated
-		if ( ! $this->allow_multiple ) { $text .= "{| class=\"formtable\"\n"; }
-		foreach ( $this->fields as $i => $field ) {
-			$is_last_field = ( $i == count( $this->fields ) - 1 );
-			$text .= $field->createMarkup( $this->allow_multiple, $is_last_field );
 		}
-		if ( ! $this->allow_multiple ) { $text .= "|}\n"; }
+		if ( $this->mLabel != '' ) {
+			$text .= "|label=" . $this->mLabel;
+		}
+		$text .= "}}}\n";
+		// For now, HTML for templates differs for multiple-instance
+		// templates; this may change if handling of form definitions
+		// gets more sophisticated.
+		if ( ! $this->mAllowMultiple ) { $text .= "{| class=\"formtable\"\n"; }
+		foreach ( $this->mFields as $i => $field ) {
+			$is_last_field = ( $i == count( $this->mFields ) - 1 );
+			$text .= $field->createMarkup( $this->mAllowMultiple, $is_last_field );
+		}
+		if ( ! $this->mAllowMultiple ) { $text .= "|}\n"; }
 		$text .= "{{{end template}}}\n";
 		return $text;
 	}

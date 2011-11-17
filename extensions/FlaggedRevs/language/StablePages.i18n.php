@@ -2,40 +2,36 @@
 /**
  * Internationalisation file for FlaggedRevs extension, section StablePages
  *
- * @addtogroup Extensions
+ * @file
+ * @ingroup Extensions
  */
 
 $messages = array();
 
 $messages['en'] = array(
-	'stablepages'               => 'Stable pages',
-	'stablepages-stable'        => 'published version',
-	'stablepages-text'          => 'Below is a list of pages manually configured to show the published version as the default page content for readers.',
-	'stablepages-none'          => 'There are no pages in this list',
+	'stablepages'               => 'Pages using edit approval',
+	'stablepages-list'          => 'Below is a list of pages to which only certain users can make edits that do not require review.
+Edits made by other users are not displayed to readers by default until an authorized user reviews them.',
+	'stablepages-none'          => 'There are no pages in this list.',
 	'stablepages-config'        => 'Configuration',
-	'stablepages-prec-none'     => 'no precedence',
-	'stablepages-prec-quality'  => 'quality precedence',
-	'stablepages-prec-pristine' => 'pristine precedence',
-	'stablepages-precedence'    => 'Precedence:',
+	'stablepages-indef'         => 'Indefinite expiry only',
 );
 
 /** Message documentation (Message documentation)
  * @author EugeneZelenko
  * @author Jon Harald Søby
  * @author Purodha
+ * @author Raymond
+ * @author Umherirrender
  */
 $messages['qqq'] = array(
 	'stablepages' => '{{Flagged Revs}}',
-	'stablepages-stable' => '{{Flagged Revs}}',
-	'stablepages-text' => '{{Flagged Revs}}',
+	'stablepages-list' => '{{Flagged Revs}}
+This text is shown on [http://flaggedrevs.labs.wikimedia.org/wiki/Special:StablePages Special:StablePages].',
 	'stablepages-none' => '{{Flagged Revs}}
 {{Identical|There are no pages in this list}}',
 	'stablepages-config' => '{{Flagged Revs}}
 {{Identical|Configuration}}',
-	'stablepages-prec-none' => '{{Flagged Revs}}',
-	'stablepages-prec-quality' => '{{Flagged Revs}}',
-	'stablepages-prec-pristine' => '{{Flagged Revs}}',
-	'stablepages-precedence' => '{{Flagged Revs}}',
 );
 
 /** Afrikaans (Afrikaans)
@@ -43,40 +39,42 @@ $messages['qqq'] = array(
  * @author Naudefj
  */
 $messages['af'] = array(
-	'stablepages' => 'Stabiele bladsye',
-	'stablepages-stable' => 'stabiele weergawe',
-	'stablepages-none' => 'Daar is geen bladsye in hierdie lys nie',
+	'stablepages' => 'Bladsye onderhewig aan goedkeuring van bywerkings',
+	'stablepages-list' => "Hier is 'n lys van bladsye wat handmatig gestel is om die gepubliseerde weergawe as standaard inhoud vir lesers te wys.",
+	'stablepages-none' => 'Daar is geen bladsye in hierdie lys nie.',
 	'stablepages-config' => 'Voorkeure',
-	'stablepages-prec-none' => 'geen voorrang',
-	'stablepages-prec-quality' => 'voorrang kwaliteit',
-	'stablepages-prec-pristine' => 'voorrang ongerep',
-	'stablepages-precedence' => 'Volgorde:',
+);
+
+/** Gheg Albanian (Gegë)
+ * @author Mdupont
+ */
+$messages['aln'] = array(
+	'stablepages' => 'Faqet e përdorur redakto miratim',
+	'stablepages-list' => 'Më poshtë është një listë e faqeve të cilat janë të kufizuara në mënyrë që përdoruesit të caktuara mund të bëjë vetëm redaktimet e që nuk kërkojnë shqyrtim. Redaktimet e tillë nuk janë botuar deri në një përdorues të autorizuar kritikat e tyre.',
+	'stablepages-none' => 'Nuk ka faqe në këtë listë.',
+	'stablepages-config' => 'Konfiguracion',
 );
 
 /** Aragonese (Aragonés)
  * @author Juanpabl
  */
 $messages['an'] = array(
-	'stablepages' => 'Pachinas estables',
-	'stablepages-stable' => 'bersión estable',
-	'stablepages-text' => "En o cobaixo s'amuestran as pachinas que s'han confeguratas manualment t'amostrar a bersión estable como o conteniu d'a pachina por defeuto ta os bisualizadors.",
+	'stablepages' => "Pachinas que emplegan l'aprobación d'as modificacions",
+	'stablepages-list' => "Contino s'amuestra una lista de pachinas que nomás bells usuarios pueden fer-ie edicions que no requieran revisions. As edicions feitas por atros usuarios no s'amuestras ta os lectors por defecto, dica un usuario autorizado las revise.",
 	'stablepages-none' => 'No bi ha garra pachina en ista lista',
-	'stablepages-config' => 'Confegurazión',
+	'stablepages-config' => 'Confeguración',
 );
 
 /** Arabic (العربية)
+ * @author Ciphers
  * @author Meno25
  */
 $messages['ar'] = array(
-	'stablepages' => 'صفحات مستقرة',
-	'stablepages-stable' => 'نسخة منشورة',
-	'stablepages-text' => 'بالأسفل قائمة الصفحات المضبوطة يدويا لتعرض النسخة المنشورة كمحتوى الصفحة الافتراضي للقراء.',
+	'stablepages' => 'صفحات تستخدم الموافقة على التعديل',
+	'stablepages-list' => 'فيما يلي قائمة من الصفحات التي يمكن لبعض المستخدمين فقط إجراء التعديلات التي لا تتطلب المراجعة عليها. 
+ لا يتم عرض التعديلات التي أجريت من قبل مستخدمين آخرين للقراء بشكل افتراضي حتى يأذن مستخدم مفوض بذلك باستعراضها.',
 	'stablepages-none' => 'لا توجد صفحات في هذه القائمة',
 	'stablepages-config' => 'ضبط',
-	'stablepages-prec-none' => 'لا سابقة',
-	'stablepages-prec-quality' => 'سابقة جودة',
-	'stablepages-prec-pristine' => 'سابقة فائقة',
-	'stablepages-precedence' => 'سابقة:',
 );
 
 /** Egyptian Spoken Arabic (مصرى)
@@ -86,14 +84,9 @@ $messages['ar'] = array(
  */
 $messages['arz'] = array(
 	'stablepages' => 'صفحات مستقرة',
-	'stablepages-stable' => 'نسخه منشوره',
-	'stablepages-text' => 'تحت فيه ليستة الصفح اللى مترتّبه يدوى علشان تخلّى النسخه المنشوره تبقى محتوى الصفحه الاساسى للقرّايين.',
+	'stablepages-list' => 'تحت فيه ليستة الصفح اللى مترتّبه يدوى علشان تخلّى النسخه المنشوره تبقى محتوى الصفحه الاساسى للقرّايين.',
 	'stablepages-none' => 'لا توجد صفحات فى هذه القائمة',
 	'stablepages-config' => 'ضبط',
-	'stablepages-prec-none' => 'لا سابقة',
-	'stablepages-prec-quality' => 'سابقه جودة',
-	'stablepages-prec-pristine' => 'سابقه فائقة',
-	'stablepages-precedence' => 'سابقة:',
 );
 
 /** Southern Balochi (بلوچی مکرانی)
@@ -101,26 +94,35 @@ $messages['arz'] = array(
  */
 $messages['bcc'] = array(
 	'stablepages' => 'صفحات ثابت',
-	'stablepages-stable' => 'نسخه ثابت',
-	'stablepages-text' => 'جهلء یک لیستی چه صفحاتی هستن که دستی تنظیم بوتت تا نسخه ثابت په داب پیش فرضین محتوا په بازدید کنوک پیش داریت.',
+	'stablepages-list' => 'جهلء یک لیستی چه صفحاتی هستن که دستی تنظیم بوتت تا نسخه ثابت په داب پیش فرضین محتوا په بازدید کنوک پیش داریت.',
 	'stablepages-none' => 'هچ صفحه ای تی ای لیست نیست',
 	'stablepages-config' => 'تنظیمات',
+);
+
+/** Belarusian (Беларуская)
+ * @author Хомелка
+ */
+$messages['be'] = array(
+	'stablepages' => 'Старонкі, якія выкарыстоўваюць пацверджанне зменаў',
+	'stablepages-list' => 'Ніжэй паказаны пералік старонак на якіх толькі пэўныя ўдзельнікі могуць рабіць праўкі, якія не патрабуюць праверкі.
+Зробленыя іншымі ўдзельнікамі праўкі гэтых артыкулаў па змаўчанні не будуць паказаны чытачам, пакуль не будуць правераны ўпаўнаважанымі ўдзельнікамі.',
+	'stablepages-none' => 'Няма старонак у гэтым пераліку.',
+	'stablepages-config' => 'Наладка',
+	'stablepages-indef' => 'Толькі з нявызначаным тэрмінам',
 );
 
 /** Belarusian (Taraškievica orthography) (Беларуская (тарашкевіца))
  * @author EugeneZelenko
  * @author Jim-by
+ * @author Wizardist
  */
 $messages['be-tarask'] = array(
-	'stablepages' => 'Стабільныя старонкі',
-	'stablepages-stable' => 'апублікаваная вэрсія',
-	'stablepages-text' => 'Ніжэй пададзены сьпіс старонак, якія ўручную настроеныя для паказу апублікаванай вэрсіі па змоўчваньні для чытачоў.',
-	'stablepages-none' => 'У гэтым сьпісе няма старонак',
+	'stablepages' => 'Старонкі, якія выкарыстоўваюць зацьверджаньні рэдагаваньняў',
+	'stablepages-list' => 'Ніжэй пададзены сьпіс старонак, якія могуць рэдагаваць толькі вызначаныя ўдзельнікі без неабходнага рэцэнзаваньня. 
+Рэдагаваньні зробленыя іншымі ўдзельнікамі, па змоўчваньні ня будуць паказвацца чытачам, пакуль аўтарызаваны ўдзельнік іх не прарэцэнзуе.',
+	'stablepages-none' => 'У гэтым сьпісе няма старонак.',
 	'stablepages-config' => 'Канфігурацыя',
-	'stablepages-prec-none' => 'няма першаснасьці',
-	'stablepages-prec-quality' => 'першаснасьць якасьці',
-	'stablepages-prec-pristine' => 'першаснасьць першапачатковасьці',
-	'stablepages-precedence' => 'Першаснасьць:',
+	'stablepages-indef' => 'Толькі зь непазначаным тэрмінам',
 );
 
 /** Bulgarian (Български)
@@ -128,7 +130,6 @@ $messages['be-tarask'] = array(
  */
 $messages['bg'] = array(
 	'stablepages' => 'Устойчиви страници',
-	'stablepages-stable' => 'устойчива версия',
 	'stablepages-none' => 'Списъкът не съдържа страници',
 	'stablepages-config' => 'Конфигурация',
 );
@@ -139,30 +140,24 @@ $messages['bg'] = array(
  * @author Y-M D
  */
 $messages['br'] = array(
-	'stablepages' => 'Pajennoù stabil',
-	'stablepages-stable' => 'stumm embannet',
-	'stablepages-text' => "A-is ez eus ur roll pajennoù kefluniet gant an dorn evit na vefe diskouezet d'al lennerien nemet ar stumm embannet da bajenn danvez enni, dre ziouer.",
-	'stablepages-none' => "N'eus pajenn ebet er roll-mañ",
+	'stablepages' => "Pajennoù oc'h implijout kadarnadur ar c'hemmoù",
+	'stablepages-list' => "A-is ez eus ur roll pajennoù strishaet o implij, a c'hall bezañ kemmet gant implijerien zo hepken, hep na vije ezhomm d'o adlenn. 
+Gant se, ne vo diskouezet dre ziouer d'al lennerien ar c'hemmoù graet gant implijerien all nemet pa vint bet adlennet gant un implijer aotreet evit se.",
+	'stablepages-none' => "N'eus pajenn ebet er roll-mañ.",
 	'stablepages-config' => 'Kefluniañ',
-	'stablepages-prec-none' => 'Tamm dibab gwellañ ebet',
-	'stablepages-prec-quality' => "Dibaboù gwellañ evit ar c'halite",
-	'stablepages-prec-pristine' => "Dibab gwellañ gwerc'h",
-	'stablepages-precedence' => 'Dibab gwellañ :',
+	'stablepages-indef' => 'Padelezh termen amfin hepken',
 );
 
 /** Bosnian (Bosanski)
  * @author CERminator
  */
 $messages['bs'] = array(
-	'stablepages' => 'Stabilne stranice',
-	'stablepages-stable' => 'objavljena verzija',
-	'stablepages-text' => 'Ispod je spisak stranica koje su ručno postavljene da prikazuju objavljenu verziju kao pretpostavljenu stranicu sadržaja za čitaoce.',
+	'stablepages' => 'Stranice koristeći odobravanje izmjena',
+	'stablepages-list' => 'Ispod je spisak stranica koje samo određeni korisnici mogu ih mijenjati a te izmjene ne zahtjevaju provjeru.
+Izmjene drugih korisnika nisu prikazane čitaocima po postavkama dok ih ne provjeri autorizovani korisnik.',
 	'stablepages-none' => 'Nema stranica na ovom spisku',
 	'stablepages-config' => 'Podešavanje',
-	'stablepages-prec-none' => 'bez prednosti',
-	'stablepages-prec-quality' => 'poredak po kvalitetu',
-	'stablepages-prec-pristine' => 'prvobitni poredak',
-	'stablepages-precedence' => 'Prednost:',
+	'stablepages-indef' => 'Samo bez isteka roka',
 );
 
 /** Catalan (Català)
@@ -172,7 +167,6 @@ $messages['bs'] = array(
  */
 $messages['ca'] = array(
 	'stablepages' => 'Pàgines estables',
-	'stablepages-stable' => 'versió publicada',
 	'stablepages-none' => 'No hi ha pàgines a la llista',
 	'stablepages-config' => 'Configuració',
 );
@@ -183,60 +177,59 @@ $messages['ca'] = array(
  */
 $messages['cs'] = array(
 	'stablepages' => 'Stabilní stránky',
-	'stablepages-stable' => 'stabilní verze',
-	'stablepages-text' => 'Níže je seznam stránek, které byly ručně nastaveny, aby se jako jejich výchozí obash zobrazovala jejich stabilní verze.',
+	'stablepages-list' => 'Níže je seznam stránek, které byly ručně nastaveny, aby se jako jejich výchozí obash zobrazovala jejich stabilní verze.',
 	'stablepages-none' => 'V tomto seznamu nejsou žádné stránky.',
 	'stablepages-config' => 'Konfigurace',
-	'stablepages-prec-none' => 'bez přednosti',
-	'stablepages-prec-quality' => 'přednost podle kvality',
-	'stablepages-prec-pristine' => 'čistá přednost',
-	'stablepages-precedence' => 'Přednost:',
+	'stablepages-indef' => 'Pouze neurčitá expirace',
+);
+
+/** Danish (Dansk)
+ * @author Froztbyte
+ */
+$messages['da'] = array(
+	'stablepages-none' => 'Der er ingen sider i denne liste.',
+	'stablepages-config' => 'Konfiguration',
 );
 
 /** German (Deutsch)
+ * @author Kghbln
+ * @author MF-Warburg
+ * @author Merlissimo
  * @author Purodha
  * @author Umherirrender
  */
 $messages['de'] = array(
-	'stablepages' => 'Konfigurierte Seiten',
-	'stablepages-stable' => 'veröffentlichte Version',
-	'stablepages-text' => 'Es folgt eine Liste der Seiten, die individuell konfiguriert wurden, damit diese die markierte Version als Standardinhalt für Leser anzeigen.',
-	'stablepages-none' => 'Diese Liste ist leer.',
+	'stablepages' => 'Seiten, die erst nach einer Markierung angezeigt werden',
+	'stablepages-list' => 'Es folgt eine Liste von Seiten, die Einschränkungen haben, so das nur Bearbeitungen bestimmter Benutzer sofort angezeigt werden.
+Bearbeitungen von anderen Bentzern werden standardmäßig solange nicht angezeigt, bis ein entsprechend berechtigter Benutzer sie markiert hat.',
+	'stablepages-none' => 'Diese Liste enthält keine Seiten.',
 	'stablepages-config' => 'Konfiguration',
-	'stablepages-prec-none' => 'keine Rangordnung',
-	'stablepages-prec-quality' => 'Qualitätsrangordnung',
-	'stablepages-prec-pristine' => 'ursprüngliche Rangordnung',
-	'stablepages-precedence' => 'Rangordnung:',
+	'stablepages-indef' => 'Nur mit unbefristetem Ablauf',
 );
 
 /** Zazaki (Zazaki)
  * @author Aspar
+ * @author Mirzali
+ * @author Xoser
  */
 $messages['diq'] = array(
-	'stablepages' => 'pelê istiqrar biyayeyi',
-	'stablepages-stable' => 'versiyonê istiqrar biyayeyi',
-	'stablepages-text' => 'Aşağıdaki liste, ziyaretçilere geçerli sayfa içeriği olarak kararlı sürümü gösterecek şekilde elle yapılandırılmış sayfaların listesidir.',
-	'stablepages-none' => 'na liste de pel çino',
-	'stablepages-config' => 'vıraştış',
-	'stablepages-prec-none' => 'pêşani çina',
-	'stablepages-prec-quality' => 'pêşaneyê qaliteyi',
-	'stablepages-prec-pristine' => 'pêşaneyê ewwil',
-	'stablepages-precedence' => 'pêşane:',
+	'stablepages' => 'Pelanê ke vurnayise testiqi ser hewitiyeno',
+	'stablepages-list' => 'Cor de yew liste este ke ey de teyna pelan ke teyna belli karberan eşkeni maqalayen bivurne u kontrol gani niya.
+Vurnayişan otomatik qeyd nibena eka yew karberanê binan meqale vurne heta yew gorevli kontral bike.',
+	'stablepages-none' => 'Ena liste de qet peli çıniyê.',
+	'stablepages-config' => 'Vıraştış',
+	'stablepages-indef' => 'Tenya vêrdışo ebedi',
 );
 
 /** Lower Sorbian (Dolnoserbski)
  * @author Michawiki
  */
 $messages['dsb'] = array(
-	'stablepages' => 'Stabilne boki',
-	'stablepages-stable' => 'stabilna wersija',
-	'stablepages-text' => 'Slědujo lisćina bokow, kótarež su so manuelnje konfigurěrowali, aby pokazali stabilnu wersiju ako standardne wopśimjeśe za wobglědowarjow.',
+	'stablepages' => 'Boki, kótarež wužywaju pśizwólenje změnow',
+	'stablepages-list' => 'Slědujo lisćina bokow, kótarež jano wěste wužywarje mógu změny pśewjasć, kótarež njetrjebaju pśeglědanje. Změny drugich wužywarjow se pó standarźe cytarjam njepokazuju, až awtorizěrowany wužywaŕ je njepśeglědujo.',
 	'stablepages-none' => 'Toś ta lisćina njewopśimujo boki',
 	'stablepages-config' => 'Konfiguracija',
-	'stablepages-prec-none' => 'žedna prědnosć',
-	'stablepages-prec-quality' => 'kwalitna prědnosć',
-	'stablepages-prec-pristine' => 'spócetna prědnosć',
-	'stablepages-precedence' => 'Prědnosć:',
+	'stablepages-indef' => 'Jano njewobgranicowany cas spadnjenja',
 );
 
 /** Greek (Ελληνικά)
@@ -245,45 +238,46 @@ $messages['dsb'] = array(
  */
 $messages['el'] = array(
 	'stablepages' => 'Σταθερές σελίδες',
-	'stablepages-stable' => 'σταθερή έκδοση',
-	'stablepages-text' => 'Παρακάτω είναι ένας κατάλογος σελίδων χειροκίνητα ρυθμισμένων να εμφανίζουν την σταθερή έκδοση ως το προεπιλεγμένο περιεχόμενο σελίδας για τους αναγνώστες.',
+	'stablepages-list' => 'Παρακάτω είναι ένας κατάλογος σελίδων χειροκίνητα ρυθμισμένων να εμφανίζουν την σταθερή έκδοση ως το προεπιλεγμένο περιεχόμενο σελίδας για τους αναγνώστες.',
 	'stablepages-none' => 'Δεν υπάρχουν σελίδες σε αυτή την λίστα',
 	'stablepages-config' => 'Ρύθμιση',
-	'stablepages-prec-none' => 'χωρίς προτεραιότητα',
-	'stablepages-prec-quality' => 'προτεραιότητα ποιότητας',
-	'stablepages-prec-pristine' => 'προτεραιότητα μη αλλοίωσης',
-	'stablepages-precedence' => 'Προτεραιότητα:',
 );
 
 /** Esperanto (Esperanto)
  * @author Yekrats
  */
 $messages['eo'] = array(
-	'stablepages' => 'Stabilaj paĝoj',
-	'stablepages-stable' => 'stabila versio',
-	'stablepages-text' => 'Jen listo de paĝoj permane konfiguritaj montri la stabilan version kiel la defaŭltan paĝon por rigardantoj.',
+	'stablepages' => 'Paĝoj uzantaj redaktan aprobadon',
+	'stablepages-list' => 'Jen listo de paĝoj kiuj estas limigitaj tiel nur specifaj uzantoj povas fari redaktojn kiuj ne bezonas kontroladon. Redaktoj faritaj de aliaj uzantoj ne estas montrataj al legantoj defaŭlte ĝis kontrolanta uzanto kontrolis ilin.',
 	'stablepages-none' => 'Neniuj paĝoj estas en ĉi tiu listo',
 	'stablepages-config' => 'Konfiguro',
-	'stablepages-prec-none' => 'neniu prioritato',
-	'stablepages-prec-quality' => 'bonkvalita prioritato',
-	'stablepages-prec-pristine' => 'perfekta prioritato',
-	'stablepages-precedence' => 'Prioritato:',
+	'stablepages-indef' => 'Nur maldefinita findato',
 );
 
 /** Spanish (Español)
+ * @author Bola
  * @author Crazymadlover
+ * @author Dferg
+ * @author McDutchie
  * @author Translationista
  */
 $messages['es'] = array(
-	'stablepages' => 'Páginas estables',
-	'stablepages-stable' => 'versión publicada',
-	'stablepages-text' => 'Debajo hay una lista de páginas configuradas  manualmente para mostrar a los lectores la versión publicada como la página de contenido predeterminada.',
+	'stablepages' => 'Páginas usando aprobación para la edición',
+	'stablepages-list' => 'Debajo está una lista de páginas los cuales solo ciertos usuarios pueden hacer ediciones que no requieren revisión.
+Las ediciones hechas por otros usuarios no son mostradas a los lectores por defecto hasta que un usuario autorizado los revise.',
 	'stablepages-none' => 'No hay páginas en esta lista',
 	'stablepages-config' => 'Configuración',
-	'stablepages-prec-none' => 'Sin precedencia',
-	'stablepages-prec-quality' => 'precedencia de calidad',
-	'stablepages-prec-pristine' => 'precedencia prístina',
-	'stablepages-precedence' => 'Precedencia:',
+	'stablepages-indef' => 'Sólo caducidad infinita',
+);
+
+/** Estonian (Eesti)
+ * @author Pikne
+ */
+$messages['et'] = array(
+	'stablepages' => 'Leheküljed, mille muutmine vajab heakskiitu',
+	'stablepages-list' => 'Järgnevatel lehekülgedel saavad ainult kindlad kasutajad teha muudatusi, mis ei vaja ülevaatamist. Ülejäänud kasutajate tehtud muudatusi ei kuvata vaikimisi, enne kui volitatud kasutaja on need üle vaadanud.',
+	'stablepages-none' => 'Selles loendis pole lehekülgi.',
+	'stablepages-config' => 'Sätted',
 );
 
 /** Basque (Euskara)
@@ -291,34 +285,38 @@ $messages['es'] = array(
  * @author Kobazulo
  */
 $messages['eu'] = array(
-	'stablepages' => 'Orrialde egonkorrak',
-	'stablepages-stable' => 'argitaratutako bertsioa',
+	'stablepages' => 'Editatzeko baimena erabiltzen duten orrialdeak',
 	'stablepages-config' => 'Konfigurazioa',
-	'stablepages-precedence' => 'Jatorria:',
 );
 
-/** Persian (فارسی) */
+/** Persian (فارسی)
+ * @author Ebraminio
+ * @author Mjbmr
+ * @author Sahim
+ */
 $messages['fa'] = array(
-	'stablepages' => 'صفحه‌های پایدار',
-	'stablepages-stable' => 'نسخهٔ پایدار',
-	'stablepages-text' => 'در زیر فهرستی از صفحه‌هایی که به طور دستی تنظیم شده‌اند تا نسخهٔ پایدارشان به عنوان نسخهٔ پیش‌فرض به بینندگان نمایش داده شود را می‌بینید.',
+	'stablepages' => 'صفحه‌های تصویب شده در حال تغییر',
+	'stablepages-list' => 'در زیر فهرستی از صفحات وجود دارد که فقط کاربران معینی می‌توانند آن‌ها را ویرایش کنند که دیگر نیاز به بازبینی ندارند.
+ویرایش‌های دیگر کاربران به طور پیش‌فرض برای خوانندگان نمایش داده نمی‌شود تا زمانی که یک کاربر مجاز، آن‌ها را بازبینی کند.',
 	'stablepages-none' => 'هیچ صفحه‌ای در این فهرست وجود ندارد',
 	'stablepages-config' => 'تنظیمات',
+	'stablepages-indef' => 'فقط انقضای نامحدود',
 );
 
 /** Finnish (Suomi)
  * @author Cimon Avaro
+ * @author Crt
+ * @author Olli
  * @author Str4nd
  * @author ZeiP
  */
 $messages['fi'] = array(
-	'stablepages' => 'Vakaat sivut',
-	'stablepages-stable' => 'vakaa versio',
+	'stablepages' => 'Sivut, jotka käyttävät muokkausten hyväksyntää',
+	'stablepages-list' => 'Alla on lista sivuista, joihin vain tietyt käyttäjät voivat tehdä muokkauksia, jotka eivät vaadi tarkistusta.
+Muiden käyttäjien tekemiä muokkauksia ei näytetä ennen kuin valtuutettu käyttäjä tarkistaa ne.',
 	'stablepages-none' => 'Tällä listalla ei ole sivuja.',
 	'stablepages-config' => 'Asetukset',
-	'stablepages-prec-none' => 'ei järjestystä',
-	'stablepages-prec-quality' => 'laatujärjestys',
-	'stablepages-precedence' => 'Järjestys:',
+	'stablepages-indef' => 'Vain ikuinen vanhentuminen',
 );
 
 /** French (Français)
@@ -326,48 +324,39 @@ $messages['fi'] = array(
  * @author Grondin
  * @author IAlex
  * @author Mihai
+ * @author Peter17
  * @author Verdy p
  */
 $messages['fr'] = array(
-	'stablepages' => 'Pages stables',
-	'stablepages-stable' => 'version publiée',
-	'stablepages-text' => 'Ci-dessous figure une liste de pages manuellement configurées pour ne montrer que la version publiée comme contenu par défaut pour les lecteurs.',
-	'stablepages-none' => 'Il n’existe aucune page dans cette liste',
+	'stablepages' => 'Pages utilisant la validation des modifications',
+	'stablepages-list' => "Ci-dessous figure une liste de pages qui sont restreintes tel que seul certains utilisateurs peuvent la modifier sans qu'une relecture soit nécessaire.
+Aussi, les modifications faites par les autres utilisateurs ne sont pas affichées par défaut aux lecteurs tant qu'un utilisateur habilité les aient relues.",
+	'stablepages-none' => 'Il n’y a aucune page dans cette liste.',
 	'stablepages-config' => 'Configuration',
-	'stablepages-prec-none' => 'aucune priorité',
-	'stablepages-prec-quality' => 'préférence pour la qualité',
-	'stablepages-prec-pristine' => 'priorité vierge',
-	'stablepages-precedence' => 'Préférence :',
+	'stablepages-indef' => 'Délai d’expiration infini seulement',
 );
 
 /** Franco-Provençal (Arpetan)
  * @author ChrisPtDe
  */
 $messages['frp'] = array(
-	'stablepages' => 'Pâges stâbles.',
-	'stablepages-stable' => 'vèrsion publeyê',
-	'stablepages-text' => 'Vê-que una lista de les pâges configurâs a la man por que lo contegnu de lor vèrsion publeyê seye montrâ per dèfôt por los liésors.',
+	'stablepages' => 'Pâges qu’utilisont la validacion des changements',
+	'stablepages-list' => 'Vê-que una lista de les pâges que sont rètrentes de façon que solament quârques utilisators la pôvont changiér sen qu’una rèvision seye nècèssèra.
+Los changements fêts per los ôtros utilisators sont pas montrâs per dèfôt ux liésors tant qu’un utilisator ôtorisâ los èye revus.',
 	'stablepages-none' => 'Y at gins de pâge dens ceta lista.',
 	'stablepages-config' => 'Configuracion',
-	'stablepages-prec-none' => 'gins de prèference',
-	'stablepages-prec-quality' => 'prèference por la qualitât',
-	'stablepages-prec-pristine' => 'prèference sen tache',
-	'stablepages-precedence' => 'Prèference :',
 );
 
 /** Galician (Galego)
  * @author Toliño
  */
 $messages['gl'] = array(
-	'stablepages' => 'Páxinas estábeis',
-	'stablepages-stable' => 'versión publicada',
-	'stablepages-text' => 'A continuación está a lista das páxinas configuradas manualmente para amosar a versión publicada como o contido da páxina por defecto para os lectores.',
+	'stablepages' => 'Páxinas que usan a aprobación de edicións',
+	'stablepages-list' => 'A continuación está a lista coas páxinas restrinxidas de xeito que só certos usuarios poidan realizar edicións que non necesiten revisión.
+As edicións feitas por outros usuarios non se mostran aos lectores por defecto ata que un usuario autorizado as revise.',
 	'stablepages-none' => 'Non hai páxinas nesta lista',
 	'stablepages-config' => 'Configuración',
-	'stablepages-prec-none' => 'sen prioridade',
-	'stablepages-prec-quality' => 'calidade prioritaria',
-	'stablepages-prec-pristine' => 'prioridade antiga',
-	'stablepages-precedence' => 'Prioridade:',
+	'stablepages-indef' => 'Caducidade indefinida só',
 );
 
 /** Ancient Greek (Ἀρχαία ἑλληνικὴ)
@@ -376,42 +365,35 @@ $messages['gl'] = array(
  */
 $messages['grc'] = array(
 	'stablepages' => 'Σταθεραὶ δέλτοι',
-	'stablepages-stable' => 'σταθερὰ ἔκδοσις',
 	'stablepages-config' => 'Διαμόρφωσις',
-	'stablepages-precedence' => 'Προτεραιότης:',
 );
 
 /** Swiss German (Alemannisch)
  * @author Als-Holder
  */
 $messages['gsw'] = array(
-	'stablepages' => 'Lischt vu Syte, wu einzeln konfiguriert sin',
-	'stablepages-stable' => 'Vereffetligti Version',
-	'stablepages-text' => 'Do isch e Lischt vu däne Syte, wu eso vu Hand konfiguriert wore sin, ass byyn ene di vereffetligt Version as Standardinhalt aazeigt wird.',
+	'stablepages' => 'Syte mit Bearbeitigskontrolle',
+	'stablepages-list' => 'Do isch e Lischt vu däne Syte, wu nume sicheri Benutzer chenne Bearbeitige dra mache, wu kei Priefig bruche. Sonigi Bearbeitige wäre erscht vereffetligt, wänn si vun eme autorisierte Benutzer freigee wore sin.',
 	'stablepages-none' => 'Die Lischt isch läär.',
 	'stablepages-config' => 'Konfiguration',
-	'stablepages-prec-none' => 'kei Rangfolg',
-	'stablepages-prec-quality' => 'Qualitätsrangfolg',
-	'stablepages-prec-pristine' => 'reini Rangfolg',
-	'stablepages-precedence' => 'Rangfolg:',
+	'stablepages-indef' => 'Nume mit uubfrischtetem Ablauf',
 );
 
 /** Hebrew (עברית)
+ * @author Amire80
+ * @author DoviJ
  * @author Ori229
  * @author Rotemliss
  * @author StuB
  * @author דניאל ב.
  */
 $messages['he'] = array(
-	'stablepages' => 'דפים יציבים',
-	'stablepages-stable' => 'גרסה יציבה',
-	'stablepages-text' => 'זוהי רשימת הדפים שהוגדרו ידנית להציג את הגרסה היציבה כגרסת ברירת המחדל שתוצג לקוראים.',
+	'stablepages' => 'דפים המשתמשים באישור עריכות',
+	'stablepages-list' => 'זוהי רשימת הדפים שבהם רק משתמשים מסוימים יכולים לבצע עריכות שאינן דורשות בדיקה.
+עריכות שבוצעו על ידי משתמשים אחרים אינן מוצגות לקוראים כברירת מחדל עד שהמשתמשים המורשים בודקים אותן.',
 	'stablepages-none' => 'אין דפים ברשימה זו',
 	'stablepages-config' => 'תצורה',
-	'stablepages-prec-none' => 'ללא עדיפות',
-	'stablepages-prec-quality' => 'עדיפות לגרסאות איכותיות',
-	'stablepages-prec-pristine' => 'עדיפות לגרסאות מושלמות',
-	'stablepages-precedence' => 'עדיפות:',
+	'stablepages-indef' => 'רק ללא תאריך פתוגה',
 );
 
 /** Hindi (हिन्दी)
@@ -419,8 +401,7 @@ $messages['he'] = array(
  */
 $messages['hi'] = array(
 	'stablepages' => 'स्थिर पन्ने',
-	'stablepages-stable' => 'स्थिर अवतरण',
-	'stablepages-text' => 'नीचे स्थिर अवतरण अविचल दिखाने वाले पन्नोंकी सूची हैं जो हाथसे तैयार की गई हैं।',
+	'stablepages-list' => 'नीचे स्थिर अवतरण अविचल दिखाने वाले पन्नोंकी सूची हैं जो हाथसे तैयार की गई हैं।',
 	'stablepages-none' => 'इस सूची में पन्ने नहीं हैं',
 	'stablepages-config' => 'कॉन्फिगरेशन',
 );
@@ -428,33 +409,25 @@ $messages['hi'] = array(
 /** Croatian (Hrvatski)
  * @author Dalibor Bosits
  * @author Ex13
- * @author Suradnik13
+ * @author SpeedyGonsales
  */
 $messages['hr'] = array(
-	'stablepages' => 'Važeće stranice',
-	'stablepages-stable' => 'važeća inačica',
-	'stablepages-text' => 'Ispod je popis stranica koje su ručno podešene kako bi prikazivale važeću inačicu kao zadani sadržaj stranice za čitače sadržaja.',
+	'stablepages' => 'Stranice koje rabe potvrdu uređivanja',
+	'stablepages-list' => 'Ispod je popis stranica koje su ručno podešene kako bi prikazivale važeću inačicu kao zadani sadržaj stranice za čitače sadržaja.',
 	'stablepages-none' => 'Nema stranica u ovom popisu',
 	'stablepages-config' => 'Postavka',
-	'stablepages-prec-none' => 'bez prvenstva',
-	'stablepages-prec-quality' => 'prvenstvo kvalitete',
-	'stablepages-prec-pristine' => 'zastarjelo prvenstvo',
-	'stablepages-precedence' => 'Prvenstvo:',
+	'stablepages-indef' => 'Samo bez isteka roka',
 );
 
 /** Upper Sorbian (Hornjoserbsce)
  * @author Michawiki
  */
 $messages['hsb'] = array(
-	'stablepages' => 'Stabilne strony',
-	'stablepages-stable' => 'stabilna wersija',
-	'stablepages-text' => 'Deleka je lisćina stronow, kotrež buchu manuelnje konfigurowane, zo bychu stabilnu wersiju jako standardny wobsah strony za přehladowarjow pokazali',
+	'stablepages' => 'Strony, kotrež schwalenje změnow wužiwaja',
+	'stablepages-list' => 'Deleka je lisćina stronow, kotrež jenož wěsći wužiwarjo móža změny přewjesć, kotrež sej přepruwowanje njewužaduja. Změny druhich wužiwarjow so po standardźe druhim čitarjam njepokazaja, doniž awtorizowany wužiwar je njepřepruwuje.',
 	'stablepages-none' => 'W tutej lisćinje strony njejsu.',
 	'stablepages-config' => 'Konfiguracija',
-	'stablepages-prec-none' => 'žana prěnjosć',
-	'stablepages-prec-quality' => 'kwalitna prěnjosć',
-	'stablepages-prec-pristine' => 'prěnjotna prěnjosć',
-	'stablepages-precedence' => 'Prěnjosć:',
+	'stablepages-indef' => 'Jenož z njepostajenym spadnjenjom',
 );
 
 /** Hungarian (Magyar)
@@ -463,82 +436,80 @@ $messages['hsb'] = array(
  * @author Samat
  */
 $messages['hu'] = array(
-	'stablepages' => 'Stabil lapok',
-	'stablepages-stable' => 'stabil változat',
-	'stablepages-text' => 'Ez a lista azokat a lapokat tartalmazza, amelyeknél külön be lett állítva, hogy az olvasók számára mindig a stabil változat jelenjen meg.',
+	'stablepages' => 'Szerkesztések ellenőrzését megkövetelő',
+	'stablepages-list' => 'Ez a lista azokat a korlátozott lapokat tartalmazza, amelyeknél csak meghatározott felhasználók szerkeszthetnek ellenőrzés nélkül. Az ilyen szerkesztések nincsenek közzétéve, amíg egy járőr nem ellenőrzi őket.',
 	'stablepages-none' => 'Nem található egyetlen lap sem a listában',
 	'stablepages-config' => 'beállítás',
-	'stablepages-prec-none' => 'nincs precedencia',
-	'stablepages-prec-quality' => '„minőségi” szint szerinti rendezés',
-	'stablepages-prec-pristine' => '„kiemelkedő” szint szerinti rendezés',
-	'stablepages-precedence' => 'Precedencia:',
+	'stablepages-indef' => 'Csak határozatlan lejárat',
 );
 
 /** Interlingua (Interlingua)
  * @author McDutchie
  */
 $messages['ia'] = array(
-	'stablepages' => 'Paginas stabile',
-	'stablepages-stable' => 'version publicate',
-	'stablepages-text' => 'Infra es un lista de paginas manualmente configurate de sorta que le version publicate se monstra como le contento predefinite del pagina pro lectores.',
+	'stablepages' => 'Paginas subjecte al approbation de modificationes',
+	'stablepages-list' => 'Hic infra es un lista de paginas al quales solmente certe usatores pote facer modificationes que non require revision. Modificationes facite per altere usatores non es initialmente monstrate al lectores usque un usator autorisate los habera revidite.',
 	'stablepages-none' => 'Il non ha paginas in iste lista',
 	'stablepages-config' => 'Configuration',
-	'stablepages-prec-none' => 'nulle precedentia',
-	'stablepages-prec-quality' => 'precedentia de qualitate',
-	'stablepages-prec-pristine' => 'precedentia de pristine',
-	'stablepages-precedence' => 'Precedentia:',
+	'stablepages-indef' => 'Expiration indefinite solmente',
 );
 
 /** Indonesian (Bahasa Indonesia)
  * @author Bennylin
+ * @author Farras
+ * @author Irwangatot
+ * @author IvanLanin
+ * @author Iwan Novirion
  * @author Rex
  */
 $messages['id'] = array(
-	'stablepages' => 'Halaman stabil',
-	'stablepages-stable' => 'versi stabil',
-	'stablepages-text' => 'Di bawah ini adalah daftar halaman yang dikonfigurasi secara manual untuk menampilkan versi stabil sebagai isi halaman baku bagi para pembaca.',
+	'stablepages' => 'Halaman menggunakan suntingan persetujuan',
+	'stablepages-list' => 'Di bawah ini adalah daftar halaman yang dibatasi sehingga hanya pengguna tertentu dapat melakukan penyuntingan yang tidak membutuhkan peninjauan. Suntingan yang dilakukan pengguna lain tidak akan ditampilkan ke pembaca secara langsung sampai seorang pengguna yang diberi kuasa meninjaunya.',
 	'stablepages-none' => 'Tidak ada halaman di dalam daftar ini',
 	'stablepages-config' => 'Konfigurasi',
-	'stablepages-prec-none' => 'tidak ada preseden',
-	'stablepages-prec-quality' => 'preseden berkualitas',
-	'stablepages-prec-pristine' => 'preseden murni',
-	'stablepages-precedence' => 'Preseden:',
+	'stablepages-indef' => 'Hanya untuk kedaluwarsa tak terbatas',
 );
 
 /** Italian (Italiano)
+ * @author Beta16
+ * @author Blaisorblade
  * @author Darth Kule
+ * @author Gianfranco
  * @author Pietrodn
  */
 $messages['it'] = array(
-	'stablepages' => 'Pagine stabili',
-	'stablepages-stable' => 'versione stabile',
-	'stablepages-text' => 'Di seguito sono elencate le pagine configurate manualmente in modo tale da mostrare per default le versioni stabili ai visitatori.',
+	'stablepages' => "Pagine che utilizzano l'approvazione delle modifiche",
+	'stablepages-list' => 'Di seguito sono elencate le pagine cui solo determinati utenti possono fare modifiche che non necessitano di revisione. Le modifiche di altri utenti non sono mostrate ai lettori, di default, fino a quando un utente autorizzato non le revisioni.',
 	'stablepages-none' => 'Non ci sono pagine in questo elenco',
 	'stablepages-config' => 'Configurazione',
-	'stablepages-prec-none' => 'nessuna precendenza',
-	'stablepages-precedence' => 'Precedenza:',
+	'stablepages-indef' => 'Solo scadenza indefinita',
 );
 
 /** Japanese (日本語)
  * @author Aotake
  * @author Fryed-peach
+ * @author Whym
+ * @author 青子守歌
  */
 $messages['ja'] = array(
-	'stablepages' => '固定ページ',
-	'stablepages-stable' => '固定版',
-	'stablepages-text' => '以下は固定版を既定で閲覧者に表示するよう手動で設定されたページの一覧です。',
+	'stablepages' => '編集承認を使用しているページ',
+	'stablepages-list' => '以下は、特定の利用者のみが、査読なしに編集することのできるページの一覧です。
+その他の利用者による編集は、承認された利用者が査読するまで、閲覧者には表示されません。',
 	'stablepages-none' => '表示すべきページはありません',
 	'stablepages-config' => '設定',
-	'stablepages-prec-none' => '優先なし',
-	'stablepages-prec-quality' => '{{int:revreview-lev-quality}}優先',
-	'stablepages-prec-pristine' => '{{int:revreview-lev-pristine}}優先',
-	'stablepages-precedence' => '優先順位:',
+	'stablepages-indef' => '無期限のみ',
 );
 
 /** Georgian (ქართული)
  * @author BRUTE
+ * @author ITshnik
+ * @author გიორგიმელა
  */
 $messages['ka'] = array(
+	'stablepages' => 'რედაქტირებების დამადასტურებელო გვერდები',
+	'stablepages-list' => 'ქვემოთ წარმოდგებილია გვერდების სია, რომლებზეც მხოლოდ რამდენიმე მომხმარებელს შეუძლია შეუმოწმებელი რედაქტირებების განხორციელება. 
+სხვა მომხმარებლების მიერ განხორციელებული ცვლილებები არ იქნება ნაჩვენები მომხმარებლებისადმი სანამ ვინმე მათ არ შეამოწმებს.',
+	'stablepages-none' => 'ამ სიაში გვერდები არ არის',
 	'stablepages-config' => 'კონფიგურაცია',
 );
 
@@ -552,44 +523,50 @@ $messages['km'] = array(
 );
 
 /** Korean (한국어)
+ * @author Devunt
+ * @author Gapo
  * @author Kwj2772
  */
 $messages['ko'] = array(
-	'stablepages' => '안정 문서',
-	'stablepages-stable' => '안정 버전',
-	'stablepages-text' => '다음은 독자들에게 보여 줄 안정 버전으로서의 기본 문서 내용을 어떻게 보여 줄 것인지 수동으로 설정된 문서의 목록입니다.',
+	'stablepages' => '편집 승인을 거치는 문서 목록',
+	'stablepages-list' => '다음은 문서에 제한이 걸려 있어 특정한 사용자만 검토를 거치지 않고 편집을 할 수 있는 문서의 목록입니다. 다른 사용자의 편집은 권한이 있는 사용자가 검토하기 전까지는 기본적으로 보여지지 않습니다.',
 	'stablepages-none' => '이 목록에 문서가 없습니다.',
 	'stablepages-config' => '설정',
+	'stablepages-indef' => '무기한 유효만 가능',
 );
 
-/** Ripoarisch (Ripoarisch)
+/** Colognian (Ripoarisch)
  * @author Purodha
  */
 $messages['ksh'] = array(
 	'stablepages' => 'Beshtändeje Sigge met einzel Enshtellunge',
-	'stablepages-stable' => 'beshtändeje Version',
-	'stablepages-text' => 'Hee dronger kütt en Leß met Sigge, woh vun Hand enjshtallt es, dat de {{int:stablepages-stable}} ier Enhallt shtandatmäßesch för der Lesser aanjezeisch weedt.',
+	'stablepages-list' => 'Hee dronger kütt en Leß met Sigge, woh vun Hand enjshtallt es, dat de {{int:stablepages-stable}} ier Enhallt shtandatmäßesch för der Lesser aanjezeisch weedt.',
 	'stablepages-none' => 'En dä Leß sin kein Sigge dren',
 	'stablepages-config' => 'Enstellunge',
-	'stablepages-prec-none' => 'keine Vürrang',
-	'stablepages-prec-quality' => 'de {{int:revreview-lev-quality}} hät der Vürrang',
-	'stablepages-prec-pristine' => 'de {{int:revreview-lev-pristine}} hät der Vörrang',
-	'stablepages-precedence' => 'Reijefollsch vum Vörrang:',
 );
 
 /** Luxembourgish (Lëtzebuergesch)
  * @author Robby
  */
 $messages['lb'] = array(
-	'stablepages' => 'Stabil Säiten',
-	'stablepages-stable' => 'publizéiert Versioun',
-	'stablepages-text' => 'Hei ass eng Lëscht vu Säiten déi manuell konfiguréiert goufen fir déi publizéiert Versioun als Standard Säiteninhalt fir Lieser ze weisen.',
+	'stablepages' => 'Säiten déi Zoustëmmung vun den Ännerunge benotzen',
+	'stablepages-list' => 'Hei ass eng Lëscht vu Säiten déi esou gespaart sinn datt nëmme gewësse Benotzer Ännerunge maache kënnen déi net brauche nogekuckt ze ginn.
+Ännerunge vun anere Benotzer ginn de Lieser net gewise bis en autoriséierte Benotzer se nogekuckt huet.',
 	'stablepages-none' => 'Dës Lëscht ass eidel',
 	'stablepages-config' => 'Konfiguratioun',
-	'stablepages-prec-none' => 'Keng Prioritéit',
-	'stablepages-prec-quality' => "Proritéit fir d'Qualitéit",
-	'stablepages-prec-pristine' => 'Keng Prioritéit',
-	'stablepages-precedence' => 'Prioritéit:',
+	'stablepages-indef' => 'Nëmmen no net limitéiertem Delai',
+);
+
+/** Limburgish (Limburgs)
+ * @author Ooswesthoesbes
+ */
+$messages['li'] = array(
+	'stablepages' => "Pagina's ongerhevig aan goodkeuring van bewerkinge",
+	'stablepages-list' => "Hie waere pagina's weergegaeve wo allein bepaolde gebroekers kinne bewerke zonger det controle neudig is.
+Bewerkinge door anger gebroekers waere neet weergegaeve toetdet daotoe gerechtigde gebroekers ze gecontroleerd höbbe.",
+	'stablepages-none' => "Gein pagina's op dees lies.",
+	'stablepages-config' => 'Instelling',
+	'stablepages-indef' => 'Allein zonger vervaldatum',
 );
 
 /** Macedonian (Македонски)
@@ -597,15 +574,12 @@ $messages['lb'] = array(
  * @author Brest
  */
 $messages['mk'] = array(
-	'stablepages' => 'Стабилни страници',
-	'stablepages-stable' => 'објавена верзија',
-	'stablepages-text' => 'Подолу е наведена листа на страници рачно конфигурирани да ја прикажуваат објавената верзија по основно за читателите.',
-	'stablepages-none' => 'Нема страници во оваа листа',
-	'stablepages-config' => 'Конфигурација',
-	'stablepages-prec-none' => 'без предност',
-	'stablepages-prec-quality' => 'предност на квалитет',
-	'stablepages-prec-pristine' => 'предност на неизменетост',
-	'stablepages-precedence' => 'Предност:',
+	'stablepages' => 'Страници што користат оодобрување на уредувања',
+	'stablepages-list' => 'Подолу е наведен список на страници што само извесни уредници можат да ги уредуваат без да треба да бидат прегледани. 
+Уредувањата на други корисници по основно нема да бидат видливи за читателите сè додека не ги провери овластен корисник.',
+	'stablepages-none' => 'Нема страници на овој список.',
+	'stablepages-config' => 'Поставки',
+	'stablepages-indef' => 'Само со бесконечен рок на истекување',
 );
 
 /** Malayalam (മലയാളം)
@@ -613,14 +587,11 @@ $messages['mk'] = array(
  * @author Shijualex
  */
 $messages['ml'] = array(
-	'stablepages' => 'സ്ഥിരതയുള്ള താളുകള്‍',
-	'stablepages-stable' => 'പ്രസിദ്ധീകരിച്ച പതിപ്പ്',
-	'stablepages-text' => 'പ്രസിദ്ധീകരിച്ച പതിപ്പ് ഒരു താളിന്റെ സ്വതവെയുള്ള ഉള്ളടക്കമായി വായനക്കാരെ കാണിക്കുവാന്‍ സ്വതവേയല്ലാതെ ക്രമീകരണം ചെയ്യപ്പെട്ട താളുകള്‍ ആണ്‌ താഴെയുള്ള പട്ടികയില്‍.',
-	'stablepages-none' => 'ഈ പട്ടികയില്‍ താളുകള്‍ ഒന്നും ഇല്ല',
+	'stablepages' => 'തിരുത്തൽ അംഗീകരണം ഉപയോഗിക്കുന്ന താളുകൾ',
+	'stablepages-list' => 'സംശോധനം ആവശ്യമില്ലാത്ത വിധം ചില പ്രത്യേക ഉപയോക്താക്കൾക്ക് മാത്രം തിരുത്തുവാൻ കഴിയുന്ന താളുകളുടെ പട്ടികയാണ് താഴെ നൽകിയിരിക്കുന്നത്. മറ്റ് ഉപയോക്താക്കൾ ചെയ്യുന്ന തിരുത്തലുകൾ അംഗീകരിക്കപ്പെട്ട ഒരു ഉപയോക്താവ് സംശോധനം ചെയ്യുന്നതു വരെ എല്ലാവർക്കും കാണാനാവുന്നതല്ല.',
+	'stablepages-none' => 'ഈ പട്ടികയിൽ താളുകൾ ഒന്നും ഇല്ല',
 	'stablepages-config' => 'ക്രമീകരണം',
-	'stablepages-prec-none' => 'യാതൊരു മുൻഗണനയുമില്ലാതെ',
-	'stablepages-prec-quality' => 'ഗുണമേന്മയ്ക്ക് മുൻഗണന',
-	'stablepages-precedence' => 'മുൻഗണന:',
+	'stablepages-indef' => 'തീർച്ചപ്പെടുത്താത്ത കാലാവധി മാത്രം',
 );
 
 /** Marathi (मराठी)
@@ -628,8 +599,7 @@ $messages['ml'] = array(
  */
 $messages['mr'] = array(
 	'stablepages' => 'स्थिर पाने',
-	'stablepages-stable' => 'स्थिर आवृत्ती',
-	'stablepages-text' => 'खाली स्थिर आवृत्त्या अविचल पणे दाखविणार्‍या पानांची यादी आहे जी कुणीतरी तयार केलेली आहे.',
+	'stablepages-list' => 'खाली स्थिर आवृत्त्या अविचल पणे दाखविणार्‍या पानांची यादी आहे जी कुणीतरी तयार केलेली आहे.',
 	'stablepages-none' => 'या यादीत पाने नाहीत',
 	'stablepages-config' => 'कॉन्फिगरेशन',
 );
@@ -639,25 +609,34 @@ $messages['mr'] = array(
  */
 $messages['ms'] = array(
 	'stablepages' => 'Laman stabil',
-	'stablepages-stable' => 'versi stabil',
-	'stablepages-text' => 'Yang berikut ialah senarai laman yang telah ditetapkan untuk memaparkan versi stabil sebagai kandungan lalai kepada para pengunjung.',
+	'stablepages-list' => 'Yang berikut ialah senarai laman yang telah ditetapkan untuk memaparkan versi stabil sebagai kandungan lalai kepada para pengunjung.',
 	'stablepages-none' => 'Tiada laman dalam senarai ini',
 	'stablepages-config' => 'Konfigurasi',
 );
 
+/** Maltese (Malti)
+ * @author Chrisportelli
+ */
+$messages['mt'] = array(
+	'stablepages' => 'Paġni li jużaw l-approvazzjoni tal-modifiki',
+	'stablepages-list' => "Hawn taħt hawn lista ta' paġni li huma ristretti għal ċerti utenti biss biex jagħmlu modifiki fihom mingħajr il-bżonn li jiġu reviżjonati.
+Modifiki magħmula minn utenti oħra ma jidhrux awtomatikament lill-qarrejja sakemm utent awtorizzat jirrevedihom.",
+	'stablepages-none' => "M'hemm ebda paġni f'din il-lista",
+	'stablepages-config' => 'Konfigurazzjoni',
+	'stablepages-indef' => 'Skadenza indefinita biss',
+);
+
 /** Dutch (Nederlands)
+ * @author McDutchie
  * @author Siebrand
  */
 $messages['nl'] = array(
-	'stablepages' => "Gepubliceerde pagina's",
-	'stablepages-stable' => 'gepubliceerde versie',
-	'stablepages-text' => "Hier worden pagina's weergegeven waarvoor handmatig is ingesteld dat de gepubliceerde versies standaard wordt weergegeven voor lezers.",
+	'stablepages' => "Pagina's onderhevig aan goedkeuring van bewerkingen",
+	'stablepages-list' => "Hier worden pagina's weergegeven waar alleen bepaalde gebruikers kunnen bewerken zonder dat controle nodig is.
+Bewerkingen door andere gebruikers worden niet weergegeven totdat daartoe gerechtigde gebruikers ze gecontroleerd hebben.",
 	'stablepages-none' => "Er zijn geen pagina's die aan de criteria voldoen",
 	'stablepages-config' => 'Instellingen',
-	'stablepages-prec-none' => 'geen voorrang',
-	'stablepages-prec-quality' => 'voorrang kwaliteit',
-	'stablepages-prec-pristine' => 'voorrang ongerept',
-	'stablepages-precedence' => 'Volgorde:',
+	'stablepages-indef' => 'Alleen zonder vervaldatum',
 );
 
 /** Norwegian Nynorsk (‪Norsk (nynorsk)‬)
@@ -665,14 +644,9 @@ $messages['nl'] = array(
  */
 $messages['nn'] = array(
 	'stablepages' => 'Stabile sider',
-	'stablepages-stable' => 'stabil versjon',
-	'stablepages-text' => 'Under er ei lista over sider manuelt innstilte til å syna den stabile versjonen som standardinnhald for lesarar.',
+	'stablepages-list' => 'Under er ei lista over sider manuelt innstilte til å syna den stabile versjonen som standardinnhald for lesarar.',
 	'stablepages-none' => 'Det finst ingen sider i denne lista',
 	'stablepages-config' => 'Konfigurering',
-	'stablepages-prec-none' => 'inga prioritering',
-	'stablepages-prec-quality' => 'kvalitetsprioritering',
-	'stablepages-prec-pristine' => 'prioritering av urørde',
-	'stablepages-precedence' => 'Prioritering:',
 );
 
 /** Norwegian (bokmål)‬ (‪Norsk (bokmål)‬)
@@ -680,30 +654,22 @@ $messages['nn'] = array(
  * @author Nghtwlkr
  */
 $messages['no'] = array(
-	'stablepages' => 'Stabile sider',
-	'stablepages-stable' => 'publisert versjon',
-	'stablepages-text' => 'Nedenfor er en liste over sider manuelt innstilt til å vise den publiserte versjonen som standard sideinnhold for lesere.',
+	'stablepages' => 'Sider som bruker redigeringsgodkjenning',
+	'stablepages-list' => 'Nedenfor er en liste over sider som kun enkelte brukere kan redigere uten krav om revidering.
+Endringer utført av andre brukere vises ikke til lesere som standard før en autorisert bruker reviderer dem.',
 	'stablepages-none' => 'Det er ingen sider i denne listen',
 	'stablepages-config' => 'Konfigurering',
-	'stablepages-prec-none' => 'ingen prioritering',
-	'stablepages-prec-quality' => 'Kvalitetsprioritering',
-	'stablepages-prec-pristine' => 'prioritering av urørte',
-	'stablepages-precedence' => 'Prioritering:',
+	'stablepages-indef' => 'Kun ubestemt utløpstid',
 );
 
 /** Occitan (Occitan)
  * @author Cedric31
  */
 $messages['oc'] = array(
-	'stablepages' => 'Paginas establas',
-	'stablepages-stable' => 'version publicada',
-	'stablepages-text' => 'Aquí, çaijós, una lista de las paginas configuradas manualament per far pas veire que la version publicada coma contengut per defaut pels lectors.',
+	'stablepages' => "Paginas qu'utilizan la validacion de las modificacions",
+	'stablepages-list' => "Çaijós, figura una lista de las paginas que son restrenchas que d'unes utilizaires ne pòdon editar solets sens qu'una relectura siá necessària. Atal, las modificacions son pas publicadas tant qu'un utilizaire abilitat las ajan repassadas.",
 	'stablepages-none' => 'Existís pas cap de pagina dins aquesta lista',
 	'stablepages-config' => 'Configuracion',
-	'stablepages-prec-none' => 'pas cap de prioritat',
-	'stablepages-prec-quality' => 'preferéncia per la qualitat',
-	'stablepages-prec-pristine' => 'prioritat vèrja',
-	'stablepages-precedence' => 'Prioritat :',
 );
 
 /** Polish (Polski)
@@ -712,15 +678,12 @@ $messages['oc'] = array(
  * @author ToSter
  */
 $messages['pl'] = array(
-	'stablepages' => 'Strony z domyślnie pokazywaną wersją oznaczoną',
-	'stablepages-stable' => 'wersja przejrzana',
-	'stablepages-text' => 'Poniżej znajduje się lista stron skonfigurowanych tak, by domyślnie czytelnikom prezentowana była wersja oznaczona.',
-	'stablepages-none' => 'Brak stron na tej liście',
+	'stablepages' => 'Strony wykorzystujące oznaczanie zmian',
+	'stablepages-list' => 'Poniżej znajduje się lista stron, które skonfigurowano tak, że tylko określeni użytkownicy mogą wprowadzać do nich zmiany niewymagające oznaczenia.
+Edycje dokonane przez innych użytkowników nie będą domyślnie wyświetlane czytelnikom do momentu oznaczenia ich przez uprawnionego użytkownika.',
+	'stablepages-none' => 'Brak stron na tej liście.',
 	'stablepages-config' => 'Konfiguracja',
-	'stablepages-prec-none' => 'brak pierwszeństwa',
-	'stablepages-prec-quality' => 'pierwszeństwo dla zweryfikowanej',
-	'stablepages-prec-pristine' => 'pierwszeństwo dla nienaruszonej',
-	'stablepages-precedence' => 'Pierwszeństwo w wyświetlaniu',
+	'stablepages-indef' => 'Wyłącznie z niezdefiniowanym czasem wygaśnięcia',
 );
 
 /** Piedmontese (Piemontèis)
@@ -728,15 +691,11 @@ $messages['pl'] = array(
  * @author Dragonòt
  */
 $messages['pms'] = array(
-	'stablepages' => 'Pàgine stabij',
-	'stablepages-stable' => 'version publicà',
-	'stablepages-text' => 'Sota a-i é na lista ëd pàgine configurà manualment për smon-e la version publicà com contnù ëd la pàgina dë stàndard për ij visitador.',
+	'stablepages' => "Pàgine ch'a deuvro l'aprovassion ëd le modìfiche",
+	'stablepages-list' => "Sota a-i é na lista ëd pàgine anté che mach serti utent a peulo fé 'd modìfiche che a l'han nen da manca ëd revision. Modìfiche fàite da d'àutri utent a son pa publicà për ij letor fin-a che n'utent autorisà a-j revision-a pa.",
 	'stablepages-none' => 'A-i é pa gnun-e pàgine an sta lista-sì',
 	'stablepages-config' => 'Configurassion',
-	'stablepages-prec-none' => 'pa gnun-e precedense',
-	'stablepages-prec-quality' => 'precedensa ëd qualità',
-	'stablepages-prec-pristine' => 'precedensa pa contaminà',
-	'stablepages-precedence' => 'Precedensa:',
+	'stablepages-indef' => 'Mach fin andefinìa',
 );
 
 /** Portuguese (Português)
@@ -745,90 +704,80 @@ $messages['pms'] = array(
  * @author Waldir
  */
 $messages['pt'] = array(
-	'stablepages' => 'Páginas estáveis',
-	'stablepages-stable' => 'versão publicada',
-	'stablepages-text' => 'Segue-se uma lista das páginas configuradas manualmente para apresentarem, por omissão, a todos os leitores, a versão publicada.',
-	'stablepages-none' => 'Não há páginas nesta lista',
+	'stablepages' => 'Páginas sujeitas à aprovação de edições',
+	'stablepages-list' => 'Segue-se uma lista de páginas restringidas de forma a que que só certos utilizadores podem fazer edições que não necessitam de revisão.
+Edições de outros utilizadores não são apresentadas aos leitores até que um utilizador autorizado as tenha revisto.',
+	'stablepages-none' => 'Não há páginas nesta lista.',
 	'stablepages-config' => 'Configuração',
-	'stablepages-prec-none' => 'sem precedência',
-	'stablepages-prec-quality' => 'precedência de qualidade',
-	'stablepages-prec-pristine' => 'precedência intocada',
-	'stablepages-precedence' => 'Precedência:',
+	'stablepages-indef' => 'Somente de expiração infinita',
 );
 
 /** Brazilian Portuguese (Português do Brasil)
  * @author Eduardo.mps
+ * @author Giro720
  */
 $messages['pt-br'] = array(
-	'stablepages' => 'Páginas estáveis',
-	'stablepages-stable' => 'edição estável',
-	'stablepages-text' => 'Segue-se uma lista das páginas que foram manualmente configuradas para exibirem a edição estável como conteúdo padrão a quem as acessar.',
+	'stablepages' => 'Páginas sujeitas à aprovação de edições',
+	'stablepages-list' => 'Segue-se uma lista de páginas restringidas de forma a que que só certos usuários podem fazer edições que não necessitam de revisão.
+Edições de outros utilizadores não são apresentadas aos leitores até que um usuário autorizado as tenha revisadas.',
 	'stablepages-none' => 'Não há páginas nesta lista',
 	'stablepages-config' => 'Configuração',
-	'stablepages-prec-none' => 'sem precedência',
-	'stablepages-prec-quality' => 'precedência de qualidade',
-	'stablepages-prec-pristine' => 'precedência intocada',
-	'stablepages-precedence' => 'Precedência:',
+	'stablepages-indef' => 'Somente de expiração infinita',
 );
 
 /** Romanian (Română)
+ * @author Firilacroco
  * @author KlaudiuMihaila
  * @author Mihai
  * @author Stelistcristi
  */
 $messages['ro'] = array(
-	'stablepages' => 'Pagini stabile',
-	'stablepages-stable' => 'versiune stabilă',
+	'stablepages' => 'Pagini utilizând aprobarea modificării',
 	'stablepages-none' => 'Nu există pagini în această listă',
-	'stablepages-config' => 'Configuraţie',
-	'stablepages-prec-none' => 'nicio prioritate',
-	'stablepages-prec-quality' => 'preferinţă pentru calitate',
-	'stablepages-precedence' => 'Precedenţă',
+	'stablepages-config' => 'Configurație',
 );
 
 /** Tarandíne (Tarandíne)
  * @author Joetaras
  */
 $messages['roa-tara'] = array(
-	'stablepages' => 'Pàggene sicure',
-	'stablepages-stable' => 'versiona pubblecate',
-	'stablepages-text' => "Sotte ste 'na liste de pàggene ca onne state configurete manualmende pe fa vedè 'a versiona pubblecate cumme pàgene cu 'u condenute iniziale pe le visitature.",
+	'stablepages' => "Pàggene ca ausane 'nu cangiamende approvate",
+	'stablepages-list' => "Sotte ste 'na liste de pàggene ca onne state ristrette accussì ca sulamende certe utinde ponne fà cangiaminde ca non ge richiedene 'na revisione. <br />
+Certe cangiaminde non ge ponne essere pubblecate fine ca 'n'utende autorizzate non ge le rivede.",
 	'stablepages-none' => "Non ge stonne pàggene jndr'à sta liste",
 	'stablepages-config' => 'Configurazione',
-	'stablepages-prec-none' => 'nisciuna in precedenze',
-	'stablepages-prec-quality' => "qualitate d'a precedende",
-	'stablepages-prec-pristine' => "ripristine d'a precedende",
-	'stablepages-precedence' => 'Precedenze:',
+	'stablepages-indef' => "Sualmende 'na scadenze indefinite",
 );
 
 /** Russian (Русский)
  * @author Claymore
+ * @author G0rn
  * @author Александр Сигачёв
  */
 $messages['ru'] = array(
-	'stablepages' => 'Стабильные страницы',
-	'stablepages-stable' => 'опубликованная версия',
-	'stablepages-text' => 'Ниже показан список страниц, вручную настроенных на показ опубликованной версии по умолчанию для читателей.',
+	'stablepages' => 'Страницы, использующие подтверждение правок',
+	'stablepages-list' => 'Ниже показан список страниц на которых только определённые участники могут делать правки, не требующие проверки.
+Сделанные другими участниками правки этих статей по умолчанию не будут показаны читателям, пока не будут проверены уполномоченными участниками.',
 	'stablepages-none' => 'В данном списке отсутствуют страницы',
 	'stablepages-config' => 'настройка',
-	'stablepages-prec-none' => 'без приоритета',
-	'stablepages-prec-quality' => 'приоритет качества',
-	'stablepages-prec-pristine' => 'приоритет изначальности',
-	'stablepages-precedence' => 'Приоритет:',
+	'stablepages-indef' => 'Только с неопределённым сроком',
+);
+
+/** Rusyn (Русиньскый)
+ * @author Gazeb
+ */
+$messages['rue'] = array(
+	'stablepages-none' => 'І тім списку не суть жадны сторінкы.',
+	'stablepages-config' => 'Конфіґурація',
 );
 
 /** Yakut (Саха тыла)
  * @author HalanTul
  */
 $messages['sah'] = array(
-	'stablepages' => 'Бигэргэтиллибит сирэйдэр',
-	'stablepages-stable' => 'бэчээттэммит барыл',
+	'stablepages' => 'Бигэргэтиллии туһаныллар сирэйдэрэ',
 	'stablepages-none' => 'Бу тиһиккэ сирэйдэрэ суох',
 	'stablepages-config' => 'Туруоруута',
-	'stablepages-prec-none' => 'баһыйара (приоритета) суох',
-	'stablepages-prec-quality' => 'хаачыстыбата баһыйыылаах',
-	'stablepages-prec-pristine' => 'эрдэтээҥҥитэ баһыйыылаах',
-	'stablepages-precedence' => 'Баһыйыыта:',
 );
 
 /** Slovak (Slovenčina)
@@ -836,34 +785,43 @@ $messages['sah'] = array(
  */
 $messages['sk'] = array(
 	'stablepages' => 'Stabilné stránky',
-	'stablepages-stable' => 'stabilná verzia',
-	'stablepages-text' => 'Toto je zoznam stránok, ktoré boli ručne nastavené, aby sa ako ich štandardný obsah zobrazovala čitateľom stabilná verzia.',
+	'stablepages-list' => 'Toto je zoznam stránok, ktoré boli ručne nastavené, aby sa ako ich štandardný obsah zobrazovala čitateľom stabilná verzia.',
 	'stablepages-none' => 'Tento zoznam neobsahuje žiadne stránky.',
 	'stablepages-config' => 'Nastavenie',
-	'stablepages-prec-none' => 'bez precedencie',
-	'stablepages-prec-quality' => 'precedencia podľa kvality',
-	'stablepages-prec-pristine' => 'čistá precedencia',
-	'stablepages-precedence' => 'Precedencia:',
+	'stablepages-indef' => 'Vypršanie iba na dobu neurčitú',
+);
+
+/** Slovenian (Slovenščina)
+ * @author Dbc334
+ */
+$messages['sl'] = array(
+	'stablepages' => 'Strani, ki uporabljajo odobritev urejanj',
+	'stablepages-list' => 'Spodaj se nahaja seznam strani, katere lahko brez zahtevanega pregleda urejajo samo določeni uporabniki.
+Urejanja, ki jih naredijo ostali uporabniki, privzeto niso prikazana bralcem, dokler jih ne pregleda pooblaščen uporabnik.',
+	'stablepages-none' => 'Na tem seznamu ni strani.',
+	'stablepages-config' => 'Konfiguracija',
+	'stablepages-indef' => 'Samo neomejen potek',
 );
 
 /** Serbian Cyrillic ekavian (Српски (ћирилица))
+ * @author Charmed94
  * @author Millosh
  */
 $messages['sr-ec'] = array(
-	'stablepages' => 'Стабилне стране',
-	'stablepages-stable' => 'Стабилна верзија',
-	'stablepages-text' => 'Испод се налази списак страна ручно подешених за приказ стабилне верзије као подразумеване стране за читаче садржаја.',
-	'stablepages-none' => 'Не постоје стране у списку.',
-	'stablepages-config' => 'Подешавање',
+	'stablepages' => 'Странице које користе потврду измена',
+	'stablepages-list' => 'Испод се налази списак страна које су ограничене тако да само одређени корисници могу да их уреде.
+Такве измене нису прихваћене док их овлашћени корисник не прегледа.',
+	'stablepages-none' => 'Не постоје стране у овом списку.',
+	'stablepages-config' => 'Поставке',
 );
 
 /** Serbian Latin ekavian (Srpski (latinica))
  * @author Michaello
  */
 $messages['sr-el'] = array(
-	'stablepages' => 'Stabilne strane',
-	'stablepages-stable' => 'Stabilna verzija',
-	'stablepages-text' => 'Ispod se nalazi spisak strana ručno podešenih za prikaz stabilne verzije kao podrazumevane strane za čitače sadržaja.',
+	'stablepages' => 'Stranice koje koriste potvrdu izmena',
+	'stablepages-list' => 'Ispod se nalazi spisak strana koje su ograničene tako da samo određeni korisnici mogu da ih urede.
+Takve izmene nisu prihvaćene dok ih ovlašćeni korisnik ne pregleda.',
 	'stablepages-none' => 'Ne postoje strane u spisku.',
 	'stablepages-config' => 'Podešavanje',
 );
@@ -873,15 +831,26 @@ $messages['sr-el'] = array(
  * @author M.M.S.
  */
 $messages['sv'] = array(
-	'stablepages' => 'Stabila sidor',
-	'stablepages-stable' => 'publicerad version',
-	'stablepages-text' => 'Nedan visas en lista över sidor som manuellt ställts in att visa den publicerade versionen som standardinnehåll för läsare.',
+	'stablepages' => 'Sidor som använder redigeringsgodkännande',
+	'stablepages-list' => 'Nedan är en lista över sidor till vilka endast vissa användare kan göra redigeringar som inte kräver granskning.
+Ändringar gjorda av andra användare visas inte för läsarna förrän en behörig användare granskar dem.',
 	'stablepages-none' => 'Det finns inga sidor i denna lista',
 	'stablepages-config' => 'Konfigurering',
-	'stablepages-prec-none' => 'ingen rangordning',
-	'stablepages-prec-quality' => 'kvalitetsordning',
-	'stablepages-prec-pristine' => 'företräde för orörda',
-	'stablepages-precedence' => 'Rangordning:',
+	'stablepages-indef' => 'Endast obegränsad giltighetstid',
+);
+
+/** Tamil (தமிழ்)
+ * @author Kanags
+ * @author TRYPPN
+ */
+$messages['ta'] = array(
+	'stablepages' => 'இப்பக்கங்கள் தொகுத்தலுக்கான அனுமதிகளை பயன்படுத்துகின்றன',
+	'stablepages-list' => 'கீழே கொடுக்கப்பட்ட பட்டியலில் உள்ள பக்கங்களை ஒரு சில குறிப்பிட்ட பயனர்கள் மட்டுமே தொகுக்க கூடியவை. அவ்வாறு தொகுக்கப்பட்ட பக்கங்களை மறு ஆய்வு செய்ய வேண்டிய அவசியமில்லை. 
+
+மற்ற பயனர்கள் தொகுத்த பக்கங்களை படிப்பவர்களுக்கு, அதிகாரமளிக்கப்பட்ட பயனர்கள் மறு ஆய்வு செய்த பின்பே காட்டப்படும்.',
+	'stablepages-none' => 'இப்பட்டியலில் எந்தப் பக்கங்களும் இல்லை.',
+	'stablepages-config' => 'வடிவமைப்பு',
+	'stablepages-indef' => 'காலாவதியாவதற்கான காலவரம்பற்றவை மாத்திரம்',
 );
 
 /** Telugu (తెలుగు)
@@ -890,9 +859,9 @@ $messages['sv'] = array(
  */
 $messages['te'] = array(
 	'stablepages' => 'స్థిరమైన పేజీలు',
-	'stablepages-stable' => 'ప్రచురిత కూర్పు',
 	'stablepages-none' => 'ఈ జాబితాలో పేజీలేవీ లేవు',
 	'stablepages-config' => 'స్వరూపణం',
+	'stablepages-indef' => 'నిరవధిక కాలంచెల్లుబాటు మాత్రమే',
 );
 
 /** Turkmen (Türkmençe)
@@ -900,75 +869,57 @@ $messages['te'] = array(
  */
 $messages['tk'] = array(
 	'stablepages' => 'Durnukly sahypalar',
-	'stablepages-stable' => 'durnukly wersiýa',
-	'stablepages-text' => 'Aşakda durnukly wersiýany zyýaratçylara gaýybana sahypa mazmuny hökmünde görkezmek üçin el bilen konfigurirlenen sahypalaryň sanawy görkezilýär.',
+	'stablepages-list' => 'Aşakda durnukly wersiýany zyýaratçylara gaýybana sahypa mazmuny hökmünde görkezmek üçin el bilen konfigurirlenen sahypalaryň sanawy görkezilýär.',
 	'stablepages-none' => 'Bu sanawda hiç hili sahypa ýok',
 	'stablepages-config' => 'Konfigurasiýa',
-	'stablepages-prec-none' => 'öňürtilik ýok',
-	'stablepages-prec-quality' => 'hil öňürtiligi',
-	'stablepages-prec-pristine' => 'başky öňürtilik',
-	'stablepages-precedence' => 'Öňürtilik:',
 );
 
 /** Tagalog (Tagalog)
  * @author AnakngAraw
  */
 $messages['tl'] = array(
-	'stablepages' => 'Matatatag na mga pahina',
-	'stablepages-stable' => 'matatag na bersyon',
-	'stablepages-text' => 'Nasa ibaba ang isang talaan ng mga pahinang kinamay ang pagsasaayos upang maipakita ang matatag na bersyon bilang nakatakdang pahina ng nilalaman para sa mga tumatanaw.',
+	'stablepages' => 'Mga pahinang gumagamit ng pagpayag sa pagbago',
+	'stablepages-list' => 'Nasa ibaba ang isang talaan ng mga pahinang tanging ilang partikular na mga tagagamit lamang ang makagagawa ng mga pamamatnugot na hindi nangangailangan ng muling pagsusuri.  
+Ang mga pagbabago na ginawa ng ibang mga tagagamit ay likas na nakatakdang hindi ipinapakita sa mga mambabasa hanggang sa suriin sila ng isang may pahintulot na tagagamit.',
 	'stablepages-none' => 'Walang mga pahina sa loob ng talaang ito',
 	'stablepages-config' => 'Pagkakaayos (konpigurasyon)',
-	'stablepages-prec-none' => 'walang pagkakauna',
-	'stablepages-prec-quality' => 'pagkauna ng kataasan ng uri',
-	'stablepages-prec-pristine' => 'Pagkakaunang nasa orihinal na kalagayan',
-	'stablepages-precedence' => 'Pagkauna:',
+	'stablepages-indef' => 'Walang taning na katapusan lamang',
 );
 
 /** Turkish (Türkçe)
  * @author Joseph
+ * @author Manco Capac
  */
 $messages['tr'] = array(
-	'stablepages' => 'Kararlı sayfalar',
-	'stablepages-stable' => 'yayımlanmış sürüm',
-	'stablepages-text' => 'Aşağıdaki liste, okuyuculara geçerli sayfa içeriği olarak yayımlanmış sürümü gösterecek şekilde elle yapılandırılmış sayfaların listesidir.',
+	'stablepages' => 'Değişiklik onayı kullanan sayfalar',
+	'stablepages-list' => 'Aşağıdaki liste, sadece belirli kullanıcıların gözden geçirme gerektirmeden değişiklik yapabilecekleri sayfaların bir listesidir. Diğer kullanıcılar tarafından yapılmış değişiklikler yetkilendirilmiş bir kullanıcı tarafından gözden geçirilip onaylanmadan gösterilmemektedir.',
 	'stablepages-none' => 'Bu listede hiç sayfa yok',
 	'stablepages-config' => 'Yapılandırma',
-	'stablepages-prec-none' => 'öncelik yok',
-	'stablepages-prec-quality' => 'kalite önceliği',
-	'stablepages-prec-pristine' => 'asıl öncelik',
-	'stablepages-precedence' => 'Öncelik:',
+	'stablepages-indef' => 'Sadece belirsiz sona erme',
 );
 
 /** Ukrainian (Українська)
  * @author Ahonc
  * @author Prima klasy4na
+ * @author Тест
  */
 $messages['uk'] = array(
-	'stablepages' => 'Стабільні сторінки',
-	'stablepages-stable' => 'опублікована версія',
-	'stablepages-text' => 'Нижче поданий список сторінок, які вручну налаштовані на показ опублікованої версії за замовчуванням для читачів.',
-	'stablepages-none' => 'У цьому списку нема сторінок',
+	'stablepages' => 'Сторінки, що використовують затвердження редагувань',
+	'stablepages-list' => 'Нижче наведено список сторінок, на які тільки певні користувачі можуть вносити зміни, що не потребують рецензування. Зміни, внесені іншими користувачами, за умовчанням не відображаються читачам, поки уповноважений користувач не перевірить їх.',
+	'stablepages-none' => 'У цьому списку немає сторінок.',
 	'stablepages-config' => 'Налаштування',
-	'stablepages-prec-none' => 'без пріоритету',
-	'stablepages-prec-quality' => 'пріоритет якості',
-	'stablepages-prec-pristine' => 'пріоритет первинності',
-	'stablepages-precedence' => 'Пріоритет:',
+	'stablepages-indef' => 'Тільки з невизначеним строком',
 );
 
 /** Vèneto (Vèneto)
  * @author Candalua
  */
 $messages['vec'] = array(
-	'stablepages' => 'Pagine stabili',
-	'stablepages-stable' => 'version publicà',
-	'stablepages-text' => 'Sta qua la xe na lista de pagine configurà manualmente par mostrar la version publicà come contenuto de default par i letori.',
+	'stablepages' => "Pagine che dopara l'aprovassion de le modifiche",
+	'stablepages-list' => 'Sta qua la xe na lista de pagine configurà manualmente par mostrar la version publicà come contenuto de default par i letori.',
 	'stablepages-none' => 'No ghe xe nissuna pagina su sta lista',
 	'stablepages-config' => 'Configurassion',
-	'stablepages-prec-none' => 'nissuna precedensa',
-	'stablepages-prec-quality' => 'precedensa par qualità',
-	'stablepages-prec-pristine' => 'precedensa originaria',
-	'stablepages-precedence' => 'Precedensa:',
+	'stablepages-indef' => 'Solo scadensa indefinìa',
 );
 
 /** Veps (Vepsan kel')
@@ -976,14 +927,9 @@ $messages['vec'] = array(
  */
 $messages['vep'] = array(
 	'stablepages' => 'Stabiližed lehtpoled',
-	'stablepages-stable' => 'stabiline versii',
-	'stablepages-text' => 'Lehtpoled, kudambad oma järgetud ičeksaz, miše ozutada lugijoile stabiližid versijoid augotižjärgendusen mödhe - nimikirjutez:',
+	'stablepages-list' => 'Lehtpoled, kudambad oma käzil järgetud muga, miše ozutada lugijoile stabiližid versijoid augotižjärgendusen mödhe - nimikirjutez.',
 	'stablepages-none' => 'Neciš nimikirjuteses ei ole lehtpolid',
 	'stablepages-config' => 'Järgendused',
-	'stablepages-prec-none' => 'ei ole tobmust',
-	'stablepages-prec-quality' => 'Ladun tobmuz',
-	'stablepages-prec-pristine' => 'koskmatomuden tobmuz',
-	'stablepages-precedence' => 'Tobmuz:',
 );
 
 /** Vietnamese (Tiếng Việt)
@@ -991,24 +937,27 @@ $messages['vep'] = array(
  * @author Vinhtantran
  */
 $messages['vi'] = array(
-	'stablepages' => 'Trang ổn định',
-	'stablepages-stable' => 'bản phát hành',
-	'stablepages-text' => 'Dưới đây là danh sách các trang được cấu hình bằng tay để hiển thị bản phát hành làm nội dung trang mặc định đối với người xem.',
+	'stablepages' => 'Trang có quá trình chấp nhận sửa đổi',
+	'stablepages-list' => 'Đây là danh sách các trang có quá trình duyệt sửa đổi, chỉ cho phép một số người dùng bỏ qua quá trình này.
+Độc giả sẽ không thấy được sửa đổi của người khác cho đến khi người duyệt bài chấp nhận nó.',
 	'stablepages-none' => 'Không có trang nào trong danh sách',
 	'stablepages-config' => 'Cấu hình',
-	'stablepages-prec-none' => 'không có bản trước',
-	'stablepages-prec-quality' => 'bản chất lượng trước',
-	'stablepages-prec-pristine' => 'bản trong sạch trước',
-	'stablepages-precedence' => 'Bản trước:',
+	'stablepages-indef' => 'Chỉ hiện trang vô hạn',
 );
 
-/** Yue (粵語)
+/** Volapük (Volapük)
+ * @author Malafaya
+ */
+$messages['vo'] = array(
+	'stablepages-none' => 'Lised at labon padis nonik.',
+);
+
+/** Cantonese (粵語)
  * @author Shinjiman
  */
 $messages['yue'] = array(
 	'stablepages' => '穩定頁',
-	'stablepages-stable' => '穩定版',
-	'stablepages-text' => '下面嗰版列示咗啲版係手動噉設定去顯示穩定版做畀觀看者做預設版內容。',
+	'stablepages-list' => '下面嗰版列示咗啲版係手動噉設定去顯示穩定版做畀觀看者做預設版內容。',
 	'stablepages-none' => '無版響呢個表度',
 	'stablepages-config' => '設定',
 );
@@ -1016,32 +965,28 @@ $messages['yue'] = array(
 /** Simplified Chinese (‪中文(简体)‬)
  * @author Gaoxuewei
  * @author Shinjiman
+ * @author Xiaomingyan
  */
 $messages['zh-hans'] = array(
-	'stablepages' => '稳定页面',
-	'stablepages-stable' => '稳定版本',
-	'stablepages-text' => '以下的页面列示出一些页面是手动地设置去显示稳定版作为观看者做预设页面版内容。',
+	'stablepages' => '页面已经通过审核',
+	'stablepages-list' => '以下的页面列示出一些页面是手动地设定去显示稳定版作为观看者做预设页面版内容，
+只有指定用户的编辑才不需要通过审核。',
 	'stablepages-none' => '没有页面在这个列表中',
 	'stablepages-config' => '设置',
-	'stablepages-prec-none' => '没有优先级',
-	'stablepages-prec-quality' => '质量优先级',
-	'stablepages-prec-pristine' => '原始优先级',
-	'stablepages-precedence' => '优先级：',
+	'stablepages-indef' => '只限永久到期',
 );
 
 /** Traditional Chinese (‪中文(繁體)‬)
  * @author Gaoxuewei
+ * @author Horacewai2
  * @author Shinjiman
  */
 $messages['zh-hant'] = array(
-	'stablepages' => '穩定頁面',
-	'stablepages-stable' => '穩定版本',
-	'stablepages-text' => '以下的頁面列示出一些頁面是手動地設定去顯示穩定版作為觀看者做預設頁面版內容。',
+	'stablepages' => '頁面已經通過審核',
+	'stablepages-list' => '以下的頁面列示出一些頁面是手動地設定去顯示穩定版作為觀看者做預設頁面版內容，
+只有指定用戶的編輯才不需要通過審核。',
 	'stablepages-none' => '沒有頁面在這個清單中',
 	'stablepages-config' => '設定',
-	'stablepages-prec-none' => '沒有優先級',
-	'stablepages-prec-quality' => '質量優先級',
-	'stablepages-prec-pristine' => '原始優先級',
-	'stablepages-precedence' => '優先級：',
+	'stablepages-indef' => '只限永久到期',
 );
 
