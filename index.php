@@ -47,7 +47,7 @@ $mediaWiki = new MediaWiki();
 wfProfileIn( 'main-misc-setup' );
 OutputPage::setEncodings(); # Not really used yet
 
-require( $IP . '/extensions/iChainLoginFix.php' );
+require( $IP . '/extensions/NovellLoginFix.php' );
 
 $maxLag = $wgRequest->getVal( 'maxlag' );
 if( !is_null( $maxLag ) && !$mediaWiki->checkMaxLag( $maxLag ) ) {

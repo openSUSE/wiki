@@ -118,7 +118,11 @@ class BentoTemplate extends QuickTemplate {
                 <a href="<?php echo $this->data['personal_urls'][login][href] ?>">Sign up</a> | <a id="login-trigger" href="#login">Login</a>
 
                 <div id="login-form">
+		    <?php if( strpos($_SERVER["SERVER_NAME"], "stage") !== FALSE ) { ?>
                     <form action="https://loginstage.provo.novell.com/ICSLogin/auth-up" method="post" enctype="application/x-www-form-urlencoded" id="login_form">
+		    <?php } else { ?>
+		    <form action="https://login.novell.com/ICSLogin/auth-up" method="post" enctype="application/x-www-form-urlencoded" id="login_form">
+		    <?php } ?>
                         <input name="url" value="http://<?php echo $_SERVER['SERVER_NAME'] . $this->data['personal_urls'][login][href] ?>" type="hidden"/>
                         <input name="context" value="default" type="hidden"/>
                         <input name="proxypath" value="reverse" type="hidden"/>

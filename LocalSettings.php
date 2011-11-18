@@ -209,9 +209,9 @@ include("$IP/extensions/intersection/DynamicPageList.php");
 # SimpleFeed -----------------------
 include("$IP/extensions/SimpleFeed.php");
 
-# iChain ---------------------------
-require_once("$IP/extensions/iChainAuthenticationPlugin.php");
-$wgAuth = new iChainAuthenticationPlugin();                   
+# Access Manager -------------------
+require_once("$IP/extensions/NovellAuthenticationPlugin.php");
+$wgAuth = new NovellAuthenticationPlugin();                   
 
 # InputBox -------------------------
 require_once($IP.'/extensions/InputBox/InputBox.php');
