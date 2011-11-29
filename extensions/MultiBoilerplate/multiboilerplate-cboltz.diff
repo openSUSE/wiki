@@ -1,0 +1,67 @@
+MultiBoilerplate megapatch ;-) by cboltz. Fixes/implements:
+- https://bugzilla.wikimedia.org/show_bug.cgi?id=32710 - multiline <noinclude> / <includeonly> fails
+- https://bugzilla.wikimedia.org/show_bug.cgi?id=22759 - different boilerplates per namespace
+- (no upstream bugreport) - $wgMultiBoilerplateDontStrip to use templates for templates raw (without <noinclude> / <includeonly> stripping)
+
+Index: MultiBoilerplate.php
+===================================================================
+--- MultiBoilerplate.php	(Revision 104575)
++++ MultiBoilerplate.php	(Arbeitskopie)
+@@ -65,6 +65,18 @@
+ }
+ 
+ 
++/* Whether or not to use per-namespace boilerplates. Uses Mediawiki:Multiboilerplate-<namespacenumber>,
++ * for example -12 for the help namespace. No -0 suffix for main namespace.
++ * Requires $wgMultiBoilerplateOptions = false to work.
++ */
++$wgMultiBoilerplatePerNamespace = false;
++
++/* Boilerplates where <noinclude> / <includeonly> are ignored
++ * Boilderplates in this array are just copied without any change
++ * Useful for Boilerplates for templates.
++ */
++$wgMultiBoilerplateDontStrip = array();
++
+ /**
+  * Generate the form to be displayed at the top of the edit page and insert it.
+  * @param $form EditPage object.
+@@ -73,7 +85,7 @@
+ function efMultiBoilerplate( $form ) {
+ 
+ 	// Get various variables needed for this extension.
+-	global $wgMultiBoilerplateOptions, $wgMultiBoilerplateOverwrite, $wgTitle, $wgRequest;
++	global $wgMultiBoilerplateOptions, $wgMultiBoilerplateOverwrite, $wgTitle, $wgRequest, $wgMultiBoilerplatePerNamespace, $wgMultiBoilerplateDontStrip;
+ 
+ 	// If $wgMultiBoilerplateOverwrite is true then detect whether
+ 	// the current page exists or not and if it does return true
+@@ -91,7 +103,12 @@
+ 			$options .= Xml::option( $name, $template, $selected );
+ 		}
+ 	} else {
+-		$things = wfMsgForContent( 'multiboilerplate' );
++		$boilerplatepage = 'multiboilerplate';
++		if ($wgMultiBoilerplatePerNamespace) {
++			$namespace = $wgTitle->getNamespace();
++			if ($namespace <> 0) $boilerplatepage .= '-' . $namespace;
++		}
++		$things = wfMsgForContent( $boilerplatepage );
+ 		$options = '';
+ 		$things = explode( "\n", str_replace( "\r", "\n", str_replace( "\r\n", "\n", $things ) ) ); // Ensure line-endings are \n
+ 		foreach( $things as $row ) {
+@@ -137,9 +154,13 @@
+ 		 * found one with a name as if it would do this, but it didn't seam to
+ 		 * work).
+ 		 */
+-		$content = preg_replace( '#<noinclude>(.*?)</noinclude>#', '', $content );
+-		$content = preg_replace( '#<includeonly>(.*?)</includeonly>#', '$1', $content );
+ 		// TODO: Handle <onlyinclude> tags.
++		// Exclude pages in $wgMultiBoilerplateDontStrip from stripping. Useful for boilerplates for templates.
++		# error_log ( "Boilerplate: ***" . $wgRequest->getVal( 'boilerplate' ). "***");
++		if (! in_array($wgRequest->getVal( 'boilerplate' ), $wgMultiBoilerplateDontStrip)) {
++			$content = preg_replace( '#<noinclude>(.*?)</noinclude>#ims', '', $content );
++			$content = preg_replace( '#<includeonly>(.*?)</includeonly>#ims', '$1', $content );
++		}
+ 		$form->textbox1 = $content;
+ 	}
+ 
