@@ -59,7 +59,7 @@ $wgEmailAuthentication = false;
 $wgDBmysql4 = true;
 
 # Experimental charset support for MySQL 4.1/5.0.
-$wgDBmysql5 = false;
+$wgDBmysql5 = true;
 
 # File Cache
 #$wgUseFileCache = true; /* default: false */
