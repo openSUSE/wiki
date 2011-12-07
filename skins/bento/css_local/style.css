@@ -462,4 +462,12 @@ fieldset table {
 background:none repeat scroll 0 0 transparent;
 }
 
+/* "red links" to non-existing pages */
+a.new, .box a.new, .box .ui-oo-box-shadow a.new, #p-personal a.new {
+	color: #ba0000;
+}
+a.new:visited, .box a.new:visited, .box .ui-oo-box-shadow a.new:visited, #p-personal a.new:visited {
+	color: #a55858;
+}
+
 
