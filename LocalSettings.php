@@ -154,8 +154,10 @@ $wgExtraNamespaces[104] = 'Archive';
 $wgExtraNamespaces[105] = 'Archive_Talk';
 $wgExtraNamespaces[106] = 'HCL';
 $wgExtraNamespaces[107] = 'HCL_Talk';
-$wgExtraNamespaces[108] = '11.2';
-$wgExtraNamespaces[109] = '11.2_Talk';
+# $wgExtraNamespaces[108] = '11.2';
+# $wgExtraNamespaces[109] = '11.2_Talk';
+$wgExtraNamespaces[110] = 'Book';
+$wgExtraNamespaces[111] = 'Book_Talk';
 
 # Enable/Disable subpages                                                                              
 $wgNamespacesWithSubpages[-1] = false;                                                             
@@ -177,8 +179,9 @@ $wgNamespacesWithSubpages[102] = true;
 $wgNamespacesWithSubpages[103] = true;                                               
 $wgNamespacesWithSubpages[104] = true;                                               
 $wgNamespacesWithSubpages[105] = true;
+$wgNamespacesWithSubpages[110] = true;
 
-$wgContentNamespaces = array (0, 4, 12, 100, 102, 104, 106, 108);
+$wgContentNamespaces = array (0, 4, 12, 100, 102, 104, 106, 110);
 
 $wgAllowCategorizedRecentChanges = true;
 
