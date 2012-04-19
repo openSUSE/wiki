@@ -470,7 +470,7 @@ a.new:visited, .box a.new:visited, .box .ui-oo-box-shadow a.new:visited, #p-pers
 	color: #a55858;
 }
 
-#wikiEditor-ui-toolbar .section-help .page-format table { margin-left:0; }
+#wikiEditor-ui-toolbar .section-help table { margin-left:0; }
 .wikiEditor-ui .wikiEditor-ui-text > textarea { width: 100%; }
 .wikiEditor-ui {
     margin-left: 10px;
