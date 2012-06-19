@@ -205,7 +205,7 @@ class BentoTemplate extends QuickTemplate {
                 <div id="some_other_content" class="box box-shadow alpha clear-both navigation">
                     <h2 class="box-header">Sponsors</h2>
                     <?php $arr = array("sponsor_amd.png", 'sponsor_b1-systems.png', 'sponsor_ip-exchange2.png', 'sponsor_heinlein.png'); ?>
-                    <a class="sponsor-image" href="/Sponsors"><img src="https://static.opensuse.org/themes/bento/images/sponsors/<?php echo $arr[rand(0, count($arr)-1)] ?>" alt="Sponsor" /></a>
+                    <a class="sponsor-image" href="/Sponsors"><img src="https://static.opensuse.org/themes/bento/images/sponsors/<?php echo $arr[rand(0, count($arr)-1)] ?>" alt="Sponsor" style="max-width: 145px;"/></a>
                 </div>
 
 
