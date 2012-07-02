@@ -60,16 +60,31 @@ function renderVideoFlash($input, $args) {
         $url['sevenload'  ] = 'http://en.sevenload.com/pl/%1$s/%2$ux%3$u/swf';
         $url['revver'     ] = 'http://flash.revver.com/player/1.0/player.swf?mediaId=%1$u';
         $url['blip'       ] = 'http://blip.tv/play/%1$s';
-        $url['youku'      ] = 'http://player.youku.com/player.php/sid/%1$s/.swf';
         $url['vimeo'      ] = 'http://www.vimeo.com/moogaloop.swf?clip_id=%1$d&amp;server=www.vimeo.com&amp;fullscreen=1&amp;show_title=1&amp;show_byline=0&amp;show_portrait=0';
         $url['metacafe'   ] = 'http://www.metacafe.com/fplayer/%1$d/' . (isset($args['vid']) ? $args['vid'] : '') . '.swf';
         $url['viddler'    ] = 'http://www.viddler.com/player/%1$s';
         $url['megavideo'  ] = 'http://www.megavideo.com/v/%1$s';
-        $url['html5'  ] = '%1$s';
- 
+	$url['html5'  ] = '%1$s';
+	// Chinese Local Videos. To fight against GFW.
+	$url['youku'      ] = 'http://player.youku.com/player.php/sid/%1$s/.swf';
+	$url['tudou'      ] = 'http://www.tudou.com/v/%1$s/';
+	$url['sina'       ] = 'http://you.video.sina.com.cn/api/sinawebApi/outplayrefer.php/vid=%1$s/s.swf';
+	$url['qq'         ] = 'http://static.video.qq.com/TPout.swf?vid=%1$s&auto=1';
+	$url['bilibili'   ] = 'http://static.loli.my/miniloader.swf?aid=%1$u';
+	$url['acfun'      ] = 'http://static.acfun.tv/ACFlashPlayer.swf?aid=%1$u';	
+	$url['ku6'        ] = 'http://player.ku6.com/refer/%1$s../v.swf';
+	$url['56'         ] = 'http://player.56.com/v_%1$s.swf';
+	$url['sohu'           ] = 'http://share.vrs.sohu.com/%1$d/v.swf&autoplay=false&xuid=';
+        $url['yinyuetai'      ] = 'http://player.yinyuetai.com/video/player/%1$d/v_0.swf';
+        $url['ifeng'          ] = 'http://v.ifeng.com/include/exterior.swf?guid=%1$s&AutoPlay=false';
+	$url['xiyou'           ] = 'http://player.xiyou.cntv.cn/v-%1$s.swf';
+	$url['pomoho'          ] = 'http://resources.pomoho.com/swf/out_player.swf?flvid=%1$d&outall=true';
+
+	// add more service here.
+
         // if the embed code for a service requires flashvars attributes, you can add them here
         $flashvars = array();
-        $flashvars['revver'] = 'mediaId=%1$u&affiliateId=0';
+	$flashvars['revver'] = 'mediaId=%1$u&affiliateId=0';
  
         $type       = isset($args['type'],$url[$args['type']]) ? $args['type'] : 'youtube';
         $media_url  = isset($url[$type]) ? $url[$type] : $url['youtube'];
@@ -92,7 +107,7 @@ function renderVideoFlash($input, $args) {
  
                      $output .= '><source src="'.$id.'"></video><p style="font-size:80%;padding:0;margin:0;">(Right click to control movie)</p>';
                      return $output;
-                }
+		}
                 else
                 {
                          $output = '<object width="%2$u" height="%3$u">'
