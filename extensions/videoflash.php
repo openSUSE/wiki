@@ -74,10 +74,10 @@ function renderVideoFlash($input, $args) {
 	$url['acfun'      ] = 'http://static.acfun.tv/ACFlashPlayer.swf?aid=%1$u';	
 	$url['ku6'        ] = 'http://player.ku6.com/refer/%1$s../v.swf';
 	$url['56'         ] = 'http://player.56.com/v_%1$s.swf';
-	$url['sohu'           ] = 'http://share.vrs.sohu.com/%1$d/v.swf&autoplay=false&xuid=';
+	$url['sohu'           ] = 'http://tv.sohu.com/upload/swf/20120628/PlayerShell.swf?autoplay=false&skinNum=1&id=%1$d&topBar=1&shareBtn=1&likeBtn=1&topBar=1&sogouBtn=0';
         $url['yinyuetai'      ] = 'http://player.yinyuetai.com/video/player/%1$d/v_0.swf';
         $url['ifeng'          ] = 'http://v.ifeng.com/include/exterior.swf?guid=%1$s&AutoPlay=false';
-	$url['xiyou'           ] = 'http://player.xiyou.cntv.cn/v-%1$s.swf';
+	$url['xiyou'           ] = 'http://player.xiyou.cntv.cn/%1$s.swf';
 	$url['pomoho'          ] = 'http://resources.pomoho.com/swf/out_player.swf?flvid=%1$d&outall=true';
 
 	// add more service here.
