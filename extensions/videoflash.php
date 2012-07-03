@@ -61,7 +61,7 @@ function renderVideoFlash($input, $args) {
         $url['revver'     ] = 'http://flash.revver.com/player/1.0/player.swf?mediaId=%1$u';
         $url['blip'       ] = 'http://blip.tv/play/%1$s';
         $url['vimeo'      ] = 'http://www.vimeo.com/moogaloop.swf?clip_id=%1$d&amp;server=www.vimeo.com&amp;fullscreen=1&amp;show_title=1&amp;show_byline=0&amp;show_portrait=0';
-        $url['metacafe'   ] = 'http://www.metacafe.com/fplayer/%1$d/' . (isset($args['vid']) ? $args['vid'] : '') . '.swf';
+        $url['metacafe'   ] = 'http://www.metacafe.com/fplayer/%1$s/' . (isset($args['vid']) ? $args['vid'] : '') . '.swf';
         $url['viddler'    ] = 'http://www.viddler.com/player/%1$s';
         $url['megavideo'  ] = 'http://www.megavideo.com/v/%1$s';
 	$url['html5'  ] = '%1$s';
