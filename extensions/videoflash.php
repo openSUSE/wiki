@@ -58,12 +58,12 @@ function renderVideoFlash($input, $args) {
         $url['googlevideo'] = 'http://video.google.com/googleplayer.swf?docId=%1$d';
         $url['dailymotion'] = 'http://www.dailymotion.com/swf/%1$s';
         $url['sevenload'  ] = 'http://en.sevenload.com/pl/%1$s/%2$ux%3$u/swf';
-        $url['revver'     ] = 'http://flash.revver.com/player/1.0/player.swf?mediaId=%1$u';
+        //$url['revver'     ] = 'http://flash.revver.com/player/1.0/player.swf?mediaId=%1$u';
         $url['blip'       ] = 'http://blip.tv/play/%1$s';
         $url['vimeo'      ] = 'http://www.vimeo.com/moogaloop.swf?clip_id=%1$d&amp;server=www.vimeo.com&amp;fullscreen=1&amp;show_title=1&amp;show_byline=0&amp;show_portrait=0';
         $url['metacafe'   ] = 'http://www.metacafe.com/fplayer/%1$s/' . (isset($args['vid']) ? $args['vid'] : '') . '.swf';
         $url['viddler'    ] = 'http://www.viddler.com/player/%1$s';
-        $url['megavideo'  ] = 'http://www.megavideo.com/v/%1$s';
+        //$url['megavideo'  ] = 'http://www.megavideo.com/v/%1$s';
 	$url['html5'  ] = '%1$s';
 	// Chinese Local Videos. To fight against GFW.
 	$url['youku'      ] = 'http://player.youku.com/player.php/sid/%1$s/.swf';
@@ -84,7 +84,7 @@ function renderVideoFlash($input, $args) {
 
         // if the embed code for a service requires flashvars attributes, you can add them here
         $flashvars = array();
-	$flashvars['revver'] = 'mediaId=%1$u&affiliateId=0';
+	//$flashvars['revver'] = 'mediaId=%1$u&affiliateId=0';
  
         $type       = isset($args['type'],$url[$args['type']]) ? $args['type'] : 'youtube';
         $media_url  = isset($url[$type]) ? $url[$type] : $url['youtube'];
