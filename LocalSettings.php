@@ -261,6 +261,9 @@ $wgHideInterlanguageLinks=false;
 $wgGroupPermissions['*']['interwiki'] = false;
 $wgGroupPermissions['sysop']['interwiki'] = true;
 
+# ReplaceText ----------------------------------
+require_once( "$IP/extensions/ReplaceText/ReplaceText.php" );
+
 # Flash video links ----------------------------------
 require_once("extensions/videoflash.php");
 
