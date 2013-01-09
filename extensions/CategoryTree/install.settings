@@ -1,2 +1,0 @@
-$wgUseAjax = true;
-require_once( "{{path}}/CategoryTree.php" );
