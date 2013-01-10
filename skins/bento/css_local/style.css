@@ -1,0 +1,484 @@
+body {
+    color: #000000;
+}
+
+#header ul#global-navigation {
+    width: auto; /* to get space for advanced search */
+}
+
+div.tright {
+    clear: right;
+    float: right;
+    margin-left: 0.7em;
+    margin-right: 15px;
+}
+
+div.thumb {
+    border: 1px solid #ddd;
+    padding: 5px 5px 0;
+}
+
+.thumbcaption {
+    font-size: 0.8em;
+}
+.magnify  {
+    float: right;
+}
+
+
+/* Styles for wiki user actions under the main navigations */
+#local-user-actions {
+    height: 1em;
+    text-align: right;
+}
+
+#local-user-actions a {
+    margin-right: 10px;
+    text-decoration: none;
+}
+
+#pt-personal {
+    display: none;
+    position: absolute;
+    z-index: 9999;
+    list-style: none inside;
+    margin: 0;
+    padding: 0;
+    font-size: 12px;
+
+    background: white;
+    background: #fff url('../css/images/gradient-light-short-02.png') repeat-x scroll 0 -23px; /*TODO: fix path for different applications */
+
+    border: 1px solid transparent;
+    border-color: transparent #f6f6f6 #eee;
+
+    -moz-box-shadow: 0 1px 2px #ddd;
+    -webkit-box-shadow: 0 1px 2px #ddd;
+    box-shadow: 0 1px 2px #ddd;
+
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    -moz-border-radius-bottomleft: 5px;
+    -moz-border-radius-bottomright: 5px;
+    -webkit-border-bottom-left-radius: 5px;
+    -webkit-border-bottom-right-radius: 5px;
+    -khtml-border-bottom-left-radius: 5px;
+    -khtml-border-bottom-right-radius: 5px;
+
+}
+
+#pt-personal li {
+    margin: 0 10px;
+    padding: 2px 0;
+}
+
+#pt-personal li a {
+    margin: 3px;
+    display: block;
+    width: 100%;
+    text-decoration: none;
+}
+
+#actions-trigger {
+    padding-right: 1.2em;
+    background: transparent url('../css/images/unfold-indicator-single.png') no-repeat scroll 4em 0.4em; /* toggle indicator */
+
+}
+
+.ui-oo-content-wrapper .ui-oo-box-shadow > * > h2, .content-wrapper .box-shadow > * > h2 {
+    margin-top:1em;
+}
+
+/* Don't display things that shouldn't be displayed */
+#siteSub {
+    display: none;
+}
+#jump-to-nav {
+    display: none;
+}
+.printfooter {
+    display: none;
+}
+
+/* Preferences page */
+#preferences {
+    margin: 0;
+    clear: both;
+    padding: 1.5em;
+}
+#preferences legend {
+    display: none;
+}
+#preftoc {
+    width: 100%;
+    clear: both;
+    display: block;
+}
+#preftoc li {
+    float: left;
+    white-space: nowrap;
+    padding-right: 10px;
+    list-style-type: none;
+    list-style-image: none;
+    border: 1px solid #ddd;
+    background: #fff url('../css/images/gradient-light-short.png') repeat-x scroll 0 -20px ;
+}
+#preftoc a {
+    color: #666;
+    text-decoration: none;
+}
+#preftoc li.selected {
+    margin-top: 5px;
+    font-weight: bold;
+}
+
+/* fieldsets */
+fieldset {
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    margin: 1em 0 1em 0;
+    padding: 0 1em 1em;
+    line-height: 1.5em;
+}
+fieldset.nested {
+    margin: 0 0 0.5em 0;
+    padding: 0 0.5em 0.5em;
+}
+legend {
+    padding: .5em;
+    font-size: 95%;
+}
+
+/* contentSub */
+/* #contentSub, #contentSub2 {
+    font-size: 84%;
+    line-height: 1.2em;
+    margin: 0 0 1.4em 1em;
+    width: auto;
+} */
+
+/* END OFF: Styles for wiki user actions under the main navigations */
+
+td {
+    border: none;
+}
+
+h4.mw-specialpagesgroup  {
+    margin:1em;
+    padding:4px;
+}
+
+#contentSub, #contentSub2, hr, #toolbar, #editform, #editoptions, #catlinks, .mw-searchresult, #search,
+.special_info, .shell, .flash_video, div.mw-geshi, #successbox, #prefcache, dl {
+    margin-left: 1em;
+    margin-right: 1em;
+}
+
+#contentSub {
+    position: relative;
+}
+
+hr {
+    color: #AAAAAA;
+    background-color: #AAAAAA;
+}
+
+h1 .editsection, h2 .editsection, h3 .editsection {
+    position: 1;
+    font-size:small;
+    font-weight:normal;
+}
+
+.toc {
+    background:url("../geeko_tail.gif") no-repeat scroll right top #F6F6F6;
+    /* display: block; */
+    font-size: 95%;
+    border: 1px solid #E0E0E0;
+    margin: 1;
+    min-width: 30em;
+    /* margin-top: 7px; */
+}
+
+.toc a {
+    text-decoration: none;
+}
+
+.special_info, .toc {
+    padding-right: 4em;
+}
+
+#toc h2, .toc h2 {
+    display: inline;
+}
+
+/* trying to move the flaggedrev box out of the way */
+.flaggedrevs_short {
+    border: 1px solid #DDDDDD;
+    -moz-border-radius: 5px 5px 5px 5px;
+    line-height: 1;
+    position: absolute;
+    right: 0;
+    max-width: 320px;
+}
+
+.flaggedrevs_basic, .flaggedrevs_quality, .flaggedrevs_pristine,
+.flaggedrevs_notice, .flaggedrevs_editnotice, .flaggedrevs_diffnotice,
+.flaggedrevs_warning, .flaggedrevs_preview  {
+    margin: 1em;
+}
+
+.external {
+    background:url("../http.png") no-repeat scroll right center transparent;
+    padding-right: 18px;
+}
+
+#catlinks {
+    border-top: 2px solid #D9E5BF;
+    padding: 0.5em 0 0 2em;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+}
+
+.shell, div.mw-geshi {
+    background-color:#F6F6F6;
+    border:1px dotted #669900;
+    font-family:monospace;
+    border:1px solid #666666;
+    padding: 0.3em;
+    margin-bottom: 1em;
+}
+
+.image {
+
+}
+
+.CategoryTreeTag {
+    margin:0.5ex 0 0 1em;
+}
+
+
+.lable-overley label {
+    left:20px;
+}
+
+table  {
+    max-width: none;
+}
+
+.editsection {
+    font-weight: normal;
+    margin-left: 1em;
+    margin-right: 1em;
+}
+
+ul, ol {
+    list-style: disc outside none;
+}
+
+ol {
+    list-style-type: decimal;
+}
+
+.center {
+    text-align: center;
+}
+
+pre {
+    margin-bottom: 1em;
+}
+
+div.minutes {
+    background: none repeat scroll 0 0 #F0F0F4;
+    border: 1px solid #669900;
+    color: #000000;
+    margin: 0 0 1em 1em;
+    padding: 0 0.5em;
+    white-space: pre;
+}
+
+/* Kategorie-Auswahl scrollbar */
+#SelectCategoryList {
+    height:20em;
+    overflow:auto;
+    border: 1px solid #E0E0E0;
+    margin-bottom:10px;
+    margin-left: 0;
+}
+
+#SelectCategoryList li { margin: 0.1em 0; }
+
+
+/* expand templates inputbox */
+textarea#input {
+    border: 1px solid #2f6fab;
+    color: Black;
+    background-color: white;
+    width: 100%;
+    padding: 0.1em;
+    overflow: auto;
+
+}
+
+dt {
+    font-weight: bold;
+}
+
+/* fix screenshot galleries */
+table.gallery td { vertical-align: top; }
+
+/* add nice link icons */
+a.external[href$=".ogm"], a.external[href$=".OGM"], a.external[href$=".avi"], a.external[href$=".AVI"], a.external[href$=".mpeg"], a.external[href$=".MPEG"], a.external[href$=".mpg"], a.external[href$=".MPG"], .link-video {
+    background: url("../film.png") no-repeat scroll right center transparent;
+    padding: 3px 16px 0 0;
+}
+
+a.external[href$=".iso"], a.external[href$=".ISO"] {
+    background: url("../cd.png") no-repeat scroll right center transparent;
+    padding: 3px 16px 0 0;
+}
+
+a.external[href$=".txt"], a.external[href$=".TXT"], a.external[href$=".doc"], a.external[href$=".DOC"] {
+    background: url("../page_white.png") no-repeat scroll right center transparent;
+    padding: 3px 16px 0 0;
+}
+
+a.external[href$=".pdf"], a.external[href$=".PDF"] {
+    background: url("../page_white_acrobat.png") no-repeat scroll right center transparent;
+    padding: 3px 16px 0 0;
+}
+
+a.external[href$=".png"], a.external[href$=".jpg"], a.external[href$=".jpeg"], a.external[href$=".gif"] {
+    background: url("../picture.png") no-repeat scroll right center transparent;
+    padding: 3px 16px 0 0;
+}
+
+/* Redirects on [[Special:Allpages]] and [[Special:Watchlist/edit]]. */
+.allpagesredirect a, .watchlistredir a {
+    background: url("../external.png") left top no-repeat;
+    padding-left: 12px;
+    color: #C0C0C0;
+}
+
+blockquote {
+    padding-left: 5px;
+}
+
+
+/* formatting our search page */
+div.searchresults {
+    border: none;
+}
+
+.mw-search-formheader {
+   margin-left: 15px;
+   margin-right: 15px; 
+   background-color: #F3F3F3;
+   border: 1px solid silver;
+   margin-top: 1em;
+}
+
+.mw-search-formheader div.search-types {
+   float:left;
+   padding-left:0.25em;
+}
+
+.mw-search-formheader div.search-types ul {
+   list-style:none outside none !important;
+   margin:0 !important;
+   padding:0 !important;
+}
+
+.mw-search-formheader div.search-types ul li {
+    float: left;
+    margin:0;
+    padding:0;
+}
+
+.mw-search-formheader div.search-types ul li.current a {
+   color:#333333;
+   cursor:default;
+}
+
+.mw-search-formheader div.search-types ul li a {
+   background:none repeat scroll 0 0 transparent !important;
+   padding:0.5em !important;
+}
+
+.mw-search-formheader div.search-types ul li a {
+   display:block;
+   padding:0.5em;
+}
+
+.mw-search-formheader div.results-info {
+   float:right;
+   padding-right: 0.5em;
+}
+
+.mw-search-formheader div.results-info ul {
+   list-style:none outside none !important;
+   margin:0 !important;
+   padding:0 !important;
+}
+
+fieldset#mw-searchoptions {
+   background-color:#F9F9F9;
+   border-color:silver !important;
+   border-right:1px solid silver !important;
+   border-style:solid !important;
+   border-width:0 1px 1px !important;
+   border:1px solid #2F6FAB;
+   padding: 1em;
+   margin-left:15px !important;
+   margin-right:15px !important;
+}
+
+
+fieldset#mw-searchoptions legend {
+   display:none;
+}
+fieldset#mw-searchoptions h4 {
+   float:left;
+   margin:0;
+   padding:0;
+}
+
+fieldset#mw-searchoptions div#mw-search-togglebox {
+   float:right;
+}
+
+fieldset#mw-searchoptions div.divider {
+border-bottom:1px solid #DDDDDD;
+clear:both;
+margin-bottom:0.5em;
+padding-top:0.5em;
+}
+
+fieldset#mw-searchoptions table {
+float:left;
+margin-right:3em;
+}
+
+fieldset table {
+background:none repeat scroll 0 0 transparent;
+}
+
+/* "red links" to non-existing pages */
+a.new, .box a.new, .box .ui-oo-box-shadow a.new, #p-personal a.new {
+	color: #ba0000;
+}
+a.new:visited, .box a.new:visited, .box .ui-oo-box-shadow a.new:visited, #p-personal a.new:visited {
+	color: #a55858;
+}
+
+#wikiEditor-ui-toolbar .section-help table { margin-left:0; }
+.wikiEditor-ui .wikiEditor-ui-text > textarea { width: 100%; }
+.wikiEditor-ui {
+    margin-left: 10px;
+    margin-top: 10px;
+    width: 95%;
+}
+
+.editOptions { margin-left: 10px; }
+
+.sponsor-image {max-width: 130px; }
+
