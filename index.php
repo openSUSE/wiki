@@ -55,4 +55,5 @@ if ( isset( $_SERVER['MW_COMPILED'] ) ) {
 }
 
 $mediaWiki = new MediaWiki();
+require( $IP . '/extensions/NovellLoginFix.php' );
 $mediaWiki->run();

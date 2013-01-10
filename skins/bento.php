@@ -99,12 +99,12 @@ class BentoTemplate extends QuickTemplate {
                     $lastsearch = $this->data['search'];
                 }
                 $search_form = '<input type="text" name="search" id="search" ' .
-                        $this->skin->tooltipAndAccesskey('search') .
+                        $this->skin->tooltipAndAccesskeyAttribs('search') .
                         ' value="' . $lastsearch . '" ' .
                         "onFocus='this.value = \"\"'" . '/>';
                 $search_button = '<input type="submit" name="go" class="hidden" ' .
                         ' value="Search" ' .
-                        $this->skin->tooltipAndAccesskey( 'search-go' ) .
+                        $this->skin->tooltipAndAccesskeyAttribs( 'search-go' ) .
                         '/>';
                 $content = str_replace( array(
                         '<input type="text" name="q" value="search" id="search" />' ,
@@ -126,9 +126,9 @@ class BentoTemplate extends QuickTemplate {
 
                 <div id="login-form">
 		    <?php if( strpos($_SERVER["SERVER_NAME"], "stage") !== FALSE ) { ?>
-                    <form action="https://loginstage.provo.novell.com/nidp/idff/sso?sid=0" method="post" enctype="application/x-www-form-urlencoded" name="login_form">
+                    <form action="https://loginstage.attachmategroup.com/nidp/idff/sso?sid=0" method="post" enctype="application/x-www-form-urlencoded" name="login_form">
                     <?php } else { ?>
-                    <form action="https://login.novell.com/nidp/idff/sso?sid=0" method="post" enctype="application/x-www-form-urlencoded" name="login_form">
+                    <form action="https://login.attachmategroup.com/nidp/idff/sso?sid=0" method="post" enctype="application/x-www-form-urlencoded" name="login_form">
                     <?php } ?>
 		    <input name="target" value="http://<?php echo $_SERVER['SERVER_NAME'] . $this->data['personal_urls'][login][href] ?>" type="hidden"/>
                         <input name="context" value="default" type="hidden"/>
@@ -149,7 +149,7 @@ class BentoTemplate extends QuickTemplate {
             <?php foreach($this->data['personal_urls'] as $key => $item) { ?>
                     <li id="<?php echo Sanitizer::escapeId( "pt-$key" ) ?>"<?php
                                                                 if ($item['active']) { ?> class="active"<?php } ?>><a href="<?php
-                                                                echo htmlspecialchars($item['href']) ?>"<?php echo $skin->tooltipAndAccesskey('pt-'.$key) ?><?php
+                                                                echo htmlspecialchars($item['href']) ?>"<?php echo $skin->tooltipAndAccesskeyAttribs('pt-'.$key) ?><?php
                                                                 if(!empty($item['class'])) { ?> class="<?php
                                                 echo htmlspecialchars($item['class']) ?>"<?php } ?>><?php
                                     echo htmlspecialchars($item['text']) ?></a></li>
@@ -184,8 +184,8 @@ class BentoTemplate extends QuickTemplate {
                 <div id="some_other_content" class="box box-shadow alpha clear-both navigation">
                     <h2 class="box-header"><?php $this->msg('toolbox') ?></h2>
                     <ul class="navigation">
-                                <?php if($this->data['notspecialpage']) { ?><li id="t-whatlinkshere"><a href="<?php echo htmlspecialchars($this->data['nav_urls']['whatlinkshere']['href']) ?>"<?php echo $this->skin->tooltipAndAccesskey('t-whatlinkshere') ?>><?php $this->msg('whatlinkshere') ?></a></li>
-                                    <?php if( $this->data['nav_urls']['recentchangeslinked'] ) { ?><li id="t-recentchangeslinked"><a href="<?php echo htmlspecialchars($this->data['nav_urls']['recentchangeslinked']['href']) ?>"<?php echo $this->skin->tooltipAndAccesskey('t-recentchangeslinked') ?>><?php $this->msg('recentchangeslinked') ?></a></li>
+                                <?php if($this->data['notspecialpage']) { ?><li id="t-whatlinkshere"><a href="<?php echo htmlspecialchars($this->data['nav_urls']['whatlinkshere']['href']) ?>"<?php echo $this->skin->tooltipAndAccesskeyAttribs('t-whatlinkshere') ?>><?php $this->msg('whatlinkshere') ?></a></li>
+                                    <?php if( $this->data['nav_urls']['recentchangeslinked'] ) { ?><li id="t-recentchangeslinked"><a href="<?php echo htmlspecialchars($this->data['nav_urls']['recentchangeslinked']['href']) ?>"<?php echo $this->skin->tooltipAndAccesskeyAttribs('t-recentchangeslinked') ?>><?php $this->msg('recentchangeslinked') ?></a></li>
                 <?php }
                                 }
         ?>
@@ -258,7 +258,7 @@ class BentoTemplate extends QuickTemplate {
                                             && in_array( $key, array( 'edit', 'watch', 'unwatch' ))) {
                                         echo $skin->tooltip( "ca-$key" );
                                     } else {
-                                        echo $skin->tooltipAndAccesskey( "ca-$key" );
+                                        echo $skin->tooltipAndAccesskeyAttribs( "ca-$key" );
             }
             echo '>'.htmlspecialchars($tab['text']).'</a></li>';
         } ?>
@@ -316,7 +316,7 @@ class BentoTemplate extends QuickTemplate {
                     && in_array( $key, array( 'edit', 'watch', 'unwatch' ))) {
                 echo $skin->tooltip( "ca-$key" );
             } else {
-                echo $skin->tooltipAndAccesskey( "ca-$key" );
+                echo $skin->tooltipAndAccesskeyAttribs( "ca-$key" );
             }
             echo '>'.htmlspecialchars($tab['text']).'</a></li>';
         } ?>
