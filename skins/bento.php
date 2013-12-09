@@ -124,7 +124,7 @@ class BentoTemplate extends QuickTemplate {
         <?php if( $this->data['username'] == NULL ) { ?>
             <div id="login-wrapper" class="grid_4 omega">
 		<?php if( strpos($_SERVER["SERVER_NAME"], "stage") !== FALSE ) { ?>
-                	<a href="https://secure-www.novell.com/selfreg/jsp/createOpenSuseAccount.jsp?login=Sign+up?>">Sign up</a> | <a id="login-trigger" href="https://loginstage.attachmategroup.com/nidp/idff/sso?id=12&sid=3&option=credential&sid=3">Login</a>
+                	<a href="https://secure-wwwstage.provo.novell.com/selfreg/jsp/createOpenSuseAccount.jsp?login=Sign+up?>">Sign up</a> | <a id="login-trigger" href="https://loginstage.attachmategroup.com/nidp/idff/sso?id=12&sid=3&option=credential&sid=3">Login</a>
 		<?php } else { ?>			
                 	<a href="https://secure-www.novell.com/selfreg/jsp/createOpenSuseAccount.jsp?login=Sign+up">Sign up</a> | <a id="login-trigger" href="https://login.attachmategroup.com/nidp/app/login?id=28&sid=0&option=credential&sid=0">Login</a>
 		<?php } ?>
