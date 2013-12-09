@@ -126,7 +126,7 @@ class BentoTemplate extends QuickTemplate {
 		<?php if( strpos($_SERVER["SERVER_NAME"], "stage") !== FALSE ) { ?>
                 	<a href="<?php echo $this->data['personal_urls'][login][href] ?>">Sign up</a> | <a id="login-trigger" href="https://loginstage.attachmategroup.com/nidp/idff/sso?id=12&sid=3&option=credential&sid=3">Login</a>
 		<?php } else { ?>			
-                	<a href="<?php echo $this->data['personal_urls'][login][href] ?>">Sign up</a> | <a id="login-trigger" href="https://login.attachmategroup.com/nidp/app/login?id=27&sid=4&option=credential&sid=4">Login</a>
+                	<a href="<?php echo $this->data['personal_urls'][login][href] ?>">Sign up</a> | <a id="login-trigger" href="https://login.attachmategroup.com/nidp/app/login?id=28&sid=0&option=credential&sid=0">Login</a>
 		<?php } ?>
                 <!-- <a href="<?php //echo $this->data['personal_urls'][login][href] ?>">Sign up</a> | <a id="login-trigger" href="#login">Login</a> -->
 
