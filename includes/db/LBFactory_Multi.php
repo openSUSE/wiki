@@ -1,11 +1,25 @@
 <?php
 /**
- * Advanced generator of database load balancing objects for wiki farms
+ * Advanced generator of database load balancing objects for wiki farms.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
  * @ingroup Database
  */
-
 
 /**
  * A multi-wiki, multi-master factory for Wikimedia and similar installations.
@@ -55,6 +69,7 @@ class LBFactory_Multi extends LBFactory {
 
 	/**
 	 * @param $conf array
+	 * @throws MWException
 	 */
 	function __construct( $conf ) {
 		$this->chronProt = new ChronologyProtector;
@@ -67,7 +82,7 @@ class LBFactory_Multi extends LBFactory {
 
 		foreach ( $required as $key ) {
 			if ( !isset( $conf[$key] ) ) {
-				throw new MWException( __CLASS__.": $key is required in configuration" );
+				throw new MWException( __CLASS__ . ": $key is required in configuration" );
 			}
 			$this->$key = $conf[$key];
 		}
@@ -130,21 +145,22 @@ class LBFactory_Multi extends LBFactory {
 		$section = $this->getSectionForWiki( $wiki );
 		if ( !isset( $this->mainLBs[$section] ) ) {
 			$lb = $this->newMainLB( $wiki, $section );
-			$this->chronProt->initLB( $lb );
 			$lb->parentInfo( array( 'id' => "main-$section" ) );
+			$this->chronProt->initLB( $lb );
 			$this->mainLBs[$section] = $lb;
 		}
 		return $this->mainLBs[$section];
 	}
 
 	/**
-	 * @param $cluster
-	 * @param $wiki
+	 * @param string $cluster
+	 * @param bool $wiki
+	 * @throws MWException
 	 * @return LoadBalancer
 	 */
 	function newExternalLB( $cluster, $wiki = false ) {
 		if ( !isset( $this->externalLoads[$cluster] ) ) {
-			throw new MWException( __METHOD__.": Unknown cluster \"$cluster\"" );
+			throw new MWException( __METHOD__ . ": Unknown cluster \"$cluster\"" );
 		}
 		$template = $this->serverTemplate;
 		if ( isset( $this->externalTemplateOverrides ) ) {
@@ -165,6 +181,7 @@ class LBFactory_Multi extends LBFactory {
 		if ( !isset( $this->extLBs[$cluster] ) ) {
 			$this->extLBs[$cluster] = $this->newExternalLB( $cluster, $wiki );
 			$this->extLBs[$cluster]->parentInfo( array( 'id' => "ext-$cluster" ) );
+			$this->chronProt->initLB( $this->extLBs[$cluster] );
 		}
 		return $this->extLBs[$cluster];
 	}
@@ -279,6 +296,9 @@ class LBFactory_Multi extends LBFactory {
 	function shutdown() {
 		foreach ( $this->mainLBs as $lb ) {
 			$this->chronProt->shutdownLB( $lb );
+		}
+		foreach ( $this->extLBs as $extLB ) {
+			$this->chronProt->shutdownLB( $extLB );
 		}
 		$this->chronProt->shutdown();
 		$this->commitMasterChanges();

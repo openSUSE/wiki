@@ -41,10 +41,8 @@ class SFTemplateInForm {
 		// they're part of an "#if" statement), so they're only
 		// recorded the first time they're found.
 		$template_title = Title::makeTitleSafe( NS_TEMPLATE, $this->mTemplateName );
-		$template_article = null;
-		if ( isset( $template_title ) ) $template_article = new Article( $template_title, 0 );
-		if ( isset( $template_article ) ) {
-			$templateText = $template_article->getContent();
+		if ( isset( $template_title ) ) {
+			$templateText = SFUtils::getPageText( $template_title );
 			// Ignore 'noinclude' sections and 'includeonly' tags.
 			$templateText = StringUtils::delimiterReplace( '<noinclude>', '</noinclude>', '', $templateText );
 			$templateText = strtr( $templateText, array( '<includeonly>' => '', '</includeonly>' => '' ) );
@@ -79,9 +77,10 @@ class SFTemplateInForm {
 				}
 			}
 
-			// Then, get calls to #set and #set_internal
-			// (thankfully, they have basically the same syntax).
-			if ( preg_match_all( '/#(set|set_internal):(.*?}}})\s*}}/mis', $templateText, $matches ) ) {
+			// Then, get calls to #set, #set_internal and
+			// #subobject. (Thankfully, they all have similar
+			// syntax).
+			if ( preg_match_all( '/#(set|set_internal|subobject):(.*?}}})\s*}}/mis', $templateText, $matches ) ) {
 				foreach ( $matches[2] as $match ) {
 					if ( preg_match_all( '/([^|{]*?)=\s*{{{([^|}]*)/mis', $match, $matches2 ) ) {
 						foreach ( $matches2[1] as $i => $propertyName ) {
@@ -96,7 +95,8 @@ class SFTemplateInForm {
 				}
 			}
 
-			// Then, get calls to #declare.
+			// Then, get calls to #declare. (This is really rather
+			// optional, since no one seems to use #declare.)
 			if ( preg_match_all( '/#declare:(.*?)}}/mis', $templateText, $matches ) ) {
 				foreach ( $matches[1] as $match ) {
 					$setValues = explode( '|', $match );

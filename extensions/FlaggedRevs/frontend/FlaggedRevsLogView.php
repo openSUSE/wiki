@@ -16,6 +16,8 @@ class FlaggedRevsLogView {
 		if ( !$title ) {
 			return ''; // sanity check
 		}
+		// Give grep a chance to find the usages:
+		// stable-logentry-config, stable-logentry-modify, stable-logentry-reset
 		if ( $skin ) {
 			$titleLink = $skin->link( $title, $title->getPrefixedText() );
 			$text = wfMessage( "stable-logentry-{$action}" )->rawParams( $titleLink )->escaped();
@@ -71,6 +73,8 @@ class FlaggedRevsLogView {
 		} else {
 			// Default version shown on page view
 			if ( isset( $pars['override'] ) ) {
+				// Give grep a chance to find the usages:
+				// stabilization-def-short-0, stabilization-def-short-1
 				$set[] = wfMessage( 'stabilization-def-short' )->inLanguage( $langObj )->text() .
 					wfMessage( 'colon-separator' )->inLanguage( $langObj )->text() .
 					wfMessage( 'stabilization-def-short-' . $pars['override'] )

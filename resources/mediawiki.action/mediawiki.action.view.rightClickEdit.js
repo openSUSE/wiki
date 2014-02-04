@@ -1,24 +1,26 @@
-/*
- * JavaScript to enable right click edit functionality
+/**
+ * JavaScript to enable right click edit functionality.
+ * When the user right-clicks in a heading, it will open the
+ * edit screen.
  */
-jQuery( function( $ ) {
+jQuery( function ( $ ) {
 	// Select all h1-h6 elements that contain editsection links
-	$( 'h1:has(.editsection a), ' +
-		'h2:has(.editsection a), ' +
-		'h3:has(.editsection a), ' +
-		'h4:has(.editsection a), ' +
-		'h5:has(.editsection a), ' +
-		'h6:has(.editsection a)'
-	).live( 'contextmenu', function( e ) {
-		// Get href of the [edit] link
-		var href = $(this).find( '.editsection a' ).attr( 'href' );
-		// Check if target is the anchor link itself. If so, don't suppress the context menu; this
-		// way the reader can still do things like copy URL, open in new tab etc.
-		var $target = $( e.target );
-		if ( !$target.is( 'a' ) && !$target.parent().is( '.editsection' ) ){
-			window.location = href;
+	// Don't use the ":has:(.mw-editsection a)" selector because it performs very bad.
+	// http://jsperf.com/jq-1-7-2-vs-jq-1-8-1-performance-of-mw-has/2
+	$( document ).on( 'contextmenu', 'h1, h2, h3, h4, h5, h6', function ( e ) {
+		var $edit = $( this ).find( '.mw-editsection a' );
+		if ( !$edit.length ) {
+			return;
+		}
+
+		// Headings can contain rich text.
+		// Make sure to not block contextmenu events on (other) anchor tags
+		// inside the heading (e.g. to do things like copy URL, open in new tab, ..).
+		// e.target can be the heading, but it can also be anything inside the heading.
+		if ( e.target.nodeName.toLowerCase() !== 'a' ) {
+			// Trigger native HTMLElement click instead of opening URL (bug 43052)
 			e.preventDefault();
-			return false;
+			$edit.get( 0 ).click();
 		}
 	} );
 } );

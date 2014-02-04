@@ -20,17 +20,17 @@ class SFTextAreaInput extends SFFormInput {
 	 * Constructor for the SFTextAreaInput class.
 	 *
 	 * @param String $input_number
-	 *		The number of the input in the form. For a simple HTML input element
-	 *      this should end up in the id attribute in the format 'input_<number>'.
+	 *	The number of the input in the form. For a simple HTML input element
+	 *	this should end up in the id attribute in the format 'input_<number>'.
 	 * @param String $cur_value
-	 *		The current value of the input field. For a simple HTML input
-	 *		element this should end up in the value attribute.
+	 *	The current value of the input field. For a simple HTML input
+	 *	element this should end up in the value attribute.
 	 * @param String $input_name
-	 *		The name of the input. For a simple HTML input element this should
-	 *		end up in the name attribute.
+	 *	The name of the input. For a simple HTML input element this should
+	 *	end up in the name attribute.
 	 * @param Array $other_args
-	 *		An associative array of other parameters that were present in the
-	 *		input definition.
+	 *	An associative array of other parameters that were present in the
+	 *	input definition.
 	 */
 	public function __construct( $input_number, $cur_value, $input_name, $disabled, $other_args ) {
 		
@@ -58,15 +58,34 @@ class SFTextAreaInput extends SFFormInput {
 	}
 
 	public static function getDefaultPropTypes() {
-		return array( '_txt' => array(), '_cod' => array() );
+		$defaultPropTypes = array( '_cod' => array() );
+		if ( defined( 'SMWDataItem::TYPE_STRING' ) ) {
+			// SMW < 1.9
+			$defaultPropTypes['_txt'] = array();
+		}
+		return $defaultPropTypes;
 	}
 
 	public static function getOtherPropTypesHandled() {
-		return array( '_wpg', '_str' );
+		$otherPropTypesHandled = array( '_wpg' );
+		if ( defined( 'SMWDataItem::TYPE_STRING' ) ) {
+			// SMW < 1.9
+			$otherPropTypesHandled[] = '_str';
+		} else {
+			$otherPropTypesHandled[] = '_txt';
+		}
+		return $otherPropTypesHandled;
 	}
 
 	public static function getOtherPropTypeListsHandled() {
-		return array( '_wpg', '_str' );
+		$otherPropTypeListsHandled = array( '_wpg' );
+		if ( defined( 'SMWDataItem::TYPE_STRING' ) ) {
+			// SMW < 1.9
+			$otherPropTypeListsHandled[] = '_str';
+		} else {
+			$otherPropTypeListsHandled[] = '_txt';
+		}
+		return $otherPropTypeListsHandled;
 	}
 
 	public static function getParameters() {
@@ -121,7 +140,9 @@ class SFTextAreaInput extends SFFormInput {
 
 		global $sfgTabIndex, $sfgFieldNum;
 
-		// Use a special ID for the free text field, for FCK's needs.
+		// Use a special ID for the free text field -
+		// this was originally done for FCKeditor, but maybe it's
+		// useful for other stuff too.
 		$input_id = $this->mInputName == 'sf_free_text' ? 'sf_free_text' : "input_$sfgFieldNum";
 
 		if ( $this->mUseWikieditor ) {

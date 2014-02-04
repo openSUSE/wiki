@@ -78,7 +78,7 @@ class SFCheckboxesInput extends SFMultiEnumInput {
 			// purposes as well as to clarify this element.
 			$text .= "\t" . Html::rawElement( 'label',
 				array( 'class' => $labelClass ),
-				$checkbox_input . ' ' . $label
+				$checkbox_input . '&nbsp;' . $label
 			) . "\n";
 			$sfgTabIndex++;
 			$sfgFieldNum++;

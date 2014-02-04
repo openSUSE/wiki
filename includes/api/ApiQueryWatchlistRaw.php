@@ -4,7 +4,7 @@
  *
  * Created on Oct 4, 2008
  *
- * Copyright © 2008 Roan Kattouw <Firstname>.<Lastname>@gmail.com
+ * Copyright © 2008 Roan Kattouw "<Firstname>.<Lastname>@gmail.com"
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,24 +71,27 @@ class ApiQueryWatchlistRaw extends ApiQueryGeneratorBase {
 
 		if ( isset( $params['continue'] ) ) {
 			$cont = explode( '|', $params['continue'] );
-			if ( count( $cont ) != 2 ) {
-				$this->dieUsage( "Invalid continue param. You should pass the " .
-					"original value returned by the previous query", "_badcontinue" );
-			}
+			$this->dieContinueUsageIf( count( $cont ) != 2 );
 			$ns = intval( $cont[0] );
-			$title = $this->getDB()->strencode( $this->titleToKey( $cont[1] ) );
+			$this->dieContinueUsageIf( strval( $ns ) !== $cont[0] );
+			$title = $this->getDB()->addQuotes( $cont[1] );
+			$op = $params['dir'] == 'ascending' ? '>' : '<';
 			$this->addWhere(
-				"wl_namespace > '$ns' OR " .
-				"(wl_namespace = '$ns' AND " .
-				"wl_title >= '$title')"
+				"wl_namespace $op $ns OR " .
+				"(wl_namespace = $ns AND " .
+				"wl_title $op= $title)"
 			);
 		}
 
+		$sort = ( $params['dir'] == 'descending' ? ' DESC' : '' );
 		// Don't ORDER BY wl_namespace if it's constant in the WHERE clause
 		if ( count( $params['namespace'] ) == 1 ) {
-			$this->addOption( 'ORDER BY', 'wl_title' );
+			$this->addOption( 'ORDER BY', 'wl_title' . $sort );
 		} else {
-			$this->addOption( 'ORDER BY', 'wl_namespace, wl_title' );
+			$this->addOption( 'ORDER BY', array(
+				'wl_namespace' . $sort,
+				'wl_title' . $sort
+			));
 		}
 		$this->addOption( 'LIMIT', $params['limit'] + 1 );
 		$res = $this->select( __METHOD__ );
@@ -98,8 +101,7 @@ class ApiQueryWatchlistRaw extends ApiQueryGeneratorBase {
 		foreach ( $res as $row ) {
 			if ( ++$count > $params['limit'] ) {
 				// We've reached the one extra which shows that there are additional pages to be had. Stop here...
-				$this->setContinueEnumParameter( 'continue', $row->wl_namespace . '|' .
-									$this->keyToTitle( $row->wl_title ) );
+				$this->setContinueEnumParameter( 'continue', $row->wl_namespace . '|' . $row->wl_title );
 				break;
 			}
 			$t = Title::makeTitle( $row->wl_namespace, $row->wl_title );
@@ -113,8 +115,7 @@ class ApiQueryWatchlistRaw extends ApiQueryGeneratorBase {
 				}
 				$fit = $this->getResult()->addValue( $this->getModuleName(), null, $vals );
 				if ( !$fit ) {
-					$this->setContinueEnumParameter( 'continue', $row->wl_namespace . '|' .
-									$this->keyToTitle( $row->wl_title ) );
+					$this->setContinueEnumParameter( 'continue', $row->wl_namespace . '|' . $row->wl_title );
 					break;
 				}
 			} else {
@@ -160,7 +161,14 @@ class ApiQueryWatchlistRaw extends ApiQueryGeneratorBase {
 			),
 			'token' => array(
 				ApiBase::PARAM_TYPE => 'string'
-			)
+			),
+			'dir' => array(
+				ApiBase::PARAM_DFLT => 'ascending',
+				ApiBase::PARAM_TYPE => array(
+					'ascending',
+					'descending'
+				),
+			),
 		);
 	}
 
@@ -176,6 +184,22 @@ class ApiQueryWatchlistRaw extends ApiQueryGeneratorBase {
 			'show' => 'Only list items that meet these criteria',
 			'owner' => 'The name of the user whose watchlist you\'d like to access',
 			'token' => 'Give a security token (settable in preferences) to allow access to another user\'s watchlist',
+			'dir' => 'Direction to sort the titles and namespaces in',
+		);
+	}
+
+	public function getResultProperties() {
+		return array(
+			'' => array(
+				'ns' => 'namespace',
+				'title' => 'string'
+			),
+			'changed' => array(
+				'changed' => array(
+					ApiBase::PROP_TYPE => 'timestamp',
+					ApiBase::PROP_NULLABLE => true
+				)
+			)
 		);
 	}
 
@@ -199,7 +223,7 @@ class ApiQueryWatchlistRaw extends ApiQueryGeneratorBase {
 		);
 	}
 
-	public function getVersion() {
-		return __CLASS__ . ': $Id$';
+	public function getHelpUrls() {
+		return 'https://www.mediawiki.org/wiki/API:Watchlistraw';
 	}
 }

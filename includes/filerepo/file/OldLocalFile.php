@@ -1,6 +1,21 @@
 <?php
 /**
- * Old file in the oldimage table
+ * Old file in the oldimage table.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
  * @ingroup FileAbstraction
@@ -17,18 +32,36 @@ class OldLocalFile extends LocalFile {
 	const CACHE_VERSION = 1;
 	const MAX_CACHE_ROWS = 20;
 
+	/**
+	 * @param $title Title
+	 * @param $repo FileRepo
+	 * @param $time null
+	 * @return OldLocalFile
+	 * @throws MWException
+	 */
 	static function newFromTitle( $title, $repo, $time = null ) {
 		# The null default value is only here to avoid an E_STRICT
 		if ( $time === null ) {
-			throw new MWException( __METHOD__.' got null for $time parameter' );
+			throw new MWException( __METHOD__ . ' got null for $time parameter' );
 		}
 		return new self( $title, $repo, $time, null );
 	}
 
+	/**
+	 * @param $title Title
+	 * @param $repo FileRepo
+	 * @param $archiveName
+	 * @return OldLocalFile
+	 */
 	static function newFromArchiveName( $title, $repo, $archiveName ) {
 		return new self( $title, $repo, null, $archiveName );
 	}
 
+	/**
+	 * @param $row
+	 * @param $repo FileRepo
+	 * @return OldLocalFile
+	 */
 	static function newFromRow( $row, $repo ) {
 		$title = Title::makeTitle( NS_FILE, $row->oi_name );
 		$file = new self( $title, $repo, null, $row->oi_archive_name );
@@ -40,7 +73,7 @@ class OldLocalFile extends LocalFile {
 	 * Create a OldLocalFile from a SHA-1 key
 	 * Do not call this except from inside a repo class.
 	 *
-	 * @param $sha1 string base-36 SHA-1
+	 * @param string $sha1 base-36 SHA-1
 	 * @param $repo LocalRepo
 	 * @param string|bool $timestamp MW_timestamp (optional)
 	 *
@@ -61,9 +94,10 @@ class OldLocalFile extends LocalFile {
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Fields in the oldimage table
+	 * @return array
 	 */
 	static function selectFields() {
 		return array(
@@ -89,22 +123,29 @@ class OldLocalFile extends LocalFile {
 	/**
 	 * @param $title Title
 	 * @param $repo FileRepo
-	 * @param $time String: timestamp or null to load by archive name
-	 * @param $archiveName String: archive name or null to load by timestamp
+	 * @param string $time timestamp or null to load by archive name
+	 * @param string $archiveName archive name or null to load by timestamp
+	 * @throws MWException
 	 */
 	function __construct( $title, $repo, $time, $archiveName ) {
 		parent::__construct( $title, $repo );
 		$this->requestedTime = $time;
 		$this->archive_name = $archiveName;
 		if ( is_null( $time ) && is_null( $archiveName ) ) {
-			throw new MWException( __METHOD__.': must specify at least one of $time or $archiveName' );
+			throw new MWException( __METHOD__ . ': must specify at least one of $time or $archiveName' );
 		}
 	}
 
+	/**
+	 * @return bool
+	 */
 	function getCacheKey() {
 		return false;
 	}
 
+	/**
+	 * @return String
+	 */
 	function getArchiveName() {
 		if ( !isset( $this->archive_name ) ) {
 			$this->load();
@@ -112,23 +153,30 @@ class OldLocalFile extends LocalFile {
 		return $this->archive_name;
 	}
 
+	/**
+	 * @return bool
+	 */
 	function isOld() {
 		return true;
 	}
 
+	/**
+	 * @return bool
+	 */
 	function isVisible() {
-		return $this->exists() && !$this->isDeleted(File::DELETED_FILE);
+		return $this->exists() && !$this->isDeleted( File::DELETED_FILE );
 	}
 
 	function loadFromDB() {
 		wfProfileIn( __METHOD__ );
+
 		$this->dataLoaded = true;
 		$dbr = $this->repo->getSlaveDB();
 		$conds = array( 'oi_name' => $this->getName() );
 		if ( is_null( $this->requestedTime ) ) {
 			$conds['oi_archive_name'] = $this->archive_name;
 		} else {
-			$conds[] = 'oi_timestamp = ' . $dbr->addQuotes( $dbr->timestamp( $this->requestedTime ) );
+			$conds['oi_timestamp'] = $dbr->timestamp( $this->requestedTime );
 		}
 		$row = $dbr->selectRow( 'oldimage', $this->getCacheFields( 'oi_' ),
 			$conds, __METHOD__, array( 'ORDER BY' => 'oi_timestamp DESC' ) );
@@ -137,9 +185,50 @@ class OldLocalFile extends LocalFile {
 		} else {
 			$this->fileExists = false;
 		}
+
 		wfProfileOut( __METHOD__ );
 	}
 
+	/**
+	 * Load lazy file metadata from the DB
+	 */
+	protected function loadExtraFromDB() {
+		wfProfileIn( __METHOD__ );
+
+		$this->extraDataLoaded = true;
+		$dbr = $this->repo->getSlaveDB();
+		$conds = array( 'oi_name' => $this->getName() );
+		if ( is_null( $this->requestedTime ) ) {
+			$conds['oi_archive_name'] = $this->archive_name;
+		} else {
+			$conds['oi_timestamp'] = $dbr->timestamp( $this->requestedTime );
+		}
+		// In theory the file could have just been renamed/deleted...oh well
+		$row = $dbr->selectRow( 'oldimage', $this->getLazyCacheFields( 'oi_' ),
+			$conds, __METHOD__, array( 'ORDER BY' => 'oi_timestamp DESC' ) );
+
+		if ( !$row ) { // fallback to master
+			$dbr = $this->repo->getMasterDB();
+			$row = $dbr->selectRow( 'oldimage', $this->getLazyCacheFields( 'oi_' ),
+				$conds, __METHOD__, array( 'ORDER BY' => 'oi_timestamp DESC' ) );
+		}
+
+		if ( $row ) {
+			foreach ( $this->unprefixRow( $row, 'oi_' ) as $name => $value ) {
+				$this->$name = $value;
+			}
+		} else {
+			wfProfileOut( __METHOD__ );
+			throw new MWException( "Could not find data for image '{$this->archive_name}'." );
+		}
+
+		wfProfileOut( __METHOD__ );
+	}
+
+	/**
+	 * @param $prefix string
+	 * @return array
+	 */
 	function getCacheFields( $prefix = 'img_' ) {
 		$fields = parent::getCacheFields( $prefix );
 		$fields[] = $prefix . 'archive_name';
@@ -147,10 +236,16 @@ class OldLocalFile extends LocalFile {
 		return $fields;
 	}
 
+	/**
+	 * @return string
+	 */
 	function getRel() {
 		return 'archive/' . $this->getHashPath() . $this->getArchiveName();
 	}
 
+	/**
+	 * @return string
+	 */
 	function getUrlRel() {
 		return 'archive/' . $this->getHashPath() . rawurlencode( $this->getArchiveName() );
 	}
@@ -161,7 +256,7 @@ class OldLocalFile extends LocalFile {
 
 		# Don't destroy file info of missing files
 		if ( !$this->fileExists ) {
-			wfDebug( __METHOD__.": file does not exist, aborting\n" );
+			wfDebug( __METHOD__ . ": file does not exist, aborting\n" );
 			wfProfileOut( __METHOD__ );
 			return;
 		}
@@ -169,17 +264,18 @@ class OldLocalFile extends LocalFile {
 		$dbw = $this->repo->getMasterDB();
 		list( $major, $minor ) = self::splitMime( $this->mime );
 
-		wfDebug(__METHOD__.': upgrading '.$this->archive_name." to the current schema\n");
+		wfDebug( __METHOD__ . ': upgrading ' . $this->archive_name . " to the current schema\n" );
 		$dbw->update( 'oldimage',
 			array(
-				'oi_width' => $this->width,
-				'oi_height' => $this->height,
-				'oi_bits' => $this->bits,
+				'oi_size'       => $this->size, // sanity
+				'oi_width'      => $this->width,
+				'oi_height'     => $this->height,
+				'oi_bits'       => $this->bits,
 				'oi_media_type' => $this->media_type,
 				'oi_major_mime' => $major,
 				'oi_minor_mime' => $minor,
-				'oi_metadata' => $this->metadata,
-				'oi_sha1' => $this->sha1,
+				'oi_metadata'   => $this->metadata,
+				'oi_sha1'       => $this->sha1,
 			), array(
 				'oi_name' => $this->getName(),
 				'oi_archive_name' => $this->archive_name ),
@@ -195,7 +291,7 @@ class OldLocalFile extends LocalFile {
 	 */
 	function isDeleted( $field ) {
 		$this->load();
-		return ($this->deleted & $field) == $field;
+		return ( $this->deleted & $field ) == $field;
 	}
 
 	/**
@@ -219,47 +315,52 @@ class OldLocalFile extends LocalFile {
 		$this->load();
 		return Revision::userCanBitfield( $this->deleted, $field, $user );
 	}
-	
+
 	/**
 	 * Upload a file directly into archive. Generally for Special:Import.
-	 * 
-	 * @param $srcPath string File system path of the source file
-	 * @param $archiveName string Full archive name of the file, in the form 
-	 * 	$timestamp!$filename, where $filename must match $this->getName()
 	 *
+	 * @param string $srcPath File system path of the source file
+	 * @param string $archiveName Full archive name of the file, in the form
+	 *     $timestamp!$filename, where $filename must match $this->getName()
+	 *
+	 * @param $timestamp string
+	 * @param $comment string
+	 * @param $user
+	 * @param $flags int
 	 * @return FileRepoStatus
 	 */
 	function uploadOld( $srcPath, $archiveName, $timestamp, $comment, $user, $flags = 0 ) {
 		$this->lock();
-		
+
 		$dstRel = 'archive/' . $this->getHashPath() . $archiveName;
 		$status = $this->publishTo( $srcPath, $dstRel,
 			$flags & File::DELETE_SOURCE ? FileRepo::DELETE_SOURCE : 0
 		);
-		
+
 		if ( $status->isGood() ) {
 			if ( !$this->recordOldUpload( $srcPath, $archiveName, $timestamp, $comment, $user ) ) {
 				$status->fatal( 'filenotfound', $srcPath );
 			}
 		}
-		
+
 		$this->unlock();
-		
+
 		return $status;
 	}
-	
+
 	/**
 	 * Record a file upload in the oldimage table, without adding log entries.
-	 * 
-	 * @param $srcPath string File system path to the source file
-	 * @param $archiveName string The archive name of the file
-	 * @param $comment string Upload comment
+	 *
+	 * @param string $srcPath File system path to the source file
+	 * @param string $archiveName The archive name of the file
+	 * @param $timestamp string
+	 * @param string $comment Upload comment
 	 * @param $user User User who did this upload
 	 * @return bool
 	 */
 	function recordOldUpload( $srcPath, $archiveName, $timestamp, $comment, $user ) {
 		$dbw = $this->repo->getMasterDB();
-		$dbw->begin();
+		$dbw->begin( __METHOD__ );
 
 		$dstPath = $this->repo->getZonePath( 'public' ) . '/' . $this->getRel();
 		$props = $this->repo->getFileProps( $dstPath );
@@ -287,9 +388,9 @@ class OldLocalFile extends LocalFile {
 			), __METHOD__
 		);
 
-		$dbw->commit();
+		$dbw->commit( __METHOD__ );
 
 		return true;
 	}
-	
+
 }

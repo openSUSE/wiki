@@ -1,4 +1,24 @@
 <?php
+/**
+ * Class for managing forking command line scripts.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
+ * @file
+ */
 
 /**
  * Class for managing forking command line scripts.
@@ -33,7 +53,7 @@ class ForkController {
 	const RESTART_ON_ERROR = 1;
 
 	public function __construct( $numProcs, $flags = 0 ) {
-		if ( php_sapi_name() != 'cli' ) {
+		if ( PHP_SAPI != 'cli' ) {
 			throw new MWException( "ForkController cannot be used from the web." );
 		}
 		$this->procsToStart = $numProcs;
@@ -49,6 +69,7 @@ class ForkController {
 	 * This will return 'child' in the child processes. In the parent process,
 	 * it will run until all the child processes exit or a TERM signal is
 	 * received. It will then return 'done'.
+	 * @return string
 	 */
 	public function start() {
 		// Trap SIGTERM
@@ -100,7 +121,9 @@ class ForkController {
 			if ( function_exists( 'pcntl_signal_dispatch' ) ) {
 				pcntl_signal_dispatch();
 			} else {
-				declare (ticks=1) { $status = $status; }
+				declare( ticks = 1 ) {
+					$status = $status;
+				}
 			}
 			// Respond to TERM signal
 			if ( $this->termReceived ) {
@@ -116,8 +139,10 @@ class ForkController {
 
 	protected function prepareEnvironment() {
 		global $wgMemc;
-		// Don't share DB or memcached connections
+		// Don't share DB, storage, or memcached connections
 		wfGetLBFactory()->destroyInstance();
+		FileBackendGroup::destroySingleton();
+		LockManagerGroup::destroySingletons();
 		ObjectCache::clear();
 		$wgMemc = null;
 	}

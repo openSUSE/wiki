@@ -32,42 +32,53 @@ class SFCreateTemplate extends SpecialPage {
 		// getProperties() functions stop requiring a limit
 		$options = new SMWRequestOptions();
 		$options->limit = 500;
-		$used_properties = smwfGetStore()->getPropertiesSpecial( $options );
+		$used_properties = SFUtils::getSMWStore()->getPropertiesSpecial( $options );
+		if ( $used_properties instanceof SMW\SQLStore\PropertiesCollector ) {
+			// SMW 1.9+
+			$used_properties = $used_properties->runCollector();
+		}
 		foreach ( $used_properties as $property ) {
-			if ( $property[0] instanceof SMWDIProperty ) {
-				// SMW 1.6+
-				$propName = $property[0]->getKey();
-				if ( $propName{0} != '_' ) {
-					$all_properties[] = str_replace( '_', ' ', $propName );
-				}
-			} else {
-				$all_properties[] = $property[0]->getWikiValue();
+			// Skip over properties that are errors. (This
+			// shouldn't happen, but it sometimes does.)
+			if ( !method_exists( $property[0], 'getKey' ) ) {
+				continue;
+			}
+			$propName = $property[0]->getKey();
+			if ( $propName{0} != '_' ) {
+				$all_properties[] = str_replace( '_', ' ', $propName );
 			}
 		}
 
-		$unused_properties = smwfGetStore()->getUnusedPropertiesSpecial( $options );
+		$unused_properties = SFUtils::getSMWStore()->getUnusedPropertiesSpecial( $options );
+		if ( $unused_properties instanceof SMW\SQLStore\UnusedPropertiesCollector ) {
+			// SMW 1.9+
+			$unused_properties = $unused_properties->runCollector();
+		}
 		foreach ( $unused_properties as $property ) {
-			if ( $property instanceof SMWDIProperty ) {
-				// SMW 1.6+
-				$all_properties[] = str_replace( '_' , ' ', $property->getKey() );
-			} else {
-				$all_properties[] = $property->getWikiValue();
+			// Skip over properties that are errors. (This
+			// shouldn't happen, but it sometimes does.)
+			if ( !method_exists( $property, 'getKey' ) ) {
+				continue;
 			}
+			$all_properties[] = str_replace( '_' , ' ', $property->getKey() );
 		}
 
-		// Sort properties list alphabetically.
+		// Sort properties list alphabetically, and get unique values
+		// (for SQLStore3, getPropertiesSpecial() seems to get unused
+		// properties as well.
 		sort( $all_properties );
+		$all_properties = array_unique( $all_properties );
 		return $all_properties;
 	}
 
-	public static function printPropertiesDropdown( $all_properties, $id, $selected_property = null ) {
+	public static function printPropertiesComboBox( $all_properties, $id, $selected_property = null ) {
 		$selectBody = "<option value=\"\"></option>\n";
 		foreach ( $all_properties as $prop_name ) {
 			$optionAttrs = array( 'value' => $prop_name );
 			if ( $selected_property == $prop_name ) { $optionAttrs['selected'] = 'selected'; }
 			$selectBody .= Html::element( 'option', $optionAttrs, $prop_name ) . "\n";
 		}
-		return Html::rawElement( 'select', array( 'name' => "semantic_property_$id" ), $selectBody ) . "\n";
+		return Html::rawElement( 'select', array( 'name' => "semantic_property_$id", 'class' => 'sfComboBox' ), $selectBody ) . "\n";
 	}
 
 	public static function printFieldEntryBox( $id, $all_properties, $display = true ) {
@@ -82,7 +93,7 @@ class SFCreateTemplate extends SpecialPage {
 				array( 'size' => '15' )
 			) . "\n";
 
-		$dropdown_html = self::printPropertiesDropdown( $all_properties, $id );
+		$dropdown_html = self::printPropertiesComboBox( $all_properties, $id );
 		$text .= "\t" . wfMessage( 'sf_createtemplate_semanticproperty' )->text() . ' ' . $dropdown_html . "</p>\n";
 		$text .= "\t<p>" . '<input type="checkbox" name="is_list_' . $id . '" /> ' . wfMessage( 'sf_createtemplate_fieldislist' )->text() . "\n";
 		$text .= '	&#160;&#160;<input type="button" value="' . wfMessage( 'sf_createtemplate_deletefield' )->text() . '" class="deleteField" />' . "\n";
@@ -181,6 +192,13 @@ END;
 		$save_page = $wgRequest->getCheck( 'wpSave' );
 		$preview_page = $wgRequest->getCheck( 'wpPreview' );
 		if ( $save_page || $preview_page ) {
+			$validToken = $this->getUser()->matchEditToken( $wgRequest->getVal( 'csrf' ), 'CreateTemplate' );
+			if ( !$validToken ) {
+				$text = "This appears to be a cross-site request forgery; canceling save.";
+				$wgOut->addHTML( $text );
+				return;
+			}
+
 			$fields = array();
 			// Cycle through the query values, setting the
 			// appropriate local variables.
@@ -239,13 +257,18 @@ END;
 		$text .= "\t" . Html::element( 'legend', null, wfMessage( 'sf_createtemplate_aggregation' )->text() ) . "\n";
 		$text .= "\t" . Html::element( 'p', null, wfMessage( 'sf_createtemplate_aggregationdesc' )->text() ) . "\n";
 		$text .= "\t<p>" . wfMessage( 'sf_createtemplate_semanticproperty' )->escaped() . ' ' .
-			self::printPropertiesDropdown( $all_properties, "aggregation" ) . "</p>\n";
+			self::printPropertiesComboBox( $all_properties, "aggregation" ) . "</p>\n";
 		$text .= "\t<p>" . wfMessage( 'sf_createtemplate_aggregationlabel' )->escaped() . ' ' .
 			Html::input( 'aggregation_label', null, 'text',
 				array( 'size' => '25' ) ) .
 			"</p>\n";
 		$text .= "\t</fieldset>\n";
 		$text .= self::printTemplateStyleInput( 'template_format' );
+
+		if ( method_exists( 'User', 'getEditToken' ) ) {
+			$text .= "\t" . Html::hidden( 'csrf', $this->getUser()->getEditToken( 'CreateTemplate' ) ) . "\n";
+		}
+
 		$save_button_text = wfMessage( 'savearticle' )->escaped();
 		$preview_button_text = wfMessage( 'preview' )->escaped();
 		$text .= <<<END

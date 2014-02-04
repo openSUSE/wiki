@@ -4,7 +4,7 @@
  *
  * Created on Oct 16, 2006
  *
- * Copyright © 2006 Yuri Astrakhan <Firstname><Lastname>@gmail.com
+ * Copyright © 2006 Yuri Astrakhan "<Firstname><Lastname>@gmail.com"
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,10 +35,10 @@ class ApiQueryContributions extends ApiQueryBase {
 		parent::__construct( $query, $moduleName, 'uc' );
 	}
 
-	private $params, $prefixMode, $userprefix, $multiUserMode, $usernames;
+	private $params, $prefixMode, $userprefix, $multiUserMode, $usernames, $parentLens;
 	private $fld_ids = false, $fld_title = false, $fld_timestamp = false,
 			$fld_comment = false, $fld_parsedcomment = false, $fld_flags = false,
-			$fld_patrolled = false, $fld_tags = false, $fld_size = false;
+			$fld_patrolled = false, $fld_tags = false, $fld_size = false, $fld_sizediff = false;
 
 	public function execute() {
 		// Parse some parameters
@@ -48,8 +48,9 @@ class ApiQueryContributions extends ApiQueryBase {
 		$this->fld_ids = isset( $prop['ids'] );
 		$this->fld_title = isset( $prop['title'] );
 		$this->fld_comment = isset( $prop['comment'] );
-		$this->fld_parsedcomment = isset ( $prop['parsedcomment'] );
+		$this->fld_parsedcomment = isset( $prop['parsedcomment'] );
 		$this->fld_size = isset( $prop['size'] );
+		$this->fld_sizediff = isset( $prop['sizediff'] );
 		$this->fld_flags = isset( $prop['flags'] );
 		$this->fld_timestamp = isset( $prop['timestamp'] );
 		$this->fld_patrolled = isset( $prop['patrolled'] );
@@ -81,6 +82,17 @@ class ApiQueryContributions extends ApiQueryBase {
 
 		// Do the actual query.
 		$res = $this->select( __METHOD__ );
+
+		if ( $this->fld_sizediff ) {
+			$revIds = array();
+			foreach ( $res as $row ) {
+				if ( $row->rev_parent_id ) {
+					$revIds[] = $row->rev_parent_id;
+				}
+			}
+			$this->parentLens = Revision::getParentLengths( $this->getDB(), $revIds );
+			$res->rewind(); // reset
+		}
 
 		// Initialise some variables
 		$count = 0;
@@ -148,17 +160,15 @@ class ApiQueryContributions extends ApiQueryBase {
 		// Handle continue parameter
 		if ( $this->multiUserMode && !is_null( $this->params['continue'] ) ) {
 			$continue = explode( '|', $this->params['continue'] );
-			if ( count( $continue ) != 2 ) {
-				$this->dieUsage( 'Invalid continue param. You should pass the original ' .
-					'value returned by the previous query', '_badcontinue' );
-			}
-			$encUser = $this->getDB()->strencode( $continue[0] );
-			$encTS = wfTimestamp( TS_MW, $continue[1] );
+			$this->dieContinueUsageIf( count( $continue ) != 2 );
+			$db = $this->getDB();
+			$encUser = $db->addQuotes( $continue[0] );
+			$encTS = $db->addQuotes( $db->timestamp( $continue[1] ) );
 			$op = ( $this->params['dir'] == 'older' ? '<' : '>' );
 			$this->addWhere(
-				"rev_user_text $op '$encUser' OR " .
-				"(rev_user_text = '$encUser' AND " .
-				"rev_timestamp $op= '$encTS')"
+				"rev_user_text $op $encUser OR " .
+				"(rev_user_text = $encUser AND " .
+				"rev_timestamp $op= $encTS)"
 			);
 		}
 
@@ -185,7 +195,7 @@ class ApiQueryContributions extends ApiQueryBase {
 		if ( !is_null( $show ) ) {
 			$show = array_flip( $show );
 			if ( ( isset( $show['minor'] ) && isset( $show['!minor'] ) )
-			   		|| ( isset( $show['patrolled'] ) && isset( $show['!patrolled'] ) ) ) {
+					|| ( isset( $show['patrolled'] ) && isset( $show['!patrolled'] ) ) ) {
 				$this->dieUsageMsg( 'show' );
 			}
 
@@ -210,7 +220,7 @@ class ApiQueryContributions extends ApiQueryBase {
 		) );
 
 		if ( isset( $show['patrolled'] ) || isset( $show['!patrolled'] ) ||
-				 $this->fld_patrolled ) {
+				$this->fld_patrolled ) {
 			if ( !$user->useRCPatrol() && !$user->useNPPatrol() ) {
 				$this->dieUsage( 'You need the patrol right to request the patrolled flag', 'permissiondenied' );
 			}
@@ -243,8 +253,9 @@ class ApiQueryContributions extends ApiQueryBase {
 		$this->addFieldsIf( 'page_latest', $this->fld_flags );
 		// $this->addFieldsIf( 'rev_text_id', $this->fld_ids ); // Should this field be exposed?
 		$this->addFieldsIf( 'rev_comment', $this->fld_comment || $this->fld_parsedcomment );
-		$this->addFieldsIf( 'rev_len', $this->fld_size );
-		$this->addFieldsIf( array( 'rev_minor_edit', 'rev_parent_id' ), $this->fld_flags );
+		$this->addFieldsIf( 'rev_len', $this->fld_size || $this->fld_sizediff );
+		$this->addFieldsIf( 'rev_minor_edit', $this->fld_flags );
+		$this->addFieldsIf( 'rev_parent_id', $this->fld_flags || $this->fld_sizediff || $this->fld_ids );
 		$this->addFieldsIf( 'rc_patrolled', $this->fld_patrolled );
 
 		if ( $this->fld_tags ) {
@@ -257,8 +268,7 @@ class ApiQueryContributions extends ApiQueryBase {
 			$this->addTables( 'change_tag' );
 			$this->addJoinConds( array( 'change_tag' => array( 'INNER JOIN', array( 'rev_id=ct_rev_id' ) ) ) );
 			$this->addWhereFld( 'ct_tag', $this->params['tag'] );
-			global $wgOldChangeTagsIndex;
-			$index['change_tag'] = $wgOldChangeTagsIndex ? 'ct_tag' : 'change_tag_tag_id';
+			$index['change_tag'] = 'change_tag_tag_id';
 		}
 
 		if ( $this->params['toponly'] ) {
@@ -286,6 +296,10 @@ class ApiQueryContributions extends ApiQueryBase {
 			$vals['pageid'] = intval( $row->rev_page );
 			$vals['revid'] = intval( $row->rev_id );
 			// $vals['textid'] = intval( $row->rev_text_id ); // todo: Should this field be exposed?
+
+			if ( !is_null( $row->rev_parent_id ) ) {
+				$vals['parentid'] = intval( $row->rev_parent_id );
+			}
 		}
 
 		$title = Title::makeTitle( $row->page_namespace, $row->page_title );
@@ -330,6 +344,11 @@ class ApiQueryContributions extends ApiQueryBase {
 
 		if ( $this->fld_size && !is_null( $row->rev_len ) ) {
 			$vals['size'] = intval( $row->rev_len );
+		}
+
+		if ( $this->fld_sizediff && !is_null( $row->rev_len ) && !is_null( $row->rev_parent_id ) ) {
+			$parentLen = isset( $this->parentLens[$row->rev_parent_id] ) ? $this->parentLens[$row->rev_parent_id] : 0;
+			$vals['sizediff'] = intval( $row->rev_len - $parentLen );
 		}
 
 		if ( $this->fld_tags ) {
@@ -397,6 +416,7 @@ class ApiQueryContributions extends ApiQueryBase {
 					'comment',
 					'parsedcomment',
 					'size',
+					'sizediff',
 					'flags',
 					'patrolled',
 					'tags'
@@ -425,7 +445,7 @@ class ApiQueryContributions extends ApiQueryBase {
 			'end' => 'The end timestamp to return to',
 			'continue' => 'When more results are available, use this to continue',
 			'user' => 'The users to retrieve contributions for',
-			'userprefix' => "Retrieve contibutions for all users whose names begin with this value. Overrides {$p}user",
+			'userprefix' => "Retrieve contributions for all users whose names begin with this value. Overrides {$p}user",
 			'dir' => $this->getDirectionDescription( $p ),
 			'namespace' => 'Only list contributions in these namespaces',
 			'prop' => array(
@@ -435,7 +455,8 @@ class ApiQueryContributions extends ApiQueryBase {
 				' timestamp      - Adds the timestamp of the edit',
 				' comment        - Adds the comment of the edit',
 				' parsedcomment  - Adds the parsed comment of the edit',
-				' size           - Adds the size of the page',
+				' size           - Adds the new size of the edit',
+				' sizediff       - Adds the size delta of the edit against its parent',
 				' flags          - Adds flags of the edit',
 				' patrolled      - Tags patrolled edits',
 				' tags           - Lists tags for the edit',
@@ -444,6 +465,65 @@ class ApiQueryContributions extends ApiQueryBase {
 					"NOTE: if {$p}show=patrolled or {$p}show=!patrolled is set, revisions older than \$wgRCMaxAge ($wgRCMaxAge) won't be shown", ),
 			'tag' => 'Only list revisions tagged with this tag',
 			'toponly' => 'Only list changes which are the latest revision',
+		);
+	}
+
+	public function getResultProperties() {
+		return array(
+			'' => array(
+				'userid' => 'integer',
+				'user' => 'string',
+				'userhidden' => 'boolean'
+			),
+			'ids' => array(
+				'pageid' => 'integer',
+				'revid' => 'integer',
+				'parentid' => array(
+					ApiBase::PROP_TYPE => 'integer',
+					ApiBase::PROP_NULLABLE => true
+				)
+			),
+			'title' => array(
+				'ns' => 'namespace',
+				'title' => 'string'
+			),
+			'timestamp' => array(
+				'timestamp' => 'timestamp'
+			),
+			'flags' => array(
+				'new' => 'boolean',
+				'minor' => 'boolean',
+				'top' => 'boolean'
+			),
+			'comment' => array(
+				'commenthidden' => 'boolean',
+				'comment' => array(
+					ApiBase::PROP_TYPE => 'string',
+					ApiBase::PROP_NULLABLE => true
+				)
+			),
+			'parsedcomment' => array(
+				'commenthidden' => 'boolean',
+				'parsedcomment' => array(
+					ApiBase::PROP_TYPE => 'string',
+					ApiBase::PROP_NULLABLE => true
+				)
+			),
+			'patrolled' => array(
+				'patrolled' => 'boolean'
+			),
+			'size' => array(
+				'size' => array(
+					ApiBase::PROP_TYPE => 'integer',
+					ApiBase::PROP_NULLABLE => true
+				)
+			),
+			'sizediff' => array(
+				'sizediff' => array(
+					ApiBase::PROP_TYPE => 'integer',
+					ApiBase::PROP_NULLABLE => true
+				)
+			)
 		);
 	}
 
@@ -469,9 +549,5 @@ class ApiQueryContributions extends ApiQueryBase {
 
 	public function getHelpUrls() {
 		return 'https://www.mediawiki.org/wiki/API:Usercontribs';
-	}
-
-	public function getVersion() {
-		return __CLASS__ . ': $Id$';
 	}
 }

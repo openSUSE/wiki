@@ -1,6 +1,21 @@
 <?php
 /**
- * Database load monitoring
+ * Database load monitoring.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
  * @ingroup Database
@@ -22,7 +37,7 @@ interface LoadMonitor {
 	/**
 	 * Perform pre-connection load ratio adjustment.
 	 * @param $loads array
-	 * @param $group String: the selected query group
+	 * @param string $group the selected query group
 	 * @param $wiki String
 	 */
 	function scaleLoads( &$loads, $group = false, $wiki = false );
@@ -120,18 +135,19 @@ class LoadMonitor_MySQL implements LoadMonitor {
 		$requestRate = 10;
 
 		global $wgMemc;
-		if ( empty( $wgMemc ) )
+		if ( empty( $wgMemc ) ) {
 			$wgMemc = wfGetMainCache();
+		}
 
 		$masterName = $this->parent->getServerName( 0 );
 		$memcKey = wfMemcKey( 'lag_times', $masterName );
 		$times = $wgMemc->get( $memcKey );
-		if ( $times ) {
+		if ( is_array( $times ) ) {
 			# Randomly recache with probability rising over $expiry
 			$elapsed = time() - $times['timestamp'];
 			$chance = max( 0, ( $expiry - $elapsed ) * $requestRate );
 			if ( mt_rand( 0, $chance ) != 0 ) {
-				unset( $times['timestamp'] );
+				unset( $times['timestamp'] ); // hide from caller
 				wfProfileOut( __METHOD__ );
 				return $times;
 			}
@@ -141,10 +157,21 @@ class LoadMonitor_MySQL implements LoadMonitor {
 		}
 
 		# Cache key missing or expired
+		if ( $wgMemc->add( "$memcKey:lock", 1, 10 ) ) {
+			# Let this process alone update the cache value
+			$unlocker = new ScopedCallback( function() use ( $wgMemc, $memcKey ) {
+				$wgMemc->delete( $memcKey );
+			} );
+		} elseif ( is_array( $times ) ) {
+			# Could not acquire lock but an old cache exists, so use it
+			unset( $times['timestamp'] ); // hide from caller
+			wfProfileOut( __METHOD__ );
+			return $times;
+		}
 
 		$times = array();
 		foreach ( $serverIndexes as $i ) {
-			if ($i == 0) { # Master
+			if ( $i == 0 ) { # Master
 				$times[$i] = 0;
 			} elseif ( false !== ( $conn = $this->parent->getAnyOpenConnection( $i ) ) ) {
 				$times[$i] = $conn->getLag();
@@ -155,14 +182,11 @@ class LoadMonitor_MySQL implements LoadMonitor {
 
 		# Add a timestamp key so we know when it was cached
 		$times['timestamp'] = time();
-		$wgMemc->set( $memcKey, $times, $expiry );
-
-		# But don't give the timestamp to the caller
-		unset($times['timestamp']);
-		$lagTimes = $times;
+		$wgMemc->set( $memcKey, $times, $expiry + 10 );
+		unset( $times['timestamp'] ); // hide from caller
 
 		wfProfileOut( __METHOD__ );
-		return $lagTimes;
+		return $times;
 	}
 
 	/**
@@ -174,7 +198,7 @@ class LoadMonitor_MySQL implements LoadMonitor {
 		if ( !$threshold ) {
 			return 0;
 		}
-		$status = $conn->getMysqlStatus("Thread%");
+		$status = $conn->getMysqlStatus( "Thread%" );
 		if ( $status['Threads_running'] > $threshold ) {
 			$server = $conn->getProperty( 'mServer' );
 			wfLogDBError( "LB backoff from $server - Threads_running = {$status['Threads_running']}\n" );
@@ -184,4 +208,3 @@ class LoadMonitor_MySQL implements LoadMonitor {
 		}
 	}
 }
-

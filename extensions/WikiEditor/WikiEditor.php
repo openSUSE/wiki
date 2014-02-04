@@ -46,10 +46,6 @@ $wgWikiEditorFeatures = array(
 
 );
 
-// If set to true and the ClickTracking extension is installed, track clicks
-// on the toolbar buttons
-$wgWikiEditorToolbarClickTracking = false;
-
 /* Setup */
 
 $wgExtensionCredits['other'][] = array(
@@ -124,6 +120,20 @@ $wgResourceModules += array(
 			'jquery.wikiEditor.dialogs',
 			'jquery.wikiEditor.toolbar.i18n',
 			'jquery.suggestions',
+			'mediawiki.Title',
+			'mediawiki.jqueryMsg',
+		),
+		'messages' => array(
+			'wikieditor-toolbar-tool-file-title',
+			'wikieditor-toolbar-file-target',
+			'wikieditor-toolbar-file-caption',
+			'wikieditor-toolbar-file-size',
+			'wikieditor-toolbar-file-float',
+			'wikieditor-toolbar-file-default',
+			'wikieditor-toolbar-file-format-none',
+			'wikieditor-toolbar-file-format',
+			'wikieditor-toolbar-tool-file-insert',
+			'wikieditor-toolbar-tool-file-cancel',
 		),
 	),
 	'jquery.wikiEditor.highlight' => $wikiEditorTpl + array(
@@ -229,6 +239,7 @@ $wgResourceModules += array(
 			'wikieditor-toolbar-tool-link-int-target-status-invalid',
 			'wikieditor-toolbar-tool-link-int-target-status-external',
 			'wikieditor-toolbar-tool-link-int-target-status-loading',
+			'wikieditor-toolbar-tool-link-int-target-status-disambig',
 			'wikieditor-toolbar-tool-link-int-invalid',
 			'wikieditor-toolbar-tool-link-lookslikeinternal',
 			'wikieditor-toolbar-tool-link-lookslikeinternal-int',
@@ -328,6 +339,9 @@ $wgResourceModules += array(
 			'wikieditor-toolbar-characters-page-thai',
 			'wikieditor-toolbar-characters-page-lao',
 			'wikieditor-toolbar-characters-page-khmer',
+			'wikieditor-toolbar-characters-endash',
+			'wikieditor-toolbar-characters-emdash',
+			'wikieditor-toolbar-characters-minus',
 			/* Help Section */
 			'wikieditor-toolbar-section-help',
 			'wikieditor-toolbar-help-heading-description',

@@ -47,7 +47,7 @@ Your name will appear in page histories as the user responsible for any changes.
 	'replacetext_blankwarning' => "'''Warning:''' Because the replacement string is blank, this operation will not be reversible.",
 	'replacetext_continue' => 'Continue',
 	// content messages
-	'replacetext_editsummary' => 'Text replace - "$1" to "$2"',
+	'replacetext_editsummary' => 'Text replacement - "$1" to "$2"',
 	'right-replacetext' => 'Make string replacements on the entire wiki',
 	'action-replacetext' => 'make string replacements on the entire wiki',
 );
@@ -61,22 +61,65 @@ Your name will appear in page histories as the user responsible for any changes.
  * @author McMonster
  * @author Nike
  * @author Purodha
+ * @author Shirayuki
  * @author Umherirrender
  */
 $messages['qqq'] = array(
-	'replacetext' => "This message is displayed as a title of this extension's special page.",
-	'replacetext-desc' => '{{desc}}
-
+	'replacetext' => '{{doc-special|ReplaceText}}',
+	'replacetext-desc' => '{{desc|name=Replace Text|url=http://www.mediawiki.org/wiki/Extension:Replace_Text}}
 {{Identical|Content page}}',
-	'replacetext_docu' => "Description of how to use this extension, displayed on the extension's special page ([[Special:ReplaceText]]). The translation of 'Continue' should correspond with message {{msg-mw|Replacetext continue}}.",
+	'replacetext_docu' => "Description of how to use this extension, displayed on the extension's special page ([[Special:ReplaceText]]).
+
+Refers to {{msg-mw|Replacetext continue}}.",
 	'replacetext_originaltext' => 'Label of the text field, where user enters original piece of text, which would be replaced.',
-	'replacetext_regexdocu' => '* "Original text" - {{msg-mw|replacetext_originaltext}}
-* "Replacement text" - {{msg-mw|replacetext_replacementtext}}',
-	'replacetext_choosepagesforedit' => 'Displayed over the list of pages where the given text was found.',
+	'replacetext_regexdocu' => '<code>$1</code> is not a parameter.
+
+Refers to the following messages:
+* {{msg-mw|Replacetext originaltext}}
+* {{msg-mw|Replacetext replacementtext}}',
+	'replacetext_choosepagesforedit' => 'Displayed over the list of pages where the given text was found. Parameters:
+* $1 - target code
+* $2 - replacement code
+* $3 - number of pages for edit',
+	'replacetext_choosepagesformove' => 'Used in [[Special:ReplaceText]].
+
+This message is followed by list of the pages.
+
+Parameters:
+* $1 - target string
+* $2 - replacement string
+* $3 - number of pages',
+	'replacetext_cannotmove' => 'Used in [[Special:ReplaceText]].
+
+This message is followed by list of the pages.
+
+Parameters:
+* $1 - number of pages which cannot be moved',
+	'replacetext_invertselections' => '{{Identical|Invert selection}}',
 	'replacetext_replace' => 'Label of the button, which triggers the begin of replacment.
 
 {{Identical|Replace}}',
+	'replacetext_success' => 'Used as success message in [[Special:ReplaceText]]. Parameters:
+* $1 - target string
+* $2 - replacement string
+* $3 - number of affected pages',
+	'replacetext_noreplacement' => 'Used in [[Special:ReplaceText]]. Parameters:
+* $1 - target string
+See also:
+* {{msg-mw|Replacetext nomove}}',
+	'replacetext_nomove' => 'Used in [[Special:ReplaceText]]. Parameters:
+* $1 - target string
+See also:
+* {{msg-mw|Replacetext noreplacement}}',
+	'replacetext_nosuchcategory' => 'Used in [[Special:ReplaceText]]. Parameters:
+* $1 - category name (with link)',
+	'replacetext_warning' => 'Used in [[Special:ReplaceText]]. Parameters:
+* $1 - number of pages
+* $2 - replacement string',
 	'replacetext_continue' => '{{Identical|Continue}}',
+	'replacetext_editsummary' => 'Used as Edit Summary in [[Special:ReplaceText]]. Parameters:
+* $1 - target string
+* $2 - replacement string',
 	'right-replacetext' => '{{doc-right|replacetext}}',
 	'action-replacetext' => '{{doc-action|replacetext}}',
 );
@@ -113,7 +156,7 @@ $messages['af'] = array(
 	'replacetext_blankwarning' => 'Omdat u teks met niks vervang kan hierdie aksie nie ongedaan gemaak word nie.
 Wil u voortgaan?',
 	'replacetext_continue' => 'Gaan voort',
-	'replacetext_editsummary' => "Teks vervang - '$1' na '$2'",
+	'replacetext_editsummary' => "Teks vervang - '$1' na '$2'", # Fuzzy
 	'right-replacetext' => 'Doen vervangings oor die hele wiki',
 );
 
@@ -153,7 +196,7 @@ $messages['ar'] = array(
 	'replacetext_warning' => "'''تحذير''': توجد {{PLURAL:$1||صفحة واحدة تحتوي|صفحتان تحتويان|$1 صفحات تحتوي|$1 صفحة تحتوي}} بالفعل على سلسلة الاستبدال '$2'. إذا قمت بهذا الاستبدال فلن تصبح قادرًا على فصل استبدالاتك عن هذه السلاسل.",
 	'replacetext_blankwarning' => 'لأن سلسلة الاستبدال فارغة، هذه العملية لن تكون عكسية؛ استمر؟',
 	'replacetext_continue' => 'استمرار',
-	'replacetext_editsummary' => "استبدال النص - '$1' ب'$2'",
+	'replacetext_editsummary' => "استبدال النص - '$1' ب'$2'", # Fuzzy
 	'right-replacetext' => 'القيام باستبدال للسلاسل في الويكي بأكمله',
 );
 
@@ -192,7 +235,7 @@ $messages['arz'] = array(
 استمرار مع الاستبدال؟", # Fuzzy
 	'replacetext_blankwarning' => 'لأن سلسلة الاستبدال فارغة، هذه العملية لن تكون عكسية؛ استمر؟',
 	'replacetext_continue' => 'استمر',
-	'replacetext_editsummary' => "استبدال النص - '$1' ب'$2'",
+	'replacetext_editsummary' => "استبدال النص - '$1' ب'$2'", # Fuzzy
 	'right-replacetext' => 'القيام باستبدال للسلاسل فى الويكى بأكمله',
 );
 
@@ -282,17 +325,18 @@ $messages['azb'] = array(
 	'replacetext_warning' => "'''دیقت:''' ایندی {{PLURAL:$1|بیر|$1}} دنه «$2» یئرینه قویولان یازیسی اولان صحیفه واردیر. اگر بو یئرینه قویماغی ائتسز، اؤز یئرینه قویدوقلارینیزی بو یازیلاردان آییرا بیلنمه‌یه‌جکسینیز.",
 	'replacetext_blankwarning' => "'''دیقت:''' یئرینه قویولان یازینین بوش اولدوغونا گؤره، بو ایشی دؤندره بیلنمه‌یه‌جکسینیز.",
 	'replacetext_continue' => 'داوام ائت',
-	'replacetext_editsummary' => 'یازی یئرینه قویما - «$1»-ی «$2»-یه',
+	'replacetext_editsummary' => 'یازی یئرینه قویما - «$1»-ی «$2»-یه', # Fuzzy
 	'right-replacetext' => 'یازی یئرینه قویمانی بوتون ویکی‌ده ائت',
 	'action-replacetext' => 'یازی یئرینه قویمانی بوتون ویکی‌ده ائت',
 );
 
 /** Bashkir (башҡортса)
  * @author Assele
+ * @author Рустам Нурыев
  */
 $messages['ba'] = array(
 	'replacetext' => 'Тексты алмаштырырға',
-	'replacetext-desc' => 'Хәкимдәргә бөтә эстәлек биттәрендә тексты табып алмаштырырға мөмкинлек биреүсе [[Special:ReplaceText|махсус бит]] менән тәьмин итә',
+	'replacetext-desc' => 'Хакимдәргә бөтә эстәлек биттәрендә тексты табып алмаштырырға мөмкинлек биреүсе [[Special:ReplaceText|махсус бит]] менән тәьмин итә',
 	'replacetext_docu' => 'Был викиның бөтә биттәрендә бер текст юлын икенсе менән алмаштырыр өсөн, ике текст керетегеҙ һәм "Дауам итергә" төймәһенә баҫығыҙ.
 Артабан һеҙгә эҙләнгән тексты үҙ эсенә алған биттәр исемлеге күрһәтеләсәк, һеҙ улар араһында алмаштырырға теләгәндәрен һайлай алаһығыҙ.
 Һеҙҙең исемегеҙ биттәрҙең үҙгәртеү тарихтарында үҙгәртеүҙәргә яуаплы ҡатнашыусы булараҡ күрһәтеләсәк.', # Fuzzy
@@ -324,7 +368,7 @@ $messages['ba'] = array(
 	'replacetext_warning' => "'''Иғтибар:''' Алмаш \"\$2\" тексын үҙ эсенә алған {{PLURAL:\$1|\$1 бит}} бар инде. Әгәр һеҙ алмаштырыуҙы башҡарһағыҙ, алмаштырылған текстарҙы булғандарынан айыра алмаясаҡһығыҙ.",
 	'replacetext_blankwarning' => "'''Иғтибар:'''Алмаш текст буш булғанға күрә, был ғәмәлде кире алыу мөмкин түгел.",
 	'replacetext_continue' => 'Дауам итергә',
-	'replacetext_editsummary' => '"$1" тексын "$2" менән алмаштырыу',
+	'replacetext_editsummary' => '"$1" тексын "$2" менән алмаштырыу', # Fuzzy
 	'right-replacetext' => 'Бөтә викила тексты алмаштырыу',
 );
 
@@ -370,7 +414,7 @@ $messages['be-tarask'] = array(
 	'replacetext_blankwarning' => 'У выніку таго, што радок, на які павінна адбыцца замена, пусты, апэрацыя ня будзе выкананая.
 Вы жадаеце працягваць?',
 	'replacetext_continue' => 'Працягваць',
-	'replacetext_editsummary' => 'Замена тэксту: «$1» на «$2»',
+	'replacetext_editsummary' => 'Замена тэксту: «$1» на «$2»', # Fuzzy
 	'right-replacetext' => 'замена тэксту ва ўсёй вікі',
 	'action-replacetext' => 'замяняць радкі ва ўсёй вікі',
 );
@@ -389,7 +433,7 @@ $messages['bg'] = array(
 	'replacetext_noreplacement' => "Не бяха открити страници, съдържащи низа '$1'.",
 	'replacetext_blankwarning' => 'Тъй като низът за заместване е празен, процесът на заместване е необратим; продължаване?',
 	'replacetext_continue' => 'Продължаване',
-	'replacetext_editsummary' => "Заместване на текст - '$1' на '$2'",
+	'replacetext_editsummary' => "Заместване на текст - '$1' на '$2'", # Fuzzy
 );
 
 /** Bengali (বাংলা)
@@ -444,7 +488,7 @@ War wel e teuio hoc'h anv war roll istor pep pajenn evit ma vo gouezet gant piv 
 	'replacetext_warning' => "'''Diwallit :''' {{PLURAL:\$1| \$1 bajenn enni| \$1 pajenn enno}} ar steudad arouezennoù erlec'hiañ zo dija, \"\$2\". Ma kasit ar cheñchamant da benn ne vo ket posupl diforc'hañ ar cheñchamantoù degaset ganeoc'h diouzh an neudennadoù-se ken.",
 	'replacetext_blankwarning' => "'''Diwallit : ''' Dre m'eo goullo ar steudad erlec'hiañ, ne vo ket tu da zizober an urzh-mañ.",
 	'replacetext_continue' => "Kenderc'hel",
-	'replacetext_editsummary' => 'Erlec\'hiañ an destenn - "$1" dre "$2"',
+	'replacetext_editsummary' => 'Erlec\'hiañ an destenn - "$1" dre "$2"', # Fuzzy
 	'right-replacetext' => "Krouiñ erlec'hiadurioù testenn er wiki a-bezh",
 );
 
@@ -485,7 +529,7 @@ Ako želite napraviti ovu zamjenu nećete biti u mogućnosti da razdvojite Vaše
 	'replacetext_blankwarning' => 'Pošto je zamjenski tekst prazan, ovu operaciju neće biti moguće vratiti.
 Da li želite nastaviti?',
 	'replacetext_continue' => 'Nastavi',
-	'replacetext_editsummary' => "Zamjena teksta - '$1' u '$2'",
+	'replacetext_editsummary' => "Zamjena teksta - '$1' u '$2'", # Fuzzy
 	'right-replacetext' => 'Pravljenje zamjene teksta na cijelom wikiju',
 );
 
@@ -500,9 +544,14 @@ $messages['ca'] = array(
 
 /** Chechen (нохчийн)
  * @author Sasan700
+ * @author Умар
  */
 $messages['ce'] = array(
+	'replacetext' => 'Хийца йоза',
+	'replacetext_originaltext' => 'ДӀадолалун йоза:',
 	'replacetext_optionalfilters' => 'Тlедожийна доцу литтарш:',
+	'replacetext_replace' => 'Хийца',
+	'replacetext_continue' => 'Кхин дӀа',
 );
 
 /** Czech (česky)
@@ -523,6 +572,23 @@ Vaše jméno se objeví v historiích stránek jako osoba zodpovědná za přís
 	'replacetext_continue' => 'Pokračovat',
 	'replacetext_editsummary' => 'Nahrazení textu „$1“ textem „$2“',
 	'right-replacetext' => 'Hledání a nahrazování textu na celé wiki',
+);
+
+/** Welsh (Cymraeg)
+ * @author Lloffiwr
+ */
+$messages['cy'] = array(
+	'replacetext' => 'Disodli testun',
+	'replacetext_originaltext' => 'Y testun gwreiddiol:',
+	'replacetext_replacementtext' => 'Y testun newydd:',
+	'replacetext_optionalfilters' => 'Hidlau dewisol:',
+	'replacetext_watchmovedpages' => 'Dilyn hynt y tudalennau hyn',
+	'replacetext_invertselections' => "Gwrthdroi'r dewis",
+	'replacetext_replace' => 'Disodler',
+	'replacetext_success' => 'Caiff "$1" ei ddisodli gan "$2" mewn $3 {{PLURAL:$3||dudalen|dudalen|tudalen|thudalen|tudalen}}.',
+	'replacetext_noreplacement' => 'Ni chafwyd hyd i unrhyw dudalennau yn cynnwys y llinyn "$1".',
+	'replacetext_continue' => 'Parhau',
+	'replacetext_editsummary' => 'Disodli\'r testun - "$1" i "$2"',
 );
 
 /** German (Deutsch)
@@ -629,7 +695,7 @@ $messages['dsb'] = array(
 Jolic wuwjedujoš toś tu wuměnu, njamóžoš rozeznaś swóje wuměny wót toś togo teksta.',
 	'replacetext_blankwarning' => 'Dokulaž njejo tekst za wuměnjenje, toś ta operacija njedajo se anulěrowaś. Coš weto pókšacowaś?',
 	'replacetext_continue' => 'Dalej',
-	'replacetext_editsummary' => "Wuměna teksta - '$1' do '$2'",
+	'replacetext_editsummary' => "Wuměna teksta - '$1' do '$2'", # Fuzzy
 	'right-replacetext' => 'Tekst na cełem wikiju wuměniś',
 );
 
@@ -644,13 +710,13 @@ Jolic wuwjedujoš toś tu wuměnu, njamóžoš rozeznaś swóje wuměny wót to�
 $messages['el'] = array(
 	'replacetext' => 'Αντικατάσταση κειμένου',
 	'replacetext-desc' => 'Παρέχει μια [[Special:ReplaceText|ειδική σελίδα]] που επιτρέπει σε διαχειριστές να κάνουν μια καθολική εύρεση και αντικατάσταση συμβολοσειράς σε όλες τις σελίδες περιεχομένου ενός wiki',
-	'replacetext_docu' => 'Για να αντικαταστήσετε μια συμβολοσειρά κειμένου με μια άλλη σε όλες τις κανονικές σελίδες αυτού του wiki, εισαγάγετε εδώ τα δύο κείμενα και στη συνέχεια πατήστε «{{int:replacetext_continue}}».
+	'replacetext_docu' => 'Για να αντικαταστήσετε μια συμβολοσειρά κειμένου με μια άλλη σε όλες τις κανονικές σελίδες αυτού του wiki, εισαγάγετε εδώ τα δύο κείμενα και μετά πατήστε «{{int:replacetext_continue}}».
 Θα εμφανιστεί τότε μια λίστα με σελίδες που περιέχουν το αναζητούμενο κείμενο και μπορείτε να επιλέξετε εκείνες στις οποίες θέλετε να το αντικαταστήσετε.
 Το όνομά σας θα εμφανιστεί στο ιστορικό των σελίδων ως ο χρήστης που ευθύνεται για τις όποιες αλλαγές.',
 	'replacetext_originaltext' => 'Αρχικό κείμενο:',
 	'replacetext_replacementtext' => 'Κείμενο αντικατάστασης:',
 	'replacetext_useregex' => 'Χρήση κανονικών εκφράσεων',
-	'replacetext_regexdocu' => '(Παράδειγμα: με τιμές «a(.*)γ» ως «{{int:replacetext_originaltext}}» και «ac$1» ως «{{int:replacetext_replacementtext}}» θα αντικατασταθεί το «αβγ» με «αγβ»).',
+	'replacetext_regexdocu' => '(Παράδειγμα: με τιμές «α(.*)γ» ως «{{int:replacetext_originaltext}}» και «αγ$1» ως «{{int:replacetext_replacementtext}}» θα αντικατασταθεί το «αβγ» με «αγβ»).',
 	'replacetext_optionalfilters' => 'Προαιρετικά φίλτρα:',
 	'replacetext_categorysearch' => 'Αντικατάσταση μόνο στην κατηγορία:',
 	'replacetext_prefixsearch' => 'Αντικατάσταση μόνο σε σελίδες με πρόθεμα:',
@@ -699,7 +765,7 @@ $messages['eo'] = array(
 	'replacetext_noreplacement' => "Neniuj paĝoj estis trovitaj enhavantaj la ĉenon '$1'.",
 	'replacetext_return' => 'Reiri al formularo.',
 	'replacetext_continue' => 'Reaktivigi',
-	'replacetext_editsummary' => "Teksta anstataŭigo - '$1' al '$2'",
+	'replacetext_editsummary' => "Teksta anstataŭigo - '$1' al '$2'", # Fuzzy
 );
 
 /** Spanish (español)
@@ -709,6 +775,7 @@ $messages['eo'] = array(
  * @author Dferg
  * @author Imre
  * @author Locos epraix
+ * @author MarcoAurelio
  * @author Pertile
  * @author Translationista
  */
@@ -749,7 +816,7 @@ Si realizas esta sustituación, no podrás separar tus sustituciones de estas ca
 	'replacetext_blankwarning' => 'Como la cadena de reemplazo está vacía, esta operación no podrá revertirse.
 ¿ Desea continuar ?',
 	'replacetext_continue' => 'Continuar',
-	'replacetext_editsummary' => "Texto reemplaza - '$1' a '$2'",
+	'replacetext_editsummary' => "Texto reemplaza - '$1' a '$2'", # Fuzzy
 	'right-replacetext' => 'Reemplaza cadenas de caracteres en toda la wiki',
 	'action-replacetext' => 'Reemplazar cadenas de texto en todo el wiki',
 );
@@ -778,7 +845,7 @@ $messages['eu'] = array(
 	'replacetext_replace' => 'Ordeztu',
 	'replacetext_noreplacement' => "Ez da aurkitu '$1' karaktere-katea duen orrialderik.",
 	'replacetext_continue' => 'Jarraitu',
-	'replacetext_editsummary' => "Testu aldaketa - '$1'(e)tik '$2'(e)ra.",
+	'replacetext_editsummary' => "Testu aldaketa - '$1'(e)tik '$2'(e)ra.", # Fuzzy
 );
 
 /** Persian (فارسی)
@@ -818,7 +885,7 @@ $messages['fa'] = array(
 	'replacetext_warning' => "'''هشدار:''' در حال حاضر $1 صفحه وجود دارد که حاوی رشتهٔ جایگزینی «$2» {{PLURAL:$1|است|هستند}}. اگر شما این جایگزینی را انجام دهید، قادر نخواهید بود تا جایگزینی‌هایتان را از این رشته‌ها جدا کنید.",
 	'replacetext_blankwarning' => 'چون متن جایگزین خالی است، این عمل قابل بازگشت نخواهد بود؛ ادامه می‌دهید؟',
 	'replacetext_continue' => 'ادامه',
-	'replacetext_editsummary' => "جایگزینی متن - '$1' به '$2'",
+	'replacetext_editsummary' => "جایگزینی متن - '$1' به '$2'", # Fuzzy
 	'right-replacetext' => 'انجام جایگزین کردن رشته در تمام ویکی',
 );
 
@@ -862,7 +929,7 @@ $messages['fi'] = array(
 Korvauksen jälkeen korvatut ja jo tekstin sisältäneet kohdat eivät erotu toisistaan.",
 	'replacetext_blankwarning' => "'''Varoitus:''' Koska korvaava teksti on tyhjä, operaatiota ei voi palauttaa käänteisellä korvauksella.",
 	'replacetext_continue' => 'Jatka',
-	'replacetext_editsummary' => 'Tekstin korvaus – ”$1” muotoon ”$2”',
+	'replacetext_editsummary' => 'Tekstin korvaus – ”$1” muotoon ”$2”', # Fuzzy
 	'right-replacetext' => 'Tehdä merkkijonojen korvauksia koko wikin laajuudella',
 );
 
@@ -914,7 +981,7 @@ Votre nom apparaîtra dans l’historique des pages tel un utilisateur auteur de
 Si vous effectuez cette substitution, vous ne pourrez pas distinguer vos modifications de ces chaînes.',
 	'replacetext_blankwarning' => 'Parce que la chaîne de remplacement est vide, cette opération sera irréversible ; voulez-vous continuer ?',
 	'replacetext_continue' => 'Continuer',
-	'replacetext_editsummary' => 'Remplacement du texte — « $1 » par « $2 »',
+	'replacetext_editsummary' => 'Remplacement de texte — « $1 » par « $2 »',
 	'right-replacetext' => 'Faire des remplacements de texte dans tout le wiki',
 	'action-replacetext' => 'faire les remplacements de la chaîne dans tout le wiki',
 );
@@ -941,7 +1008,7 @@ $messages['frp'] = array(
 	'replacetext_replace' => 'Remplaciér',
 	'replacetext_return' => 'Tornar u formulèro.',
 	'replacetext_continue' => 'Continuar',
-	'replacetext_editsummary' => 'Remplacement du tèxto — « $1 » per « $2 »',
+	'replacetext_editsummary' => 'Remplacement du tèxto — « $1 » per « $2 »', # Fuzzy
 );
 
 /** Galician (galego)
@@ -982,7 +1049,7 @@ O seu nome aparecerá nos histotiais das páxinas como o usuario responsable de 
 	'replacetext_warning' => '\'\'\'Aviso:\'\'\' Hai {{PLURAL:$1|unha páxina|$1 páxinas}} que xa {{PLURAL:$1|contén|conteñen}} a cadea de substitución "$2". Se fai esta substitución non poderá distinguir as súas modificacións destas cadeas.',
 	'replacetext_blankwarning' => "'''Atención:''' Debido a que a cadea de substitución está baleira, esta operación non será reversible.",
 	'replacetext_continue' => 'Continuar',
-	'replacetext_editsummary' => 'Substitución de texto - de "$1" a "$2"',
+	'replacetext_editsummary' => 'Substitución de texto: "$1" por "$2"',
 	'right-replacetext' => 'Facer substitucións de texto en todo o wiki',
 	'action-replacetext' => 'facer substitucións de texto en todo o wiki',
 );
@@ -1038,7 +1105,7 @@ $messages['gsw'] = array(
 E Trännig vu dr Ersetzige mit dr Täxtteil, wu s scho het, sich nit megli. Mechtsch einewäg wytermache?",
 	'replacetext_blankwarning' => 'Dr Täxtteil, wu soll ersetzt wären, isch läär. D Operation cha nit ruckgängig gmacht wäre, einewäg wytermache?',
 	'replacetext_continue' => 'Wytermache',
-	'replacetext_editsummary' => 'Täxtersetzig - „$1“ dur „$2“',
+	'replacetext_editsummary' => 'Täxtersetzig - „$1“ dur „$2“', # Fuzzy
 	'right-replacetext' => 'Mach e Täxtersetzig fir s gsamt Wiki',
 );
 
@@ -1079,7 +1146,7 @@ $messages['he'] = array(
 	'replacetext_warning' => '\'\'\'אזהרה\'\'\': {{PLURAL:$1|ישנו עמוד אחד שכבר מכיל|ישנם $1 עמודים שכבר מכילים}} את מחרוזת ההחלפה, "$2". אם החלפה זו תבוצע לא תהיה באפשרותך להפריד את החלפותיך מ{{PLURAL:$1|מחרוזת זו|מחרוזות אלו}}.',
 	'replacetext_blankwarning' => 'כיוון שמחרוזת ההחלפה ריקה, לא ניתן יהיה לבטל פעולה זו; להמשיך?',
 	'replacetext_continue' => 'המשך',
-	'replacetext_editsummary' => 'החלפת טקסט – "$1" ב־"$2"',
+	'replacetext_editsummary' => 'החלפת טקסט – "$1" ב־"$2"', # Fuzzy
 	'right-replacetext' => 'ביצוע החלפת מחרוזות באתר הוויקי כולו',
 	'action-replacetext' => 'החלפת מחרוזות בכל הוויקי',
 );
@@ -1109,7 +1176,7 @@ $messages['hr'] = array(
 Ako napravite ovu zamjenu nećete moći odvojiti svoju zamjenu od ovog teksta. Nastaviti sa zamjenom?", # Fuzzy
 	'replacetext_blankwarning' => 'Zato što je zamjenski tekst prazan, ovaj postupak se neće moći vratiti; nastaviti?',
 	'replacetext_continue' => 'Dalje',
-	'replacetext_editsummary' => "Zamjena teksta - '$1' u '$2'",
+	'replacetext_editsummary' => "Zamjena teksta - '$1' u '$2'", # Fuzzy
 );
 
 /** Upper Sorbian (hornjoserbsce)
@@ -1147,7 +1214,7 @@ $messages['hsb'] = array(
 	'replacetext_warning' => "'''Warnowanje:''' {{PLURAL:$1|Je hižo $1 strona, kotraž wobsahuje|Stej hižo $1 stronje, kotejž wobsahujetej|Su hižo $1 strony, kotrež wobsahuja|Je hižo $1 stronow, kotrež wobsahuje}} narunanski tekst, '$2'. Jeli tute narunanje činiš, njemóžeš swoje narunanja wot tutoho teksta rozdźělić.",
 	'replacetext_blankwarning' => 'Narunanski dźěl je prózdny, tohodla operacija njeda so cofnyć; njedźiwajo na to pokročować?',
 	'replacetext_continue' => 'Dale',
-	'replacetext_editsummary' => "Tekstowe narunanje - '$1' do '$2'",
+	'replacetext_editsummary' => "Tekstowe narunanje - '$1' do '$2'", # Fuzzy
 	'right-replacetext' => 'Tekstowe narunanja na cyłym wikiju činić',
 	'action-replacetext' => 'Tekstowe narunanja na cyłym wikiju činić',
 );
@@ -1188,7 +1255,7 @@ A neved szerepelni fog a laptörténetekben, mint aki a változtatásokat végez
 	'replacetext_blankwarning' => 'Mivel az új szöveg üres, ez a művelet nem lesz visszavonható.
 Biztosan folytatni szeretnéd?',
 	'replacetext_continue' => 'Folytatás',
-	'replacetext_editsummary' => 'Szöveg cseréje – „$1” → „$2”',
+	'replacetext_editsummary' => 'Szöveg cseréje – „$1” → „$2”', # Fuzzy
 	'right-replacetext' => 'szövegcserék végrehajtása az egész wikin',
 );
 
@@ -1198,7 +1265,9 @@ Biztosan folytatni szeretnéd?',
 $messages['ia'] = array(
 	'replacetext' => 'Reimplaciar texto',
 	'replacetext-desc' => 'Forni un [[Special:ReplaceText|pagina special]] que permitte al administratores cercar e reimplaciar globalmente un catena de characteres in tote le paginas de contento de un wiki',
-	'replacetext_docu' => "Pro reimplaciar un catena de characteres per un altere trans tote le paginas regular in iste wiki, entra le duo pecias de texto hic e clicca super 'Continuar'. Postea se monstrara un lista de paginas que contine le texto cercate, e tu potera seliger in quales tu vole reimplaciar lo. Tu nomine figurara in le historias del paginas como le usator responsabile de omne modificationes.", # Fuzzy
+	'replacetext_docu' => 'Pro reimplaciar un catena de characteres per un altere in tote le paginas regular in iste wiki, entra le duo pecias de texto hic e clicca super "{{int:replacetext_continue}}".
+Postea apparera un lista de paginas que contine le texto cercate, e tu potera seliger le paginas in le quales tu vole reimplaciar lo.
+Tu nomine figurara in le historias del paginas como le usator responsabile de eventual modificationes.',
 	'replacetext_originaltext' => 'Texto original:',
 	'replacetext_replacementtext' => 'Nove texto:',
 	'replacetext_useregex' => 'Usar expressiones regular',
@@ -1228,7 +1297,7 @@ $messages['ia'] = array(
 Si tu face iste reimplaciamento, tu non potera distinguer inter tu reimplaciamentos e iste texto ja existente.",
 	'replacetext_blankwarning' => 'Post que le nove texto es vacue, iste operation non essera reversibile; continuar?',
 	'replacetext_continue' => 'Continuar',
-	'replacetext_editsummary' => "Reimplaciamento de texto - '$1' per '$2'",
+	'replacetext_editsummary' => "Reimplaciamento de texto - '$1' per '$2'", # Fuzzy
 	'right-replacetext' => 'Facer reimplaciamentos de texto in le wiki integre',
 );
 
@@ -1271,7 +1340,7 @@ $messages['id'] = array(
 	'replacetext_blankwarning' => 'Karena untaian pengganti kosong, operasi ini tidak dapat dikembalikan.
 Apakah ingin dilanjutkan?',
 	'replacetext_continue' => 'Lanjutkan',
-	'replacetext_editsummary' => 'Penggantian teks - "$1" menjadi "$2"',
+	'replacetext_editsummary' => 'Penggantian teks - "$1" menjadi "$2"', # Fuzzy
 	'right-replacetext' => 'Melakukan penggantian seluruh teks kalimat di wiki ini',
 );
 
@@ -1321,8 +1390,9 @@ $messages['it'] = array(
 	'replacetext_warning' => '{{PLURAL:$1|C\'è già $1 pagina che contiene|Ci sono già $1 pagine che contengono}} il testo di sostituzione, "$2". Se si effettua questa sostituzione non si sarà in grado di separare le sostituzioni da questi testi. Continuare con la sostituzione?',
 	'replacetext_blankwarning' => "Poiché il testo di sostituzione è vuoto, l'operazione non sarà reversibile. Si desidera continuare?",
 	'replacetext_continue' => 'Continua',
-	'replacetext_editsummary' => "Sostituzione testo - '$1' con '$2'",
+	'replacetext_editsummary' => 'Sostituzione testo - "$1" con "$2"',
 	'right-replacetext' => 'Esegue sostituzioni di testo in tutto il sito',
+	'action-replacetext' => 'eseguire sostituzioni di testo in tutto il sito',
 );
 
 /** Japanese (日本語)
@@ -1363,8 +1433,8 @@ $messages['ja'] = array(
 	'replacetext_nomove' => '「$1」を名前に含むページは見つかりませんでした。',
 	'replacetext_nosuchcategory' => '「$1」という名前のカテゴリは存在しません。',
 	'replacetext_return' => 'フォームに戻る',
-	'replacetext_warning' => "'''警告:''' 置換後の文字列「$2」を含むページが既に $1{{PLURAL:$1|ページ}}あります。この置換を実行すると、これらの文字列と実際に置換された箇所を区別できなくなります。",
-	'replacetext_blankwarning' => '置換後文字列が空であるため、この操作は実行後の取り消しができなくなります。続行しますか？',
+	'replacetext_warning' => "'''警告:''' 置換後の文字列「$2」を含むページが既に {{PLURAL:$1|$1 件あります。}}この置換を実行すると、これらの文字列と実際に置換された箇所を区別できなくなります。",
+	'replacetext_blankwarning' => "'''警告:''' 置換後文字列が空であるため、この操作は取り消せません。",
 	'replacetext_continue' => '続行',
 	'replacetext_editsummary' => '文字列「$1」を「$2」に置換',
 	'right-replacetext' => 'ウィキ全体で文字列の置換を実行',
@@ -1389,10 +1459,19 @@ $messages['ka'] = array(
 	'replacetext' => 'ტექსტის შეცვლა',
 	'replacetext_originaltext' => 'პირველადი ტექსტი:',
 	'replacetext_replacementtext' => 'შესაცვლელი ტექსტი:',
+	'replacetext_optionalfilters' => 'არასავალდებულო ფილტრები:',
+	'replacetext_categorysearch' => 'მხოლოდ კატეგორიაში შეცვლა:',
+	'replacetext_prefixsearch' => 'მხოლოდ თავსართიან გვერდებში შეცვლა:',
+	'replacetext_editpages' => 'ტექსტის შეცვლა გვერდების შინაარსში',
+	'replacetext_movepages' => 'ტექსტის შეცვლა გვერდების სათაურში, თუ ეს შესაძლებელია',
+	'replacetext_cannotmove' => 'შემდეგი {{PLURAL:$1|გვერდის|$1 გვერდის}} გადატანა შეუძლებელია:',
+	'replacetext_formovedpages' => 'გადატანილი გვერდებისათვის:',
+	'replacetext_savemovedpages' => 'ძველი სათაურის შენახვა როგორც ახალზე გადამისამართება',
+	'replacetext_watchmovedpages' => 'ამ გვერდების კონტროლი',
 	'replacetext_replace' => 'ჩანაცვლება',
 	'replacetext_return' => 'ფორმასთან დაბრუნება.',
 	'replacetext_continue' => 'გაგრძელება',
-	'replacetext_editsummary' => 'ტექსტის შეცვლა - „$1“ „$2“-ზე',
+	'replacetext_editsummary' => 'ტექსტის შეცვლა - „$1“ „$2“-ზე', # Fuzzy
 );
 
 /** Khmer (ភាសាខ្មែរ)
@@ -1406,13 +1485,13 @@ $messages['km'] = array(
 	'replacetext_replacementtext' => 'អត្ថបទជំនួស៖',
 	'replacetext_movepages' => 'ជំនួស​អត្ថបទ​នៅក្នុង​ចំណងជើង​ទំព័រ​បើអាច',
 	'replacetext_choosepagesforedit' => "សូម​ជ្រើសរើស {{PLURAL:$3|ទំព័រ|ទំព័រ}} សម្រាប់​អ្វី​ដែល​អ្នក​ចង់​ជំនួស '$1' ដោយ '$2':",
-	'replacetext_choosepagesformove' => 'ជំនួស​អត្ថបទ​នៅក្នុង {{PLURAL:$1|ឈ្មោះ​ទំព័រ​ដូចតទៅ|ឈ្មោះ​ទំព័រ​ដូចតទៅ}}:', # Fuzzy
+	'replacetext_choosepagesformove' => 'ជំនួស​ "$1" ដោយ "$2" ក្នុង {{PLURAL:$1|ចំណងជើងទំព័រ​ដូចតទៅ|ចំណងជើងទំព័រ​ដូចតទៅ}}៖', # Fuzzy
 	'replacetext_invertselections' => 'ដាក់បញ្ច្រាស​ជម្រើស',
 	'replacetext_replace' => 'ជំនួស',
 	'replacetext_success' => "'$1' នឹងត្រូវបានជំនួសដោយ '$2' ក្នុង $3 {{PLURAL:$3|ទំព័រ|ទំព័រ}}​។",
 	'replacetext_noreplacement' => "រក​មិន​ឃើញ​ទំព័រ​ដែល​មាន​ខ្សែអក្សរ (string) '$1' ។",
 	'replacetext_continue' => 'បន្ត',
-	'replacetext_editsummary' => "អត្ថបទជំនួស - '$1' ទៅ '$2'",
+	'replacetext_editsummary' => "អត្ថបទជំនួស - '$1' ទៅ '$2'", # Fuzzy
 );
 
 /** Korean (한국어)
@@ -1421,15 +1500,15 @@ $messages['km'] = array(
  * @author 아라
  */
 $messages['ko'] = array(
-	'replacetext' => '찾아 바꾸기',
-	'replacetext-desc' => '관리자가 위키 전체의 내용을 찾아 바꿀 수 있도록 [[Special:ReplaceText|특수 문서]]를 추가',
-	'replacetext_docu' => '이 위키에서 어떤 문자열을 다른 문자열로 바꾸기 위해서는, 찾을 문자열과 바꿀 문자열을 입력한 뒤 "{{int:replacetext_continue}}"을 누르세요.
-그러면 해당 문자열을 포함하고 있는 문서 목록이 나오며, 그중에서 바꿀 문서들을 선택할 수 있습니다.
-당신의 사용자 이름이 문서 역사에 나올 것입니다.',
+	'replacetext' => '문자열 찾아 바꾸기',
+	'replacetext-desc' => '관리자가 위키 전체의 본문에 있는 문자열을 찾아 바꿀 수 있도록 [[Special:ReplaceText|특수 문서]]를 제공합니다',
+	'replacetext_docu' => '이 위키에서 어떤 문자열을 다른 문자열로 바꾸기 위해서는 찾을 문자열과 바꿀 문자열을 입력한 뒤 "{{int:replacetext_continue}}"을 누르세요.
+그러면 해당 문자열을 포함하고 있는 문서 목록이 나오며, 그 중에서 바꿀 문서들을 선택할 수 있습니다.
+모든 바뀜에 당신의 사용자 이름이 문서 역사에 나올 것입니다.',
 	'replacetext_originaltext' => '찾을 문자열:',
 	'replacetext_replacementtext' => '바꿀 문자열:',
 	'replacetext_useregex' => '정규 표현식 사용',
-	'replacetext_regexdocu' => '(예: "{{int:replacetext_originaltext}}"에 "a(.*)c"값을 입력하고 "{{int:replacetext_replacementtext}}"에 "ac$1"을 입력하면 "abc"가 "acb"로 바뀝니다.)',
+	'replacetext_regexdocu' => '(예: "{{int:replacetext_originaltext}}"에 "a(.*)c"값을 입력하고 "{{int:replacetext_replacementtext}}"에 "ac$1"값을 입력하면 "abc"가 "acb"로 바뀝니다.)',
 	'replacetext_optionalfilters' => '선택적 필터:',
 	'replacetext_categorysearch' => '다음 분류에서만 바꾸기:',
 	'replacetext_prefixsearch' => '다음 접두어로 시작하는 문서만 바꾸기:',
@@ -1450,13 +1529,13 @@ $messages['ko'] = array(
 	'replacetext_noreplacement' => '"$1" 문자열을 포함하고 있는 문서가 없습니다.',
 	'replacetext_nomove' => '"$1" 문자열을 포함하고 있는 문서 제목이 없습니다.',
 	'replacetext_nosuchcategory' => '"$1" 문자열을 포함하고 있는 분류가 없습니다.',
-	'replacetext_return' => '찾아 바꾸기 양식으로 돌아가기',
+	'replacetext_return' => '양식으로 돌아갑니다.',
 	'replacetext_warning' => '"$2" 문자열을 포함하고 있는 문서 $1개가 이미 있습니다. 이 찾아 바꾸기를 실행하면, 이미 존재하는 "$2" 문자열과 더 이상 구분되지 않을 것입니다.
 찾아 바꾸기를 계속하겠습니까?',
 	'replacetext_blankwarning' => '바꿀 문자열이 비어 있으므로 이 동작은 되돌릴 수 없습니다.
 계속하시겠습니까?',
 	'replacetext_continue' => '계속',
-	'replacetext_editsummary' => '찾아 바꾸기 – "$1" 문자열을 "$2" 문자열로',
+	'replacetext_editsummary' => '문자열 찾아 바꾸기 - "$1" 문자열을 "$2" 문자열로',
 	'right-replacetext' => '찾아 바꾸기를 위키 전체에 수행합니다.',
 	'action-replacetext' => '찾아 바꾸기를 위키 전체에 수행',
 );
@@ -1475,7 +1554,7 @@ han wells. Dinge Name als Metmaacher weed met dä neu veränderte Versione
 fun dä Sigge faßjehallde als dä Schriiver, dä et jemaat hät.',
 	'replacetext_originaltext' => 'Dä ojinaal Täx för Ußzetuusche:',
 	'replacetext_replacementtext' => 'Dä neue Täx för anshtatt dämm Ojinaal erin ze donn',
-	'replacetext_useregex' => 'Met „<i lang="en">regular Expressions</i>“',
+	'replacetext_useregex' => 'Met rejolähre Ußdrök',
 	'replacetext_regexdocu' => '(För e Beispel: Nämm „a(.*)c“ för „{{int:replacetext_originaltext}}“ un „ac$1“ för „{{int:replacetext_replacementtext}}“, un De kriß „abc“ dorsh „acb“ ußjetuusch.)',
 	'replacetext_optionalfilters' => 'Müjjelesche Beschrängkunge:',
 	'replacetext_categorysearch' => 'Bloß en dä Saachjropp ußtuusche:',
@@ -1508,8 +1587,9 @@ Wells De trozdämm wigger maache?",
 dröm kam_mer die Änderong nit esu leich automattesch retuur maache.
 Wells De trozdämm wigger maache?',
 	'replacetext_continue' => 'Wiggermaache',
-	'replacetext_editsummary' => 'Täx-Shtöcker tuusche — vun „$1“ noh „$2“',
-	'right-replacetext' => 'Donn Täx-Shtöcksher em janze Wiki ußtuusche',
+	'replacetext_editsummary' => 'Täx-Shtöcker tuusche — vun „$1“ noh „$2“', # Fuzzy
+	'right-replacetext' => 'Täx-Schtöckscher em janze Wiki ußtuusche',
+	'action-replacetext' => 'Täx-Schtöckscher em janze Wiki ußzetuusche',
 );
 
 /** Luxembourgish (Lëtzebuergesch)
@@ -1549,7 +1629,7 @@ $messages['lb'] = array(
 Wann Dir dës Ännerunge maacht wäert et Iech net méi méiglech sinn déi Säiten op deenen Dir Ännerunge gemaach hutt vun de Säiten z'ënnerscheeden wou elo d'Zeecherei '$2' schonn dran ass.",
 	'replacetext_blankwarning' => 'Well den Textdeel mat dem de gesichten Text ersat gi soll eidel ass, kann dës Aktioun net réckgängeg gemaach ginn; wëllt Dir awer weiderfueren?',
 	'replacetext_continue' => 'Weiderfueren',
-	'replacetext_editsummary' => "Text ersat - '$1' duerch '$2'",
+	'replacetext_editsummary' => 'Text ersat - "$1" duerch "$2"',
 	'right-replacetext' => 'Ersetze vun enger Rei vun Textzeechen op der ganzer Wiki',
 	'action-replacetext' => 'ersetze vun enger Rei vun Textzeechen op der ganzer Wiki',
 );
@@ -1560,7 +1640,7 @@ Wann Dir dës Ännerunge maacht wäert et Iech net méi méiglech sinn déi Säi
 $messages['lt'] = array(
 	'replacetext' => 'Keisti tekstą',
 	'replacetext_continue' => 'Tęsti',
-	'replacetext_editsummary' => 'Teksto pakeitimas - "$1" į "$2"',
+	'replacetext_editsummary' => 'Teksto pakeitimas - "$1" į "$2"', # Fuzzy
 );
 
 /** Malagasy (Malagasy)
@@ -1585,7 +1665,7 @@ $messages['mk'] = array(
 	'replacetext_regexdocu' => '(Пример: вредностите на „a(.*)c“ за „{{int:replacetext_originaltext}}“ и „ac$1“ за „{{int:replacetext_replacementtext}}“ ќе го заменат „abc“ со „acb“.)',
 	'replacetext_optionalfilters' => 'Незадолжителни филтри:',
 	'replacetext_categorysearch' => 'Замени само во категорија:',
-	'replacetext_prefixsearch' => 'Замени само во страници со префиксот:',
+	'replacetext_prefixsearch' => 'Замени само во страници со претставката:',
 	'replacetext_editpages' => 'Замени текст во содржина на страница',
 	'replacetext_movepages' => 'Замени текст во насловите на страниците, кога е можно',
 	'replacetext_givetarget' => 'Мора да ја наведете низата што треба да се замени.',
@@ -1608,7 +1688,7 @@ $messages['mk'] = array(
 	'replacetext_blankwarning' => 'Бидејќи новата низа е празна, оваа операција не може да се врати.
 Дали сакате да продолжите?',
 	'replacetext_continue' => 'Продолжи',
-	'replacetext_editsummary' => 'Замена на текст - „$1“ со „$2“',
+	'replacetext_editsummary' => 'Замена на текст — „$1“ со „$2“',
 	'right-replacetext' => 'Вршење замена на низи во целото вики',
 	'action-replacetext' => 'вршење замена на низи во целото вики',
 );
@@ -1643,7 +1723,7 @@ $messages['ml'] = array(
 	'replacetext_nomove' => 'ഒരു താളിന്റെയും തലക്കെട്ടിൽ "$1" എന്നു കണ്ടെത്താനായില്ല.',
 	'replacetext_return' => 'ഫോമിലേക്ക് തിരിച്ചു പോവുക',
 	'replacetext_continue' => 'തുടരുക',
-	'replacetext_editsummary' => 'എഴുത്ത് മാറ്റിച്ചേർക്കൽ - "$1" എന്നത് "$2" എന്നതുകൊണ്ട്',
+	'replacetext_editsummary' => 'എഴുത്ത് മാറ്റിച്ചേർക്കൽ - "$1" എന്നത് "$2" എന്നതുകൊണ്ട്', # Fuzzy
 	'right-replacetext' => 'വിക്കിയിൽ മുഴുവനും പദം മാറ്റിച്ചേർക്കുക',
 );
 
@@ -1663,7 +1743,7 @@ $messages['mr'] = array(
 	'replacetext_warning' => "अगोदरच $1 पानांवर '$2' हा बदलण्यासाठीचा मजकूर आहे; जर तुम्ही पुनर्लेखन केले तर तुम्ही केलेले बदल तुम्ही या पानांपासून वेगळे करू शकणार नाही. पुनर्लेखन करायचे का?", # Fuzzy
 	'replacetext_blankwarning' => 'बदलण्यासाठीचा मजकूर रिकामा असल्यामुळे ही क्रिया उलटविता येणार नाही; पुढे जायचे का?',
 	'replacetext_continue' => 'पुनर्लेखन करा',
-	'replacetext_editsummary' => "मजकूर पुनर्लेखन - '$1' ते '$2'",
+	'replacetext_editsummary' => "मजकूर पुनर्लेखन - '$1' ते '$2'", # Fuzzy
 );
 
 /** Malay (Bahasa Melayu)
@@ -1703,12 +1783,12 @@ Nama anda akan terpapar dalam sejarah laman sebagai pengguna yang bertanggungjaw
 	'replacetext_warning' => "'''Amaran:''' Terdapat \$1 laman yang sudah mengandungi rentetan ganti \"\$2\". Jika anda melakukan penggantian ini, anda tidak akan dapat mengasingkan gantian anda daripada rentetan-rentetan ini.",
 	'replacetext_blankwarning' => "'''Amaran:''' Oleh sebab rentetan ganti adalah kosong, operasi ini tidak boleh dimansuhkan.",
 	'replacetext_continue' => 'Sambung',
-	'replacetext_editsummary' => 'Ganti teks - "$1" kepada "$2"',
+	'replacetext_editsummary' => 'Ganti teks - "$1" kepada "$2"', # Fuzzy
 	'right-replacetext' => 'Membuat penggantian rentetan di seluruh wiki',
 	'action-replacetext' => 'melakukan penggantian rentetan di seluruh wiki',
 );
 
-/** Norwegian Bokmål (norsk (bokmål)‎)
+/** Norwegian Bokmål (norsk bokmål)
  * @author Event
  * @author Laaknor
  * @author Nghtwlkr
@@ -1748,18 +1828,19 @@ Navnet ditt vil stå i sidehistorikkene som den som er ansvarlig for endringene.
 	'replacetext_warning' => "'''Advarsel:''' Det er {{PLURAL:$1|én side|$1 sider}} som allerede har erstatningsteksten «$2». Om du gjør denne erstatningen vil du ikke kunne skille ut dine erstatninger fra denne teksten.",
 	'replacetext_blankwarning' => 'Fordi erstatningsteksten er tom vil denne handlingen ikke kunne angres automatisk; fortsette?',
 	'replacetext_continue' => 'Fortsett',
-	'replacetext_editsummary' => 'Teksterstatting – «$1» til «$2»',
+	'replacetext_editsummary' => 'Teksterstatting – «$1» til «$2»', # Fuzzy
 	'right-replacetext' => 'Gjennomfør teksterstatninger på hele wikien',
 );
 
 /** Dutch (Nederlands)
+ * @author HanV
  * @author SPQRobin
  * @author Siebrand
  */
 $messages['nl'] = array(
 	'replacetext' => 'Tekst vervangen',
 	'replacetext-desc' => "Beheerders kunnen via een [[Special:ReplaceText|speciale pagina]] tekst zoeken en vervangen in alle pagina's",
-	'replacetext_docu' => "Om een stuk tekst te vervangen door een ander stuk tekst in alle pagina's van de wiki, kunt u hier deze twee tekstdelen ingeven en daarna op \"{{int:replacetext_continue}}\" klikken.
+	'replacetext_docu' => "Om een stuk tekst te vervangen door een ander stuk tekst in alle pagina's van de wiki, kunt u hier deze twee tekstdelen opgeven en daarna op \"{{int:replacetext_continue}}\" klikken.
 U krijgt dan een lijst met pagina's te zien waar uw te vervangen tekstdeel in voorkomt, en u kunt kiezen in welke pagina's u de tekst ook echt wilt vervangen.
 Uw naam wordt opgenomen in de geschiedenis van de pagina als verantwoordelijke voor de wijzigingen.",
 	'replacetext_originaltext' => 'Oorspronkelijke tekst:',
@@ -1773,12 +1854,12 @@ Uw naam wordt opgenomen in de geschiedenis van de pagina als verantwoordelijke v
 	'replacetext_movepages' => 'Tekst vervangen in paginanamen als mogelijk',
 	'replacetext_givetarget' => 'U moet de te vervangen tekst opgeven.',
 	'replacetext_nonamespace' => 'U moet ten minste één naamruimte selecteren.',
-	'replacetext_editormove' => 'U moet tenminste een van de vervangingingsopties kiezen.',
+	'replacetext_editormove' => 'U moet tenminste een van de vervangingsopties kiezen.',
 	'replacetext_choosepagesforedit' => 'Selecteer de {{PLURAL:$3|pagina|pagina\'s}} waar u "$1" door "$2" wilt vervangen:',
 	'replacetext_choosepagesformove' => '"$1" door "$2" vervangen in de volgende {{PLURAL:$3|paginanaam|paginanamen}}:',
 	'replacetext_cannotmove' => "De volgende {{PLURAL:$1|pagina kan|pagina's kunnen}} niet hernoemd worden:",
 	'replacetext_formovedpages' => "Voor hernoemde pagina's:",
-	'replacetext_savemovedpages' => "Een doorwijziging aanmaken voor hernoemde pagina's",
+	'replacetext_savemovedpages' => "Een doorverwijzing aanmaken voor hernoemde pagina's",
 	'replacetext_watchmovedpages' => "Deze pagina's volgen",
 	'replacetext_invertselections' => 'Selecties omkeren',
 	'replacetext_replace' => 'Vervangen',
@@ -1791,12 +1872,12 @@ Uw naam wordt opgenomen in de geschiedenis van de pagina als verantwoordelijke v
 Als u nu doorgaat met vervangen, kunt u geen onderscheid meer maken.",
 	'replacetext_blankwarning' => 'Omdat u tekst vervangt door niets, kan deze handeling niet ongedaan gemaakt worden. Wilt u doorgaan?',
 	'replacetext_continue' => 'Doorgaan',
-	'replacetext_editsummary' => "Tekst vervangen - '$1' door '$2'",
+	'replacetext_editsummary' => 'Tekst vervangen - "$1" door "$2"',
 	'right-replacetext' => 'Tekst vervangen in de hele wiki',
 	'action-replacetext' => 'tekst te vervangen in de hele wiki',
 );
 
-/** Norwegian Nynorsk (norsk (nynorsk)‎)
+/** Norwegian Nynorsk (norsk nynorsk)
  * @author Gunnernett
  * @author Harald Khan
  * @author Njardarlogar
@@ -1804,7 +1885,7 @@ Als u nu doorgaat met vervangen, kunt u geen onderscheid meer maken.",
 $messages['nn'] = array(
 	'replacetext' => 'Byt ut tekst',
 	'replacetext-desc' => 'Gjev ei [[Special:ReplaceText|spesialsida]] som lèt administratorar søkja etter og byta ut tekst på alle innhaldssidene på ein wiki.',
-	'replacetext_docu' => 'For å byta éin tekststreng med ein annan på alle datasidene på denne wikien kan du skriva inn dei to tekstane her og trykkja «Hald fram». Du vil då bli førd til ei lista over sidene som inneheld søkjestrengen, og du kan velja kva sider du ønskjer å byta han ut i. Namnet ditt vil stå i sidehistorikkane som han som er ansvarleg for endringane.', # Fuzzy
+	'replacetext_docu' => 'For å byta ein tekststreng med ein annan på alle vanlege sider på denne wikien kan du skriva inn dei to tekstbitane her og klikka «{{int:replacetext_continue}}». Du vil då verta ført til ei liste over sidene som inneheld søkjestrengen, og du kan velja kva sider du ønskjer å byta han ut i. Namnet ditt vil stå i sidehistorikkane som den som er ansvarleg for endringane.',
 	'replacetext_originaltext' => 'Originaltekst:',
 	'replacetext_replacementtext' => 'Ny tekst til erstatning:',
 	'replacetext_optionalfilters' => 'Valfrie filter:',
@@ -1834,7 +1915,7 @@ Halda fram med utbytinga?', # Fuzzy
 	'replacetext_blankwarning' => 'Av di teksten som skal bli sett inn er tom, vil ikkje denne handlinga kunna bli køyrt omvendt.
 Vil du halda fram?',
 	'replacetext_continue' => 'Hald fram',
-	'replacetext_editsummary' => 'Utbyting av tekst - «$1» til «$2»',
+	'replacetext_editsummary' => 'Utbyting av tekst - «$1» til «$2»', # Fuzzy
 	'right-replacetext' => 'Gjennomfør utbyting av tekst på heile wikien',
 );
 
@@ -1872,7 +1953,7 @@ $messages['oc'] = array(
 S'efectuatz aquesta substitucion, poiretz pas separar vòstres cambiaments a partir d'aquestas cadenas.",
 	'replacetext_blankwarning' => 'Perque la cadena de remplaçament es voida, aquesta operacion serà irreversibla ; volètz contunhar ?',
 	'replacetext_continue' => 'Contunhar',
-	'replacetext_editsummary' => 'Remplaçament del tèxte — « $1 » per « $2 »',
+	'replacetext_editsummary' => 'Remplaçament de tèxte — « $1 » per « $2 »',
 	'right-replacetext' => 'Far de remplaçaments de tèxte dins tot lo wiki',
 );
 
@@ -1886,6 +1967,7 @@ $messages['pdc'] = array(
 
 /** Polish (polski)
  * @author Ankry
+ * @author Chrumps
  * @author Derbeth
  * @author Leinad
  * @author Maikking
@@ -1927,7 +2009,7 @@ $messages['pl'] = array(
 	'replacetext_warning' => "'''Uwaga''' {{PLURAL:$1|Jest $1 strona zawierająca|Są $1 strony zawierające|Jest $1 stron zawierających}} tekst „$2”, którym chcesz zastępować. Jeśli wykonasz zastępowanie nie będzie możliwe odseparowanie Twoich zastąpień od tych tekstów.",
 	'replacetext_blankwarning' => 'Ponieważ ciąg znaków, którym ma być wykonane zastępowanie jest pusty, operacja będzie nieodwracalna. Czy kontynuować?',
 	'replacetext_continue' => 'Kontynuuj',
-	'replacetext_editsummary' => 'zamienił w treści „$1” na „$2”',
+	'replacetext_editsummary' => 'Zastępowanie tekstu - "$1" na "$2"',
 	'right-replacetext' => 'Wykonywanie zastępowania tekstu w całej wiki',
 );
 
@@ -1971,7 +2053,7 @@ S'it fas sta rimpiassadura-sì it saras pa bon a separé toe rimpiassadure da st
 	'replacetext_blankwarning' => "Da già che la stringa ëd rimpiass a l'é veuida, st'operassion-sì a sarà pa reversìbil.
 Veul-lo continué?",
 	'replacetext_continue' => 'Continua',
-	'replacetext_editsummary' => 'Rimpiassadura test - "$1" a "$2"',
+	'replacetext_editsummary' => 'Rimpiassadura test - "$1" a "$2"', # Fuzzy
 	'right-replacetext' => "Fà rimpiassadura dë stringhe an sl'antrega wiki",
 	'action-replacetext' => 'fé ij rampiass dë stringhe an sla wiki antrega',
 );
@@ -1992,7 +2074,7 @@ $messages['ps'] = array(
 	'replacetext_replacementtext' => 'د متن ځايناستوب:',
 	'replacetext_categorysearch' => 'يوازې په وېشنيزه کې ځايناستول:',
 	'replacetext_prefixsearch' => 'يوازې په مختاړي لرونکيو مخونو کې ځايناستول:',
-	'replacetext_editpages' => 'د مخ په مېنځپانګه کې متن ځايناستول',
+	'replacetext_editpages' => 'د مخ په مېنځپانگه کې متن ځايناستول',
 	'replacetext_movepages' => 'د شونتيا په وخت کې، د مخ د سرليک متن ځايناستول',
 	'replacetext_nonamespace' => 'تاسې بايد لږ تر لږه يو نوم-تشيال وټاکۍ.',
 	'replacetext_cannotmove' => 'دا {{PLURAL:$1|لاندې مخ|لانديني مخونه}} د لېږدولو وړ نه دي:',
@@ -2000,13 +2082,15 @@ $messages['ps'] = array(
 	'replacetext_watchmovedpages' => 'همدا مخونه کتل',
 	'replacetext_invertselections' => 'ټاکنې سرچپه کول',
 	'replacetext_replace' => 'ځايناستول',
-	'replacetext_editsummary' => 'متن ځايناستول - له "$1" نه "$2" ته',
+	'replacetext_editsummary' => 'متن ځايناستول - له "$1" نه "$2" ته', # Fuzzy
 );
 
 /** Portuguese (português)
+ * @author Capmo
  * @author Crazymadlover
  * @author Hamilton Abreu
  * @author Lijealso
+ * @author Luckas
  * @author Malafaya
  * @author Waldir
  * @author 555
@@ -2015,27 +2099,27 @@ $messages['pt'] = array(
 	'replacetext' => 'Substituir texto',
 	'replacetext-desc' => "[[Special:ReplaceText|Página especial]] que permite que os administradores façam substituições globais de texto ''(string find-and-replace)'' em todas as páginas de conteúdo de uma wiki",
 	'replacetext_docu' => 'Para substituir um texto por outro texto em todas as páginas desta wiki, introduza os dois textos e clique o botão "Prosseguir".
-Serão listadas as páginas que contêm o texto a substituir e poderá seleccionar em quais deseja proceder à substituição.
-O seu nome aparecerá no histórico dessas páginas como o utilizador responsável pelas alterações.', # Fuzzy
+Serão listadas as páginas que contêm o texto a substituir e poderá selecionar em quais deseja proceder à substituição.
+O seu nome aparecerá no histórico dessas páginas como o utilizador responsável pelas alterações.',
 	'replacetext_originaltext' => 'Texto original:',
 	'replacetext_replacementtext' => 'Texto de substituição:',
 	'replacetext_useregex' => 'Usar expressões regulares',
-	'replacetext_regexdocu' => '(Exemplo: os valores "a(.*)c" no "Texto original" e "ac$1" no "Texto de substituição" substituiriam "abc" por "acb")', # Fuzzy
+	'replacetext_regexdocu' => '(Exemplo: os valores "a(.*)c" no "Texto original" e "ac$1" no "Texto de substituição" substituiriam "abc" por "acb")',
 	'replacetext_optionalfilters' => 'Filtros opcionais:',
 	'replacetext_categorysearch' => 'Substituir só na categoria:',
 	'replacetext_prefixsearch' => 'Substituir só em páginas com o prefixo:',
 	'replacetext_editpages' => 'Substituir texto no conteúdo da página',
 	'replacetext_movepages' => 'Substituir texto nos títulos de páginas, quando possível',
 	'replacetext_givetarget' => 'Deve especificar o texto que será substituído.',
-	'replacetext_nonamespace' => 'Deverá seleccionar pelo menos um espaço nominal.',
-	'replacetext_editormove' => 'Deve seleccionar pelo menos uma das opções de substituição.',
+	'replacetext_nonamespace' => 'Deverá selecionar pelo menos um espaço nominal.',
+	'replacetext_editormove' => 'Deve selecionar pelo menos uma das opções de substituição.',
 	'replacetext_choosepagesforedit' => 'Substituir "$1" por "$2" no texto {{PLURAL:$3|da seguinte página|das seguintes páginas}}:',
 	'replacetext_choosepagesformove' => 'Substituir "$1" por "$2" {{PLURAL:$3|no título da seguinte página|nos títulos das seguintes páginas}}:',
 	'replacetext_cannotmove' => '{{PLURAL:$1|A seguinte página não pode ser movida|As seguintes páginas não podem ser movidas}}:',
 	'replacetext_formovedpages' => 'Para páginas movidas:',
-	'replacetext_savemovedpages' => 'Gravar os títulos anteriores como redireccionamentos para os novos títulos',
+	'replacetext_savemovedpages' => 'Gravar os títulos anteriores como redirecionamentos para os novos títulos',
 	'replacetext_watchmovedpages' => 'Vigiar estas páginas',
-	'replacetext_invertselections' => 'Inverter selecções',
+	'replacetext_invertselections' => 'Inverter seleções',
 	'replacetext_replace' => 'Substituir',
 	'replacetext_success' => "'$1' será substituído por '$2' em $3 {{PLURAL:$3|página|páginas}}.",
 	'replacetext_noreplacement' => 'Não foram encontradas páginas que contenham o texto "$1".',
@@ -2045,23 +2129,27 @@ O seu nome aparecerá no histórico dessas páginas como o utilizador responsáv
 	'replacetext_warning' => "'''Aviso:''' Há {{PLURAL:\$1|uma página que já contém|\$1 páginas que já contêm}} o texto de substituição, \"\$2\". Se fizer esta substituição não poderá distingui-las das suas substituições, nem desfazer a operação com uma simples substituição em ordem inversa.",
 	'replacetext_blankwarning' => "'''Aviso:''' Como o texto de substituição foi deixado em branco, esta operação não será reversível.",
 	'replacetext_continue' => 'Prosseguir',
-	'replacetext_editsummary' => 'Substituição de texto - de "$1" para "$2"',
+	'replacetext_editsummary' => 'Substituição de texto - de "$1" para "$2"', # Fuzzy
 	'right-replacetext' => 'Fazer substituições de texto em toda a wiki',
+	'action-replacetext' => 'fazer substituições de texto por toda a wiki',
 );
 
 /** Brazilian Portuguese (português do Brasil)
+ * @author Cainamarques
+ * @author Capmo
  * @author Crazymadlover
  * @author Eduardo.mps
  * @author Enqd
  * @author Giro720
  * @author Hamilton Abreu
  * @author Jaideraf
+ * @author Luckas
  * @author Luckas Blade
  * @author 555
  */
 $messages['pt-br'] = array(
 	'replacetext' => 'Substituir texto',
-	'replacetext-desc' => '[[Special:ReplaceText|Página especial]] que permite que os administradores façam substituições globais de texto em todas as páginas de conteúdo de um wiki',
+	'replacetext-desc' => 'Apresenta uma [[Special:ReplaceText|página especial]] que permite aos administradores fazer substituições globais de texto em todas as páginas de conteúdo de uma wiki',
 	'replacetext_docu' => 'Para substituir uma "string" de texto por outra em todas as páginas deste wiki, forneça o texto a ser substituído e o novo texto e clique no botão "{{int:replacetext_continue}}".
 Será exibida uma lista de páginas que possuem o termo pesquisado. A partir dela, selecione em quais você deseja realizar substituições.
 Seu nome de usuário aparecerá nos históricos das páginas como o responsável por ter feito as alterações.',
@@ -2092,9 +2180,10 @@ Seu nome de usuário aparecerá nos históricos das páginas como o responsável
 	'replacetext_return' => 'Voltar ao formulário.',
 	'replacetext_warning' => "'''Aviso:''' Há {{PLURAL:\$1|uma página que já contém|\$1 páginas que já contêm}} a expressão de substituição, \"\$2\". Se você prosseguir, não será possível distinguí-las das suas substituições, nem desfazer a operação com uma simples substituição em ordem inversa.",
 	'replacetext_blankwarning' => "'''Aviso:''' Como o texto de substituição foi deixado em branco, esta operação não será reversível.",
-	'replacetext_continue' => 'Avançar',
-	'replacetext_editsummary' => "Substituindo texto '$1' por '$2'",
+	'replacetext_continue' => 'Continuar',
+	'replacetext_editsummary' => 'Substituição de texto - "$1" por "$2"',
 	'right-replacetext' => 'Fazer substituições de texto em toda a wiki',
+	'action-replacetext' => 'executar substituições de cadeias de caracteres em toda a wiki',
 );
 
 /** Romanian (română)
@@ -2112,7 +2201,7 @@ $messages['ro'] = array(
 	'replacetext_nomove' => "Nu a fost găsită nici o pagină al cărei titlu să conțină '$1'.",
 	'replacetext_return' => 'Revenire la formular.',
 	'replacetext_continue' => 'Continuare',
-	'replacetext_editsummary' => "Înlocuire de text - '$1' în '$2'",
+	'replacetext_editsummary' => "Înlocuire de text - '$1' în '$2'", # Fuzzy
 );
 
 /** tarandíne (tarandíne)
@@ -2121,9 +2210,16 @@ $messages['ro'] = array(
 $messages['roa-tara'] = array(
 	'replacetext' => "Sostituisce 'u teste",
 	'replacetext_originaltext' => 'Teste origgenale:',
+	'replacetext_replacementtext' => 'Teste da sostituì:',
+	'replacetext_useregex' => 'Ause le espressiune regolare',
 	'replacetext_watchmovedpages' => 'Vide ste pàggene',
+	'replacetext_invertselections' => 'Selezione a smerse',
 	'replacetext_replace' => 'Sostituisce',
+	'replacetext_success' => '"$1" avène sostituite cu "$2" jndr\'à {{PLURAL:$3|\'na pàgene|$3 pàggene}}.',
+	'replacetext_return' => "Tuèrne a 'u module.",
 	'replacetext_continue' => 'Condinue',
+	'replacetext_editsummary' => 'Sostituzione d\'u teste - "$1" cu "$2"',
+	'right-replacetext' => "Fà 'a sostituzione de le stringhe sus a totte a uicchi",
 );
 
 /** Russian (русский)
@@ -2131,17 +2227,18 @@ $messages['roa-tara'] = array(
  * @author Ferrer
  * @author Kv75
  * @author Normalex
+ * @author Okras
  * @author Rubin
  * @author Александр Сигачёв
  */
 $messages['ru'] = array(
 	'replacetext' => 'Заменить текст',
 	'replacetext-desc' => 'Добавляет [[Special:ReplaceText|служебную страницу]], позволяющую администраторам осуществлять повсеместную замену указанного текста на всех обычных страницах вики',
-	'replacetext_docu' => 'Для того, чтобы заменить один текст на другой на всех страницах вики, вам необходимо ввести здесь желаемый текст и нажать на кнопку «Продолжить». После этого вам будет предложен список всех страниц, содержащих заменяемый текст, и вы сможете выбрать из них те, в которых нужно произвести замены. В качестве лица, отвечающего за внесённые изменения, в истории правок страниц, в которых произойдёт замена текста, будете указаны вы.', # Fuzzy
+	'replacetext_docu' => 'Для того, чтобы заменить одну строку на другую на всех страницах вики, вам необходимо ввести здесь желаемый текст и нажать на кнопку «{{int:replacetext_continue}}». После этого вам будет предложен список всех страниц, содержащих заменяемый текст, и вы сможете выбрать из них те, в которых нужно произвести замены. В качестве лица, отвечающего за внесённые изменения, в истории правок страниц, в которых произойдёт замена текста, будете указаны вы.',
 	'replacetext_originaltext' => 'Исходный текст:',
 	'replacetext_replacementtext' => 'Текст для замены:',
 	'replacetext_useregex' => 'Использовать регулярные выражения',
-	'replacetext_regexdocu' => '(Например, выражения «a(.*)c» в поле «Исходный текст» и «ac$1» в поле «Текст для замены» приведут к замене «abc» на «acb».)', # Fuzzy
+	'replacetext_regexdocu' => '(Например, выражения «a(.*)c» в поле «{{int:replacetext_originaltext}}» и «ac$1» в поле «{{int:replacetext_replacementtext}}» приведут к замене «abc» на «acb».)',
 	'replacetext_optionalfilters' => 'Необязательные фильтры:',
 	'replacetext_categorysearch' => 'Заменить только в категории:',
 	'replacetext_prefixsearch' => 'Заменить только в страницах с приставкой:',
@@ -2169,6 +2266,7 @@ $messages['ru'] = array(
 	'replacetext_continue' => 'Продолжить',
 	'replacetext_editsummary' => 'Замена текста — «$1» на «$2»',
 	'right-replacetext' => 'выполнение замен текста во всей вики',
+	'action-replacetext' => 'замену строк по всему проекту',
 );
 
 /** Sinhala (සිංහල)
@@ -2185,7 +2283,7 @@ $messages['si'] = array(
 	'replacetext_replace' => 'ප්‍රතිස්ථාපනය',
 	'replacetext_return' => 'නැවතත් ආකෘතිපත්‍රයට.',
 	'replacetext_continue' => 'ඉදිරියට යන්න',
-	'replacetext_editsummary' => 'පෙළ ප්‍රතිස්ථාපනය - "$1" වෙත "$2"',
+	'replacetext_editsummary' => 'පෙළ ප්‍රතිස්ථාපනය - "$1" වෙත "$2"', # Fuzzy
 );
 
 /** Slovak (slovenčina)
@@ -2224,7 +2322,7 @@ $messages['sk'] = array(
 	'replacetext_warning' => "'''Upozornenie:''' $1 {{PLURAL:$1|stránka|stránky|stránok}} už obsahuje text „$2”, ktorým chcete pôvodný text nahradiť. Ak budete pokračovať a text nahradíte, nebudete môcť odlíšiť vaše nahradenia od existujúceho textu, ktorý tento reťazec už obsahuje.",
 	'replacetext_blankwarning' => 'Pretože text, ktorým text chcete nahradiť je prázdny, operácia bude nevratná. Pokračovať?',
 	'replacetext_continue' => 'Pokračovať',
-	'replacetext_editsummary' => 'Nahradenie textu „$1” textom „$2”',
+	'replacetext_editsummary' => 'Nahradenie textu „$1” textom „$2”', # Fuzzy
 	'right-replacetext' => 'Vykonať náhradu reťazcov na celej wiki',
 );
 
@@ -2257,7 +2355,7 @@ $messages['sr-ec'] = array(
 	'replacetext_nomove' => 'Није нађена ниједна страница чији наслов садржи „$1“.',
 	'replacetext_return' => 'Назад на образац.',
 	'replacetext_continue' => 'Настави',
-	'replacetext_editsummary' => "Замена текста - '$1' у '$2'",
+	'replacetext_editsummary' => "Замена текста - '$1' у '$2'", # Fuzzy
 	'right-replacetext' => 'замењивање ниски на целом викију',
 );
 
@@ -2289,7 +2387,7 @@ $messages['sr-el'] = array(
 	'replacetext_nomove' => 'Nije nađena nijedna stranica čiji naslov sadrži „$1“.',
 	'replacetext_return' => 'Nazad na obrazac.',
 	'replacetext_continue' => 'Nastavi',
-	'replacetext_editsummary' => "Zamena teksta - '$1' u '$2'",
+	'replacetext_editsummary' => "Zamena teksta - '$1' u '$2'", # Fuzzy
 	'right-replacetext' => 'zamenjivanje niski na celom vikiju',
 );
 
@@ -2414,7 +2512,7 @@ Kapag ginawa mo ang pagpapalit na ito hindi mo na maihihiwalay ang mga pamalit m
 	'replacetext_blankwarning' => 'Dahil sa walang laman ang bagting ng pamalit, hindi na maibabalik pa sa dati ang gawaing ito/
 Naisa mo bang magpatuloy pa?',
 	'replacetext_continue' => 'Magpatuloy',
-	'replacetext_editsummary' => "Palitan ang tekso - '$1' papunta sa '$2'",
+	'replacetext_editsummary' => "Palitan ang tekso - '$1' papunta sa '$2'", # Fuzzy
 	'right-replacetext' => 'Gumawa ng pagpapalit ng bagting sa buong wiki',
 );
 
@@ -2457,12 +2555,13 @@ Değiştirme işlemine devam etmek ister misiniz?', # Fuzzy
 	'replacetext_blankwarning' => 'Değiştirme dizgisi boş olduğu için bu işlem geri alınamayacak.
 Devam etmek istiyor musunuz?',
 	'replacetext_continue' => 'Devam',
-	'replacetext_editsummary' => 'Metin değiştir - "$1" yerine "$2"',
+	'replacetext_editsummary' => 'Metin değiştir - "$1" yerine "$2"', # Fuzzy
 	'right-replacetext' => 'Vikinin tamamında dizgileri değiştirir',
 );
 
 /** Ukrainian (українська)
  * @author AS
+ * @author Andriykopanytsia
  * @author Base
  * @author Prima klasy4na
  * @author Ата
@@ -2501,7 +2600,7 @@ $messages['uk'] = array(
 	'replacetext_warning' => "'''Увага:''' Знайдено {{PLURAL:$1|$1 сторінку, що містить|$1 сторінки, що містять|$1 сторінок, що містять}} текст на який заміняти, «$2». Якщо Ви проведете цю заміну, то не зможете відділити Ваші заміни від тих рядків, що є вже.",
 	'replacetext_blankwarning' => "'''Увага:''' Так, як текст для заміни порожній, операцію не можна буде скасувати.",
 	'replacetext_continue' => 'Продовжити',
-	'replacetext_editsummary' => 'Заміна тексту — «$1» на «$2»',
+	'replacetext_editsummary' => 'Заміна тексту — „$1“ на „$2“',
 	'right-replacetext' => 'Робити заміни тексту у всій вікі',
 	'action-replacetext' => 'виконання замін тексту по всій вікі',
 );
@@ -2526,6 +2625,7 @@ $messages['vep'] = array(
 
 /** Vietnamese (Tiếng Việt)
  * @author Minh Nguyen
+ * @author Tuankiet65
  * @author Vinhtantran
  */
 $messages['vi'] = array(
@@ -2560,8 +2660,9 @@ $messages['vi'] = array(
 	'replacetext_warning' => "'''Cảnh báo:''' {{PLURAL:$1|Một trang|$1 trang}} trong lựa chọn đã có chứa chuỗi thay thế, “$2”. Nếu bạn thực hiện thay thế này bạn sẽ không thể phân biệt sự thay thế của bạn với những chuỗi này.",
 	'replacetext_blankwarning' => 'Vì chuỗi thay thế là khoảng trắng, tác vụ này sẽ không thể hồi lại được; tiếp tục?',
 	'replacetext_continue' => 'Tiếp tục',
-	'replacetext_editsummary' => 'Thay thế văn bản - ‘$1’ thành ‘$2’',
-	'right-replacetext' => 'Thay thế chuỗi ở tất cả wiki',
+	'replacetext_editsummary' => 'Thay thế văn bản – “$1” thành “$2”',
+	'right-replacetext' => 'Thay thế văn bản trên toàn wiki',
+	'action-replacetext' => 'thay thế văn bản trên toàn wiki',
 );
 
 /** Volapük (Volapük)
@@ -2581,7 +2682,7 @@ $messages['vo'] = array(
 	'replacetext_noreplacement' => 'Pads nonik labü vödem: „$1“ petuvons.',
 	'replacetext_blankwarning' => 'Bi plaädamavödem binon vägik, dun at no kanon pasädunön. Vilol-li fümiko ledunön plaädami?',
 	'replacetext_continue' => 'Ledunön',
-	'replacetext_editsummary' => 'Vödemiplaädam - „$1“ ad „$2“',
+	'replacetext_editsummary' => 'Vödemiplaädam - „$1“ ad „$2“', # Fuzzy
 	'right-replacetext' => 'Ledunön vödemiplaädami in vük lölik',
 );
 
@@ -2589,11 +2690,12 @@ $messages['vo'] = array(
  * @author Liangent
  * @author Onecountry
  * @author PhiLiP
+ * @author Yfdyh000
  */
 $messages['zh-hans'] = array(
 	'replacetext' => '替换文字',
 	'replacetext-desc' => '提供[[Special:ReplaceText|特殊页面]]让管理员可以对wiki的所有页面内容执行查找和替换。',
-	'replacetext_docu' => '要替换此维基内所有页面文字的字串，请将“原文字”及“替换文字”分别填入以下两个栏位之中，然后按“继续”。接下来会列出所有含原文字的页面供你选择在哪些页面进行替换。页面改动历史会显示你是进行此次改动的用户。', # Fuzzy
+	'replacetext_docu' => '要替换此维基内所有页面文字的字串，请将“原文字”及“替换文字”分别填入以下两个栏位之中，然后按“{{int:replacetext_continue}}”。接下来会列出所有含原文字的页面供你选择在哪些页面进行替换。页面改动历史会显示你是进行此次改动的用户。',
 	'replacetext_originaltext' => '原文字',
 	'replacetext_replacementtext' => '替换文字',
 	'replacetext_useregex' => '使用正则表达式',
@@ -2622,11 +2724,15 @@ $messages['zh-hans'] = array(
 	'replacetext_warning' => '有$1个页面已经包含文字「$2」。如果您执行了替换作业，被替代的文字会跟它们混在一起，变得难以分开原来的文字和被替代的文字。要继续执行替换作业吗？',
 	'replacetext_blankwarning' => "'''警告：'''因为替换字串为空，这将导致操作无法复原！您要继续吗？",
 	'replacetext_continue' => '继续',
-	'replacetext_editsummary' => '替换文字 - 「$1」替换为「$2」',
+	'replacetext_editsummary' => '替换文字 - 「$1」替换为「$2」', # Fuzzy
 	'right-replacetext' => '对整个wiki进行文字替换。',
+	'action-replacetext' => '对这整个wiki做字符串替换',
 );
 
 /** Traditional Chinese (中文（繁體）‎)
+ * @author Ch.Andrew
+ * @author Cwlin0416
+ * @author Justincheng12345
  * @author Mark85296341
  * @author Roc michael
  * @author Sheepy
@@ -2635,7 +2741,7 @@ $messages['zh-hans'] = array(
 $messages['zh-hant'] = array(
 	'replacetext' => '替換文字',
 	'replacetext-desc' => '提供[[Special:ReplaceText|特殊頁面]]以利管理員以「尋找及替換」的方式更改所有文章頁面內的內容。',
-	'replacetext_docu' => '要替換此維基內所有頁面文字的字串，請將「原始文字」及「替換的文字」分別填入下面的兩個欄位之中，然後按「繼續」。接下來所有內含原始文字的頁面會被列出，你可以選擇要在那一些頁面進行替換。頁面的改動歷史會顯示你是負責進行這次改動的用戶。', # Fuzzy
+	'replacetext_docu' => '要替換此維基內所有頁面文字的字串，請將「原始文字」及「替換的文字」分別填入下面的兩個欄位之中，然後按「{{int:replacetext_continue}}」。接下來所有內含原始文字的頁面會被列出，你可以選擇要在那一些頁面進行替換。頁面的改動歷史會顯示你是負責進行這次改動的用戶。',
 	'replacetext_originaltext' => '原文字',
 	'replacetext_replacementtext' => '替換文字',
 	'replacetext_useregex' => '使用正則表達式',
@@ -2647,7 +2753,7 @@ $messages['zh-hant'] = array(
 	'replacetext_movepages' => '如果可以的話，也替換頁面名稱的字串。',
 	'replacetext_givetarget' => '必須指定尋找的字符串',
 	'replacetext_nonamespace' => '您必須選擇最少一個名字空間。',
-	'replacetext_editormove' => '必須選擇至少一個替換選項。',
+	'replacetext_editormove' => '您必須選擇至少一個替換的選項。',
 	'replacetext_choosepagesforedit' => '請選擇想將“$1”替換成“$2”的{{PLURAL:$3|頁面|頁面}}。',
 	'replacetext_choosepagesformove' => '將{{PLURAL:$3|以下頁面|以下頁面}}中的“$1”替換為“$2”：',
 	'replacetext_cannotmove' => '無法移動以下{{PLURAL:$1|頁面|頁面}}：',
@@ -2664,8 +2770,9 @@ $messages['zh-hant'] = array(
 	'replacetext_warning' => '有$1個頁面已經包含文字「$2」。如果您執行了替換作業，被替代的文字會跟它們混在一起，變得難以分開原來的文字和被替代的文字。要繼續執行替換作業嗎？',
 	'replacetext_blankwarning' => '因為替換字串是空白的，這將造成難以復原的結果！您要繼續嗎？',
 	'replacetext_continue' => '繼續',
-	'replacetext_editsummary' => '替換文字 - 「$1」替換為「$2」',
+	'replacetext_editsummary' => '取代文字 - 「$1」取代成「$2」',
 	'right-replacetext' => '對整個維基進行文字替換。',
+	'action-replacetext' => '對整個維基進行文字替換。',
 );
 
 /** Chinese (Taiwan) (‪中文(台灣)‬)

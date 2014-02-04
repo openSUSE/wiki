@@ -320,22 +320,21 @@ class FlaggedRevsHooks {
 				$result = false;
 				return false;
 			}
-		# Don't let users patrol reviewable pages (where reviewed <=> patrolled)
-		} elseif ( $action === 'patrol' || $action === 'autopatrol' ) {
-			$flaggedArticle = FlaggableWikiPage::getTitleInstance( $title );
-			# For a page to be patrollable it must not be reviewable.
-			if ( $flaggedArticle->isReviewable() ) {
-				$result = false;
-				return false; // patrol by "accepting"
-			}
 		# Enforce autoreview/review restrictions
 		} elseif ( $action === 'autoreview' || $action === 'review' ) {
 			# Get autoreview restriction settings...
 			$fa = FlaggableWikiPage::getTitleInstance( $title );
 			$config = $fa->getStabilitySettings();
 			# Convert Sysop -> protect
-			$right = ( $config['autoreview'] === 'sysop' ) ?
-				'protect' : $config['autoreview'];
+			$right = $config['autoreview'];
+			if ( $right === 'sysop' ) {
+				// Backwards compatibility, rewrite sysop -> editprotected
+				$right = 'editprotected';
+			}
+			if ( $right === 'autoconfirmed' ) {
+				// Backwards compatibility, rewrite autoconfirmed -> editsemiprotected
+				$right = 'editsemiprotected';
+			}
 			# Check if the user has the required right, if any
 			if ( $right != '' && !$user->isAllowed( $right ) ) {
 				$result = false;
@@ -345,14 +344,17 @@ class FlaggedRevsHooks {
 			# If a page is restricted from editing such that a user cannot
 			# edit it, then said user should not be able to review it.
 			foreach ( $title->getRestrictions( 'edit' ) as $right ) {
-				// Backwards compatibility, rewrite sysop -> protect
-				$right = ( $right === 'sysop' ) ? 'protect' : $right;
+				if ( $right === 'sysop' ) {
+					// Backwards compatibility, rewrite sysop -> editprotected
+					$right = 'editprotected';
+				}
+				if ( $right === 'autoconfirmed' ) {
+					// Backwards compatibility, rewrite autoconfirmed -> editsemiprotected
+					$right = 'editsemiprotected';
+				}
 				if ( $right != '' && !$user->isAllowed( $right ) ) {
-					// 'editprotected' bypasses this restriction
-					if ( !$user->isAllowed( 'editprotected' ) ) {
-						$result = false;
-						return false;
-					}
+					$result = false;
+					return false;
 				}
 			}
 		}
@@ -361,7 +363,7 @@ class FlaggedRevsHooks {
 
 	/**
 	 * When an edit is made by a user, review it if either:
-	 * (a) The user can 'autoreview' and the edit's base revision is a checked
+	 * (a) The user can 'autoreview' and the edit's base revision was checked
 	 * (b) The edit is a self-revert to the stable version (by anyone)
 	 * (c) The user can 'autoreview' new pages and this edit is a new page
 	 * (d) The user can 'review' and the "review pending edits" checkbox was checked
@@ -373,13 +375,14 @@ class FlaggedRevsHooks {
 		Page $article, $rev, $baseRevId = false, $user = null
 	) {
 		global $wgRequest;
+
+		$title = $article->getTitle(); // convenience
 		# Edit must be non-null, to a reviewable page, with $user set
-		$fa = FlaggableWikiPage::getTitleInstance( $article->getTitle() );
+		$fa = FlaggableWikiPage::getTitleInstance( $title );
 		$fa->loadPageData( 'fromdbmaster' );
 		if ( !$rev || !$user || !$fa->isReviewable() ) {
 			return true;
 		}
-		$title = $article->getTitle(); // convenience
 		$title->resetArticleID( $rev->getPage() ); // Avoid extra DB hit and lag issues
 		# Get what was just the current revision ID
 		$prevRevId = $rev->getParentId();
@@ -390,7 +393,7 @@ class FlaggedRevsHooks {
 			&& $wgRequest->getCheck( 'wpReviewEdit' )
 			&& $title->getUserPermissionsErrors( 'review', $user ) === array() )
 		{
-			if ( self::editCheckReview( $article, $rev, $user, $editTimestamp ) ) {
+			if ( self::editCheckReview( $fa, $rev, $user, $editTimestamp ) ) {
 				return true; // reviewed...done!
 			}
 		}
@@ -422,24 +425,37 @@ class FlaggedRevsHooks {
 		# (a) this new revision creates a new page and new page autoreview is enabled
 		# (b) this new revision is based on an old, reviewed, revision
 		if ( $title->getUserPermissionsErrors( 'autoreview', $user ) === array() ) {
+			# For rollback/null edits, use the previous ID as the alternate base ID.
+			# Otherwise, use the 'altBaseRevId' parameter passed in by the request.
+			$altBaseRevId = $isOldRevCopy ? $prevRevId : $wgRequest->getInt( 'altBaseRevId' );
 			if ( !$prevRevId ) { // New pages
 				$reviewableNewPage = FlaggedRevs::autoReviewNewPages();
 				$reviewableChange = false;
 			} else { // Edits to existing pages
 				$reviewableNewPage = false; // had previous rev
+				# If a edit was automatically merged, do not trust 'baseRevId' (bug 33481)
+				if ( $editTimestamp
+					&& $editTimestamp !== Revision::getTimestampFromId( $title, $prevRevId ) )
+				{
+					$baseRevId = $prevRevId;
+					$altBaseRevId = 0;
+				}
 				# Check if the base revision was reviewed...
 				if ( FlaggedRevs::autoReviewEdits() ) {
 					$frev = FlaggedRevision::newFromTitle( $title, $baseRevId, FR_MASTER );
+					if ( !$frev && $altBaseRevId ) {
+						$frev = FlaggedRevision::newFromTitle( $title, $altBaseRevId, FR_MASTER );
+					}
 				}
 				$reviewableChange = (bool)$frev;
 			}
-			// Is this an edit directly to a reviewed version or a new page?
+			# Is this an edit directly to a reviewed version or a new page?
 			if ( $reviewableNewPage || $reviewableChange ) {
 				if ( $isOldRevCopy && $frev ) {
 					$flags = $frev->getTags(); // null edits & rollbacks keep previous tags
 				}
 				# Review this revision of the page...
-				FlaggedRevs::autoReviewEdit( $article, $user, $rev, $flags );
+				FlaggedRevs::autoReviewEdit( $fa, $user, $rev, $flags );
 			}
 		# Case B: the user cannot autoreview edits. Check if either:
 		# (a) this is a rollback to the stable version
@@ -454,15 +470,15 @@ class FlaggedRevsHooks {
 				$baseRevId == $srev->getRevId() && // restored stable rev
 				$title->getUserPermissionsErrors( 'autoreviewrestore', $user ) === array()
 			);
-			# Check for self-reversions...
+			# Check for self-reversions (checks text hashes)...
 			if ( !$reviewableChange ) {
 				$reviewableChange = self::isSelfRevertToStable( $rev, $srev, $baseRevId, $user );
 			}
-			// Is this a rollback or self-reversion to the stable rev?
+			# Is this a rollback or self-reversion to the stable rev?
 			if ( $reviewableChange ) {
 				$flags = $srev->getTags(); // use old tags
 				# Review this revision of the page...
-				FlaggedRevs::autoReviewEdit( $article, $user, $rev, $flags );
+				FlaggedRevs::autoReviewEdit( $fa, $user, $rev, $flags );
 			}
 		}
 		return true;
@@ -531,7 +547,7 @@ class FlaggedRevsHooks {
 			return false; // only looking for self-reverts
 		}
 		# Confirm the text because we can't trust this user.
-		return ( $rev->getText() == $srev->getRevText() );
+		return ( $rev->getSha1() === $srev->getRevision()->getSha1() );
 	}
 
 	/**
@@ -935,7 +951,7 @@ class FlaggedRevsHooks {
 
 	public static function setSessionKey( User $user ) {
 		global $wgRequest;
-		if ( $user->isAllowed( 'review' ) ) {
+		if ( $user->isLoggedIn() && $user->isAllowed( 'review' ) ) {
 			$key = $wgRequest->getSessionData( 'wsFlaggedRevsKey' );
 			if ( $key === null ) { // should catch login
 				$key = MWCryptRand::generateHex( 32 );
@@ -991,6 +1007,22 @@ class FlaggedRevsHooks {
 				break;
 		}
 
+		return true;
+	}
+
+	/**
+	 * Handler for EchoGetDefaultNotifiedUsers hook.
+	 * @param $event EchoEvent to get implicitly subscribed users for
+	 * @param &$users Array to append implicitly subscribed users to.
+	 * @return bool true in all cases
+	 */
+	public static function onEchoGetDefaultNotifiedUsers( $event, &$users ) {
+		$extra = $event->getExtra();
+		if ( $event->getType() == 'reverted' && $extra['method'] == 'flaggedrevs-reject' ) {
+			foreach ( $extra['reverted-users-ids'] as $userId ) {
+				$users[$userId] = User::newFromId( intval( $userId ) );
+			}
+		}
 		return true;
 	}
 }

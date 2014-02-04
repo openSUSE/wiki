@@ -1,31 +1,45 @@
 /**
- * Additional mw.Api methods to assist with API calls related to parsing wikitext.
+ * @class mw.Api.plugin.parse
  */
-
-( function( $, mw ) {
+( function ( mw, $ ) {
 
 	$.extend( mw.Api.prototype, {
 		/**
-		 * Convinience method for 'action=parse'. Parses wikitext into HTML.
+		 * Convinience method for 'action=parse'.
 		 *
-		 * @param wikiText {String}
-		 * @param success {Function} callback to which to pass success HTML
-		 * @param err {Function} callback if error (optional)
-		 * @return {jqXHR}
+		 * @param {string} wikitext
+		 * @param {Function} [ok] Success callback (deprecated)
+		 * @param {Function} [err] Error callback (deprecated)
+		 * @return {jQuery.Promise}
+		 * @return {Function} return.done
+		 * @return {string} return.done.data Parsed HTML of `wikitext`.
 		 */
-		parse: function( wikiText, success, err ) {
-			var params = {
-					text: wikiText,
-					action: 'parse'
-				},
-				ok = function( data ) {
-					if ( data.parse && data.parse.text && data.parse.text['*'] ) {
-						success( data.parse.text['*'] );
-					}
-				};
-			return this.get( params, { ok: ok, err: err } );
-		}
+		parse: function ( wikitext, ok, err ) {
+			var d = $.Deferred(),
+				apiPromise;
 
+			// Backwards compatibility (< MW 1.20)
+			d.done( ok ).fail( err );
+
+			apiPromise = this.get( {
+					action: 'parse',
+					contentmodel: 'wikitext',
+					text: wikitext
+				} )
+				.done( function ( data ) {
+					if ( data.parse && data.parse.text && data.parse.text['*'] ) {
+						d.resolve( data.parse.text['*'] );
+					}
+				} )
+				.fail( d.reject );
+
+			return d.promise( { abort: apiPromise.abort } );
+		}
 	} );
 
-} )( jQuery, mediaWiki );
+	/**
+	 * @class mw.Api
+	 * @mixins mw.Api.plugin.parse
+	 */
+
+}( mediaWiki, jQuery ) );

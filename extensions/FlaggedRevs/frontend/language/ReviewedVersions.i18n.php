@@ -20,6 +20,7 @@ $messages['en'] = array(
 /** Message documentation (Message documentation)
  * @author Aaron Schulz
  * @author Jon Harald Søby
+ * @author Shirayuki
  * @author Siebrand
  */
 $messages['qqq'] = array(
@@ -29,15 +30,25 @@ Name of the Special:ReviewedVersions page, which lists all reviewed versions for
 Used on Special:ReviewedVersions.
 The legend of the form used to select a page on Special:ReviewedVersions.',
 	'reviewedversions-page' => '{{Flagged Revs}}
-{{Identical|Page name}}
-Used on Special:ReviewedVersions.',
+Used on Special:ReviewedVersions.
+{{Identical|Page name}}',
 	'reviewedversions-none' => '{{Flagged Revs}}
 Message is displayed on Special:ReviewedVersions for pages that has no reviewed revisions.
-* $1 The page name.',
+
+Parameters:
+* $1 - the page title
+See also:
+* {{msg-mw|Reviewedversions-list}}',
 	'reviewedversions-list' => '{{Flagged Revs}}
-Used on Special:ReviewedVersions.
-Parameter $1 is a page title,
-Parameter $2 is the count of revisions following, to be used with PLURAL.',
+Used on [[Special:ReviewedVersions]].
+
+Followed by a list.
+
+Parameters:
+* $1 - a page title
+* $2 - the count of revisions following, can be used with PLURAL
+See also:
+* {{msg-mw|Reviewedversions-none}}',
 	'reviewedversions-review' => '{{Flagged Revs}}
 This message is used in the list of reviewed versions of a page (Special:ReviewedVersions) to specify who has reviewed each version.
 * $1 is the date and time of the review
@@ -266,7 +277,7 @@ $messages['cs'] = array(
  * @author ОйЛ
  */
 $messages['cu'] = array(
-	'reviewedversions-page' => 'страни́цѧ и́мѧ',
+	'reviewedversions-page' => 'страницѧ имѧ :',
 );
 
 /** Danish (dansk)
@@ -505,14 +516,15 @@ $messages['he'] = array(
 
 /** Hindi (हिन्दी)
  * @author Kaustubh
+ * @author Siddhartha Ghai
  */
 $messages['hi'] = array(
-	'reviewedversions' => 'स्थिर अवतरण देखें', # Fuzzy
-	'reviewedversions-leg1' => 'पन्नेके परीक्षण हुए अवतरणोंकी सूची देखें',
-	'reviewedversions-page' => 'लेख शीर्षक:',
-	'reviewedversions-none' => '"[[:$1]]" को एकभी परिक्षण किया हुआ अवतरण नहीं हैं।',
-	'reviewedversions-list' => 'नीचे [[:$1]] के परिक्षण हुए अवतरणोंकी सूची हैं:', # Fuzzy
-	'reviewedversions-review' => '$2 द्वारा <i>$1</i> को परिक्षण हुआ',
+	'reviewedversions' => 'पुनरीक्षित अवतरण',
+	'reviewedversions-leg1' => 'किसी पृष्ठ के पुनरीक्षित अवतरणों की सूची देखें',
+	'reviewedversions-page' => 'पृष्ठ नाम:',
+	'reviewedversions-none' => '"[[:$1]]" का कोई पुनरीक्षित अवतरण नहीं है।',
+	'reviewedversions-list' => '[[:$1]] {{PLURAL:$2|का|के}} पुनरीक्षित {{PLURAL:$2|अवतरण|अवतरणों की सूची}} निम्न है:',
+	'reviewedversions-review' => '$2 द्वारा <i>$1</i> को पुनरीक्षित',
 );
 
 /** Croatian (hrvatski)
@@ -694,13 +706,14 @@ $messages['km'] = array(
 /** Korean (한국어)
  * @author Devunt
  * @author Kwj2772
+ * @author 아라
  */
 $messages['ko'] = array(
-	'reviewedversions' => '검토된 버전',
+	'reviewedversions' => '검토된 판',
 	'reviewedversions-leg1' => '문서의 검토된 판의 목록',
 	'reviewedversions-page' => '문서 이름:',
 	'reviewedversions-none' => '"[[:$1]]"의 검토된 판이 없습니다.',
-	'reviewedversions-list' => '다음은 [[:$1]] 문서의 검토된 {{PLURAL:$2|편집}}의 목록입니다:',
+	'reviewedversions-list' => '다음은 검토{{PLURAL:$2|된}} [[:$1]] 문서의 {{PLURAL:$2|판}}의 목록입니다:',
 	'reviewedversions-review' => '<i>$1</i>에 $2에게 검토됨',
 );
 
@@ -723,7 +736,7 @@ $messages['ku-latn'] = array(
 	'reviewedversions-page' => 'Navê rûpelê:',
 );
 
-/** Kirghiz (Кыргызча)
+/** Kyrgyz (Кыргызча)
  * @author Growingup
  */
 $messages['ky'] = array(
@@ -851,7 +864,7 @@ $messages['nah'] = array(
 	'reviewedversions-page' => 'Zāzanilli ītōcā:',
 );
 
-/** Norwegian Bokmål (norsk (bokmål)‎)
+/** Norwegian Bokmål (norsk bokmål)
  * @author Nghtwlkr
  */
 $messages['nb'] = array(
@@ -884,7 +897,7 @@ $messages['nl'] = array(
 	'reviewedversions-review' => 'Gecontroleerd op <i>$1</i> door $2',
 );
 
-/** Norwegian Nynorsk (norsk (nynorsk)‎)
+/** Norwegian Nynorsk (norsk nynorsk)
  * @author Harald Khan
  * @author Jon Harald Søby
  */
@@ -916,7 +929,7 @@ $messages['oc'] = array(
 	'reviewedversions-review' => "Revisada lo ''$1'' per $2",
 );
 
-/** Oriya (ଓଡ଼ିଆ)
+/** Oriya (ଓଡ଼ିଆ)
  * @author Ansumang
  */
 $messages['or'] = array(
@@ -934,12 +947,13 @@ $messages['pdc'] = array(
  * @author Derbeth
  * @author Leinad
  * @author Sp5uhe
+ * @author ToSter
  */
 $messages['pl'] = array(
 	'reviewedversions' => 'Wersje oznaczone',
 	'reviewedversions-leg1' => 'Pokaż oznaczone wersje strony',
 	'reviewedversions-page' => 'Nazwa strony:',
-	'reviewedversions-none' => '„[[:$1]]” nie posiada wersji oznaczonych.',
+	'reviewedversions-none' => '„[[:$1]]” nie ma wersji oznaczonych.',
 	'reviewedversions-list' => '{{PLURAL:$2|Wersja|Wersje}} strony „[[:$1]]”, {{PLURAL:$2|która została oznaczona|które zostały oznaczone:}}',
 	'reviewedversions-review' => '<i>$1</i>, oznaczona przez $2',
 );

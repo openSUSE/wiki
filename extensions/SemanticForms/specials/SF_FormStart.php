@@ -117,7 +117,7 @@ END;
 	 * Helper function - returns a URL that includes Special:FormEdit.
 	 */
 	static function getFormEditURL( $formName, $targetName) {
-		$fe = SFUtils::getSpecialPage( 'FormEdit' );
+		$fe = SpecialPageFactory::getPage( 'FormEdit' );
 		// Special handling for forms whose name contains a slash.
 		if ( strpos( $formName, '/' ) !== false ) {
 			return $fe->getTitle()->getLocalURL( array( 'form' => $formName, 'target' => $targetName ) );
@@ -187,13 +187,11 @@ END;
 		// Show "loading" animated image while people wait for the
 		// redirect.
 		global $sfgScriptPath;
-		$text = "<p style=\"position: absolute; left: 45%; top: 45%;\"><img src=\"$sfgScriptPath/skins/loading.gif\" /></p>\n";
-		$text .= <<<END
-		<script type="text/javascript">
-		window.onload = function() {
-			window.location="$redirect_url";
-		}
-		</script>
+		$text = <<<END
+	<p style="position: absolute; left: 45%; top: 45%;">
+	<img src="$sfgScriptPath/skins/loading.gif" />
+	</p>
+ 	<meta http-equiv="refresh" content="0; url=$redirect_url" />
 
 END;
 		$wgOut->addHTML( $text );

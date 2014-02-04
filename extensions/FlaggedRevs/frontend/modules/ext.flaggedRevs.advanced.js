@@ -1,9 +1,9 @@
 /**
- * FlaggedRevs Stylesheet
+ * FlaggedRevs Advanced JavaScript
  * @author Aaron Schulz
  * @author Krinkle <krinklemail@gmail.com> 2011
  */
-( function( $ ) {
+( function( mw, $ ) {
 	"use strict";
 
 var fr = {
@@ -209,4 +209,4 @@ $(document).ready( function() {
 	fr.init();
 } );
 
-})( jQuery );
+})( mediaWiki, jQuery );

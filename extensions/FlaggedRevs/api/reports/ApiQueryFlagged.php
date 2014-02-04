@@ -52,7 +52,17 @@ class ApiQueryFlagged extends ApiQueryBase {
 			if ( $row->fp_pending_since ) {
 				$data['pending_since'] = wfTimestamp( TS_ISO_8601, $row->fp_pending_since );
 			}
+
 			$result->addValue( array( 'query', 'pages', $row->fp_page_id ), 'flagged', $data );
+		}
+
+		$this->resetQueryParams();
+		$this->addTables( 'flaggedpage_config' );
+		$this->addFields( array( 'fpc_page_id', 'fpc_level', 'fpc_expiry' ) );
+		$this->addWhereFld( 'fpc_page_id', $pageids );
+		foreach ( $this->select( __METHOD__ ) as $row ) {
+			$result->addValue( array( 'query', 'pages', $row->fpc_page_id, 'flagged' ), 'protection_level', $row->fpc_level );
+			$result->addValue( array( 'query', 'pages', $row->fpc_page_id, 'flagged' ), 'protection_expiry', $row->fpc_expiry );
 		}
 
 		return true;
@@ -73,7 +83,10 @@ class ApiQueryFlagged extends ApiQueryBase {
 			'* stable_revid      : The revision id of the latest stable revision',
 			'* level, level_text : The highest flagging level of the page',
 			'* pending_since     : If there are any current unreviewed revisions'
-			. ' for that page, holds the timestamp of the first of them'
+			. ' for that page, holds the timestamp of the first of them',
+			'If the page has protection configuration, the following parameters are returned:',
+			'* protection_level  : The right a user must have to not require review on the page',
+			'* protection_expiry : When the protection expires'
 		);
 	}
 

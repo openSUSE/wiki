@@ -1,5 +1,5 @@
 /**
- * FlaggedRevs Stylesheet
+ * FlaggedRevs Basic Stylesheet
  * @author Aaron Schulz
  */
 
@@ -265,7 +265,7 @@ img.flaggedrevs-icon {
 /* RC pending changes notice */
 .fr-watchlist-pending-notice {
 	padding: 3px;
-	margin: 5px;
+	margin-bottom: 5px;
 	border: 1px solid #990000;
 	background-color: #FEECD7;
 }

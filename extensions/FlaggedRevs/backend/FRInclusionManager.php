@@ -96,7 +96,7 @@ class FRInclusionManager {
 	 * (a) Stabilize inclusions in Parser output
 	 * (b) Load all of the "review time" versions of template/files from $frev
 	 * (c) Load their stable version counterparts (avoids DB hits)
-	 * Note: Used when calling FlaggedRevs::parseStableText().
+	 * Note: Used when calling FlaggedRevs::parseStableRevision().
 	 * @param FlaggedRevision $frev
 	 * @return void
 	 */

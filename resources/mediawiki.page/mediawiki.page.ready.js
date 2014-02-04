@@ -1,24 +1,40 @@
-jQuery( document ).ready( function( $ ) {
+( function ( mw , $ ) {
+	var supportsPlaceholder = 'placeholder' in document.createElement( 'input' );
 
-	/* Emulate placeholder if not supported by browser */
-	if ( !( 'placeholder' in document.createElement( 'input' ) ) ) {
-		$( 'input[placeholder]' ).placeholder();
-	}
+	mw.hook( 'wikipage.content' ).add( function ( $content ) {
+		var $sortableTables;
 
-	/* Enable makeCollapsible */
-	$( '.mw-collapsible' ).makeCollapsible();
+		// Run jquery.placeholder polyfill if placeholder is not supported
+		if ( !supportsPlaceholder ) {
+			$content.find( 'input[placeholder]' ).placeholder();
+		}
 
-	/* Lazy load jquery.tablesorter */
-	if ( $( 'table.sortable' ).length ) {
-		mw.loader.using( 'jquery.tablesorter', function() {
-			$( 'table.sortable' ).tablesorter();
-		});
-	}
+		// Run jquery.makeCollapsible
+		$content.find( '.mw-collapsible' ).makeCollapsible();
 
-	/* Enable CheckboxShiftClick */
-	$( 'input[type=checkbox]:not(.noshiftselect)' ).checkboxShiftClick();
+		// Lazy load jquery.tablesorter
+		$sortableTables = $content.find( 'table.sortable' );
+		if ( $sortableTables.length ) {
+			mw.loader.using( 'jquery.tablesorter', function () {
+				$sortableTables.tablesorter();
+			} );
+		}
 
-	/* Add accesskey hints to the tooltips */
-	mw.util.updateTooltipAccessKeys();
+		// Run jquery.checkboxShiftClick
+		$content.find( 'input[type="checkbox"]:not(.noshiftselect)' ).checkboxShiftClick();
+	} );
 
-} );
+	// Things outside the wikipage content
+	$( function () {
+
+		if ( !supportsPlaceholder ) {
+			// Exclude content to avoid hitting it twice for the (first) wikipage content
+			$( 'input[placeholder]' ).not( '#mw-content-text input' ).placeholder();
+		}
+
+		// Add accesskey hints to the tooltips
+		mw.util.updateTooltipAccessKeys();
+
+	} );
+
+}( mediaWiki, jQuery ) );

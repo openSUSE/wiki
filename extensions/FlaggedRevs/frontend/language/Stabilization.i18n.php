@@ -57,6 +57,7 @@ No configuration is possible.',
  * @author Robby
  * @author SPQRobin
  * @author Saper
+ * @author Shirayuki
  * @author Umherirrender
  */
 $messages['qqq'] = array(
@@ -68,17 +69,20 @@ Some skins (e.g. standard/classic) display an additional tab to control visibili
 	'stabilization' => '{{Flagged Revs}}
 Page title of Special:Stabilization, which lets admins change how the stable version is used for a page and who can review it.',
 	'stabilization-text' => '{{Flagged Revs-small}}
-
-Information displayed on Special:Stabilization.
-
-"stable version selection" is the same as {{msg-mw|Stabilization-select}}.
-*$1 The page name',
+Information displayed on [[Special:Stabilization]]. Parameters:
+* $1 - the page name
+See also:
+* {{msg-mw|Stabilization-perm}}',
 	'stabilization-perm' => '{{Flagged Revs-small}}
-Used on Special:Stabilization when the user has not the permission to change the settings.
-* $1 The page name',
+Used on [[Special:Stabilization]] when the user has not the permission to change the settings.
+
+Parameters:
+* $1 - the page name
+See also:
+* {{msg-mw|Stabilization-text}}',
 	'stabilization-page' => '{{Flagged Revs}}
-{{Identical|Page name}}
-Used on Special:Stabilization.',
+Used on Special:Stabilization.
+{{Identical|Page name}}',
 	'stabilization-leg' => '{{Flagged Revs}}
 Used on Special:Stabilization.',
 	'stabilization-def' => '{{Flagged Revs}}
@@ -104,11 +108,15 @@ Message wording is a bit vague due to the fact that wikis can restrict the 'revi
 Used on Special:Stabilization.
 {{Identical|Confirm}}',
 	'stabilization-notexists' => '{{Flagged Revs}}
-Used on Special:Stabilization.
-* $1 The page name',
+Used on [[Special:Stabilization]]. Parameters:
+* $1 - the page name
+See also:
+* {{msg-mw|Stabilization-notcontent}}',
 	'stabilization-notcontent' => '{{Flagged Revs}}
-Used on Special:Stabilization.
-* $1 The page name',
+Used on [[Special:Stabilization]]. Parameters:
+* $1 - the page name
+See also:
+* {{msg-mw|Stabilization-notexists}}',
 	'stabilization-comment' => '{{Flagged Revs}}
 Used on Special:Stabilization.
 {{Identical|Reason}}',
@@ -117,18 +125,19 @@ Used on Special:Stabilization.
 {{Identical|Other reason}}',
 	'stabilization-expiry' => '{{Flagged Revs}}
 Used on Special:Stabilization.
-{{Identical|Expires}}',
+{{Identical|Expire}}',
 	'stabilization-othertime' => '{{Flagged Revs}}
-Used on Special:Stabilization.',
+Used on Special:Stabilization.
+{{Identical|Other time}}',
 	'stabilization-def-short' => '{{Flagged Revs}}
-{{Identical|Default}}
-Used at Special:Log for entries made by Special:Stabilization. It is displayed as in log entries that have text like "[Default: Stable, autoreview=sysop]".',
+Used at [[Special:Log]] for entries made by Special:Stabilization. It is displayed as in log entries that have text like "[Default: Stable, autoreview=sysop]".
+{{Identical|Default}}',
 	'stabilization-def-short-0' => '{{Flagged Revs}}
-{{Identical|Current}}
-Used at Special:Log for entries made by Special:Stabilization. It is displayed as in log entries that have text like "[Default: Stable, autoreview=sysop]".',
+Used at [[Special:Log]] for entries made by Special:Stabilization. It is displayed as in log entries that have text like "[Default: Stable, autoreview=sysop]".
+{{Identical|Current}}',
 	'stabilization-def-short-1' => '{{Flagged Revs}}
-{{Identical|Stable}}
-Used at Special:Log for entries made by Special:Stabilization. It is displayed as in log entries that have text like "[Default: Stable, autoreview=sysop]".',
+Used at [[Special:Log]] for entries made by Special:Stabilization. It is displayed as in log entries that have text like "[Default: Stable, autoreview=sysop]".
+{{Identical|Stable}}',
 	'stabilize_page_invalid' => '{{Flagged Revs}}
 Used on Special:Stabilization.',
 	'stabilize_page_notexists' => '{{Flagged Revs}}
@@ -144,18 +153,18 @@ Used on Special:Stabilization.',
 	'stabilize_expiry_old' => '{{Flagged Revs}}
 Used on Special:Stabilization.',
 	'stabilize_denied' => '{{Flagged Revs}}
-Used on Special:Stabilization. Generic permission error.',
+Used on Special:Stabilization. Generic permission error.
+{{Identical|Permission denied}}',
 	'stabilize_protect_quota' => '{{Flagged Revs}}
 {{notranslate}}',
-	'stabilize-expiring' => "{{Flagged Revs}}
-Used on Special:Stabilization.
+	'stabilize-expiring' => '{{Flagged Revs}}
+Used to indicate when something expires, in [[Special:Stabilization]].
 
-Used to indicate when something expires.
-$1 is a time stamp in the wiki's content language.
-$2 is the corresponding date in the wiki's content language.
-$3 is the corresponding time in the wiki's content language.
-
-{{Identical|Expires $1 (UTC)}}",
+Parameters:
+* $1 - a timestamp (time and date), localized
+* $2 - (Optional) the corresponding date
+* $3 - (Optional) the corresponding time
+{{Identical|Expires $1 (UTC)}}',
 	'stabilization-review' => '{{Flagged Revs}}
 Used on Special:Stabilization.
 This refers to an option that reviews the current revision of the page when the user changes the FlaggedRevs settings for the page.',
@@ -314,6 +323,7 @@ $messages['ar'] = array(
 );
 
 /** Aramaic (ܐܪܡܝܐ)
+ * @author 334a
  * @author Basharh
  */
 $messages['arc'] = array(
@@ -321,7 +331,7 @@ $messages['arc'] = array(
 	'stabilization-submit' => 'ܫܪܪ',
 	'stabilization-comment' => 'ܥܠܬܐ:',
 	'stabilization-otherreason' => 'ܥܠܬܐ ܐܚܪܬܐ:',
-	'stabilization-othertime' => 'ܥܕܢܐ ܐܚܪܬܐ:',
+	'stabilization-othertime' => 'ܥܕܢܐ ܐܚܪܢܐ:',
 	'stabilization-def-short-0' => 'ܗܫܝܐ',
 );
 
@@ -376,17 +386,28 @@ Esta ye la configuración actual de [[:$1|$1]]:',
 	'stabilization-def' => "Revisión que s'amuesa na vista de páxina predeterminada",
 	'stabilization-def1' => 'La versión estable; si nun la hai, entós la cabera revisión',
 	'stabilization-def2' => 'La cabera revisión',
+	'stabilization-restrict' => 'Torgues de revisión/revisión automática',
+	'stabilization-restrict-none' => 'Nun hai torgues estra',
 	'stabilization-submit' => 'Confirmar',
 	'stabilization-notexists' => 'Nun esiste la páxina "[[:$1|$1]]". Nun ye posible la configuración.',
 	'stabilization-notcontent' => 'La páxina "[[:$1|$1]]" nun pue ser revisada. Nun ye posible la configuración.',
 	'stabilization-comment' => 'Motivu:',
+	'stabilization-otherreason' => 'Otru motivu:',
 	'stabilization-expiry' => 'Caduca:',
+	'stabilization-othertime' => 'Otru periodu:',
 	'stabilization-def-short' => 'Predetermináu',
 	'stabilization-def-short-0' => 'Actual',
 	'stabilization-def-short-1' => 'Estable',
+	'stabilize_page_invalid' => 'El títulu de la páxina de destín nun ye válidu.',
+	'stabilize_page_notexists' => 'La páxina de destín nun esiste.',
+	'stabilize_page_unreviewable' => 'La páxina de destín nun ta nun espaciu de nomes revisable.',
+	'stabilize_invalid_autoreview' => 'Torga de revisión automática inválida.',
+	'stabilize_invalid_level' => 'Nivel de protección inválidu.',
 	'stabilize_expiry_invalid' => 'Fecha de caducidá non válida.',
 	'stabilize_expiry_old' => 'Esta caducidá yá tien pasao.',
+	'stabilize_denied' => 'Permisu refugáu.',
 	'stabilize-expiring' => "caduca'l $1 (UTC)",
+	'stabilization-review' => 'Marcar la revisión actual como comprobada',
 );
 
 /** Azerbaijani (azərbaycanca)
@@ -736,10 +757,11 @@ No és possible cap configuració.",
 
 /** Chechen (нохчийн)
  * @author Sasan700
+ * @author Умар
  */
 $messages['ce'] = array(
 	'stabilization-page' => 'Агlон цlе:',
-	'stabilization-submit' => 'Къобалде',
+	'stabilization-submit' => 'Бакъдан',
 	'stabilization-comment' => 'Бахьан:',
 	'stabilization-otherreason' => 'Кхин бахьан:',
 	'stabilization-expiry' => 'Чекхйолу:',
@@ -748,7 +770,7 @@ $messages['ce'] = array(
 	'stabilization-def-short-0' => 'хlинцлера',
 	'stabilization-def-short-1' => 'Чутоьхнарг',
 	'stabilize_page_invalid' => 'Агlонан чулацамца йогlуш йоцу цlе.',
-	'stabilize_page_notexists' => 'Iалаше хьажийна агlо йа йац.',
+	'stabilize_page_notexists' => 'Iалаше хьажийна агӀо я яц.',
 	'stabilize-expiring' => 'чакхйолу $1 (UTC)',
 );
 
@@ -870,6 +892,13 @@ Die aktuellen Einstellungen für „[[:$1|$1]]“ sind:',
 	'stabilize_denied' => 'Der Zugriff wurde verweigert.',
 	'stabilize-expiring' => 'bis $2, $3 Uhr (UTC)',
 	'stabilization-review' => 'Markiere die aktuelle Version',
+);
+
+/** Swiss High German (Schweizer Hochdeutsch)
+ * @author Geitost
+ */
+$messages['de-ch'] = array(
+	'stabilization-text' => "'''Ändere die folgenden Einstellungen, um festzulegen, wie die zu veröffentlichende Version von «[[:$1|$1]]» ausgewählt und angezeigt werden soll.'''",
 );
 
 /** German (formal address) (Deutsch (Sie-Form)‎)
@@ -1217,11 +1246,11 @@ $messages['fa'] = array(
 	'stabilize_page_unreviewable' => 'صفحهٔ مقصد در فضای نام قابل بازبینی نیست.',
 	'stabilize_invalid_autoreview' => 'بی‌اعتباری بازبینی‌های خودکار محدود',
 	'stabilize_invalid_level' => 'سطح محافظت نامعتبر',
-	'stabilize_expiry_invalid' => 'تاریخ انقضای غیرمجاز',
+	'stabilize_expiry_invalid' => 'تاریخ انقضای نامجاز',
 	'stabilize_expiry_old' => 'این تاریخ انقضا همینک سپری شده‌است.',
 	'stabilize_denied' => 'اجازه داده نشد.',
 	'stabilize-expiring' => 'در $1 (UTC) منقضی می‌شود.',
-	'stabilization-review' => 'علامت زدن این نسخه به عنوان بازبینی شده',
+	'stabilization-review' => 'علامت‌زدن این نسخه به‌عنوان بازبینی‌شده',
 );
 
 /** Finnish (suomi)
@@ -1244,8 +1273,8 @@ Tässä ovat nykyiset asetukset kohteelle [[:$1|$1]]:',
 	'stabilization-page' => 'Sivun nimi:',
 	'stabilization-leg' => 'Vahvista vakaiden versioiden asetukset',
 	'stabilization-def' => 'Versio, joka näytetään oletusarvoisesti',
-	'stabilization-def1' => 'Vakaa versio. Jos vakaata versiota ei ole, viimeisin versio.',
-	'stabilization-def2' => 'Viimeisin versio',
+	'stabilization-def1' => 'Vakaa versio. Jos vakaata versiota ei ole, uusin versio.',
+	'stabilization-def2' => 'Uusin versio',
 	'stabilization-restrict' => 'Seulonnan ja automaattiseulonnan rajoitukset',
 	'stabilization-restrict-none' => 'Ei erityisiä rajoituksia',
 	'stabilization-submit' => 'Vahvista',
@@ -1253,12 +1282,12 @@ Tässä ovat nykyiset asetukset kohteelle [[:$1|$1]]:',
 Asetusten määrittäminen ei ole mahdollista.',
 	'stabilization-notcontent' => 'Sivua [[:$1|$1]] ei voi merkitä arvioiduksi.
 Asetusten määrittäminen ei ole mahdollista.',
-	'stabilization-comment' => 'Syy',
-	'stabilization-otherreason' => 'Muu syy',
-	'stabilization-expiry' => 'Vanhentuu',
-	'stabilization-othertime' => 'Muu aika',
+	'stabilization-comment' => 'Syy:',
+	'stabilization-otherreason' => 'Muu syy:',
+	'stabilization-expiry' => 'Vanhentuu:',
+	'stabilization-othertime' => 'Muu aika:',
 	'stabilization-def-short' => 'Oletus',
-	'stabilization-def-short-0' => 'Viimeisin',
+	'stabilization-def-short-0' => 'Uusin',
 	'stabilization-def-short-1' => 'Vakaa',
 	'stabilize_page_invalid' => 'Kohdesivun nimi ei kelpaa.',
 	'stabilize_page_notexists' => 'Kohdesivua ei ole olemassa.',
@@ -1269,7 +1298,7 @@ Asetusten määrittäminen ei ole mahdollista.',
 	'stabilize_expiry_old' => 'Tämä vanhentumisaika on jo mennyt.',
 	'stabilize_denied' => 'Ei oikeutta.',
 	'stabilize-expiring' => 'vanhentuu $1 (UTC)',
-	'stabilization-review' => 'Merkitse viimeisin versio katsotuksi',
+	'stabilization-review' => 'Merkitse uusin versio katsotuksi',
 );
 
 /** French (français)
@@ -1546,43 +1575,43 @@ $messages['he'] = array(
 /** Hindi (हिन्दी)
  * @author Ansumang
  * @author Kaustubh
+ * @author Siddhartha Ghai
  */
 $messages['hi'] = array(
-	'stabilization-tab' => 'व्हेट',
-	'stabilization' => 'लेख स्थ्रिर करें',
-	'stabilization-text' => "'''[[:$1|$1]] का स्थिर अवतरण किस प्रकार चुना या दर्शाया जाये इस के लिये निम्नलिखित सेटिंग बदलें।'''", # Fuzzy
-	'stabilization-perm' => 'आपको स्थिर अवतरण बदलनेकी अनुमति नहीं हैं।
-[[:$1|$1]]का अभीका सेटींग इस प्रकार हैं:', # Fuzzy
+	'stabilization-tab' => 'पुनरीक्षण',
+	'stabilization' => 'पृष्ठ स्थिरता',
+	'stabilization-text' => "'''[[:$1|$1]] का स्थिर अवतरण किस प्रकार चुना या दर्शाया जाये इसके लिये निम्नलिखित सेटिंग्स बदलें।'''",
+	'stabilization-perm' => 'आपके खाते को स्थिर अवतरण बदलने की अनुमति नहीं है।
+[[:$1|$1]] की वर्तमान सेटिंग्स इस प्रकार हैं:',
 	'stabilization-page' => 'पृष्ठ नाम:',
-	'stabilization-leg' => 'स्थिर अवतरण सेटिंग निश्चित करें', # Fuzzy
-	'stabilization-def' => 'डिफॉल्ट पन्ने के साथ बदलाव दर्शायें गयें हैं',
-	'stabilization-def1' => 'स्थिर अवतरण;
-अगर नहीं हैं, तो सद्य', # Fuzzy
-	'stabilization-def2' => 'सद्य अवतरण', # Fuzzy
-	'stabilization-restrict' => 'समिक्षा/स्व-समिक्षा प्रतिबंध',
+	'stabilization-leg' => 'स्थिर अवतरण सेटिंग्स निश्चित करें',
+	'stabilization-def' => 'डिफ़ॉल्ट पृष्ठ दृश्यता में दिखाया गया अवतरण',
+	'stabilization-def1' => 'स्थिर अवतरण; अगर नहीं है, तो सद्य अवतरण',
+	'stabilization-def2' => 'सद्य अवतरण',
+	'stabilization-restrict' => 'पुनरीक्षण/स्वतः पुनरीक्षण पर प्रतिबंध',
 	'stabilization-restrict-none' => 'कोई अतिरिक्त प्रतिबंध नहीं',
 	'stabilization-submit' => 'निश्चित करें',
-	'stabilization-notexists' => '"[[:$1|$1]]" इस नामका पृष्ठ अस्तित्वमें नहीं हैं।
-बदलाव नहीं किये जा सकतें।',
-	'stabilization-notcontent' => '"[[:$1|$1]]" यह पृष्ठ जाँचा नहीं जा सकता।
-बदलाव नहीं किये जा सकतें।',
+	'stabilization-notexists' => '"[[:$1|$1]]" नाम का कोई पृष्ठ नहीं है।
+बदलाव नहीं किये जा सकते।',
+	'stabilization-notcontent' => '"[[:$1|$1]]" पृष्ठ पुनरीक्षित नहीं किया जा सकता।
+बदलाव नहीं किये जा सकते।',
 	'stabilization-comment' => 'कारण:',
 	'stabilization-otherreason' => 'अन्य कारण:',
 	'stabilization-expiry' => 'समाप्ति:',
 	'stabilization-othertime' => 'अन्य समय:',
-	'stabilization-def-short' => 'डिफॉल्ट',
+	'stabilization-def-short' => 'डिफ़ॉल्ट',
 	'stabilization-def-short-0' => 'सद्य',
 	'stabilization-def-short-1' => 'स्थिर',
-	'stabilize_page_invalid' => 'लक्ष्य पृष्ठ की शीर्षक अमान्य है ।',
-	'stabilize_page_notexists' => 'लक्ष्य पृष्ठ मौजूद नहीं है ।',
-	'stabilize_page_unreviewable' => 'लख्य पृष्ठ समिक्षायोग्य नेमस्पेस में नहीं है ।',
-	'stabilize_invalid_autoreview' => 'अमान्य स्वसमिक्षा प्रतिबंध ।',
-	'stabilize_invalid_level' => 'अमान्य सुरक्षा सस्तर ।',
-	'stabilize_expiry_invalid' => 'गलत समाप्ति तिथी।',
-	'stabilize_expiry_old' => 'यह समाप्ति तिथी गुजर चुकी हैं।',
-	'stabilize_denied' => 'अनुमति नहीं मिली ।',
+	'stabilize_page_invalid' => 'लक्ष्य पृष्ठ शीर्षक अमान्य है।',
+	'stabilize_page_notexists' => 'लक्ष्य पृष्ठ मौजूद नहीं है।',
+	'stabilize_page_unreviewable' => 'लक्ष्य पृष्ठ ऐसे नामस्थान में है जिसमें पुनरीक्षण नहीं किया जा सकता।',
+	'stabilize_invalid_autoreview' => 'अमान्य स्वतः पुनरीक्षण प्रतिबंध।',
+	'stabilize_invalid_level' => 'अमान्य सुरक्षा स्तर।',
+	'stabilize_expiry_invalid' => 'अमान्य समाप्ति तिथि।',
+	'stabilize_expiry_old' => 'यह समाप्ति तिथि गुज़र चुकी है।',
+	'stabilize_denied' => 'अनुमति नहीं मिली।',
 	'stabilize-expiring' => '$1 (UTC) को समाप्ति',
-	'stabilization-review' => 'बर्त्तमान की संशोधन को चिन्हित करें',
+	'stabilization-review' => 'वर्तमान अवतरण का पुनरीक्षण स्तर देखा हुआ चिन्हित करें',
 );
 
 /** Croatian (hrvatski)
@@ -1880,7 +1909,7 @@ Non è possibile effettuare la configurazione.',
 	'stabilize_expiry_invalid' => 'Data di scadenza non valida.',
 	'stabilize_expiry_old' => 'La data di scadenza è già passata.',
 	'stabilize_denied' => 'Permesso negato.',
-	'stabilize-expiring' => 'scadenza: $1 (UTC)',
+	'stabilize-expiring' => 'scade il $2 alle $3 (UTC)',
 	'stabilization-review' => 'Marca la versione corrente come controllata',
 );
 
@@ -2112,6 +2141,8 @@ $messages['km'] = array(
 	'stabilize_page_invalid' => 'ឈ្មោះឯកសារគោលដៅមិនត្រឹមត្រូវ។',
 	'stabilize_page_notexists' => 'មិនមាន​ទំព័រ​គោលដៅនេះ​ទេ​។',
 	'stabilize_expiry_invalid' => 'កាលបរិច្ឆេទផុតកំណត់មិនត្រឹមត្រូវ។',
+	'stabilize_expiry_old' => 'កាលបរិច្ឆេទផុតកំណត់បានហួសផុតបាត់ទៅហើយ។',
+	'stabilize_denied' => 'ការអនុញ្ញាតត្រូវបដិសេដ។',
 	'stabilize-expiring' => 'ផុតកំណត់ម៉ោង $1 (UTC)',
 );
 
@@ -2151,17 +2182,17 @@ $messages['ko'] = array(
 	'stabilization-otherreason' => '다른 이유:',
 	'stabilization-expiry' => '기한:',
 	'stabilization-othertime' => '다른 시간:',
-	'stabilization-def-short' => '기본 설정',
+	'stabilization-def-short' => '기본값',
 	'stabilization-def-short-0' => '현재',
 	'stabilization-def-short-1' => '게시',
 	'stabilize_page_invalid' => '문서 이름이 잘못되었습니다.',
 	'stabilize_page_notexists' => '문서가 존재하지 않습니다.',
 	'stabilize_page_unreviewable' => '문서가 검토 가능한 이름공간에 존재하지 않습니다',
 	'stabilize_invalid_autoreview' => '잘못된 자동 검토 제한',
-	'stabilize_invalid_level' => '잘못된 보호 수준.',
+	'stabilize_invalid_level' => '잘못된 보호 수준입니다.',
 	'stabilize_expiry_invalid' => '기한을 잘못 입력하였습니다.',
 	'stabilize_expiry_old' => '기한을 과거로 입력하였습니다.',
-	'stabilize_denied' => '권한 없음',
+	'stabilize_denied' => '권한이 없습니다.',
 	'stabilize-expiring' => '$1 (UTC)에 만료',
 	'stabilization-review' => '현재 판을 확인한 것으로 표시',
 );
@@ -2190,7 +2221,7 @@ Et jidd och nix ennzeshtelle.',
 	'stabilization-otherreason' => 'Ene andere Jrond:',
 	'stabilization-expiry' => 'Leuf uß:',
 	'stabilization-othertime' => 'En ander Zick:',
-	'stabilization-def-short' => 'Shtandatt',
+	'stabilization-def-short' => 'Schtandatt',
 	'stabilization-def-short-0' => 'Von jetz',
 	'stabilization-def-short-1' => 'Beshtändesch',
 	'stabilize_page_invalid' => 'Dä Tittel vum Ziel es nit jöltesch',
@@ -2214,7 +2245,7 @@ $messages['ku-latn'] = array(
 	'stabilization-otherreason' => 'Sedemeka din:',
 );
 
-/** Kirghiz (Кыргызча)
+/** Kyrgyz (Кыргызча)
  * @author Growingup
  */
 $messages['ky'] = array(
@@ -2339,10 +2370,18 @@ $messages['lv'] = array(
 
 /** Eastern Mari (олык марий)
  * @author Сай
+ * @author Санюн Вадик
  */
 $messages['mhr'] = array(
 	'stabilization-page' => 'Лаштыкын лӱмжӧ:',
-	'stabilization-def-short' => 'Ойлыде',
+	'stabilization-def-short' => 'Тӱҥалтыш',
+);
+
+/** Minangkabau (Baso Minangkabau)
+ * @author Iwan Novirion
+ */
+$messages['min'] = array(
+	'stabilization-expiry' => 'Sampai:',
 );
 
 /** Macedonian (македонски)
@@ -2553,7 +2592,7 @@ $messages['nah'] = array(
 	'stabilize-expiring' => 'motlamīz $1 (UTC)',
 );
 
-/** Norwegian Bokmål (norsk (bokmål)‎)
+/** Norwegian Bokmål (norsk bokmål)
  * @author H92
  * @author Laaknor
  * @author Nghtwlkr
@@ -2594,12 +2633,15 @@ Her er de nåværende innstillingene for [[:$1|$1]]:',
 );
 
 /** Low German (Plattdüütsch)
+ * @author Joachim Mos
  * @author Slomox
  */
 $messages['nds'] = array(
 	'stabilization-page' => 'Siedennaam:',
 	'stabilization-comment' => 'Grund:',
 	'stabilization-expiry' => 'Löppt ut:',
+	'stabilization-def-short' => 'Default',
+	'stabilization-def-short-0' => 'Aktuell',
 	'stabilize-expiring' => 'löppt $1 ut (UTC)',
 );
 
@@ -2653,7 +2695,7 @@ $messages['nl-informal'] = array(
 Dit zijn de huidige instellingen voor [[:$1|$1]]:',
 );
 
-/** Norwegian Nynorsk (norsk (nynorsk)‎)
+/** Norwegian Nynorsk (norsk nynorsk)
  * @author Gunnernett
  * @author Harald Khan
  * @author Jon Harald Søby
@@ -2723,8 +2765,8 @@ Aquí los paramètres actuals de [[:$1|$1]] :',
 	'stabilization-leg' => 'Confirmar lo parametratge de la version publicada',
 	'stabilization-def' => "Version afichada al moment de l'afichatge per defaut de la pagina",
 	'stabilization-def1' => "La revision publicada ; se'n i a pas, alara la correnta o lo borrolhon en cors", # Fuzzy
-	'stabilization-def2' => 'La revision correnta o lo borrolhon en cors', # Fuzzy
-	'stabilization-restrict' => 'Tornar veire automaticament las restriccions', # Fuzzy
+	'stabilization-def2' => 'La revision correnta',
+	'stabilization-restrict' => 'Restriccions de relectura (automatic)',
 	'stabilization-restrict-none' => 'Pas de restriccion suplementària',
 	'stabilization-submit' => 'Confirmar',
 	'stabilization-notexists' => 'I a pas de pagina « [[:$1|$1]] », pas de parametratge possible',
@@ -2739,10 +2781,10 @@ Aquí los paramètres actuals de [[:$1|$1]] :',
 	'stabilize_expiry_invalid' => "Data d'expiracion invalida.",
 	'stabilize_expiry_old' => "Lo temps d'expiracion ja es passat.",
 	'stabilize-expiring' => 'expira $1 (UTC)',
-	'stabilization-review' => 'Tornar veire la version correnta', # Fuzzy
+	'stabilization-review' => 'Marcar la version actuala coma verificada',
 );
 
-/** Oriya (ଓଡ଼ିଆ)
+/** Oriya (ଓଡ଼ିଆ)
  * @author Ansumang
  * @author Psubhashish
  */
@@ -2879,6 +2921,7 @@ $messages['ps'] = array(
 /** Portuguese (português)
  * @author Giro720
  * @author Hamilton Abreu
+ * @author Luckas
  * @author Malafaya
  * @author Waldir
  * @author 555
@@ -2886,9 +2929,9 @@ $messages['ps'] = array(
 $messages['pt'] = array(
 	'stabilization-tab' => 'cgq',
 	'stabilization' => 'Estabilização de páginas',
-	'stabilization-text' => "'''Altere os parâmetros abaixo para ajustar a forma como a versão publicada de [[:$1|$1]] é seleccionada e apresentada.'''",
+	'stabilization-text' => "'''Altere os parâmetros abaixo para ajustar a forma como a versão publicada de [[:$1|$1]] é selecionada e apresentada.'''",
 	'stabilization-perm' => 'A sua conta não tem permissão para alterar a configuração da versão publicada.
-Os parâmetros actuais da página [[:$1|$1]] são:',
+Os parâmetros atuais da página [[:$1|$1]] são:',
 	'stabilization-page' => 'Nome da página:',
 	'stabilization-leg' => 'Confirmar os parâmetros da versão publicada',
 	'stabilization-def' => 'Edição apresentada por omissão',
@@ -2906,23 +2949,24 @@ Não é possível configurá-la.',
 	'stabilization-expiry' => 'Expira:',
 	'stabilization-othertime' => 'Outra hora:',
 	'stabilization-def-short' => 'Padrão',
-	'stabilization-def-short-0' => 'Actual',
+	'stabilization-def-short-0' => 'Atual',
 	'stabilization-def-short-1' => 'Publicada',
 	'stabilize_page_invalid' => 'O título da página de destino é inválido.',
 	'stabilize_page_notexists' => 'A página de destino não existe.',
 	'stabilize_page_unreviewable' => 'A página de destino não está num espaço nominal sujeito a revisão.',
 	'stabilize_invalid_autoreview' => 'Restrição de auto-revisão é inválida',
-	'stabilize_invalid_level' => 'Nível de protecção é inválido.',
+	'stabilize_invalid_level' => 'Nível de proteção inválido.',
 	'stabilize_expiry_invalid' => 'Data de expiração inválida.',
 	'stabilize_expiry_old' => 'Esta data de expiração já passou.',
 	'stabilize_denied' => 'Permissão negada.',
 	'stabilize-expiring' => 'expira às $1 (UTC)',
-	'stabilization-review' => 'Marcar a edição actual como verificada',
+	'stabilization-review' => 'Marcar a edição atual como verificada',
 );
 
 /** Brazilian Portuguese (português do Brasil)
  * @author Eduardo.mps
  * @author Giro720
+ * @author Luckas
  * @author Luckas Blade
  */
 $messages['pt-br'] = array(

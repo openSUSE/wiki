@@ -70,7 +70,7 @@ class ReplaceText extends SpecialPage {
 			$replacement_params['edit_summary'] = $this->msg(
 				'replacetext_editsummary',
 				$this->target, $this->replacement
-			)->inContentLanguage()->text();
+			)->inContentLanguage()->plain();
 			$replacement_params['create_redirect'] = false;
 			$replacement_params['watch_page'] = false;
 			foreach ( $request->getValues() as $key => $value ) {
@@ -211,7 +211,7 @@ class ReplaceText extends SpecialPage {
 				$warning_msg = null;
 
 				if ( $this->replacement === '' ) {
-					$warning_msg = $this->msg('replacetext_blankwarning')->escaped();
+					$warning_msg = $this->msg('replacetext_blankwarning')->text();
 				} elseif ( count( $titles_for_edit ) > 0 ) {
 					$res = $this->doSearchQuery( $this->replacement, $this->selected_namespaces, $this->category, $this->prefix, $this->use_regex );
 					$count = $res->numRows();
@@ -244,6 +244,8 @@ class ReplaceText extends SpecialPage {
 	}
 
 	function showForm( $warning_msg = null ) {
+		global $wgVersion;
+
 		$out = $this->getOutput();
 
 		$out->addHTML(
@@ -303,7 +305,18 @@ class ReplaceText extends SpecialPage {
 		// search interface exists only in some skins, like Vector -
 		// check for the presence of the 'powersearch-togglelabel'
 		// message to see if we can use this functionality here.
-		if ( !$this->msg( 'powersearch-togglelabel' )->isDisabled() ) {
+		if ( $this->msg( 'powersearch-togglelabel' )->isDisabled() ) {
+			// do nothing
+		} elseif ( version_compare( $wgVersion, '1.20', '>=' ) ) {
+			// In MediaWiki 1.20, this became a lot simpler after
+			// the main work was passed off to Javascript
+			$out->addHTML(
+				Html::element(
+					'div',
+					array( 'id' => 'mw-search-togglebox' )
+				)
+			);
+		} else { // MW <= 1.19
 			$out->addHTML(
 				Xml::tags(
 					'div',

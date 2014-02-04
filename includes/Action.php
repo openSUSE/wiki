@@ -1,15 +1,6 @@
 <?php
 /**
- * @defgroup Actions Action done on pages
- */
-
-/**
- * Actions are things which can be done to pages (edit, delete, rollback, etc).  They
- * are distinct from Special Pages because an action must apply to exactly one page.
- *
- * To add an action in an extension, create a subclass of Action, and add the key to
- * $wgActions.  There is also the deprecated UnknownAction hook
- *
+ * Base classes for actions done on pages.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,23 +18,39 @@
  *
  * @file
  */
+
+/**
+ * @defgroup Actions Action done on pages
+ */
+
+/**
+ * Actions are things which can be done to pages (edit, delete, rollback, etc).  They
+ * are distinct from Special Pages because an action must apply to exactly one page.
+ *
+ * To add an action in an extension, create a subclass of Action, and add the key to
+ * $wgActions.  There is also the deprecated UnknownAction hook
+ *
+ * Actions generally fall into two groups: the show-a-form-then-do-something-with-the-input
+ * format (protect, delete, move, etc), and the just-do-something format (watch, rollback,
+ * patrol, etc). The FormAction and FormlessAction classes represent these two groups.
+ */
 abstract class Action {
 
 	/**
 	 * Page on which we're performing the action
-	 * @var Page
+	 * @var WikiPage|Article|ImagePage|CategoryPage|Page $page
 	 */
 	protected $page;
 
 	/**
 	 * IContextSource if specified; otherwise we'll use the Context from the Page
-	 * @var IContextSource
+	 * @var IContextSource $context
 	 */
 	protected $context;
 
 	/**
 	 * The fields used to create the HTMLForm
-	 * @var Array
+	 * @var Array $fields
 	 */
 	protected $fields;
 
@@ -52,9 +59,9 @@ abstract class Action {
 	 * the action is disabled, or null if it's not recognised
 	 * @param $action String
 	 * @param $overrides Array
-	 * @return bool|null|string
+	 * @return bool|null|string|callable
 	 */
-	private final static function getClass( $action, array $overrides ) {
+	final private static function getClass( $action, array $overrides ) {
 		global $wgActions;
 		$action = strtolower( $action );
 
@@ -78,16 +85,22 @@ abstract class Action {
 	 * @param $action String
 	 * @param $page Page
 	 * @param $context IContextSource
-	 * @return Action|false|null false if the action is disabled, null
+	 * @return Action|bool|null false if the action is disabled, null
 	 *     if it is not recognised
 	 */
-	public final static function factory( $action, Page $page, IContextSource $context = null ) {
-		$class = self::getClass( $action, $page->getActionOverrides() );
-		if ( $class ) {
-			$obj = new $class( $page, $context );
+	final public static function factory( $action, Page $page, IContextSource $context = null ) {
+		$classOrCallable = self::getClass( $action, $page->getActionOverrides() );
+
+		if ( is_string( $classOrCallable ) ) {
+			$obj = new $classOrCallable( $page, $context );
 			return $obj;
 		}
-		return $class;
+
+		if ( is_callable( $classOrCallable ) ) {
+			return call_user_func_array( $classOrCallable, array( $page, $context ) );
+		}
+
+		return $classOrCallable;
 	}
 
 	/**
@@ -99,7 +112,7 @@ abstract class Action {
 	 * @param $context IContextSource
 	 * @return string: action name
 	 */
-	public final static function getActionName( IContextSource $context ) {
+	final public static function getActionName( IContextSource $context ) {
 		global $wgActions;
 
 		$request = $context->getRequest();
@@ -128,8 +141,8 @@ abstract class Action {
 		if ( !$context->canUseWikiPage() ) {
 			return 'view';
 		}
-		
-		$action = Action::factory( $actionName, $context->getWikiPage() );
+
+		$action = Action::factory( $actionName, $context->getWikiPage(), $context );
 		if ( $action instanceof Action ) {
 			return $action->getName();
 		}
@@ -140,10 +153,10 @@ abstract class Action {
 	/**
 	 * Check if a given action is recognised, even if it's disabled
 	 *
-	 * @param $name String: name of an action
+	 * @param string $name name of an action
 	 * @return Bool
 	 */
-	public final static function exists( $name ) {
+	final public static function exists( $name ) {
 		return self::getClass( $name, array() ) !== null;
 	}
 
@@ -151,11 +164,17 @@ abstract class Action {
 	 * Get the IContextSource in use here
 	 * @return IContextSource
 	 */
-	public final function getContext() {
+	final public function getContext() {
 		if ( $this->context instanceof IContextSource ) {
 			return $this->context;
+		} else if ( $this->page instanceof Article ) {
+			// NOTE: $this->page can be a WikiPage, which does not have a context.
+			wfDebug( __METHOD__ . ': no context known, falling back to Article\'s context.' );
+			return $this->page->getContext();
 		}
-		return $this->page->getContext();
+
+		wfWarn( __METHOD__ . ': no context known, falling back to RequestContext::getMain().' );
+		return RequestContext::getMain();
 	}
 
 	/**
@@ -163,7 +182,7 @@ abstract class Action {
 	 *
 	 * @return WebRequest
 	 */
-	public final function getRequest() {
+	final public function getRequest() {
 		return $this->getContext()->getRequest();
 	}
 
@@ -172,7 +191,7 @@ abstract class Action {
 	 *
 	 * @return OutputPage
 	 */
-	public final function getOutput() {
+	final public function getOutput() {
 		return $this->getContext()->getOutput();
 	}
 
@@ -181,7 +200,7 @@ abstract class Action {
 	 *
 	 * @return User
 	 */
-	public final function getUser() {
+	final public function getUser() {
 		return $this->getContext()->getUser();
 	}
 
@@ -190,7 +209,7 @@ abstract class Action {
 	 *
 	 * @return Skin
 	 */
-	public final function getSkin() {
+	final public function getSkin() {
 		return $this->getContext()->getSkin();
 	}
 
@@ -199,17 +218,17 @@ abstract class Action {
 	 *
 	 * @return Language
 	 */
-	public final function getLanguage() {
+	final public function getLanguage() {
 		return $this->getContext()->getLanguage();
 	}
 
 	/**
 	 * Shortcut to get the user Language being used for this instance
 	 *
-	 * @deprecated 1.19 Use getLanguage instead
+	 * @deprecated since 1.19 Use getLanguage instead
 	 * @return Language
 	 */
-	public final function getLang() {
+	final public function getLang() {
 		wfDeprecated( __METHOD__, '1.19' );
 		return $this->getLanguage();
 	}
@@ -218,7 +237,7 @@ abstract class Action {
 	 * Shortcut to get the Title object from the page
 	 * @return Title
 	 */
-	public final function getTitle() {
+	final public function getTitle() {
 		return $this->page->getTitle();
 	}
 
@@ -228,18 +247,26 @@ abstract class Action {
 	 *
 	 * @return Message object
 	 */
-	public final function msg() {
+	final public function msg() {
 		$params = func_get_args();
 		return call_user_func_array( array( $this->getContext(), 'msg' ), $params );
 	}
 
 	/**
-	 * Protected constructor: use Action::factory( $action, $page ) to actually build
-	 * these things in the real world
+	 * Constructor.
+	 *
+	 * Only public since 1.21
+	 *
 	 * @param $page Page
 	 * @param $context IContextSource
 	 */
-	protected function __construct( Page $page, IContextSource $context = null ) {
+	public function __construct( Page $page, IContextSource $context = null ) {
+		if ( $context === null ) {
+			wfWarn( __METHOD__ . ' called without providing a Context object.' );
+			// NOTE: We could try to initialize $context using $page->getContext(),
+			//      if $page is an Article. That however seems to not work seamlessly.
+		}
+
 		$this->page = $page;
 		$this->context = $context;
 	}
@@ -248,7 +275,7 @@ abstract class Action {
 	 * Return the name of the action this object responds to
 	 * @return String lowercase
 	 */
-	public abstract function getName();
+	abstract public function getName();
 
 	/**
 	 * Get the permission required to perform this action.  Often, but not always,
@@ -265,7 +292,8 @@ abstract class Action {
 	 * must throw subclasses of ErrorPageError
 	 *
 	 * @param $user User: the user to check, or null to use the context user
-	 * @throws ErrorPageError
+	 * @throws UserBlockedError|ReadOnlyError|PermissionsError
+	 * @return bool True on success
 	 */
 	protected function checkCanExecute( User $user ) {
 		$right = $this->getRestriction();
@@ -277,7 +305,7 @@ abstract class Action {
 		}
 
 		if ( $this->requiresUnblock() && $user->isBlocked() ) {
-			$block = $user->mBlock;
+			$block = $user->getBlock();
 			throw new UserBlockedError( $block );
 		}
 
@@ -287,6 +315,7 @@ abstract class Action {
 		if ( $this->requiresWrite() && wfReadOnly() ) {
 			throw new ReadOnlyError();
 		}
+		return true;
 	}
 
 	/**
@@ -332,7 +361,7 @@ abstract class Action {
 	 * @return String
 	 */
 	protected function getDescription() {
-		return wfMsgHtml( strtolower( $this->getName() ) );
+		return $this->msg( strtolower( $this->getName() ) )->escaped();
 	}
 
 	/**
@@ -341,42 +370,50 @@ abstract class Action {
 	 * $this->getOutput(), etc.
 	 * @throws ErrorPageError
 	 */
-	public abstract function show();
+	abstract public function show();
 
 	/**
 	 * Execute the action in a silent fashion: do not display anything or release any errors.
 	 * @return Bool whether execution was successful
 	 */
-	public abstract function execute();
+	abstract public function execute();
 }
 
+/**
+ * An action which shows a form and does something based on the input from the form
+ */
 abstract class FormAction extends Action {
 
 	/**
 	 * Get an HTMLForm descriptor array
 	 * @return Array
 	 */
-	protected abstract function getFormFields();
+	abstract protected function getFormFields();
 
 	/**
 	 * Add pre- or post-text to the form
 	 * @return String HTML which will be sent to $form->addPreText()
 	 */
-	protected function preText() { return ''; }
+	protected function preText() {
+		return '';
+	}
 
 	/**
 	 * @return string
 	 */
-	protected function postText() { return ''; }
+	protected function postText() {
+		return '';
+	}
 
 	/**
 	 * Play with the HTMLForm if you need to more substantially
 	 * @param $form HTMLForm
 	 */
-	protected function alterForm( HTMLForm $form ) {}
+	protected function alterForm( HTMLForm $form ) {
+	}
 
 	/**
-	 * Get the HTMLForm to control behaviour
+	 * Get the HTMLForm to control behavior
 	 * @return HTMLForm|null
 	 */
 	protected function getForm() {
@@ -385,7 +422,7 @@ abstract class FormAction extends Action {
 		// Give hooks a chance to alter the form, adding extra fields or text etc
 		wfRunHooks( 'ActionModifyFormFields', array( $this->getName(), &$this->fields, $this->page ) );
 
-		$form = new HTMLForm( $this->fields, $this->getContext() );
+		$form = new HTMLForm( $this->fields, $this->getContext(), $this->getName() );
 		$form->setSubmitCallback( array( $this, 'onSubmit' ) );
 
 		// Retain query parameters (uselang etc)
@@ -394,7 +431,7 @@ abstract class FormAction extends Action {
 			$this->getRequest()->getQueryValues(),
 			array( 'action' => null, 'title' => null )
 		);
-		$form->addHiddenField( 'redirectparams', wfArrayToCGI( $params ) );
+		$form->addHiddenField( 'redirectparams', wfArrayToCgi( $params ) );
 
 		$form->addPreText( $this->preText() );
 		$form->addPostText( $this->postText() );
@@ -413,21 +450,21 @@ abstract class FormAction extends Action {
 	 * @param  $data Array
 	 * @return Bool|Array true for success, false for didn't-try, array of errors on failure
 	 */
-	public abstract function onSubmit( $data );
+	abstract public function onSubmit( $data );
 
 	/**
 	 * Do something exciting on successful processing of the form.  This might be to show
 	 * a confirmation message (watch, rollback, etc) or to redirect somewhere else (edit,
 	 * protect, etc).
 	 */
-	public abstract function onSuccess();
+	abstract public function onSuccess();
 
 	/**
 	 * The basic pattern for actions is to display some sort of HTMLForm UI, maybe with
 	 * some stuff underneath (history etc); to do some processing on submission of that
 	 * form (delete, protect, etc) and to do something exciting on 'success', be that
 	 * display something new or redirect to somewhere.  Some actions have more exotic
-	 * behaviour, but that's what subclassing is for :D
+	 * behavior, but that's what subclassing is for :D
 	 */
 	public function show() {
 		$this->setHeaders();
@@ -443,15 +480,16 @@ abstract class FormAction extends Action {
 
 	/**
 	 * @see Action::execute()
-	 * @throws ErrorPageError
-	 * @param array|null $data
-	 * @param bool $captureErrors
+	 *
+	 * @param $data array|null
+	 * @param $captureErrors bool
+	 * @throws ErrorPageError|Exception
 	 * @return bool
 	 */
 	public function execute( array $data = null, $captureErrors = true ) {
 		try {
 			// Set a new context so output doesn't leak.
-			$this->context = clone $this->page->getContext();
+			$this->context = clone $this->getContext();
 
 			// This will throw exceptions if there's a problem
 			$this->checkCanExecute( $this->getUser() );
@@ -486,9 +524,7 @@ abstract class FormAction extends Action {
 }
 
 /**
- * Actions generally fall into two groups: the show-a-form-then-do-something-with-the-input
- * format (protect, delete, move, etc), and the just-do-something format (watch, rollback,
- * patrol, etc).
+ * An action which just does something, without showing a form first.
  */
 abstract class FormlessAction extends Action {
 
@@ -497,19 +533,27 @@ abstract class FormlessAction extends Action {
 	 * @return String|null will be added to the HTMLForm if present, or just added to the
 	 *     output if not.  Return null to not add anything
 	 */
-	public abstract function onView();
+	abstract public function onView();
 
 	/**
 	 * We don't want an HTMLForm
+	 * @return bool
 	 */
 	protected function getFormFields() {
 		return false;
 	}
 
+	/**
+	 * @param $data Array
+	 * @return bool
+	 */
 	public function onSubmit( $data ) {
 		return false;
 	}
 
+	/**
+	 * @return bool
+	 */
 	public function onSuccess() {
 		return false;
 	}
@@ -526,14 +570,15 @@ abstract class FormlessAction extends Action {
 	/**
 	 * Execute the action silently, not giving any output.  Since these actions don't have
 	 * forms, they probably won't have any data, but some (eg rollback) may do
-	 * @param $data Array values that would normally be in the GET request
-	 * @param $captureErrors Bool whether to catch exceptions and just return false
+	 * @param array $data values that would normally be in the GET request
+	 * @param bool $captureErrors whether to catch exceptions and just return false
+	 * @throws ErrorPageError|Exception
 	 * @return Bool whether execution was successful
 	 */
 	public function execute( array $data = null, $captureErrors = true ) {
 		try {
 			// Set a new context so output doesn't leak.
-			$this->context = clone $this->page->getContext();
+			$this->context = clone $this->getContext();
 			if ( is_array( $data ) ) {
 				$this->context->setRequest( new FauxRequest( $data, false ) );
 			}

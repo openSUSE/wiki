@@ -29,7 +29,7 @@ class FlaggedRevs {
 			return true;
 		}
 		if ( !FlaggedRevsSetup::isReady() ) { // sanity
-			wfDebugDieBacktrace( 'FlaggedRevs config loaded too soon! Possibly before LocalSettings.php!' );
+			throw new MWException( 'FlaggedRevs config loaded too soon! Possibly before LocalSettings.php!' );
 		}
 		self::$loaded = true;
 		$flaggedRevsTags = null;
@@ -49,7 +49,7 @@ class FlaggedRevs {
 			# Sanity checks
 			$safeTag = htmlspecialchars( $tag );
 			if ( !preg_match( '/^[a-zA-Z]{1,20}$/', $tag ) || $safeTag !== $tag ) {
-				die( 'FlaggedRevs given invalid tag name!' );
+				throw new MWException( 'FlaggedRevs given invalid tag name!' );
 			}
 			# Define "quality" and "pristine" reqs
 			if ( is_array( $levels ) ) {
@@ -76,7 +76,7 @@ class FlaggedRevs {
 			}
 			# Sanity checks
 			if ( !is_integer( $minQL ) || !is_integer( $minPL ) ) {
-				die( 'FlaggedRevs given invalid tag value!' );
+				throw new MWException( 'FlaggedRevs given invalid tag value!' );
 			}
 			if ( $minQL > $ratingLevels ) {
 				self::$qualityVersions = false;
@@ -104,9 +104,9 @@ class FlaggedRevs {
 		global $wgFlaggedRevsNamespaces;
 		foreach ( $wgFlaggedRevsNamespaces as $ns ) {
 			if ( MWNamespace::isTalk( $ns ) ) {
-				die( 'FlaggedRevs given talk namespace in $wgFlaggedRevsNamespaces!' );
+				throw new MWException( 'FlaggedRevs given talk namespace in $wgFlaggedRevsNamespaces!' );
 			} elseif ( $ns == NS_MEDIAWIKI ) {
-				die( 'FlaggedRevs given NS_MEDIAWIKI in $wgFlaggedRevsNamespaces!' );
+				throw new MWException( 'FlaggedRevs given NS_MEDIAWIKI in $wgFlaggedRevsNamespaces!' );
 			}
 		}
 		self::$reviewNamespaces = $wgFlaggedRevsNamespaces;
@@ -192,7 +192,7 @@ class FlaggedRevs {
 	 */
 	public static function autoReviewEdits() {
 		self::load();
-		return self::$autoReviewConfig & FR_AUTOREVIEW_CHANGES;
+		return ( self::$autoReviewConfig & FR_AUTOREVIEW_CHANGES ) != 0;
 	}
 
 	/**
@@ -201,7 +201,7 @@ class FlaggedRevs {
 	 */
 	public static function autoReviewNewPages() {
 		self::load();
-		return self::$autoReviewConfig & FR_AUTOREVIEW_CREATION;
+		return ( self::$autoReviewConfig & FR_AUTOREVIEW_CREATION ) != 0;
 	}
 
 	/**
@@ -502,8 +502,13 @@ class FlaggedRevs {
 		}
 		# Don't let them choose levels above their own rights
 		if ( $right == 'sysop' ) {
-			// special case, rewrite sysop to protect and editprotected
-			if ( !$user->isAllowed( 'protect' ) && !$user->isAllowed( 'editprotected' ) ) {
+			// special case, rewrite sysop to editprotected
+			if ( !$user->isAllowed( 'editprotected' ) ) {
+				return false;
+			}
+		} elseif ( $right == 'autoconfirmed' ) {
+			// special case, rewrite autoconfirmed to editsemiprotected
+			if ( !$user->isAllowed( 'editsemiprotected' ) ) {
 				return false;
 			}
 		} elseif ( !$user->isAllowed( $right ) ) {
@@ -549,31 +554,27 @@ class FlaggedRevs {
 	}
 
 	/**
-	 * Get the HTML output of a revision based on $text.
-	 * @param Title $title
-	 * @param string $text
-	 * @param int $id Source revision Id
+	 * Get the HTML output of a revision.
+	 * @param FlaggedRevision $frev
 	 * @param ParserOptions $pOpts
 	 * @return ParserOutput
 	 */
-	public static function parseStableText( Title $title, $text, $id, ParserOptions $pOpts ) {
-		global $wgParser;
+	public static function parseStableRevision( FlaggedRevision $frev, ParserOptions $pOpts ) {
 		# Notify Parser if includes should be stabilized
 		$resetManager = false;
 		$incManager = FRInclusionManager::singleton();
-		if ( $id && self::inclusionSetting() != FR_INCLUDES_CURRENT ) {
+		if ( $frev->getRevId() && self::inclusionSetting() != FR_INCLUDES_CURRENT ) {
 			# Use FRInclusionManager to do the template/file version query
 			# up front unless the versions are already specified there...
 			if ( !$incManager->parserOutputIsStabilized() ) {
-				$frev = FlaggedRevision::newFromTitle( $title, $id );
-				if ( $frev ) {
-					$incManager->stabilizeParserOutput( $frev );
-					$resetManager = true; // need to reset when done
-				}
+				$incManager->stabilizeParserOutput( $frev );
+				$resetManager = true; // need to reset when done
 			}
 		}
-		# Parse the new body, wikitext -> html
-		$parserOut = $wgParser->parse( $text, $title, $pOpts, true, true, $id );
+		# Parse the new body
+		$parserOut = $frev->getRevision()->getContent()->getParserOutput(
+			$frev->getTitle(), $frev->getRevId(), $pOpts
+		);
 		# Stable parse done!
 		if ( $resetManager ) {
 			$incManager->clear(); // reset the FRInclusionManager as needed
@@ -595,15 +596,26 @@ class FlaggedRevs {
 
 	/**
 	 * Update the page tables with a new stable version.
-	 * @param Title $title
+	 * @param WikiPage|Title $page
 	 * @param FlaggedRevision|null $sv, the new stable version (optional)
 	 * @param FlaggedRevision|null $oldSv, the old stable version (optional)
 	 * @param Object editInfo Article edit info about the current revision (optional)
 	 * @return bool stable version text/file changed and FR_INCLUDES_STABLE
 	 */
 	public static function stableVersionUpdates(
-		Title $title, $sv = null, $oldSv = null, $editInfo = null
+		$page, $sv = null, $oldSv = null, $editInfo = null
 	) {
+		if ( $page instanceof FlaggableWikiPage ) {
+			$article = $page;
+		} elseif ( $page instanceof WikiPage ) {
+			$article = FlaggableWikiPage::getTitleInstance( $page->getTitle() );
+		} elseif ( $page instanceof Title ) {
+			$article = FlaggableWikiPage::getTitleInstance( $page );
+		} else {
+			throw new MWException( "First argument must be a Title or WikiPage." );
+		}
+		$title = $article->getTitle();
+
 		$changed = false;
 		if ( $oldSv === null ) { // optional
 			$oldSv = FlaggedRevision::newFromStable( $title, FR_MASTER );
@@ -611,7 +623,7 @@ class FlaggedRevs {
 		if ( $sv === null ) { // optional
 			$sv = FlaggedRevision::determineStable( $title, FR_MASTER );
 		}
-		$article = new FlaggableWikiPage( $title );
+
 		if ( !$sv ) {
 			# Empty flaggedrevs data for this page if there is no stable version
 			$article->clearStableVersion();
@@ -935,9 +947,10 @@ class FlaggedRevs {
 		# Get review property flags
 		$propFlags = $auto ? array( 'auto' ) : array();
 
-		# Rev ID is not put into parser on edit, so do the same here.
-		# Also, a second parse would be triggered otherwise.
-		$editInfo = $article->prepareTextForEdit( $rev->getText() );
+		# Note: this needs to match the prepareContentForEdit() call WikiPage::doEditContent.
+		# This is for consistency and also to avoid triggering a second parse otherwise.
+		$editInfo = $article->prepareContentForEdit(
+			$rev->getContent(), null, $user, $rev->getContentFormat() );
 		$poutput  = $editInfo->output; // revision HTML output
 
 		# Get the "review time" versions of templates and files.
@@ -1012,7 +1025,7 @@ class FlaggedRevs {
 			$flags, array(), '', $rev->getId(), $oldSvId, true, $auto );
 
 		# Update page and tracking tables and clear cache
-		FlaggedRevs::stableVersionUpdates( $title );
+		FlaggedRevs::stableVersionUpdates( $article );
 
 		wfProfileOut( __METHOD__ );
 		return true;

@@ -23,6 +23,7 @@ Edits made by other users are not displayed to readers by default until an autho
  * @author Jon Harald Søby
  * @author Purodha
  * @author Raymond
+ * @author Shirayuki
  * @author Umherirrender
  */
 $messages['qqq'] = array(
@@ -35,12 +36,12 @@ This text is shown on [http://flaggedrevs.labs.wikimedia.org/wiki/Special:Stable
 Parameters:
 * $1 - (optional) Number of items in the list, to be used with PLURAL, when unavoidable.',
 	'stablepages-none' => '{{Flagged Revs}}
-{{Identical|There are no pages in this list}}
-Shown on the page [[Special:StablePages]].',
-	'stablepages-config' => '{{Flagged Revs}}
-{{Identical|Configuration}}
 Shown on the page [[Special:StablePages]].
-Text for the link to change the FlaggedRevs configuration for a specific page. Links to [[Special:Stabilization]].',
+{{Identical|There are no pages in this list}}',
+	'stablepages-config' => '{{Flagged Revs}}
+Shown on the page [[Special:StablePages]].
+Text for the link to change the FlaggedRevs configuration for a specific page. Links to [[Special:Stabilization]].
+{{Identical|Configuration}}',
 	'stablepages-indef' => '{{Flagged Revs}}
 Shown on the page [[Special:StablePages]].
 Label use on checkbox filter to only show pages where edits will require review indefinetely',
@@ -288,6 +289,14 @@ $messages['el'] = array(
 	'stablepages-indef' => 'Μόνο λήξη αορίστου χρόνου',
 );
 
+/** British English (British English)
+ * @author Shirayuki
+ */
+$messages['en-gb'] = array(
+	'stablepages-list' => 'This page lists pages to which only certain users can make edits that do not require review.
+Edits made by other users are not displayed to readers by default until an authorised user reviews them.',
+);
+
 /** Esperanto (Esperanto)
  * @author Yekrats
  */
@@ -303,6 +312,7 @@ $messages['eo'] = array(
  * @author Bola
  * @author Crazymadlover
  * @author Dferg
+ * @author MarcoAurelio
  * @author McDutchie
  * @author Translationista
  */
@@ -404,7 +414,7 @@ $messages['gl'] = array(
 	'stablepages' => 'Páxinas que usan a aprobación de edicións',
 	'stablepages-list' => 'A continuación está a lista coas páxinas restrinxidas de xeito que só certos usuarios poidan realizar edicións que non necesiten revisión.
 As edicións feitas por outros usuarios non se mostran aos lectores por defecto ata que un usuario autorizado as revise.',
-	'stablepages-none' => 'Non hai páxinas nesta lista',
+	'stablepages-none' => 'Non hai páxinas nesta lista.',
 	'stablepages-config' => 'Configuración',
 	'stablepages-indef' => 'Caducidade indefinida só',
 );
@@ -449,13 +459,15 @@ $messages['he'] = array(
 /** Hindi (हिन्दी)
  * @author Ansumang
  * @author Kaustubh
+ * @author Siddhartha Ghai
  */
 $messages['hi'] = array(
-	'stablepages' => 'स्थिर पन्ने', # Fuzzy
-	'stablepages-list' => 'नीचे स्थिर अवतरण अविचल दिखाने वाले पन्नोंकी सूची हैं जो हाथसे तैयार की गई हैं।', # Fuzzy
-	'stablepages-none' => 'इस सूची में पन्ने नहीं हैं',
+	'stablepages' => 'पुनरीक्षण का प्रयोग कर रहे पृष्ठ',
+	'stablepages-list' => 'इस पृष्ठ पर उन पृष्ठों की सूची है जिनमें कुछ ही सदस्य ऐसे सम्पादन कर सकते हैं जिनके लिए पुनरीक्षण की आवश्यकता नहीं है।
+अन्य सदस्यों द्वारा किये सम्पादन डिफ़ॉल्ट रूप से पाठकों को नहीं दिखाए जाते हैं जब तक कि कोई अधिकृत सदस्य उनका पुनरीक्षण ना कर ले।',
+	'stablepages-none' => 'इस सूची में कोई पृष्ठ नहीं हैं।',
 	'stablepages-config' => 'कॉन्फिगरेशन',
-	'stablepages-indef' => 'केबल असीमित अबसान',
+	'stablepages-indef' => 'केवल अनिश्चितकालीन समाप्ति',
 );
 
 /** Croatian (hrvatski)
@@ -542,6 +554,7 @@ $messages['it'] = array(
 /** Japanese (日本語)
  * @author Aotake
  * @author Fryed-peach
+ * @author Shirayuki
  * @author Whym
  * @author 青子守歌
  */
@@ -549,7 +562,7 @@ $messages['ja'] = array(
 	'stablepages' => '編集承認を使用しているページ',
 	'stablepages-list' => '以下は、特定の利用者のみが、査読なしに編集することのできるページの一覧です。
 その他の利用者による編集は、承認された利用者が査読するまで、閲覧者には表示されません。',
-	'stablepages-none' => '表示すべきページはありません',
+	'stablepages-none' => '表示すべきページはありません。',
 	'stablepages-config' => '設定',
 	'stablepages-indef' => '無期限のみ',
 );
@@ -609,11 +622,11 @@ $messages['ksh'] = array(
 	'stablepages-list' => 'Heh dronger kütt en Leß met {{PLURAL:$1|dä Sigg|dä Sigge|dä Noll Sigge}}, woh bloß beshtemmpte Metmaacher draan ändere künne, di nit nohjekik wääde möße.
 Änderonge vun ander Metmaacher kritt der Lesser shtandatmäßesch nit aanjezeisch, bes ene berääschteschte Metmaacher se nohjekik hät.',
 	'stablepages-none' => 'En dä Leß sin kein Sigge dren',
-	'stablepages-config' => 'Enstellunge',
+	'stablepages-config' => 'Enschtällunge',
 	'stablepages-indef' => 'Bloß met onbejränz Duuer',
 );
 
-/** Kirghiz (Кыргызча)
+/** Kyrgyz (Кыргызча)
  * @author Growingup
  */
 $messages['ky'] = array(
@@ -711,7 +724,7 @@ Modifiki magħmula minn utenti oħra ma jidhrux awtomatikament lill-qarrejja sak
 	'stablepages-indef' => 'Skadenza indefinita biss',
 );
 
-/** Norwegian Bokmål (norsk (bokmål)‎)
+/** Norwegian Bokmål (norsk bokmål)
  * @author Nghtwlkr
  */
 $messages['nb'] = array(
@@ -736,7 +749,7 @@ Bewerkingen door andere gebruikers worden niet weergegeven totdat daartoe gerech
 	'stablepages-indef' => 'Alleen zonder vervaldatum',
 );
 
-/** Norwegian Nynorsk (norsk (nynorsk)‎)
+/** Norwegian Nynorsk (norsk nynorsk)
  * @author Harald Khan
  * @author Njardarlogar
  */

@@ -1,61 +1,92 @@
 <?php
 
 class GlobalTest extends MediaWikiTestCase {
-	function setUp() {
-		global $wgReadOnlyFile, $wgUrlProtocols;
-		$this->originals['wgReadOnlyFile'] = $wgReadOnlyFile;
-		$this->originals['wgUrlProtocols'] = $wgUrlProtocols;
-		$wgReadOnlyFile = tempnam( wfTempDir(), "mwtest_readonly" );
-		$wgUrlProtocols[] = 'file://';
-		unlink( $wgReadOnlyFile );
+	protected function setUp() {
+		parent::setUp();
+
+		$readOnlyFile = tempnam( wfTempDir(), "mwtest_readonly" );
+		unlink( $readOnlyFile );
+
+		$this->setMwGlobals( array(
+			'wgReadOnlyFile' => $readOnlyFile,
+			'wgUrlProtocols' => array(
+				'http://',
+				'https://',
+				'mailto:',
+				'//',
+				'file://', # Non-default
+			),
+		) );
 	}
 
-	function tearDown() {
-		global $wgReadOnlyFile, $wgUrlProtocols;
+	protected function tearDown() {
+		global $wgReadOnlyFile;
+
 		if ( file_exists( $wgReadOnlyFile ) ) {
 			unlink( $wgReadOnlyFile );
 		}
-		$wgReadOnlyFile = $this->originals['wgReadOnlyFile'];
-		$wgUrlProtocols = $this->originals['wgUrlProtocols'];
+
+		parent::tearDown();
 	}
 
-	/** @dataProvider provideForWfArrayDiff2 */
+	/**
+	 * @dataProvider provideForWfArrayDiff2
+	 * @covers ::wfArrayDiff2
+	 */
 	public function testWfArrayDiff2( $a, $b, $expected ) {
 		$this->assertEquals(
-			wfArrayDiff2( $a, $b), $expected
+			wfArrayDiff2( $a, $b ), $expected
 		);
 	}
 
 	// @todo Provide more tests
-	public function provideForWfArrayDiff2() {
+	public static function provideForWfArrayDiff2() {
 		// $a $b $expected
 		return array(
 			array(
-				array( 'a', 'b'),
-				array( 'a', 'b'),
+				array( 'a', 'b' ),
+				array( 'a', 'b' ),
 				array(),
 			),
 			array(
-				array( array( 'a'), array( 'a', 'b', 'c' )),
-				array( array( 'a'), array( 'a', 'b' )),
+				array( array( 'a' ), array( 'a', 'b', 'c' ) ),
+				array( array( 'a' ), array( 'a', 'b' ) ),
 				array( 1 => array( 'a', 'b', 'c' ) ),
 			),
 		);
 	}
 
-	function testRandom() {
+	/**
+	 * @covers ::wfRandom
+	 */
+	public function testRandom() {
 		# This could hypothetically fail, but it shouldn't ;)
 		$this->assertFalse(
 			wfRandom() == wfRandom() );
 	}
 
-	function testUrlencode() {
+	/**
+	 * @covers ::wfUrlencode
+	 */
+	public function testUrlencode() {
 		$this->assertEquals(
 			"%E7%89%B9%E5%88%A5:Contributions/Foobar",
 			wfUrlencode( "\xE7\x89\xB9\xE5\x88\xA5:Contributions/Foobar" ) );
 	}
 
-	function testReadOnlyEmpty() {
+	/**
+	 * @covers ::wfExpandIRI
+	 */
+	public function testExpandIRI() {
+		$this->assertEquals(
+			"https://te.wikibooks.org/wiki/ఉబుంటు_వాడుకరి_మార్గదర్శని",
+			wfExpandIRI( "https://te.wikibooks.org/wiki/%E0%B0%89%E0%B0%AC%E0%B1%81%E0%B0%82%E0%B0%9F%E0%B1%81_%E0%B0%B5%E0%B0%BE%E0%B0%A1%E0%B1%81%E0%B0%95%E0%B0%B0%E0%B0%BF_%E0%B0%AE%E0%B0%BE%E0%B0%B0%E0%B1%8D%E0%B0%97%E0%B0%A6%E0%B0%B0%E0%B1%8D%E0%B0%B6%E0%B0%A8%E0%B0%BF" ) );
+	}
+
+	/**
+	 * @covers ::wfReadOnly
+	 */
+	public function testReadOnlyEmpty() {
 		global $wgReadOnly;
 		$wgReadOnly = null;
 
@@ -63,7 +94,10 @@ class GlobalTest extends MediaWikiTestCase {
 		$this->assertFalse( wfReadOnly() );
 	}
 
-	function testReadOnlySet() {
+	/**
+	 * @covers ::wfReadOnly
+	 */
+	public function testReadOnlySet() {
 		global $wgReadOnly, $wgReadOnlyFile;
 
 		$f = fopen( $wgReadOnlyFile, "wt" );
@@ -81,20 +115,7 @@ class GlobalTest extends MediaWikiTestCase {
 		$this->assertFalse( wfReadOnly() );
 	}
 
-	function testQuotedPrintable() {
-		$this->assertEquals(
-			"=?UTF-8?Q?=C4=88u=20legebla=3F?=",
-			UserMailer::quotedPrintable( "\xc4\x88u legebla?", "UTF-8" ) );
-	}
-
-	function testTime() {
-		$start = wfTime();
-		$this->assertInternalType( 'float', $start );
-		$end = wfTime();
-		$this->assertTrue( $end > $start, "Time is running backwards!" );
-	}
-
-	function dataArrayToCGI() {
+	public static function provideArrayToCGI() {
 		return array(
 			array( array(), '' ), // empty
 			array( array( 'foo' => 'bar' ), 'foo=bar' ), // string test
@@ -113,22 +134,26 @@ class GlobalTest extends MediaWikiTestCase {
 	}
 
 	/**
-	 * @dataProvider dataArrayToCGI
+	 * @dataProvider provideArrayToCGI
+	 * @covers ::wfArrayToCgi
 	 */
-	function testArrayToCGI( $array, $result ) {
-		$this->assertEquals( $result, wfArrayToCGI( $array ) );
+	public function testArrayToCGI( $array, $result ) {
+		$this->assertEquals( $result, wfArrayToCgi( $array ) );
 	}
 
 
-	function testArrayToCGI2() {
+	/**
+	 * @covers ::testWfArrayDiff2
+	 */
+	public function testArrayToCGI2() {
 		$this->assertEquals(
 			"baz=bar&foo=bar",
-			wfArrayToCGI(
+			wfArrayToCgi(
 				array( 'baz' => 'bar' ),
 				array( 'foo' => 'bar', 'baz' => 'overridden value' ) ) );
 	}
 
-	function dataCgiToArray() {
+	public static function provideCgiToArray() {
 		return array(
 			array( '', array() ), // empty
 			array( 'foo=bar', array( 'foo' => 'bar' ) ), // string
@@ -144,13 +169,14 @@ class GlobalTest extends MediaWikiTestCase {
 	}
 
 	/**
-	 * @dataProvider dataCgiToArray
+	 * @dataProvider provideCgiToArray
+	 * @covers ::wfCgiToArray
 	 */
-	function testCgiToArray( $cgi, $result ) {
+	public function testCgiToArray( $cgi, $result ) {
 		$this->assertEquals( $result, wfCgiToArray( $cgi ) );
 	}
 
-	function dataCgiRoundTrip() {
+	public static function provideCgiRoundTrip() {
 		return array(
 			array( '' ),
 			array( 'foo=bar' ),
@@ -164,212 +190,125 @@ class GlobalTest extends MediaWikiTestCase {
 	}
 
 	/**
-	 * @dataProvider dataCgiRoundTrip
+	 * @dataProvider provideCgiRoundTrip
+	 * @covers ::wfArrayToCgi
 	 */
-	function testCgiRoundTrip( $cgi ) {
-		$this->assertEquals( $cgi, wfArrayToCGI( wfCgiToArray( $cgi ) ) );
+	public function testCgiRoundTrip( $cgi ) {
+		$this->assertEquals( $cgi, wfArrayToCgi( wfCgiToArray( $cgi ) ) );
 	}
 
-	function testMimeTypeMatch() {
+	/**
+	 * @covers ::mimeTypeMatch
+	 */
+	public function testMimeTypeMatch() {
 		$this->assertEquals(
 			'text/html',
 			mimeTypeMatch( 'text/html',
 				array( 'application/xhtml+xml' => 1.0,
-				       'text/html'             => 0.7,
-				       'text/plain'            => 0.3 ) ) );
+					'text/html' => 0.7,
+					'text/plain' => 0.3 ) ) );
 		$this->assertEquals(
 			'text/*',
 			mimeTypeMatch( 'text/html',
 				array( 'image/*' => 1.0,
-				       'text/*'  => 0.5 ) ) );
+					'text/*' => 0.5 ) ) );
 		$this->assertEquals(
 			'*/*',
 			mimeTypeMatch( 'text/html',
 				array( '*/*' => 1.0 ) ) );
 		$this->assertNull(
 			mimeTypeMatch( 'text/html',
-				array( 'image/png'     => 1.0,
-				       'image/svg+xml' => 0.5 ) ) );
+				array( 'image/png' => 1.0,
+					'image/svg+xml' => 0.5 ) ) );
 	}
 
-	function testNegotiateType() {
+	/**
+	 * @covers ::wfNegotiateType
+	 */
+	public function testNegotiateType() {
 		$this->assertEquals(
 			'text/html',
 			wfNegotiateType(
 				array( 'application/xhtml+xml' => 1.0,
-				       'text/html'             => 0.7,
-				       'text/plain'            => 0.5,
-				       'text/*'                => 0.2 ),
-				array( 'text/html'             => 1.0 ) ) );
+					'text/html' => 0.7,
+					'text/plain' => 0.5,
+					'text/*' => 0.2 ),
+				array( 'text/html' => 1.0 ) ) );
 		$this->assertEquals(
 			'application/xhtml+xml',
 			wfNegotiateType(
 				array( 'application/xhtml+xml' => 1.0,
-				       'text/html'             => 0.7,
-				       'text/plain'            => 0.5,
-				       'text/*'                => 0.2 ),
+					'text/html' => 0.7,
+					'text/plain' => 0.5,
+					'text/*' => 0.2 ),
 				array( 'application/xhtml+xml' => 1.0,
-				       'text/html'             => 0.5 ) ) );
+					'text/html' => 0.5 ) ) );
 		$this->assertEquals(
 			'text/html',
 			wfNegotiateType(
-				array( 'text/html'             => 1.0,
-				       'text/plain'            => 0.5,
-				       'text/*'                => 0.5,
-				       'application/xhtml+xml' => 0.2 ),
+				array( 'text/html' => 1.0,
+					'text/plain' => 0.5,
+					'text/*' => 0.5,
+					'application/xhtml+xml' => 0.2 ),
 				array( 'application/xhtml+xml' => 1.0,
-				       'text/html'             => 0.5 ) ) );
+					'text/html' => 0.5 ) ) );
 		$this->assertEquals(
 			'text/html',
 			wfNegotiateType(
-				array( 'text/*'                => 1.0,
-				       'image/*'               => 0.7,
-				       '*/*'                   => 0.3 ),
+				array( 'text/*' => 1.0,
+					'image/*' => 0.7,
+					'*/*' => 0.3 ),
 				array( 'application/xhtml+xml' => 1.0,
-				       'text/html'             => 0.5 ) ) );
+					'text/html' => 0.5 ) ) );
 		$this->assertNull(
 			wfNegotiateType(
-				array( 'text/*'                => 1.0 ),
+				array( 'text/*' => 1.0 ),
 				array( 'application/xhtml+xml' => 1.0 ) ) );
 	}
-	
-	function testFallbackMbstringFunctions() {
-		
-		if( !extension_loaded( 'mbstring' ) ) {
-			$this->markTestSkipped( "The mb_string functions must be installed to test the fallback functions" );
-		}
-		
-		$sampleUTF = "Östergötland_coat_of_arms.png";
-		
-		
-		//mb_substr
-		$substr_params = array(
-			array( 0, 0 ),
-			array( 5, -4 ),
-			array( 33 ),
-			array( 100, -5 ),
-			array( -8, 10 ),
-			array( 1, 1 ),
-			array( 2, -1 )
-		);
-		
-		foreach( $substr_params as $param_set ) {
-			$old_param_set = $param_set;
-			array_unshift( $param_set, $sampleUTF );
-			
-			$this->assertEquals(
-				MWFunction::callArray( 'mb_substr', $param_set ),
-				MWFunction::callArray( 'Fallback::mb_substr', $param_set ),
-				'Fallback mb_substr with params ' . implode( ', ', $old_param_set )
-			);			
-		}
-		
-		
-		//mb_strlen
-		$this->assertEquals(
-			mb_strlen( $sampleUTF ),
-			Fallback::mb_strlen( $sampleUTF ),
-			'Fallback mb_strlen'
-		);			
-		
-		
-		//mb_str(r?)pos
-		$strpos_params = array(
-			//array( 'ter' ),
-			//array( 'Ö' ),
-			//array( 'Ö', 3 ),
-			//array( 'oat_', 100 ),
-			//array( 'c', -10 ),
-			//Broken for now
-		);
-		
-		foreach( $strpos_params as $param_set ) {
-			$old_param_set = $param_set;
-			array_unshift( $param_set, $sampleUTF );
-			
-			$this->assertEquals(
-				MWFunction::callArray( 'mb_strpos', $param_set ),
-				MWFunction::callArray( 'Fallback::mb_strpos', $param_set ),
-				'Fallback mb_strpos with params ' . implode( ', ', $old_param_set )
-			);		
-			
-			$this->assertEquals(
-				MWFunction::callArray( 'mb_strrpos', $param_set ),
-				MWFunction::callArray( 'Fallback::mb_strrpos', $param_set ),
-				'Fallback mb_strrpos with params ' . implode( ', ', $old_param_set )
-			);	
-		}
-		
-	}
-	
-	
-	function testDebugFunctionTest() {
-	
-		global $wgDebugLogFile, $wgOut, $wgShowDebug, $wgDebugTimestamps;
-		
+
+	/**
+	 * @covers ::wfDebug
+	 * @covers ::wfDebugMem
+	 */
+	public function testDebugFunctionTest() {
+
+		global $wgDebugLogFile, $wgDebugTimestamps;
+
 		$old_log_file = $wgDebugLogFile;
 		$wgDebugLogFile = tempnam( wfTempDir(), 'mw-' );
-		# @todo FIXME: This setting should be tested
+		# @todo FIXME: $wgDebugTimestamps should be tested
+		$old_wgDebugTimestamps = $wgDebugTimestamps;
 		$wgDebugTimestamps = false;
-		
-		
-		
+
 		wfDebug( "This is a normal string" );
 		$this->assertEquals( "This is a normal string", file_get_contents( $wgDebugLogFile ) );
 		unlink( $wgDebugLogFile );
-		
-		
+
 		wfDebug( "This is nöt an ASCII string" );
 		$this->assertEquals( "This is nöt an ASCII string", file_get_contents( $wgDebugLogFile ) );
 		unlink( $wgDebugLogFile );
-		
-		
+
 		wfDebug( "\00305This has böth UTF and control chars\003" );
 		$this->assertEquals( " 05This has böth UTF and control chars ", file_get_contents( $wgDebugLogFile ) );
 		unlink( $wgDebugLogFile );
-		
-		
-		
-		$old_wgOut = $wgOut;
-		$old_wgShowDebug = $wgShowDebug;
-		
-		$wgOut = new MockOutputPage;
-		
-		$wgShowDebug = true;
-		
-		$message = "\00305This has böth UTF and control chars\003";
-		
-		wfDebug( $message );
-		
-		if( $wgOut->message == "JAJA is a stupid error message. Anyway, here's your message: $message" ) {
-			$this->assertTrue( true, 'MockOutputPage called, set the proper message.' );
-		}
-		else {
-			$this->assertTrue( false, 'MockOutputPage was not called.' );
-		}
-		
-		$wgOut = $old_wgOut;
-		$wgShowDebug = $old_wgShowDebug;		
-		unlink( $wgDebugLogFile );
-		
-		
-		
+
 		wfDebugMem();
 		$this->assertGreaterThan( 5000, preg_replace( '/\D/', '', file_get_contents( $wgDebugLogFile ) ) );
 		unlink( $wgDebugLogFile );
-		
-		wfDebugMem(true);
+
+		wfDebugMem( true );
 		$this->assertGreaterThan( 5000000, preg_replace( '/\D/', '', file_get_contents( $wgDebugLogFile ) ) );
 		unlink( $wgDebugLogFile );
-		
-		
-		
+
 		$wgDebugLogFile = $old_log_file;
-		
+		$wgDebugTimestamps = $old_wgDebugTimestamps;
 	}
-	
-	function testClientAcceptsGzipTest() {
-		
+
+	/**
+	 * @covers ::wfClientAcceptsGzip
+	 */
+	public function testClientAcceptsGzipTest() {
+
 		$settings = array(
 			'gzip' => true,
 			'bzip' => false,
@@ -382,25 +321,27 @@ class GlobalTest extends MediaWikiTestCase {
 			'gzip;q=12345678.9' => true,
 			' gzip' => true,
 		);
-		
-		if( isset( $_SERVER['HTTP_ACCEPT_ENCODING'] ) ) $old_server_setting = $_SERVER['HTTP_ACCEPT_ENCODING'];
-		
+
+		if ( isset( $_SERVER['HTTP_ACCEPT_ENCODING'] ) ) {
+			$old_server_setting = $_SERVER['HTTP_ACCEPT_ENCODING'];
+		}
+
 		foreach ( $settings as $encoding => $expect ) {
 			$_SERVER['HTTP_ACCEPT_ENCODING'] = $encoding;
-			
+
 			$this->assertEquals( $expect, wfClientAcceptsGzip( true ),
 				"'$encoding' => " . wfBoolToStr( $expect ) );
 		}
-		
-		if( isset( $old_server_setting ) ) $_SERVER['HTTP_ACCEPT_ENCODING'] = $old_server_setting;
 
+		if ( isset( $old_server_setting ) ) {
+			$_SERVER['HTTP_ACCEPT_ENCODING'] = $old_server_setting;
+		}
 	}
-	
-	
-	
-	function testSwapVarsTest() {
-	
 
+	/**
+	 * @covers ::swap
+	 */
+	public function testSwapVarsTest() {
 		$var1 = 1;
 		$var2 = 2;
 
@@ -411,89 +352,85 @@ class GlobalTest extends MediaWikiTestCase {
 
 		$this->assertEquals( $var1, 2, 'var1 is swapped' );
 		$this->assertEquals( $var2, 1, 'var2 is swapped' );
-
 	}
 
-
-	function testWfPercentTest() {
+	/**
+	 * @covers ::wfPercent
+	 */
+	public function testWfPercentTest() {
 
 		$pcts = array(
-			array( 6/7, '0.86%', 2, false ),
-			array( 3/3, '1%' ),
-			array( 22/7, '3.14286%', 5 ),
-			array( 3/6, '0.5%' ),
-			array( 1/3, '0%', 0 ),
-			array( 10/3, '0%', -1 ),
-			array( 3/4/5, '0.1%', 1 ),
-			array( 6/7*8, '6.8571428571%', 10 ),
+			array( 6 / 7, '0.86%', 2, false ),
+			array( 3 / 3, '1%' ),
+			array( 22 / 7, '3.14286%', 5 ),
+			array( 3 / 6, '0.5%' ),
+			array( 1 / 3, '0%', 0 ),
+			array( 10 / 3, '0%', -1 ),
+			array( 3 / 4 / 5, '0.1%', 1 ),
+			array( 6 / 7 * 8, '6.8571428571%', 10 ),
 		);
-		
-		foreach( $pcts as $pct ) {
-			if( !isset( $pct[2] ) ) $pct[2] = 2;
-			if( !isset( $pct[3] ) ) $pct[3] = true;
-			
+
+		foreach ( $pcts as $pct ) {
+			if ( !isset( $pct[2] ) ) {
+				$pct[2] = 2;
+			}
+			if ( !isset( $pct[3] ) ) {
+				$pct[3] = true;
+			}
+
 			$this->assertEquals( wfPercent( $pct[0], $pct[2], $pct[3] ), $pct[1], $pct[1] );
 		}
-
-	}
-
-
-	function testInStringTest() {
-	
-		$this->assertTrue( in_string( 'foo', 'foobar' ), 'foo is in foobar' );
-		$this->assertFalse( in_string( 'Bar', 'foobar' ), 'Case-sensitive by default' );
-		$this->assertTrue( in_string( 'Foo', 'foobar', true ), 'Case-insensitive when asked' );
-	
 	}
 
 	/**
 	 * test @see wfShorthandToInteger()
 	 * @dataProvider provideShorthand
+	 * @covers ::wfShorthandToInteger
 	 */
 	public function testWfShorthandToInteger( $shorthand, $expected ) {
 		$this->assertEquals( $expected,
 			wfShorthandToInteger( $shorthand )
-		);	
+		);
 	}
 
 	/** array( shorthand, expected integer ) */
-	public function provideShorthand() {
+	public static function provideShorthand() {
 		return array(
-			# Null, empty ... 
-			array(     '', -1),
-			array(   '  ', -1),
-			array(   null, -1),
+			# Null, empty ...
+			array( '', -1 ),
+			array( '  ', -1 ),
+			array( null, -1 ),
 
 			# Failures returns 0 :(
 			array( 'ABCDEFG', 0 ),
-			array( 'Ak',      0 ),
+			array( 'Ak', 0 ),
 
 			# Int, strings with spaces
-			array(        1,    1 ),
-			array(    ' 1 ',    1 ),
-			array(     1023, 1023 ),
+			array( 1, 1 ),
+			array( ' 1 ', 1 ),
+			array( 1023, 1023 ),
 			array( ' 1023 ', 1023 ),
 
 			# kilo, Mega, Giga
-			array(   '1k', 1024 ),
-			array(   '1K', 1024 ),
-			array(   '1m', 1024 * 1024 ),
-			array(   '1M', 1024 * 1024 ),
-			array(   '1g', 1024 * 1024 * 1024 ),
-			array(   '1G', 1024 * 1024 * 1024 ),
+			array( '1k', 1024 ),
+			array( '1K', 1024 ),
+			array( '1m', 1024 * 1024 ),
+			array( '1M', 1024 * 1024 ),
+			array( '1g', 1024 * 1024 * 1024 ),
+			array( '1G', 1024 * 1024 * 1024 ),
 
 			# Negatives
-			array(     -1,    -1 ),
-			array(   -500,  -500 ),
-			array( '-500',  -500 ),
-			array(  '-1k', -1024 ),
+			array( -1, -1 ),
+			array( -500, -500 ),
+			array( '-500', -500 ),
+			array( '-1k', -1024 ),
 
 			# Zeroes
-			array(   '0', 0 ),
-			array(  '0k', 0 ),
-			array(  '0M', 0 ),
-			array(  '0G', 0 ),
-			array(  '-0', 0 ),
+			array( '0', 0 ),
+			array( '0k', 0 ),
+			array( '0M', 0 ),
+			array( '0G', 0 ),
+			array( '-0', 0 ),
 			array( '-0k', 0 ),
 			array( '-0M', 0 ),
 			array( '-0G', 0 ),
@@ -501,14 +438,98 @@ class GlobalTest extends MediaWikiTestCase {
 	}
 
 	/**
-	 * @dataProvider provideMakeUrlIndexes()
+	 * @param String $old: Text as it was in the database
+	 * @param String $mine: Text submitted while user was editing
+	 * @param String $yours: Text submitted by the user
+	 * @param Boolean $expectedMergeResult Whether the merge should be a success
+	 * @param String $expectedText: Text after merge has been completed
+	 *
+	 * @dataProvider provideMerge()
+	 * @group medium
+	 * @covers ::wfMerge
 	 */
-	function testMakeUrlIndexes( $url, $expected ) {
+	public function testMerge( $old, $mine, $yours, $expectedMergeResult, $expectedText ) {
+		$this->checkHasDiff3();
+
+		$mergedText = null;
+		$isMerged = wfMerge( $old, $mine, $yours, $mergedText );
+
+		$msg = 'Merge should be a ';
+		$msg .= $expectedMergeResult ? 'success' : 'failure';
+		$this->assertEquals( $expectedMergeResult, $isMerged, $msg );
+
+		if ( $isMerged ) {
+			// Verify the merged text
+			$this->assertEquals( $expectedText, $mergedText,
+				'is merged text as expected?' );
+		}
+	}
+
+	public static function provideMerge() {
+		$EXPECT_MERGE_SUCCESS = true;
+		$EXPECT_MERGE_FAILURE = false;
+
+		return array(
+			// #0: clean merge
+			array(
+				// old:
+				"one one one\n" . // trimmed
+					"\n" .
+					"two two two",
+
+				// mine:
+				"one one one ONE ONE\n" .
+					"\n" .
+					"two two two\n", // with tailing whitespace
+
+				// yours:
+				"one one one\n" .
+					"\n" .
+					"two two TWO TWO", // trimmed
+
+				// ok:
+				$EXPECT_MERGE_SUCCESS,
+
+				// result:
+				"one one one ONE ONE\n" .
+					"\n" .
+					"two two TWO TWO\n", // note: will always end in a newline
+			),
+
+			// #1: conflict, fail
+			array(
+				// old:
+				"one one one", // trimmed
+
+				// mine:
+				"one one one ONE ONE\n" .
+					"\n" .
+					"bla bla\n" .
+					"\n", // with tailing whitespace
+
+				// yours:
+				"one one one\n" .
+					"\n" .
+					"two two", // trimmed
+
+				$EXPECT_MERGE_FAILURE,
+
+				// result:
+				null,
+			),
+		);
+	}
+
+	/**
+	 * @dataProvider provideMakeUrlIndexes()
+	 * @covers ::wfMakeUrlIndexes
+	 */
+	public function testMakeUrlIndexes( $url, $expected ) {
 		$index = wfMakeUrlIndexes( $url );
 		$this->assertEquals( $expected, $index, "wfMakeUrlIndexes(\"$url\")" );
 	}
 
-	function provideMakeUrlIndexes() {
+	public static function provideMakeUrlIndexes() {
 		return array(
 			array(
 				// just a regular :)
@@ -556,16 +577,17 @@ class GlobalTest extends MediaWikiTestCase {
 			),
 		);
 	}
-	
+
 	/**
 	 * @dataProvider provideWfMatchesDomainList
+	 * @covers ::wfMatchesDomainList
 	 */
-	function testWfMatchesDomainList( $url, $domains, $expected, $description ) {
+	public function testWfMatchesDomainList( $url, $domains, $expected, $description ) {
 		$actual = wfMatchesDomainList( $url, $domains );
 		$this->assertEquals( $expected, $actual, $description );
 	}
-	
-	function provideWfMatchesDomainList() {
+
+	public static function provideWfMatchesDomainList() {
 		$a = array();
 		$protocols = array( 'HTTP' => 'http:', 'HTTPS' => 'https:', 'protocol-relative' => '' );
 		foreach ( $protocols as $pDesc => $p ) {
@@ -576,19 +598,31 @@ class GlobalTest extends MediaWikiTestCase {
 				array( "$p//www.example2.com", array( 'www.example.com', 'www.example2.com', 'www.example3.com' ), true, "Exact match with other domains in array, $pDesc URL" ),
 				array( "$p//www.example2.com", array( 'example.com', 'example2.com', 'example3,com' ), true, "Match without subdomain with other domains in array, $pDesc URL" ),
 				array( "$p//www.example4.com", array( 'example.com', 'example2.com', 'example3,com' ), false, "Domain not in array, $pDesc URL" ),
-				
-				// FIXME: This is a bug in wfMatchesDomainList(). If and when this is fixed, update this test case
-				array( "$p//nds-nl.wikipedia.org", array( 'nl.wikipedia.org' ), true, "Substrings of domains match while they shouldn't, $pDesc URL" ),
+				array( "$p//nds-nl.wikipedia.org", array( 'nl.wikipedia.org' ), false, "Non-matching substring of domain, $pDesc URL" ),
 			) );
 		}
+
 		return $a;
 	}
 
 	/**
-	 * @dataProvider provideWfShellMaintenanceCmdList
+	 * @covers ::wfMkdirParents
 	 */
-	function testWfShellMaintenanceCmd( $script, $parameters, $options, $expected, $description ) {
-		if( wfIsWindows() ) {
+	public function testWfMkdirParents() {
+		// Should not return true if file exists instead of directory
+		$fname = $this->getNewTempFile();
+		wfSuppressWarnings();
+		$ok = wfMkdirParents( $fname );
+		wfRestoreWarnings();
+		$this->assertFalse( $ok );
+	}
+
+	/**
+	 * @dataProvider provideWfShellMaintenanceCmdList
+	 * @covers ::wfShellMaintenanceCmd
+	 */
+	public function testWfShellMaintenanceCmd( $script, $parameters, $options, $expected, $description ) {
+		if ( wfIsWindows() ) {
 			// Approximation that's good enough for our purposes just now
 			$expected = str_replace( "'", '"', $expected );
 		}
@@ -596,33 +630,23 @@ class GlobalTest extends MediaWikiTestCase {
 		$this->assertEquals( $expected, $actual, $description );
 	}
 
-	function provideWfShellMaintenanceCmdList() {
+	public static function provideWfShellMaintenanceCmdList() {
 		global $wgPhpCli;
+
 		return array(
 			array( 'eval.php', array( '--help', '--test' ), array(),
 				"'$wgPhpCli' 'eval.php' '--help' '--test'",
 				"Called eval.php --help --test" ),
-			array( 'eval.php', array( '--help', '--test space' ), array('php' => 'php5'),
+			array( 'eval.php', array( '--help', '--test space' ), array( 'php' => 'php5' ),
 				"'php5' 'eval.php' '--help' '--test space'",
 				"Called eval.php --help --test with php option" ),
-			array( 'eval.php', array( '--help', '--test', 'X' ), array('wrapper' => 'MWScript.php'),
+			array( 'eval.php', array( '--help', '--test', 'X' ), array( 'wrapper' => 'MWScript.php' ),
 				"'$wgPhpCli' 'MWScript.php' 'eval.php' '--help' '--test' 'X'",
 				"Called eval.php --help --test with wrapper option" ),
-			array( 'eval.php', array( '--help', '--test', 'y' ), array('php' => 'php5', 'wrapper' => 'MWScript.php'),
+			array( 'eval.php', array( '--help', '--test', 'y' ), array( 'php' => 'php5', 'wrapper' => 'MWScript.php' ),
 				"'php5' 'MWScript.php' 'eval.php' '--help' '--test' 'y'",
 				"Called eval.php --help --test with wrapper and php option" ),
 		);
 	}
-	/* TODO: many more! */
+	/* @TODO many more! */
 }
-
-
-class MockOutputPage {
-	
-	public $message;
-	
-	function debug( $message ) {
-		$this->message = "JAJA is a stupid error message. Anyway, here's your message: $message";
-	}
-}
-

@@ -5,28 +5,38 @@
  * @file
  */
 
-/** Tests for MediaWiki languages/classes/LanguageSh.php */
-class LanguageShTest extends MediaWikiTestCase {
-	private $lang;
-
-	function setUp() {
-		$this->lang = Language::factory( 'sh' );
-	}
-	function tearDown() {
-		unset( $this->lang );
-	}
-
-	/** @dataProvider providerPlural */
-	function testPlural( $result, $value ) {
-		$forms = array( 'one', 'many' );
-		$this->assertEquals( $result, $this->lang->convertPlural( $value, $forms ) );
+/** Tests for  srpskohrvatski / српскохрватски / Serbocroatian */
+class LanguageShTest extends LanguageClassesTestCase {
+	/**
+	 * @dataProvider providePlural
+	 * @covers Language::convertPlural
+	 */
+	public function testPlural( $result, $value ) {
+		$forms = array( 'one', 'few', 'other' );
+		$this->assertEquals( $result, $this->getLang()->convertPlural( $value, $forms ) );
 	}
 
-	function providerPlural() {
-		return array (
-			array( 'many', 0 ),
-			array( 'one',  1 ),
-			array( 'many', 2 ),
+	/**
+	 * @dataProvider providePlural
+	 * @covers Language::getPluralRuleType
+	 */
+	public function testGetPluralRuleType( $result, $value ) {
+		$this->assertEquals( $result, $this->getLang()->getPluralRuleType( $value ) );
+	}
+
+	public static function providePlural() {
+		return array(
+			array( 'other', 0 ),
+			array( 'one', 1 ),
+			array( 'few', 2 ),
+			array( 'few', 4 ),
+			array( 'other', 5 ),
+			array( 'other', 10 ),
+			array( 'other', 11 ),
+			array( 'other', 12 ),
+			array( 'one', 101 ),
+			array( 'few', 102 ),
+			array( 'other', 111 ),
 		);
 	}
 }

@@ -299,10 +299,10 @@
     function NovellLogout($user) {
       // http://de.opensuse.org/cmd/ICSLogout
         if (strpos($_SERVER['SERVER_NAME'],'stage') !== FALSE) {
-      	  $returnto  = 'Location: https://espstage.provo.novell.com/AGLogout';
+      	  $returnto  = 'Location: https://espstage.attachmategroup.com/AGLogout';
 	}
 	else {
-      	  $returnto  = 'Location: https://esp.novell.com/AGLogout';
+      	  $returnto  = 'Location: https://www.opensuse.org/AGLogout';
 	}
       header ($returnto);
       exit (0);

@@ -4,7 +4,7 @@
  *
  * Created on Feb 13, 2009
  *
- * Copyright © 2009 Roan Kattouw <Firstname>.<Lastname>@gmail.com
+ * Copyright © 2009 Roan Kattouw "<Firstname>.<Lastname>@gmail.com"
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -98,7 +98,7 @@ class ApiQueryProtectedTitles extends ApiQueryGeneratorBase {
 					$vals['user'] = $row->user_name;
 				}
 
-				if ( isset( $prop['user'] ) ) {
+				if ( isset( $prop['userid'] ) || /*B/C*/isset( $prop['user'] ) ) {
 					$vals['userid'] = $row->pt_user;
 				}
 
@@ -139,7 +139,7 @@ class ApiQueryProtectedTitles extends ApiQueryGeneratorBase {
 
 	public function getCacheMode( $params ) {
 		if ( !is_null( $params['prop'] ) && in_array( 'parsedcomment', $params['prop'] ) ) {
-			// formatComment() calls wfMsg() among other things
+			// formatComment() calls wfMessage() among other things
 			return 'anon-public-user-private';
 		} else {
 			return 'public';
@@ -157,7 +157,7 @@ class ApiQueryProtectedTitles extends ApiQueryGeneratorBase {
 				ApiBase::PARAM_ISMULTI => true,
 				ApiBase::PARAM_TYPE => array_diff( $wgRestrictionLevels, array( '' ) )
 			),
-			'limit' => array (
+			'limit' => array(
 				ApiBase::PARAM_DFLT => 10,
 				ApiBase::PARAM_TYPE => 'limit',
 				ApiBase::PARAM_MIN => 1,
@@ -214,6 +214,43 @@ class ApiQueryProtectedTitles extends ApiQueryGeneratorBase {
 		);
 	}
 
+	public function getResultProperties() {
+		global $wgRestrictionLevels;
+		return array(
+			'' => array(
+				'ns' => 'namespace',
+				'title' => 'string'
+			),
+			'timestamp' => array(
+				'timestamp' => 'timestamp'
+			),
+			'user' => array(
+				'user' => array(
+					ApiBase::PROP_TYPE => 'string',
+					ApiBase::PROP_NULLABLE => true
+				),
+				'userid' => 'integer'
+			),
+			'userid' => array(
+				'userid' => 'integer'
+			),
+			'comment' => array(
+				'comment' => 'string'
+			),
+			'parsedcomment' => array(
+				'parsedcomment' => 'string'
+			),
+			'expiry' => array(
+				'expiry' => 'timestamp'
+			),
+			'level' => array(
+				'level' => array(
+					ApiBase::PROP_TYPE => array_diff( $wgRestrictionLevels, array( '' ) )
+				)
+			)
+		);
+	}
+
 	public function getDescription() {
 		return 'List all titles protected from creation';
 	}
@@ -226,9 +263,5 @@ class ApiQueryProtectedTitles extends ApiQueryGeneratorBase {
 
 	public function getHelpUrls() {
 		return 'https://www.mediawiki.org/wiki/API:Protectedtitles';
-	}
-
-	public function getVersion() {
-		return __CLASS__ . ': $Id$';
 	}
 }

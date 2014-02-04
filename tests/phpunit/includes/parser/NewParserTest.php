@@ -6,19 +6,21 @@
  * @group Database
  * @group Parser
  * @group Stub
+ *
+ * @todo covers tags
  */
 class NewParserTest extends MediaWikiTestCase {
-	static protected $articles = array();	// Array of test articles defined by the tests
-	/* The dataProvider is run on a different instance than the test, so it must be static
+	static protected $articles = array(); // Array of test articles defined by the tests
+	/* The data provider is run on a different instance than the test, so it must be static
 	 * When running tests from several files, all tests will see all articles.
 	 */
 	static protected $backendToUse;
 
 	public $keepUploads = false;
 	public $runDisabled = false;
+	public $runParsoid = false;
 	public $regex = '';
 	public $showProgress = true;
-	public $savedInitialGlobals = array();
 	public $savedWeirdGlobals = array();
 	public $savedGlobals = array();
 	public $hooks = array();
@@ -31,10 +33,16 @@ class NewParserTest extends MediaWikiTestCase {
 
 	protected $file = false;
 
-	function setUp() {
-		global $wgContLang, $wgNamespaceProtection, $wgNamespaceAliases;
+	public static function setUpBeforeClass() {
+		// Inject ParserTest well-known interwikis
+		ParserTest::setupInterwikis();
+	}
+
+	protected function setUp() {
+		global $wgNamespaceAliases, $wgContLang;
 		global $wgHooks, $IP;
-		$wgContLang = Language::factory( 'en' );
+
+		parent::setUp();
 
 		//Setup CLI arguments
 		if ( $this->getCliArg( 'regex=' ) ) {
@@ -48,132 +56,137 @@ class NewParserTest extends MediaWikiTestCase {
 
 		$tmpGlobals = array();
 
+		$tmpGlobals['wgLanguageCode'] = 'en';
+		$tmpGlobals['wgContLang'] = Language::factory( 'en' );
+		$tmpGlobals['wgSitename'] = 'MediaWiki';
+		$tmpGlobals['wgServer'] = 'http://example.org';
 		$tmpGlobals['wgScript'] = '/index.php';
 		$tmpGlobals['wgScriptPath'] = '/';
 		$tmpGlobals['wgArticlePath'] = '/wiki/$1';
-		$tmpGlobals['wgStyleSheetPath'] = '/skins';
+		$tmpGlobals['wgActionPaths'] = array();
+		$tmpGlobals['wgVariantArticlePath'] = false;
+		$tmpGlobals['wgExtensionAssetsPath'] = '/extensions';
 		$tmpGlobals['wgStylePath'] = '/skins';
+		$tmpGlobals['wgEnableUploads'] = true;
 		$tmpGlobals['wgThumbnailScriptPath'] = false;
 		$tmpGlobals['wgLocalFileRepo'] = array(
-			'class'           => 'LocalRepo',
-			'name'            => 'local',
-			'url'             => 'http://example.com/images',
-			'hashLevels'      => 2,
+			'class' => 'LocalRepo',
+			'name' => 'local',
+			'url' => 'http://example.com/images',
+			'hashLevels' => 2,
 			'transformVia404' => false,
-			'backend'         => 'local-backend'
+			'backend' => 'local-backend'
 		);
 		$tmpGlobals['wgForeignFileRepos'] = array();
+		$tmpGlobals['wgDefaultExternalStore'] = array();
 		$tmpGlobals['wgEnableParserCache'] = false;
-		$tmpGlobals['wgHooks'] = $wgHooks;
+		$tmpGlobals['wgCapitalLinks'] = true;
+		$tmpGlobals['wgNoFollowLinks'] = true;
+		$tmpGlobals['wgNoFollowDomainExceptions'] = array();
+		$tmpGlobals['wgExternalLinkTarget'] = false;
+		$tmpGlobals['wgThumbnailScriptPath'] = false;
+		$tmpGlobals['wgUseImageResize'] = true;
+		$tmpGlobals['wgAllowExternalImages'] = true;
+		$tmpGlobals['wgRawHtml'] = false;
+		$tmpGlobals['wgUseTidy'] = false;
+		$tmpGlobals['wgAlwaysUseTidy'] = false;
+		$tmpGlobals['wgWellFormedXml'] = true;
+		$tmpGlobals['wgAllowMicrodataAttributes'] = true;
+		$tmpGlobals['wgExperimentalHtmlIds'] = false;
+		$tmpGlobals['wgAdaptiveMessageCache'] = true;
+		$tmpGlobals['wgUseDatabaseMessages'] = true;
+		$tmpGlobals['wgLocaltimezone'] = 'UTC';
 		$tmpGlobals['wgDeferredUpdateList'] = array();
-		$tmpGlobals['wgMemc'] = wfGetMainCache();
-		$tmpGlobals['messageMemc'] = wfGetMessageCacheStorage();
-		$tmpGlobals['parserMemc'] = wfGetParserCacheStorage();
+		$tmpGlobals['wgGroupPermissions'] = array(
+			'*' => array(
+				'createaccount' => true,
+				'read' => true,
+				'edit' => true,
+				'createpage' => true,
+				'createtalk' => true,
+		) );
+		$tmpGlobals['wgNamespaceProtection'] = array( NS_MEDIAWIKI => 'editinterface' );
 
-		// $tmpGlobals['wgContLang'] = new StubContLang;
-		$tmpGlobals['wgUser'] = new User;
-		$context = new RequestContext();
-		$tmpGlobals['wgLang'] = $context->getLanguage();
-		$tmpGlobals['wgOut'] = $context->getOutput();
-		$tmpGlobals['wgParser'] = new StubObject( 'wgParser', $GLOBALS['wgParserConf']['class'], array( $GLOBALS['wgParserConf'] ) );
-		$tmpGlobals['wgRequest'] = $context->getRequest();
+		$tmpGlobals['wgParser'] = new StubObject(
+			'wgParser', $GLOBALS['wgParserConf']['class'],
+			array( $GLOBALS['wgParserConf'] ) );
+
+		$tmpGlobals['wgFileExtensions'][] = 'svg';
+		$tmpGlobals['wgSVGConverter'] = 'rsvg';
+		$tmpGlobals['wgSVGConverters']['rsvg'] =
+			'$path/rsvg-convert -w $width -h $height $input -o $output';
 
 		if ( $GLOBALS['wgStyleDirectory'] === false ) {
 			$tmpGlobals['wgStyleDirectory'] = "$IP/skins";
 		}
 
-
-		foreach ( $tmpGlobals as $var => $val ) {
-			if ( array_key_exists( $var, $GLOBALS ) ) {
-				$this->savedInitialGlobals[$var] = $GLOBALS[$var];
-			}
-
-			$GLOBALS[$var] = $val;
+		# Replace all media handlers with a mock. We do not need to generate
+		# actual thumbnails to do parser testing, we only care about receiving
+		# a ThumbnailImage properly initialized.
+		global $wgMediaHandlers;
+		foreach ( $wgMediaHandlers as $type => $handler ) {
+			$tmpGlobals['wgMediaHandlers'][$type] = 'MockBitmapHandler';
 		}
+		// Vector images have to be handled slightly differently
+		$tmpGlobals['wgMediaHandlers']['image/svg+xml'] = 'MockSvgHandler';
 
-		$this->savedWeirdGlobals['mw_namespace_protection'] = $wgNamespaceProtection[NS_MEDIAWIKI];
+		$tmpHooks = $wgHooks;
+		$tmpHooks['ParserTestParser'][] = 'ParserTestParserHook::setup';
+		$tmpHooks['ParserGetVariableValueTs'][] = 'ParserTest::getFakeTimestamp';
+		$tmpGlobals['wgHooks'] = $tmpHooks;
+		# add a namespace shadowing a interwiki link, to test
+		# proper precedence when resolving links. (bug 51680)
+		$tmpGlobals['wgExtraNamespaces'] = array( 100 => 'MemoryAlpha' );
+
+		$this->setMwGlobals( $tmpGlobals );
+
 		$this->savedWeirdGlobals['image_alias'] = $wgNamespaceAliases['Image'];
 		$this->savedWeirdGlobals['image_talk_alias'] = $wgNamespaceAliases['Image_talk'];
 
-		$wgNamespaceProtection[NS_MEDIAWIKI] = 'editinterface';
 		$wgNamespaceAliases['Image'] = NS_FILE;
 		$wgNamespaceAliases['Image_talk'] = NS_FILE_TALK;
+
+		MWNamespace::getCanonicalNamespaces( true ); # reset namespace cache
+		$wgContLang->resetNamespaces(); # reset namespace cache
 	}
 
-	public function tearDown() {
-		foreach ( $this->savedInitialGlobals as $var => $val ) {
-			$GLOBALS[$var] = $val;
-		}
+	protected function tearDown() {
+		global $wgNamespaceAliases, $wgContLang;
 
-		global $wgNamespaceProtection, $wgNamespaceAliases;
-
-		$wgNamespaceProtection[NS_MEDIAWIKI] = $this->savedWeirdGlobals['mw_namespace_protection'];
 		$wgNamespaceAliases['Image'] = $this->savedWeirdGlobals['image_alias'];
 		$wgNamespaceAliases['Image_talk'] = $this->savedWeirdGlobals['image_talk_alias'];
 
 		// Restore backends
 		RepoGroup::destroySingleton();
 		FileBackendGroup::destroySingleton();
+
+		// Remove temporary pages from the link cache
+		LinkCache::singleton()->clear();
+
+		// Restore message cache (temporary pages and $wgUseDatabaseMessages)
+		MessageCache::destroyInstance();
+
+		parent::tearDown();
+
+		MWNamespace::getCanonicalNamespaces( true ); # reset namespace cache
+		$wgContLang->resetNamespaces(); # reset namespace cache
+	}
+
+	public static function tearDownAfterClass() {
+		ParserTest::tearDownInterwikis();
+		parent::tearDownAfterClass();
 	}
 
 	function addDBData() {
 		$this->tablesUsed[] = 'site_stats';
-		$this->tablesUsed[] = 'interwiki';
 		# disabled for performance
 		#$this->tablesUsed[] = 'image';
-
-		# Hack: insert a few Wikipedia in-project interwiki prefixes,
-		# for testing inter-language links
-		$this->db->insert( 'interwiki', array(
-			array( 'iw_prefix' => 'wikipedia',
-				   'iw_url'    => 'http://en.wikipedia.org/wiki/$1',
-				   'iw_api'    => '',
-				   'iw_wikiid' => '',
-				   'iw_local'  => 0 ),
-			array( 'iw_prefix' => 'meatball',
-				   'iw_url'    => 'http://www.usemod.com/cgi-bin/mb.pl?$1',
-				   'iw_api'    => '',
-				   'iw_wikiid' => '',
-				   'iw_local'  => 0 ),
-			array( 'iw_prefix' => 'zh',
-				   'iw_url'    => 'http://zh.wikipedia.org/wiki/$1',
-				   'iw_api'    => '',
-				   'iw_wikiid' => '',
-				   'iw_local'  => 1 ),
-			array( 'iw_prefix' => 'es',
-				   'iw_url'    => 'http://es.wikipedia.org/wiki/$1',
-				   'iw_api'    => '',
-				   'iw_wikiid' => '',
-				   'iw_local'  => 1 ),
-			array( 'iw_prefix' => 'fr',
-				   'iw_url'    => 'http://fr.wikipedia.org/wiki/$1',
-				   'iw_api'    => '',
-				   'iw_wikiid' => '',
-				   'iw_local'  => 1 ),
-			array( 'iw_prefix' => 'ru',
-				   'iw_url'    => 'http://ru.wikipedia.org/wiki/$1',
-				   'iw_api'    => '',
-				   'iw_wikiid' => '',
-				   'iw_local'  => 1 ),
-			/**
-			 * @todo Fixme! Why are we inserting duplicate data here? Shouldn't
-			 * need this IGNORE or shouldn't need the insert at all.
-			 */
-			), __METHOD__, array( 'IGNORE' )
-		);
-
 
 		# Update certain things in site_stats
 		$this->db->insert( 'site_stats',
 			array( 'ss_row_id' => 1, 'ss_images' => 2, 'ss_good_articles' => 1 ),
 			__METHOD__
 		);
-
-		# Reinitialise the LocalisationCache to match the database state
-		Language::getLocalisationCache()->unloadAll();
-
-		# Clear the message cache
-		MessageCache::singleton()->clear();
 
 		$user = User::newFromId( 0 );
 		LinkCache::singleton()->clear(); # Avoids the odd failure at creating the nullRevision
@@ -182,23 +195,47 @@ class NewParserTest extends MediaWikiTestCase {
 		# We will upload the actual files later. Note that if anything causes LocalFile::load()
 		# to be triggered before then, it will break via maybeUpgrade() setting the fileExists
 		# member to false and storing it in cache.
+		# note that the size/width/height/bits/etc of the file
+		# are actually set by inspecting the file itself; the arguments
+		# to recordUpload2 have no effect.  That said, we try to make things
+		# match up so it is less confusing to readers of the code & tests.
 		$image = wfLocalFile( Title::makeTitle( NS_FILE, 'Foobar.jpg' ) );
 		if ( !$this->db->selectField( 'image', '1', array( 'img_name' => $image->getName() ) ) ) {
 			$image->recordUpload2(
 				'', // archive name
-				'Upload of some lame file', 
+				'Upload of some lame file',
 				'Some lame file',
 				array(
-					'size'        => 12345,
-					'width'       => 1941,
-					'height'      => 220,
-					'bits'        => 24,
-					'media_type'  => MEDIATYPE_BITMAP,
-					'mime'        => 'image/jpeg',
-					'metadata'    => serialize( array() ),
-					'sha1'        => wfBaseConvert( '', 16, 36, 31 ),
-					'fileExists'  => true ), 
+					'size' => 7881,
+					'width' => 1941,
+					'height' => 220,
+					'bits' => 8,
+					'media_type' => MEDIATYPE_BITMAP,
+					'mime' => 'image/jpeg',
+					'metadata' => serialize( array() ),
+					'sha1' => wfBaseConvert( '1', 16, 36, 31 ),
+					'fileExists' => true ),
 				$this->db->timestamp( '20010115123500' ), $user
+			);
+		}
+
+		$image = wfLocalFile( Title::makeTitle( NS_FILE, 'Thumb.png' ) );
+		if ( !$this->db->selectField( 'image', '1', array( 'img_name' => $image->getName() ) ) ) {
+			$image->recordUpload2(
+				'', // archive name
+				'Upload of some lame thumbnail',
+				'Some lame thumbnail',
+				array(
+					'size' => 22589,
+					'width' => 135,
+					'height' => 135,
+					'bits' => 8,
+					'media_type' => MEDIATYPE_BITMAP,
+					'mime' => 'image/png',
+					'metadata' => serialize( array() ),
+					'sha1' => wfBaseConvert( '2', 16, 36, 31 ),
+					'fileExists' => true ),
+				$this->db->timestamp( '20130225203040' ), $user
 			);
 		}
 
@@ -207,25 +244,36 @@ class NewParserTest extends MediaWikiTestCase {
 		if ( !$this->db->selectField( 'image', '1', array( 'img_name' => $image->getName() ) ) ) {
 			$image->recordUpload2(
 				'', // archive name
-				'zomgnotcensored', 
-				'Borderline image', 
+				'zomgnotcensored',
+				'Borderline image',
 				array(
-					'size'        => 12345,
-					'width'       => 320,
-					'height'      => 240,
-					'bits'        => 24,
-					'media_type'  => MEDIATYPE_BITMAP,
-					'mime'        => 'image/jpeg',
-					'metadata'    => serialize( array() ),
-					'sha1'        => wfBaseConvert( '', 16, 36, 31 ),
-					'fileExists'  => true ), 
+					'size' => 12345,
+					'width' => 320,
+					'height' => 240,
+					'bits' => 24,
+					'media_type' => MEDIATYPE_BITMAP,
+					'mime' => 'image/jpeg',
+					'metadata' => serialize( array() ),
+					'sha1' => wfBaseConvert( '3', 16, 36, 31 ),
+					'fileExists' => true ),
 				$this->db->timestamp( '20010115123500' ), $user
 			);
 		}
+		$image = wfLocalFile( Title::makeTitle( NS_FILE, 'Foobar.svg' ) );
+		if ( !$this->db->selectField( 'image', '1', array( 'img_name' => $image->getName() ) ) ) {
+			$image->recordUpload2( '', 'Upload of some lame SVG', 'Some lame SVG', array(
+					'size'        => 12345,
+					'width'       => 200,
+					'height'      => 200,
+					'bits'        => 24,
+					'media_type'  => MEDIATYPE_DRAWING,
+					'mime'        => 'image/svg+xml',
+					'metadata'    => serialize( array() ),
+					'sha1'        => wfBaseConvert( '', 16, 36, 31 ),
+					'fileExists'  => true
+			), $this->db->timestamp( '20010115123500' ), $user );
+		}
 	}
-
-
-
 
 	//ParserTest setup/teardown functions
 
@@ -233,7 +281,7 @@ class NewParserTest extends MediaWikiTestCase {
 	 * Set up the global variables for a consistent environment for each test.
 	 * Ideally this should replace the global configuration entirely.
 	 */
-	protected function setupGlobals( $opts = '', $config = '' ) {
+	protected function setupGlobals( $opts = array(), $config = '' ) {
 		global $wgFileBackends;
 		# Find out values for some special options.
 		$lang =
@@ -263,74 +311,39 @@ class NewParserTest extends MediaWikiTestCase {
 				$backend = self::$backendToUse;
 			}
 		} else {
-			$backend = new FSFileBackend( array(
-				'name'        => 'local-backend',
+			# Replace with a mock. We do not care about generating real
+			# files on the filesystem, just need to expose the file
+			# informations.
+			$backend = new MockFileBackend( array(
+				'name' => 'local-backend',
 				'lockManager' => 'nullLockManager',
 				'containerPaths' => array(
 					'local-public' => "$uploadDir",
-					'local-thumb'  => "$uploadDir/thumb",
+					'local-thumb' => "$uploadDir/thumb",
 				)
 			) );
 		}
 
 		$settings = array(
-			'wgServer' => 'http://Britney-Spears',
-			'wgScript' => '/index.php',
-			'wgScriptPath' => '/',
-			'wgArticlePath' => '/wiki/$1',
-			'wgExtensionAssetsPath' => '/extensions',
-			'wgActionPaths' => array(),
 			'wgLocalFileRepo' => array(
-				'class'           => 'LocalRepo',
-				'name'            => 'local',
-				'url'             => 'http://example.com/images',
-				'hashLevels'      => 2,
+				'class' => 'LocalRepo',
+				'name' => 'local',
+				'url' => 'http://example.com/images',
+				'hashLevels' => 2,
 				'transformVia404' => false,
-				'backend'         => $backend
+				'backend' => $backend
 			),
 			'wgEnableUploads' => self::getOptionValue( 'wgEnableUploads', $opts, true ),
-			'wgStylePath' => '/skins',
-			'wgStyleSheetPath' => '/skins',
-			'wgSitename' => 'MediaWiki',
 			'wgLanguageCode' => $lang,
 			'wgDBprefix' => $this->db->getType() != 'oracle' ? 'unittest_' : 'ut_',
-			'wgRawHtml' => isset( $opts['rawhtml'] ),
-			'wgLang' => null,
-			'wgContLang' => null,
-			'wgNamespacesWithSubpages' => array( 0 => isset( $opts['subpage'] ) ),
+			'wgRawHtml' => self::getOptionValue( 'wgRawHtml', $opts, false ),
+			'wgNamespacesWithSubpages' => array( NS_MAIN => isset( $opts['subpage'] ) ),
+			'wgAllowExternalImages' => self::getOptionValue( 'wgAllowExternalImages', $opts, true ),
 			'wgMaxTocLevel' => $maxtoclevel,
-			'wgCapitalLinks' => true,
-			'wgNoFollowLinks' => true,
-			'wgNoFollowDomainExceptions' => array(),
-			'wgThumbnailScriptPath' => false,
-			'wgUseImageResize' => false,
-			'wgUseTeX' => isset( $opts['math'] ),
+			'wgUseTeX' => isset( $opts['math'] ) || isset( $opts['texvc'] ),
 			'wgMathDirectory' => $uploadDir . '/math',
-			'wgLocaltimezone' => 'UTC',
-			'wgAllowExternalImages' => true,
-			'wgUseTidy' => false,
 			'wgDefaultLanguageVariant' => $variant,
-			'wgVariantArticlePath' => false,
-			'wgGroupPermissions' => array( '*' => array(
-				'createaccount' => true,
-				'read'          => true,
-				'edit'          => true,
-				'createpage'    => true,
-				'createtalk'    => true,
-			) ),
-			'wgNamespaceProtection' => array( NS_MEDIAWIKI => 'editinterface' ),
-			'wgDefaultExternalStore' => array(),
-			'wgForeignFileRepos' => array(),
 			'wgLinkHolderBatchSize' => $linkHolderBatchSize,
-			'wgExperimentalHtmlIds' => false,
-			'wgExternalLinkTarget' => false,
-			'wgAlwaysUseTidy' => false,
-			'wgHtml5' => true,
-			'wgCleanupPresentationalAttributes' => true,
-			'wgWellFormedXml' => true,
-			'wgAllowMicrodataAttributes' => true,
-			'wgAdaptiveMessageCache' => true,
-			'wgUseDatabaseMessages' => true,
 		);
 
 		if ( $config ) {
@@ -345,6 +358,18 @@ class NewParserTest extends MediaWikiTestCase {
 
 		$this->savedGlobals = array();
 
+		/** @since 1.20 */
+		wfRunHooks( 'ParserTestGlobals', array( &$settings ) );
+
+		$langObj = Language::factory( $lang );
+		$settings['wgContLang'] = $langObj;
+		$settings['wgLang'] = $langObj;
+
+		$context = new RequestContext();
+		$settings['wgOut'] = $context->getOutput();
+		$settings['wgUser'] = $context->getUser();
+		$settings['wgRequest'] = $context->getRequest();
+
 		foreach ( $settings as $var => $val ) {
 			if ( array_key_exists( $var, $GLOBALS ) ) {
 				$this->savedGlobals[$var] = $GLOBALS[$var];
@@ -353,21 +378,9 @@ class NewParserTest extends MediaWikiTestCase {
 			$GLOBALS[$var] = $val;
 		}
 
-		$langObj = Language::factory( $lang );
-		$GLOBALS['wgContLang'] = $langObj;
-		$context = new RequestContext();
-		$GLOBALS['wgLang'] = $context->getLanguage();
-
-		$GLOBALS['wgMemc'] = new EmptyBagOStuff;
-		$GLOBALS['wgOut'] = $context->getOutput();
-		$GLOBALS['wgUser'] = $context->getUser();
-
-		global $wgHooks;
-
-		$wgHooks['ParserTestParser'][] = 'ParserTestParserHook::setup';
-		$wgHooks['ParserGetVariableValueTs'][] = 'ParserTest::getFakeTimestamp';
-
 		MagicWord::clearCache();
+
+		# The entries saved into RepoGroup cache with previous globals will be wrong.
 		RepoGroup::destroySingleton();
 		FileBackendGroup::destroySingleton();
 
@@ -377,10 +390,7 @@ class NewParserTest extends MediaWikiTestCase {
 		# Publish the articles after we have the final language set
 		$this->publishTestArticles();
 
-		# The entries saved into RepoGroup cache with previous globals will be wrong.
-		RepoGroup::destroySingleton();
-		FileBackendGroup::destroySingleton();
-		MessageCache::singleton()->destroyInstance();
+		MessageCache::destroyInstance();
 
 		return $context;
 	}
@@ -404,6 +414,7 @@ class NewParserTest extends MediaWikiTestCase {
 		// wfDebug( "Creating upload directory $dir\n" );
 		if ( file_exists( $dir ) ) {
 			wfDebug( "Already exists!\n" );
+
 			return $dir;
 		}
 
@@ -425,9 +436,26 @@ class NewParserTest extends MediaWikiTestCase {
 		$backend->store( array(
 			'src' => "$IP/skins/monobook/headbg.jpg", 'dst' => "$base/local-public/3/3a/Foobar.jpg"
 		) );
+		$backend->prepare( array( 'dir' => "$base/local-public/e/ea" ) );
+		$backend->store( array(
+			'src' => "$IP/skins/monobook/wiki.png", 'dst' => "$base/local-public/e/ea/Thumb.png"
+		) );
 		$backend->prepare( array( 'dir' => "$base/local-public/0/09" ) );
 		$backend->store( array(
 			'src' => "$IP/skins/monobook/headbg.jpg", 'dst' => "$base/local-public/0/09/Bad.jpg"
+		) );
+
+		// No helpful SVG file to copy, so make one ourselves
+		$tmpDir = wfTempDir();
+		$tempFsFile = new TempFSFile( "$tmpDir/Foobar.svg" );
+		$tempFsFile->autocollect(); // destroy file when $tempFsFile leaves scope
+		file_put_contents( "$tmpDir/Foobar.svg",
+			'<?xml version="1.0" encoding="utf-8"?>' .
+			'<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200"><text>Foo</text></svg>' );
+
+		$backend->prepare( array( 'dir' => "$base/local-public/f/ff" ) );
+		$backend->quickStore( array(
+			'src' => "$tmpDir/Foobar.svg", 'dst' => "$base/local-public/f/ff/Foobar.svg"
 		) );
 	}
 
@@ -441,9 +469,6 @@ class NewParserTest extends MediaWikiTestCase {
 		foreach ( $this->savedGlobals as $var => $val ) {
 			$GLOBALS[$var] = $val;
 		}
-
-		RepoGroup::destroySingleton();
-		LinkCache::singleton()->clear();
 	}
 
 	/**
@@ -454,18 +479,43 @@ class NewParserTest extends MediaWikiTestCase {
 			return;
 		}
 
+		$backend = RepoGroup::singleton()->getLocalRepo()->getBackend();
+		if ( $backend instanceof MockFileBackend ) {
+			# In memory backend, so dont bother cleaning them up.
+			return;
+		}
+
 		$base = $this->getBaseDir();
 		// delete the files first, then the dirs.
 		self::deleteFiles(
-			array (
+			array(
 				"$base/local-public/3/3a/Foobar.jpg",
 				"$base/local-thumb/3/3a/Foobar.jpg/180px-Foobar.jpg",
 				"$base/local-thumb/3/3a/Foobar.jpg/200px-Foobar.jpg",
 				"$base/local-thumb/3/3a/Foobar.jpg/640px-Foobar.jpg",
 				"$base/local-thumb/3/3a/Foobar.jpg/120px-Foobar.jpg",
+				"$base/local-thumb/3/3a/Foobar.jpg/1280px-Foobar.jpg",
+				"$base/local-thumb/3/3a/Foobar.jpg/20px-Foobar.jpg",
+				"$base/local-thumb/3/3a/Foobar.jpg/270px-Foobar.jpg",
+				"$base/local-thumb/3/3a/Foobar.jpg/300px-Foobar.jpg",
+				"$base/local-thumb/3/3a/Foobar.jpg/30px-Foobar.jpg",
+				"$base/local-thumb/3/3a/Foobar.jpg/360px-Foobar.jpg",
+				"$base/local-thumb/3/3a/Foobar.jpg/400px-Foobar.jpg",
+				"$base/local-thumb/3/3a/Foobar.jpg/40px-Foobar.jpg",
+				"$base/local-thumb/3/3a/Foobar.jpg/70px-Foobar.jpg",
+				"$base/local-thumb/3/3a/Foobar.jpg/960px-Foobar.jpg",
+
+				"$base/local-public/e/ea/Thumb.png",
 
 				"$base/local-public/0/09/Bad.jpg",
-				"$base/local-thumb/0/09/Bad.jpg",
+
+				"$base/local-public/f/ff/Foobar.svg",
+				"$base/local-thumb/f/ff/Foobar.svg/180px-Foobar.svg.jpg",
+				"$base/local-thumb/f/ff/Foobar.svg/270px-Foobar.svg.jpg",
+				"$base/local-thumb/f/ff/Foobar.svg/360px-Foobar.svg.jpg",
+				"$base/local-thumb/f/ff/Foobar.svg/langde-180px-Foobar.svg.jpg",
+				"$base/local-thumb/f/ff/Foobar.svg/langde-270px-Foobar.svg.jpg",
+				"$base/local-thumb/f/ff/Foobar.svg/langde-360px-Foobar.svg.jpg",
 
 				"$base/local-public/math/f/a/5/fa50b8b616463173474302ca3e63586b.png",
 			)
@@ -500,6 +550,7 @@ class NewParserTest extends MediaWikiTestCase {
 			global $wgParserTestFiles;
 			$this->file = $wgParserTestFiles[0];
 		}
+
 		return new TestFileIterator( $this->file, $this );
 	}
 
@@ -521,6 +572,14 @@ class NewParserTest extends MediaWikiTestCase {
 			return;
 		}
 
+		if ( !$this->isWikitextNS( NS_MAIN ) ) {
+			// parser tests frequently assume that the main namespace contains wikitext.
+			// @todo When setting up pages, force the content model. Only skip if
+			//        $wgtContentModelUseDB is false.
+			$this->markTestSkipped( "Main namespace does not support wikitext,"
+				. "skipping parser test: $desc" );
+		}
+
 		wfDebug( "Running parser test: $desc\n" );
 
 		$opts = $this->parseOptions( $opts );
@@ -531,8 +590,7 @@ class NewParserTest extends MediaWikiTestCase {
 
 		if ( isset( $opts['title'] ) ) {
 			$titleText = $opts['title'];
-		}
-		else {
+		} else {
 			$titleText = 'Parser test';
 		}
 
@@ -541,6 +599,20 @@ class NewParserTest extends MediaWikiTestCase {
 		$parser = $this->getParser( $preprocessor );
 
 		$title = Title::newFromText( $titleText );
+
+		# Parser test requiring math. Make sure texvc is executable
+		# or just skip such tests.
+		if ( isset( $opts['math'] ) || isset( $opts['texvc'] ) ) {
+			global $wgTexvc;
+
+			if ( !isset( $wgTexvc ) ) {
+				$this->markTestSkipped( "SKIPPED: \$wgTexvc is not set" );
+			} elseif ( !is_executable( $wgTexvc ) ) {
+				$this->markTestSkipped( "SKIPPED: texvc binary does not exist"
+					. " or is not executable.\n"
+					. "Current configuration is:\n\$wgTexvc = '$wgTexvc'" );
+			}
+		}
 
 		if ( isset( $opts['pst'] ) ) {
 			$out = $parser->preSaveTransform( $input, $title, $user, $options );
@@ -556,9 +628,10 @@ class NewParserTest extends MediaWikiTestCase {
 		} elseif ( isset( $opts['comment'] ) ) {
 			$out = Linker::formatComment( $input, $title, $local );
 		} elseif ( isset( $opts['preload'] ) ) {
-			$out = $parser->getpreloadText( $input, $title, $options );
+			$out = $parser->getPreloadText( $input, $title, $options );
 		} else {
 			$output = $parser->parse( $input, $title, $options, true, true, 1337 );
+			$output->setTOCEnabled( !isset( $opts['notoc'] ) );
 			$out = $output->getText();
 
 			if ( isset( $opts['showtitle'] ) ) {
@@ -596,16 +669,16 @@ class NewParserTest extends MediaWikiTestCase {
 	 * Run a fuzz test series
 	 * Draw input from a set of test files
 	 *
-	 * @todo @fixme Needs some work to not eat memory until the world explodes
+	 * @todo fixme Needs some work to not eat memory until the world explodes
 	 *
 	 * @group ParserFuzz
 	 */
-	function testFuzzTests() {
+	public function testFuzzTests() {
 		global $wgParserTestFiles;
 
 		$files = $wgParserTestFiles;
 
-		if( $this->getCliArg( 'file=' ) ) {
+		if ( $this->getCliArg( 'file=' ) ) {
 			$files = array( $this->getCliArg( 'file=' ) );
 		}
 
@@ -645,7 +718,9 @@ class NewParserTest extends MediaWikiTestCase {
 			} catch ( Exception $exception ) {
 				$input_dump = sprintf( "string(%d) \"%s\"\n", strlen( $input ), $input );
 
-				$this->assertTrue( false, "Test $id, fuzz seed {$this->fuzzSeed}. \n\nInput: $input_dump\n\nError: {$exception->getMessage()}\n\nBacktrace: {$exception->getTraceAsString()}" );
+				$this->assertTrue( false, "Test $id, fuzz seed {$this->fuzzSeed}. \n\n" .
+					"Input: $input_dump\n\nError: {$exception->getMessage()}\n\n" .
+					"Backtrace: {$exception->getTraceAsString()}" );
 			}
 
 			$this->teardownGlobals();
@@ -667,7 +742,6 @@ class NewParserTest extends MediaWikiTestCase {
 			}
 
 			$id++;
-
 		}
 	}
 
@@ -767,15 +841,16 @@ class NewParserTest extends MediaWikiTestCase {
 	 */
 	public function requireHook( $name ) {
 		global $wgParser;
-		$wgParser->firstCallInit( ); // make sure hooks are loaded.
+		$wgParser->firstCallInit(); // make sure hooks are loaded.
 		return isset( $wgParser->mTagHooks[$name] );
 	}
 
 	public function requireFunctionHook( $name ) {
 		global $wgParser;
-		$wgParser->firstCallInit( ); // make sure hooks are loaded.
+		$wgParser->firstCallInit(); // make sure hooks are loaded.
 		return isset( $wgParser->mFunctionHooks[$name] );
 	}
+
 	//Various "cleanup" functions
 
 	/**
@@ -801,8 +876,7 @@ class NewParserTest extends MediaWikiTestCase {
 	public function removeEndingNewline( $s ) {
 		if ( substr( $s, -1 ) === "\n" ) {
 			return substr( $s, 0, -1 );
-		}
-		else {
+		} else {
 			return $s;
 		}
 	}
@@ -861,6 +935,7 @@ class NewParserTest extends MediaWikiTestCase {
 				}
 			}
 		}
+
 		return $opts;
 	}
 
@@ -872,6 +947,7 @@ class NewParserTest extends MediaWikiTestCase {
 		if ( substr( $opt, 0, 2 ) == '[[' ) {
 			return substr( $opt, 2, -2 );
 		}
+
 		return $opt;
 	}
 

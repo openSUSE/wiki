@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/JeroenDeDauw/SemanticMaps/!svn/ver/1041/trunk/src/queryprinters
+END
+SM_QueryPrinters.php
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/JeroenDeDauw/SemanticMaps/!svn/ver/1006/trunk/src/queryprinters/SM_QueryPrinters.php
+END
+SM_MapPrinter.php
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/JeroenDeDauw/SemanticMaps/!svn/ver/1041/trunk/src/queryprinters/SM_MapPrinter.php
+END
+SM_QueryHandler.php
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/JeroenDeDauw/SemanticMaps/!svn/ver/1004/trunk/src/queryprinters/SM_QueryHandler.php
+END
+SM_KMLPrinter.php
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/JeroenDeDauw/SemanticMaps/!svn/ver/1004/trunk/src/queryprinters/SM_KMLPrinter.php
+END

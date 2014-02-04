@@ -1,21 +1,23 @@
 <?php
 /**
+ * Base code to format metadata.
  *
  * Copyright 2004, Evan Prodromou <evan@wikitravel.org>.
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
  *
  * @author Evan Prodromou <evan@wikitravel.org>
  * @file
@@ -32,7 +34,7 @@ abstract class RdfMetaData {
 		$this->mArticle = $article;
 	}
 
-	public abstract function show();
+	abstract public function show();
 
 	protected function setup() {
 		global $wgOut, $wgRequest;
@@ -40,7 +42,7 @@ abstract class RdfMetaData {
 		$httpaccept = isset( $_SERVER['HTTP_ACCEPT'] ) ? $_SERVER['HTTP_ACCEPT'] : null;
 		$rdftype = wfNegotiateType( wfAcceptToPrefs( $httpaccept ), wfAcceptToPrefs( self::RDF_TYPE_PREFS ) );
 
-		if( !$rdftype ){
+		if ( !$rdftype ) {
 			throw new HttpError( 406, wfMessage( 'notacceptable' ) );
 		}
 
@@ -58,7 +60,7 @@ abstract class RdfMetaData {
 		global $wgLanguageCode, $wgSitename;
 
 		$this->element( 'title', $this->mArticle->getTitle()->getText() );
-		$this->pageOrString( 'publisher', wfMsg( 'aboutpage' ), $wgSitename );
+		$this->pageOrString( 'publisher', wfMessage( 'aboutpage' )->text(), $wgSitename );
 		$this->element( 'language', $wgLanguageCode );
 		$this->element( 'type', 'Text' );
 		$this->element( 'format', 'text/html' );
@@ -68,7 +70,7 @@ abstract class RdfMetaData {
 		$lastEditor = User::newFromId( $this->mArticle->getUser() );
 		$this->person( 'creator', $lastEditor );
 
-		foreach( $this->mArticle->getContributors() as $user ){
+		foreach ( $this->mArticle->getContributors() as $user ) {
 			$this->person( 'contributor', $user );
 		}
 
@@ -80,20 +82,20 @@ abstract class RdfMetaData {
 		print "\t\t<dc:{$name}>{$value}</dc:{$name}>\n";
 	}
 
-	protected function date($timestamp) {
-		return substr($timestamp, 0, 4) . '-'
-		  . substr($timestamp, 4, 2) . '-'
-		  . substr($timestamp, 6, 2);
+	protected function date( $timestamp ) {
+		return substr( $timestamp, 0, 4 ) . '-'
+			. substr( $timestamp, 4, 2 ) . '-'
+			. substr( $timestamp, 6, 2 );
 	}
 
 	protected function pageOrString( $name, $page, $str ) {
-		if( $page instanceof Title ) {
+		if ( $page instanceof Title ) {
 			$nt = $page;
 		} else {
 			$nt = Title::newFromText( $page );
 		}
 
-		if( !$nt || $nt->getArticleID() == 0 ){
+		if ( !$nt || $nt->getArticleID() == 0 ) {
 			$this->element( $name, $str );
 		} else {
 			$this->page( $name, $nt );
@@ -105,24 +107,30 @@ abstract class RdfMetaData {
 	 * @param $title Title
 	 */
 	protected function page( $name, $title ) {
-		$this->url( $name, $title->getFullUrl() );
+		$this->url( $name, $title->getFullURL() );
 	}
 
-	protected function url($name, $url) {
+	protected function url( $name, $url ) {
 		$url = htmlspecialchars( $url );
 		print "\t\t<dc:{$name} rdf:resource=\"{$url}\" />\n";
 	}
 
 	protected function person( $name, User $user ) {
-		if( $user->isAnon() ){
-			$this->element( $name, wfMsgExt( 'anonymous', array( 'parsemag' ), 1 ) );
+		global $wgHiddenPrefs;
+
+		if ( $user->isAnon() ) {
+			$this->element( $name, wfMessage( 'anonymous' )->numParams( 1 )->text() );
 		} else {
 			$real = $user->getRealName();
-			if( $real ) {
+			if ( $real && !in_array( 'realname', $wgHiddenPrefs ) ) {
 				$this->element( $name, $real );
 			} else {
 				$userName = $user->getName();
-				$this->pageOrString( $name, $user->getUserPage(), wfMsgExt( 'siteuser', 'parsemag', $userName, $userName ) );
+				$this->pageOrString(
+					$name,
+					$user->getUserPage(),
+					wfMessage( 'siteuser', $userName, $userName )->text()
+				);
 			}
 		}
 	}
@@ -134,24 +142,24 @@ abstract class RdfMetaData {
 	protected function rights() {
 		global $wgRightsPage, $wgRightsUrl, $wgRightsText;
 
-		if( $wgRightsPage && ( $nt = Title::newFromText( $wgRightsPage ) )
-			&& ($nt->getArticleID() != 0)) {
-			$this->page('rights', $nt);
-		} elseif( $wgRightsUrl ){
-			$this->url('rights', $wgRightsUrl);
-		} elseif( $wgRightsText ){
+		if ( $wgRightsPage && ( $nt = Title::newFromText( $wgRightsPage ) )
+			&& ( $nt->getArticleID() != 0 ) ) {
+			$this->page( 'rights', $nt );
+		} elseif ( $wgRightsUrl ) {
+			$this->url( 'rights', $wgRightsUrl );
+		} elseif ( $wgRightsText ) {
 			$this->element( 'rights', $wgRightsText );
 		}
 	}
 
-	protected function getTerms( $url ){
+	protected function getTerms( $url ) {
 		global $wgLicenseTerms;
 
-		if( $wgLicenseTerms ){
+		if ( $wgLicenseTerms ) {
 			return $wgLicenseTerms;
 		} else {
 			$known = $this->getKnownLicenses();
-			if( isset( $known[$url] ) ) {
+			if ( isset( $known[$url] ) ) {
 				return $known[$url];
 			} else {
 				return array();
@@ -160,23 +168,23 @@ abstract class RdfMetaData {
 	}
 
 	protected function getKnownLicenses() {
-		$ccLicenses = array('by', 'by-nd', 'by-nd-nc', 'by-nc',
-							'by-nc-sa', 'by-sa');
-		$ccVersions = array('1.0', '2.0');
+		$ccLicenses = array( 'by', 'by-nd', 'by-nd-nc', 'by-nc',
+							'by-nc-sa', 'by-sa' );
+		$ccVersions = array( '1.0', '2.0' );
 		$knownLicenses = array();
 
-		foreach ($ccVersions as $version) {
-			foreach ($ccLicenses as $license) {
-				if( $version == '2.0' && substr( $license, 0, 2) != 'by' ) {
+		foreach ( $ccVersions as $version ) {
+			foreach ( $ccLicenses as $license ) {
+				if ( $version == '2.0' && substr( $license, 0, 2 ) != 'by' ) {
 					# 2.0 dropped the non-attribs licenses
 					continue;
 				}
 				$lurl = "http://creativecommons.org/licenses/{$license}/{$version}/";
-				$knownLicenses[$lurl] = explode('-', $license);
+				$knownLicenses[$lurl] = explode( '-', $license );
 				$knownLicenses[$lurl][] = 're';
 				$knownLicenses[$lurl][] = 'di';
 				$knownLicenses[$lurl][] = 'no';
-				if (!in_array('nd', $knownLicenses[$lurl])) {
+				if ( !in_array( 'nd', $knownLicenses[$lurl] ) ) {
 					$knownLicenses[$lurl][] = 'de';
 				}
 			}
@@ -185,13 +193,12 @@ abstract class RdfMetaData {
 		/* Handle the GPL and LGPL, too. */
 
 		$knownLicenses['http://creativecommons.org/licenses/GPL/2.0/'] =
-		  array('de', 're', 'di', 'no', 'sa', 'sc');
+			array( 'de', 're', 'di', 'no', 'sa', 'sc' );
 		$knownLicenses['http://creativecommons.org/licenses/LGPL/2.1/'] =
-		  array('de', 're', 'di', 'no', 'sa', 'sc');
+			array( 'de', 're', 'di', 'no', 'sa', 'sc' );
 		$knownLicenses['http://www.gnu.org/copyleft/fdl.html'] =
-		  array('de', 're', 'di', 'no', 'sa', 'sc');
+			array( 'de', 're', 'di', 'no', 'sa', 'sc' );
 
 		return $knownLicenses;
 	}
 }
-

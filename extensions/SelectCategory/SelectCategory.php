@@ -6,8 +6,9 @@
  *
  * @file
  * @ingroup Extensions
- * @author Leon Weber <leon.weber@leonweber.de> & Manuel Schneider <manuel.schneider@wikimedia.ch>
+ * @author Leon Weber <leon.weber@leonweber.de> & Manuel Schneider <manuel.schneider@wikimedia.ch> & Christian Boltz <mediawiki+SelectCategory@cboltz.de>
  * @copyright © 2006 by Leon Weber & Manuel Schneider
+ * @copyright © 2013 by Christian Boltz
  * @licence GNU General Public Licence 2.0 or later
  */
 
@@ -60,12 +61,16 @@ if( !isset( $wgSelectCategoryRoot ) ) $wgSelectCategoryRoot = array(
 # $wgSelectCategoryEnableSubpages - if the extension should be active on subpages or not (true, as subpages are disabled by default)
 if( !isset( $wgSelectCategoryEnableSubpages ) ) $wgSelectCategoryEnableSubpages = true;
 
+# $wgSelectCategoryToplevelAllowed - should the toplevel category be allowed for selection (false will hide the checkbox for it)
+# Note: if you set this to false, articles in the toplevel category will be removed from this category on next edit
+if( !isset( $wgSelectCategoryToplevelAllowed ) ) $wgSelectCategoryToplevelAllowed = true;
+
 ## Register extension setup hook and credits:
 $wgExtensionCredits['parserhook'][] = array(
 	'path'           => __FILE__,
 	'name'           => 'SelectCategory',
-	'version'        => '0.8.1',
-	'author'         => array( 'Leon Weber', 'Manuel Schneider' ),
+	'version'        => '0.8.2',
+	'author'         => array( 'Leon Weber', 'Manuel Schneider', 'Christian Boltz' ),
 	'url'            => 'https://www.mediawiki.org/wiki/Extension:SelectCategory',
 	'descriptionmsg' => 'selectcategory-desc',
 );

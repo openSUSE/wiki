@@ -227,7 +227,9 @@ class SyntaxHighlight_GeSHi {
 
 	/**
 	 * Hook into Article::view() to provide syntax highlighting for
-	 * custom CSS and JavaScript pages
+	 * custom CSS and JavaScript pages.
+	 *
+	 * B/C for MW 1.20 and before. 1.21 and later use renderHook() instead.
 	 *
 	 * @param string $text
 	 * @param Title $title
@@ -259,14 +261,75 @@ class SyntaxHighlight_GeSHi {
 	}
 
 	/**
+	 * Hook into Content::getParserOutput to provide syntax highlighting for
+	 * script content.
+	 *
+	 * @return bool
+	 * @since MW 1.21
+	 */
+	public static function renderHook( Content $content, Title $title,
+			ParserOptions $options, $generateHtml, ParserOutput &$output
+	) {
+
+		global $wgSyntaxHighlightModels, $wgUseSiteCss;
+
+		// Determine the language
+		$model = $content->getModel();
+		if ( !isset( $wgSyntaxHighlightModels[$model] ) ) {
+			// We don't care about this model, carry on.
+			return true;
+		}
+
+		if ( !$generateHtml ) {
+			// Nothing to do.
+			return false;
+		}
+
+		// Hope that $wgSyntaxHighlightModels does not contain silly types.
+		$text = Contenthandler::getContentText( $content );
+
+		if ( $text === null || $text === false ) {
+			// Oops! Non-text content?
+			return false;
+		}
+
+		$lang = $wgSyntaxHighlightModels[$model];
+
+		// Attempt to format
+		$geshi = self::prepare( $text, $lang );
+		if( $geshi instanceof GeSHi ) {
+
+			$out = $geshi->parse_code();
+			if( !$geshi->error() ) {
+				// Done
+				$output->addHeadItem( self::buildHeadItem( $geshi ), "source-$lang" );
+				$output->setText( "<div dir=\"ltr\">{$out}</div>" );
+
+				if( $wgUseSiteCss ) {
+					$output->addModuleStyles( 'ext.geshi.local' );
+				}
+				return false;
+			}
+		}
+
+		// Bottle out
+		return true;
+	}
+
+	/**
 	 * Initialise a GeSHi object to format some code, performing
 	 * common setup for all our uses of it
+	 *
+	 * @note Used only until MW 1.20
 	 *
 	 * @param string $text
 	 * @param string $lang
 	 * @return GeSHi
 	 */
 	public static function prepare( $text, $lang ) {
+
+		global $wgSyntaxHighlightKeywordLinks;
+
 		self::initialise();
 		$geshi = new GeSHi( $text, $lang );
 		if( $geshi->error() == GESHI_ERROR_NO_SUCH_LANG ) {
@@ -275,7 +338,18 @@ class SyntaxHighlight_GeSHi {
 		$geshi->set_encoding( 'UTF-8' );
 		$geshi->enable_classes();
 		$geshi->set_overall_class( "source-$lang" );
-		$geshi->enable_keyword_links( false );
+		$geshi->enable_keyword_links( $wgSyntaxHighlightKeywordLinks );
+
+		// If the source code is over 100 kB, disable higlighting of symbols.
+		// If over 200 kB, disable highlighting of strings too.
+		$bytes = strlen( $text );
+		if ( $bytes > 102400 ) {
+			$geshi->set_symbols_highlighting( false );
+			if ( $bytes > 204800 ) {
+				$geshi->set_strings_highlighting( false );
+			}
+		}
+
 		return $geshi;
 	}
 
@@ -287,6 +361,19 @@ class SyntaxHighlight_GeSHi {
 	 * @return string
 	 */
 	public static function buildHeadItem( $geshi ) {
+		/**
+		 * Geshi comes by default with a font-family set to monospace which
+		 * ends ultimately ends up causing the font-size to be smaller than
+		 * one would expect (causing bug 26204).
+		 * We append to the default geshi style a CSS hack which is to specify
+		 * monospace twice which "reset" the browser font-size specified for monospace.
+		 *
+		 * The hack is documented in MediaWiki core under
+		 * docs/uidesign/monospace.html and in bug 33496.
+		 */
+		$geshi->set_code_style( 'font-family: monospace, monospace;',
+			/** preserve defaults */ true );
+
 		$lang = $geshi->language;
 		$css = array();
 		$css[] = '<style type="text/css">/*<![CDATA[*/';
@@ -373,7 +460,7 @@ class SyntaxHighlight_GeSHi {
 	private static function initialise() {
 		if( !self::$initialised ) {
 			if( !class_exists( 'GeSHi' ) ) {
-				require( 'geshi/geshi.php' );
+				require( dirname( __FILE__ ) . '/geshi/geshi.php' );
 			}
 			self::$initialised = true;
 		}

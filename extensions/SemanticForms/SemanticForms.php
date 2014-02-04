@@ -40,7 +40,7 @@ if ( !defined( 'SMW_VERSION' ) ) {
 	die( "ERROR: <a href=\"http://semantic-mediawiki.org\">Semantic MediaWiki</a> must be installed for Semantic Forms to run!" );
 }
 
-define( 'SF_VERSION', '2.5.1' );
+define( 'SF_VERSION', '2.6.2-alpha' );
 
 $wgExtensionCredits[defined( 'SEMANTIC_EXTENSION_TYPE' ) ? 'semantic' : 'specialpage'][] = array(
 	'path' => __FILE__,
@@ -48,7 +48,7 @@ $wgExtensionCredits[defined( 'SEMANTIC_EXTENSION_TYPE' ) ? 'semantic' : 'special
 	'version' => SF_VERSION,
 	'author' => array( 'Yaron Koren', 'Stephan Gambke', '...' ),
 	'url' => 'https://www.mediawiki.org/wiki/Extension:Semantic_Forms',
-	'descriptionmsg'  => 'semanticforms-desc',
+	'descriptionmsg' => 'semanticforms-desc',
 );
 
 # ##
@@ -85,7 +85,6 @@ $wgHooks['SkinTemplateNavigation'][] = 'SFFormEditAction::displayTab2';
 $wgHooks['SkinTemplateTabs'][] = 'SFHelperFormAction::displayTab';
 $wgHooks['SkinTemplateNavigation'][] = 'SFHelperFormAction::displayTab2';
 $wgHooks['smwInitProperties'][] = 'SFUtils::initProperties';
-$wgHooks['AdminLinks'][] = 'SFUtils::addToAdminLinks';
 $wgHooks['ArticlePurge'][] = 'SFFormUtils::purgeCache';
 $wgHooks['ArticleSave'][] = 'SFFormUtils::purgeCache';
 $wgHooks['ParserFirstCallInit'][] = 'SFParserFunctions::registerFunctions';
@@ -93,16 +92,20 @@ $wgHooks['MakeGlobalVariablesScript'][] = 'SFFormUtils::setGlobalJSVariables';
 $wgHooks['PageSchemasRegisterHandlers'][] = 'SFPageSchemas::registerClass';
 $wgHooks['EditPage::importFormData'][] = 'SFUtils::showFormPreview';
 $wgHooks['CanonicalNamespaces'][] = 'SFUtils::registerNamespaces';
+$wgHooks['UnitTestsList'][] = 'SFUtils::onUnitTestsList';
 
-// Using UnknownAction is deprecated from MW 1.18 onwards.
-if ( version_compare( $wgVersion, '1.18', '<' ) ) {
-	$wgHooks['UnknownAction'][] = 'SFFormEditAction::displayForm';
-	$wgHooks['UnknownAction'][] = 'SFHelperFormAction::displayForm';
-} else {
-	// Introduced in MW 1.18.
-	$wgActions['formedit'] = 'SFFormEditAction';
-	$wgActions['formcreate'] = 'SFHelperFormAction';
+// Admin Links hook needs to be called in a delayed way so that it
+// will always be called after SMW's Admin Links addition; as of
+// SMW 1.9, SMW delays calling all its hook functions.
+$wgExtensionFunctions[] = 'sffAddAdminLinksHook';
+function sffAddAdminLinksHook() {
+	global $wgHooks;
+	$wgHooks['AdminLinks'][] = 'SFUtils::addToAdminLinks';
 }
+
+// New "actions"
+$wgActions['formedit'] = 'SFFormEditAction';
+$wgActions['formcreate'] = 'SFHelperFormAction';
 
 // API modules
 $wgAPIModules['sfautocomplete'] = 'SFAutocompleteAPI';
@@ -147,7 +150,6 @@ $wgAutoloadClasses['SFTemplateInForm'] = $sfgIP . '/includes/SF_TemplateInForm.p
 $wgAutoloadClasses['SFFormField'] = $sfgIP . '/includes/SF_FormField.php';
 $wgAutoloadClasses['SFFormPrinter'] = $sfgIP . '/includes/SF_FormPrinter.php';
 $wgAutoloadClasses['SFFormUtils'] = $sfgIP . '/includes/SF_FormUtils.php';
-$wgAutoloadClasses['SFFormEditTab'] = $sfgIP . '/includes/SF_FormEditTab.php';
 $wgAutoloadClasses['SFFormEditPage'] = $sfgIP . '/includes/SF_FormEditPage.php';
 $wgAutoloadClasses['SFUtils'] = $sfgIP . '/includes/SF_Utils.php';
 $wgAutoloadClasses['SFFormLinker'] = $sfgIP . '/includes/SF_FormLinker.php';
@@ -157,6 +159,7 @@ $wgAutoloadClasses['SFAutocompleteAPI'] = $sfgIP . '/includes/SF_AutocompleteAPI
 $wgAutoloadClasses['SFAutoeditAPI'] = $sfgIP . '/includes/SF_AutoeditAPI.php';
 $wgAutoloadClasses['SFFormEditAction'] = $sfgIP . '/includes/SF_FormEditAction.php';
 $wgAutoloadClasses['SFHelperFormAction'] = $sfgIP . '/includes/SF_HelperFormAction.php';
+$wgAutoloadClasses['SFPageSection'] = $sfgIP . '/includes/SF_PageSection.php';
 
 // Form inputs
 $wgAutoloadClasses['SFFormInput'] = $sfgIP . '/includes/forminputs/SF_FormInput.php';
@@ -175,6 +178,7 @@ $wgAutoloadClasses['SFComboBoxInput'] = $sfgIP . '/includes/forminputs/SF_ComboB
 $wgAutoloadClasses['SFDateInput'] = $sfgIP . '/includes/forminputs/SF_DateInput.php';
 $wgAutoloadClasses['SFDateTimeInput'] = $sfgIP . '/includes/forminputs/SF_DateTimeInput.php';
 $wgAutoloadClasses['SFYearInput'] = $sfgIP . '/includes/forminputs/SF_YearInput.php';
+$wgAutoloadClasses['SFTreeInput'] = $sfgIP . '/includes/forminputs/SF_TreeInput.php';
 $wgAutoloadClasses['SFCategoryInput'] = $sfgIP . '/includes/forminputs/SF_CategoryInput.php';
 $wgAutoloadClasses['SFCategoriesInput'] = $sfgIP . '/includes/forminputs/SF_CategoriesInput.php';
 
@@ -202,7 +206,7 @@ if ( defined( 'MW_SUPPORTS_RESOURCE_MODULES' ) ) {
 		'ext.semanticforms.main' => $sfgResourceTemplate + array(
 			'scripts' => array(
 				'libs/SemanticForms.js',
-				'libs/SF_ajax_form_preview.js',
+				'libs/SF_preview.js'
 			),
 			'styles' => array(
 				'skins/SemanticForms.css',
@@ -220,6 +224,8 @@ if ( defined( 'MW_SUPPORTS_RESOURCE_MODULES' ) ) {
 			),
 			'messages' => array(
 				'sf_formerrors_header',
+				'sf_too_few_instances_error',
+				'sf_too_many_instances_error',
 				'sf_blank_error',
 				'sf_bad_url_error',
 				'sf_bad_email_error',
@@ -229,6 +235,14 @@ if ( defined( 'MW_SUPPORTS_RESOURCE_MODULES' ) ) {
 		'ext.semanticforms.fancybox' => $sfgResourceTemplate + array(
 			'scripts' => 'libs/jquery.fancybox.js',
 			'styles' => 'skins/jquery.fancybox.css',
+		),
+		'ext.semanticforms.dynatree' => $sfgResourceTemplate + array(
+			'dependencies' => array( 'jquery.ui.widget' ),
+			'scripts' => array(
+				'libs/jquery.dynatree.js',
+				'libs/ext.dynatree.js',
+			),
+			'styles' => 'skins/ui.dynatree.css',
 		),
 		'ext.semanticforms.autogrow' => $sfgResourceTemplate + array(
 			'scripts' => 'libs/SF_autogrow.js',
@@ -281,8 +295,8 @@ if ( defined( 'MW_SUPPORTS_RESOURCE_MODULES' ) ) {
 // Global functions
 
 /**
- *  This is a delayed init that makes sure that MediaWiki is set up
- *  properly before we add our stuff.
+ * This is a delayed init that makes sure that MediaWiki is set up
+ * properly before we add our stuff.
  */
 function sffSetupExtension() {
 	// This global variable is needed so that other extensions can hook
@@ -353,7 +367,7 @@ $sfgAutocompleteCacheTimeout = null;
 # ##
 $sfgRenameEditTabs = false;
 $sfgRenameMainEditTab = false;
-$wgGroupPermissions['*']['viewedittab']   = true;
+$wgGroupPermissions['*']['viewedittab'] = true;
 $wgAvailableRights[] = 'viewedittab';
 
 # ##

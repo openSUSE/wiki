@@ -1,11 +1,13 @@
 <?php
 
 /**
+ * @group API
  * @group Database
+ * @group medium
  */
 class ApiPurgeTest extends ApiTestCase {
 
-	function setUp() {
+	protected function setUp() {
 		parent::setUp();
 		$this->doLogin();
 	}
@@ -13,7 +15,7 @@ class ApiPurgeTest extends ApiTestCase {
 	/**
 	 * @group Broken
 	 */
-	function testPurgeMainPage() {
+	public function testPurgeMainPage() {
 		if ( !Title::newFromText( 'UTPage' )->exists() ) {
 			$this->markTestIncomplete( "The article [[UTPage]] does not exist" );
 		}
@@ -31,9 +33,8 @@ class ApiPurgeTest extends ApiTestCase {
 			"Purge request for three articles should give back three results received: " . var_export( $data[0]['purge'], true ) );
 
 		$pages = array( 'UTPage' => 'purged', $somePage => 'missing', '%5D' => 'invalid' );
-		foreach( $data[0]['purge'] as $v ) {
+		foreach ( $data[0]['purge'] as $v ) {
 			$this->assertArrayHasKey( $pages[$v['title']], $v );
 		}
 	}
-
 }

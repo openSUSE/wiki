@@ -1,6 +1,21 @@
 <?php
 /**
- * File without associated database record
+ * File without associated database record.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
  * @ingroup FileAbstraction
@@ -19,7 +34,7 @@
  * @ingroup FileAbstraction
  */
 class UnregisteredLocalFile extends File {
-	var $title, $path, $mime, $dims;
+	var $title, $path, $mime, $dims, $metadata;
 
 	/**
 	 * @var MediaHandler
@@ -27,7 +42,7 @@ class UnregisteredLocalFile extends File {
 	var $handler;
 
 	/**
-	 * @param $path string Storage path
+	 * @param string $path Storage path
 	 * @param $mime string
 	 * @return UnregisteredLocalFile
 	 */
@@ -47,16 +62,16 @@ class UnregisteredLocalFile extends File {
 	/**
 	 * Create an UnregisteredLocalFile based on a path or a (title,repo) pair.
 	 * A FileRepo object is not required here, unlike most other File classes.
-	 * 
+	 *
 	 * @throws MWException
-	 * @param $title Title|false
-	 * @param $repo FileRepo
-	 * @param $path string
-	 * @param $mime string
+	 * @param $title Title|bool
+	 * @param $repo FileRepo|bool
+	 * @param $path string|bool
+	 * @param $mime string|bool
 	 */
 	function __construct( $title = false, $repo = false, $path = false, $mime = false ) {
 		if ( !( $title && $repo ) && !$path ) {
-			throw new MWException( __METHOD__.': not enough parameters, must specify title and repo, or a full path' );
+			throw new MWException( __METHOD__ . ': not enough parameters, must specify title and repo, or a full path' );
 		}
 		if ( $title instanceof Title ) {
 			$this->title = File::normalizeTitle( $title, 'exception' );
@@ -79,6 +94,10 @@ class UnregisteredLocalFile extends File {
 		$this->dims = array();
 	}
 
+	/**
+	 * @param $page int
+	 * @return bool
+	 */
 	private function cachePageDimensions( $page = 1 ) {
 		if ( !isset( $this->dims[$page] ) ) {
 			if ( !$this->getHandler() ) {
@@ -89,16 +108,27 @@ class UnregisteredLocalFile extends File {
 		return $this->dims[$page];
 	}
 
+	/**
+	 * @param $page int
+	 * @return number
+	 */
 	function getWidth( $page = 1 ) {
 		$dim = $this->cachePageDimensions( $page );
 		return $dim['width'];
 	}
 
+	/**
+	 * @param $page int
+	 * @return number
+	 */
 	function getHeight( $page = 1 ) {
 		$dim = $this->cachePageDimensions( $page );
 		return $dim['height'];
 	}
 
+	/**
+	 * @return bool|string
+	 */
 	function getMimeType() {
 		if ( !isset( $this->mime ) ) {
 			$magic = MimeMagic::singleton();
@@ -107,6 +137,10 @@ class UnregisteredLocalFile extends File {
 		return $this->mime;
 	}
 
+	/**
+	 * @param $filename String
+	 * @return Array|bool
+	 */
 	function getImageSize( $filename ) {
 		if ( !$this->getHandler() ) {
 			return false;
@@ -114,6 +148,9 @@ class UnregisteredLocalFile extends File {
 		return $this->handler->getImageSize( $this, $this->getLocalRefPath() );
 	}
 
+	/**
+	 * @return bool
+	 */
 	function getMetadata() {
 		if ( !isset( $this->metadata ) ) {
 			if ( !$this->getHandler() ) {
@@ -125,6 +162,9 @@ class UnregisteredLocalFile extends File {
 		return $this->metadata;
 	}
 
+	/**
+	 * @return bool|string
+	 */
 	function getURL() {
 		if ( $this->repo ) {
 			return $this->repo->getZoneUrl( 'public' ) . '/' .
@@ -134,12 +174,23 @@ class UnregisteredLocalFile extends File {
 		}
 	}
 
+	/**
+	 * @return bool|int
+	 */
 	function getSize() {
 		$this->assertRepoDefined();
-		$props = $this->repo->getFileProps( $this->path );
-		if ( isset( $props['size'] ) ) {
-			return $props['size'];
-		}
-		return false; // doesn't exist
+		return $this->repo->getFileSize( $this->path );
+	}
+
+	/**
+	 * Optimize getLocalRefPath() by using an existing local reference.
+	 * The file at the path of $fsFile should not be deleted (or at least
+	 * not until the end of the request). This is mostly a performance hack.
+	 *
+	 * @param $fsFile FSFile
+	 * @return void
+	 */
+	public function setLocalReference( FSFile $fsFile ) {
+		$this->fsFile = $fsFile;
 	}
 }

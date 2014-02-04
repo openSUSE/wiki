@@ -8,6 +8,7 @@
  * @copyright © 2006-2008 Daniel Kinzler and others
  * @license GNU General Public Licence 2.0 or later
  */
+// @codingStandardsIgnoreFile
 
 $specialPageAliases = array();
 
@@ -41,7 +42,7 @@ $specialPageAliases['arz'] = array(
 	'CategoryTree' => array( 'شجرة_تصنيف' ),
 );
 
-/** Assamese (অসমীয়া) */
+/** Assamese (অসমীয়া) */
 $specialPageAliases['as'] = array(
 	'CategoryTree' => array( 'শ্ৰেণীবৃক্ষ' ),
 );
@@ -86,6 +87,16 @@ $specialPageAliases['ca'] = array(
 	'CategoryTree' => array( 'Categories_en_arbre', 'Arbre_de_categories' ),
 );
 
+/** Min Dong Chinese (Mìng-dĕ̤ng-ngṳ̄) */
+$specialPageAliases['cdo'] = array(
+	'CategoryTree' => array( '分類樹' ),
+);
+
+/** Chechen (нохчийн) */
+$specialPageAliases['ce'] = array(
+	'CategoryTree' => array( 'Категорешин_дит' ),
+);
+
 /** Czech (česky) */
 $specialPageAliases['cs'] = array(
 	'CategoryTree' => array( 'Strom_kategorií' ),
@@ -103,7 +114,7 @@ $specialPageAliases['de'] = array(
 
 /** Zazaki (Zazaki) */
 $specialPageAliases['diq'] = array(
-	'CategoryTree' => array( 'DaraKategoriye' ),
+	'CategoryTree' => array( 'DaraKategoriya' ),
 );
 
 /** Lower Sorbian (dolnoserbski) */
@@ -118,7 +129,7 @@ $specialPageAliases['el'] = array(
 
 /** Esperanto (Esperanto) */
 $specialPageAliases['eo'] = array(
-	'CategoryTree' => array( 'Kategorio-arbo' ),
+	'CategoryTree' => array( 'Arbo_de_kategorioj', 'Kategorio-arbo' ),
 );
 
 /** Spanish (español) */
@@ -258,7 +269,7 @@ $specialPageAliases['kw'] = array(
 
 /** Latin (Latina) */
 $specialPageAliases['la'] = array(
-	'CategoryTree' => array( 'Categoriarum arbor' ),
+	'CategoryTree' => array( 'Categoriarum_arbor' ),
 );
 
 /** Ladino (Ladino) */
@@ -274,6 +285,11 @@ $specialPageAliases['lb'] = array(
 /** Malagasy (Malagasy) */
 $specialPageAliases['mg'] = array(
 	'CategoryTree' => array( 'Hazon-tsokajy' ),
+);
+
+/** Minangkabau (Baso Minangkabau) */
+$specialPageAliases['min'] = array(
+	'CategoryTree' => array( 'BatangKategori' ),
 );
 
 /** Macedonian (македонски) */
@@ -306,7 +322,7 @@ $specialPageAliases['myv'] = array(
 	'CategoryTree' => array( 'КатегорияньЧувто' ),
 );
 
-/** Norwegian Bokmål (norsk (bokmål)‎) */
+/** Norwegian Bokmål (norsk bokmål) */
 $specialPageAliases['nb'] = array(
 	'CategoryTree' => array( 'Kategoritre' ),
 );
@@ -316,7 +332,7 @@ $specialPageAliases['nds'] = array(
 	'CategoryTree' => array( 'Kategorieboom' ),
 );
 
-/** Nedersaksies (Nedersaksies) */
+/** Low Saxon (Netherlands) (Nedersaksies) */
 $specialPageAliases['nds-nl'] = array(
 	'CategoryTree' => array( 'Kategorieboom' ),
 );
@@ -326,7 +342,7 @@ $specialPageAliases['nl'] = array(
 	'CategoryTree' => array( 'Categorieboom' ),
 );
 
-/** Norwegian Nynorsk (norsk (nynorsk)‎) */
+/** Norwegian Nynorsk (norsk nynorsk) */
 $specialPageAliases['nn'] = array(
 	'CategoryTree' => array( 'Kategoritre' ),
 );

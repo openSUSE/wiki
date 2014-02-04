@@ -25,11 +25,17 @@ class SFDateInput extends SFFormInput {
 
 		$optionsText = '';
 		$month_names = SFFormUtils::getMonthNames();
+		// Add a "null" value at the beginning.
+		array_unshift( $month_names, null );
 		foreach ( $month_names as $i => $name ) {
-			// pad out month to always be two digits
-			$month_value = ( $wgAmericanDates == true ) ? $name : str_pad( $i + 1, 2, '0', STR_PAD_LEFT );
+			if ( is_null( $name ) ) {
+				$month_value = null;
+			} else {
+				// Pad out month to always be two digits.
+				$month_value = ( $wgAmericanDates == true ) ? $name : str_pad( $i, 2, '0', STR_PAD_LEFT );
+			}
 			$optionAttrs = array ( 'value' => $month_value );
-			if ( $name == $cur_month || ( $i + 1 ) == $cur_month ) {
+			if ( $name == $cur_month || $i == $cur_month ) {
 				$optionAttrs['selected'] = 'selected';
 			}
 			$optionsText .= Html::element( 'option', $optionAttrs, $name );
@@ -48,6 +54,8 @@ class SFDateInput extends SFFormInput {
 
 	public static function getMainHTML( $date, $input_name, $is_mandatory, $is_disabled, $other_args ) {
 		global $sfgTabIndex, $wgAmericanDates;
+
+		$year = $month = $day = null;
 
 		if ( $date ) {
 			// Can show up here either as an array or a string,
@@ -78,14 +86,25 @@ class SFDateInput extends SFFormInput {
 				if ( $year < 0 ) {
 					$year = ( $year * - 1 + 1 ) . ' BC';
 				}
-				$month = $actual_date->getMonth();
-				$day = $actual_date->getDay();
+				// Use precision of the date to determine
+				// whether we should also set the month and
+				// day.
+				if ( method_exists( $actual_date->getDataItem(), 'getPrecision' ) ) {
+					$precision = $actual_date->getDataItem()->getPrecision();
+					if ( $precision > SMWDITime::PREC_Y ) {
+						$month = $actual_date->getMonth();
+					}
+					if ( $precision > SMWDITime::PREC_YM ) {
+						$day = $actual_date->getDay();
+					}
+				} else {
+					// There's some sort of error - make
+					// everything blank.
+					$year = null;
+				}
 			}
 		} else {
-			$cur_date = getdate();
-			$year = $cur_date['year'];
-			$month = $cur_date['month'];
-			$day = null; // no need for day
+			// Just keep everything at null.
 		}
 		$text = "";
 		$disabled_text = ( $is_disabled ) ? 'disabled' : '';

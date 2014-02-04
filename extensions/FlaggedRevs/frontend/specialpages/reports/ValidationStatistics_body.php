@@ -8,7 +8,7 @@ class ValidationStatistics extends IncludableSpecialPage {
 	}
 
 	public function execute( $par ) {
-		global $wgContLang, $wgFlaggedRevsStats;
+		global $wgContLang, $wgFlaggedRevsStats, $wgFlaggedRevsProtection;
 
 		$out = $this->getOutput();
 		$lang = $this->getLanguage();
@@ -78,8 +78,12 @@ class ValidationStatistics extends IncludableSpecialPage {
 		$out->addHTML( "<tr>\n" );
 		// Headings (for a positive grep result):
 		// validationstatistics-ns, validationstatistics-total, validationstatistics-stable,
-		// validationstatistics-latest, validationstatistics-synced, validationstatistics-old
+		// validationstatistics-latest, validationstatistics-synced, validationstatistics-old,
+		// validationstatistics-unreviewed
 		$msgs = array( 'ns', 'total', 'stable', 'latest', 'synced', 'old' ); // our headings
+		if ( !$wgFlaggedRevsProtection ) {
+			$msgs[] = 'unreviewed';
+		}
 		foreach ( $msgs as $msg ) {
 			$out->addHTML( '<th>' .
 				$this->msg( "validationstatistics-$msg" )->parse() . '</th>' );
@@ -120,6 +124,8 @@ class ValidationStatistics extends IncludableSpecialPage {
 					->escaped();
 			$outdated = intval( $reviewed ) - intval( $synced );
 			$outdated = $lang->formatnum( max( 0, $outdated ) ); // lag between queries
+			$unreviewed = intval( $total ) - intval( $reviewed );
+			$unreviewed = $lang->formatnum( max( 0, $unreviewed ) ); // lag between queries
 
 			$out->addHTML(
 				"<tr align='center'>
@@ -146,7 +152,20 @@ class ValidationStatistics extends IncludableSpecialPage {
 							array(),
 							array( 'namespace' => $namespace )
 						) .
-					"</td>
+					"</td>"
+			);
+			if ( !$wgFlaggedRevsProtection ) {
+				$out->addHTML( "
+					<td>" .
+						Linker::linkKnown( SpecialPage::getTitleFor( 'UnreviewedPages' ),
+							htmlspecialchars( $unreviewed ),
+							array(),
+							array( 'namespace' => $namespace )
+						) .
+					"</td>"
+				);
+			}
+			$out->addHTML( "
 				</tr>"
 			);
 		}

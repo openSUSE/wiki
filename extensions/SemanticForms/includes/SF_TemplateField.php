@@ -20,8 +20,9 @@ class SFTemplateField {
 	private $mDelimiter;
 	private $mDisplay;
 	private $mInputType;
+	private $mOptions;
 
-	static function create( $name, $label, $semanticProperty = null, $isList = null, $delimiter = null, $display = null ) {
+	static function create( $name, $label, $semanticProperty = null, $isList = null, $delimiter = null, $display = null, $field_options = null ) {
 		$f = new SFTemplateField();
 		$f->mFieldName = trim( str_replace( '\\', '', $name ) );
 		$f->mLabel = trim( str_replace( '\\', '', $label ) );
@@ -29,6 +30,7 @@ class SFTemplateField {
 		$f->mIsList = $isList;
 		$f->mDelimiter = $delimiter;
 		$f->mDisplay = $display;
+		$f->mOptions = $field_options;
 		// Delimiter should default to ','.
 		if ( $isList && !$delimiter ) {
 			$f->mDelimiter = ',';
@@ -63,23 +65,24 @@ class SFTemplateField {
 	}
 
 	function setTypeAndPossibleValues() {
+		// The presence of "-" at the beginning of a property name
+		// (which happens if SF tries to parse an inverse query)
+		// leads to an error in SMW - just exit if that's the case.
+		if ( strpos( $this->mSemanticProperty, '-' ) === 0 ) {
+			return;
+		}
+
 		$proptitle = Title::makeTitleSafe( SMW_NS_PROPERTY, $this->mSemanticProperty );
 		if ( $proptitle === null ) {
 			return;
 		}
 
-		$store = smwfGetStore();
+		$store = SFUtils::getSMWStore();
 		// this returns an array of objects
 		$allowed_values = SFUtils::getSMWPropertyValues( $store, $proptitle, "Allows value" );
 		$label_formats = SFUtils::getSMWPropertyValues( $store, $proptitle, "Has field label format" );
-		if ( class_exists( 'SMWDIProperty' ) ) {
-			// SMW 1.6+
-			$propValue = SMWDIProperty::newFromUserLabel( $this->mSemanticProperty );
-			$this->mPropertyType = $propValue->findPropertyTypeID();
-		} else {
-			$propValue = SMWPropertyValue::makeUserProperty( $this->mSemanticProperty );
-			$this->mPropertyType = $propValue->getPropertyTypeID();
-		}
+		$propValue = SMWDIProperty::newFromUserLabel( $this->mSemanticProperty );
+		$this->mPropertyType = $propValue->findPropertyTypeID();
 
 		foreach ( $allowed_values as $allowed_value ) {
 			// HTML-unencode each value
@@ -163,7 +166,8 @@ class SFTemplateField {
 	 * @TODO: There's really no good reason why this method is contained
 	 * within this class.
 	 */
-	public static function createTemplateText( $template_name, $template_fields, $internal_obj_property, $category, $aggregating_property, $aggregating_label, $template_format ) {
+	public static function createTemplateText( $template_name, $template_fields, $internal_obj_property, $category,
+											$aggregating_property, $aggregating_label, $template_format, $template_options = null ) {
 		$template_header = wfMessage( 'sf_template_docu', $template_name )->inContentLanguage()->text();
 		$text = <<<END
 <noinclude>
@@ -184,16 +188,32 @@ END;
 $template_footer
 </noinclude><includeonly>
 END;
-		// Only add a call to #set_internal if the Semantic Internal
-		// Objects extension is also installed.
-		if ( $internal_obj_property && class_exists( 'SIOInternalObject' ) ) {
-			$setInternalText = '{{#set_internal:' . $internal_obj_property;
-		} else {
-			$setInternalText = null;
+
+		//Before text
+		if ( isset($template_options['beforeText']) ) {
+			$text .= $template_options['beforeText']."\n";
+		}
+
+		// $internalObjText can be either a call to #set_internal
+		// or to #subobject (or null); which one we go with
+		// depends on whether Semantic Internal Objects is installed,
+		// and on the SMW version.
+		// Thankfully, the syntaxes of #set_internal and #subobject
+		// are quite similar, so we don't need too much extra logic.
+		$internalObjText = null;
+		if ( $internal_obj_property ) {
+			global $smwgDefaultStore;
+			if ( defined( 'SIO_VERSION' ) ) {
+				$useSubobject = false;
+				$internalObjText = '{{#set_internal:' . $internal_obj_property;
+			} elseif ( $smwgDefaultStore == "SMWSQLStore3" ) {
+				$useSubobject = true;
+				$internalObjText = '{{#subobject:-|' . $internal_obj_property . '={{PAGENAME}}';
+			}
 		}
 		$setText = '';
 
- 		// Topmost part of table depends on format.
+		// Topmost part of table depends on format.
 		if ( !$template_format ) $template_format = 'standard';
 		if ( $template_format == 'standard' ) {
 			$tableText = '{| class="wikitable"' . "\n";
@@ -213,6 +233,22 @@ END;
 
 		foreach ( $template_fields as $i => $field ) {
 			if ( $field->mFieldName == '' ) continue;
+			$separator = '|';
+
+			$fieldBefore = '';
+			$fieldAfter = '';
+
+			$fieldOptions = $field->getOptions();
+
+			if ( isset($fieldOptions['textBefore']) && ( $field !== null ) ) {
+				$fieldBefore = $fieldOptions['textBefore'];
+				//wfRunHooks('SfTemplateFieldBefore', array( $field, &$fieldBefore ) );
+			}
+			if ( isset($fieldOptions['textAfter']) && ( $field !== null ) ) {
+				$fieldAfter = $fieldOptions['textAfter'];
+				//wfRunHooks('SfTemplateFieldAfter', array( $field, &$fieldAfter ) );
+			}
+
 			if ( $field->mLabel == '' ) {
 				$field->mLabel = $field->mFieldName;
 			}
@@ -224,40 +260,61 @@ END;
 					}
 					$tableText .= '! ' . $field->mLabel . "\n";
 				} elseif ( $template_format == 'plain' ) {
-					$tableText .= "\n'''" .  $field->mLabel . ":''' ";
+					$tableText .= "\n'''" . $field->mLabel . ":''' ";
 				} elseif ( $template_format == 'sections' ) {
-					$tableText .= "\n==" .  $field->mLabel . "==\n";
+					$tableText .= "\n==" . $field->mLabel . "==\n";
 				}
 			} elseif ( $field->mDisplay == 'nonempty' ) {
+				if ( $template_format == 'plain' || $template_format == 'sections' ) {
+					$tableText .= "\n";
+				}
 				$tableText .= '{{#if:{{{' . $field->mFieldName . '|}}}|';
 				if ( $template_format == 'standard' || $template_format == 'infobox' ) {
 					if ( $i > 0 ) {
-						$tableText .= "{{!}}-\n";
+						$tableText .= "\n{{!}}-\n";
 					}
 					$tableText .= '! ' . $field->mLabel . "\n";
+					$separator = '{{!}}';
 				} elseif ( $template_format == 'plain' ) {
-					$tableText .= "'''" .  $field->mLabel . "''' ";
+					$tableText .= "'''" . $field->mLabel . ":''' ";
+					$separator = '';
 				} elseif ( $template_format == 'sections' ) {
-					$tableText .= '==' .  $field->mLabel . "==\n";
+					$tableText .= '==' . $field->mLabel . "==\n";
+					$separator = '';
 				}
 			} // If it's 'hidden', do nothing
 			// Value column
 			if ( $template_format == 'standard' || $template_format == 'infobox' ) {
 				if ( $field->mDisplay == 'hidden' ) {
-				} elseif ( $field->mDisplay == 'hidden' ) {
-					$tableText .= "{{!}} ";
+				} elseif ( $field->mDisplay == 'nonempty' ) {
+					//$tableText .= "{{!}} ";
 				} else {
 					$tableText .= "| ";
 				}
 			}
 			if ( !$field->mSemanticProperty ) {
-				$tableText .= "{{{" . $field->mFieldName . "|}}}\n";
-			} elseif ( !is_null( $setInternalText ) ) {
-				$tableText .= "{{{" . $field->mFieldName . "|}}}\n";
+				$tableText .= "$separator $fieldBefore {{{" . $field->mFieldName . "|}}} $fieldAfter\n";
+				if ( $field->mDisplay == 'nonempty' ) {
+					$tableText .= " }}";
+				}
+				$tableText .= "\n";
+			} elseif ( !is_null( $internalObjText ) ) {
+				if ( $separator != '' || $fieldBefore != '' ) {
+					$tableText .= "$separator $fieldBefore ";
+				}
+				$tableText .= "{{{" . $field->mFieldName . "|}}} $fieldAfter";
+				if ( $field->mDisplay == 'nonempty' ) {
+					$tableText .= " }}";
+				}
+				$tableText .= "\n";
 				if ( $field->mIsList ) {
-					$setInternalText .= '|' . $field->mSemanticProperty . '#list={{{' . $field->mFieldName . '|}}}';
+					if ( $useSubobject ) {
+						$internalObjText .= '|' . $field->mSemanticProperty . '={{{' . $field->mFieldName . '|}}}|+sep=,';
+					} else {
+						$internalObjText .= '|' . $field->mSemanticProperty . '#list={{{' . $field->mFieldName . '|}}}';
+					}
 				} else {
-					$setInternalText .= '|' . $field->mSemanticProperty . '={{{' . $field->mFieldName . '|}}}';
+					$internalObjText .= '|' . $field->mSemanticProperty . '={{{' . $field->mFieldName . '|}}}';
 				}
 			} elseif ( $field->mDisplay == 'hidden' ) {
 				if ( $field->mIsList ) {
@@ -266,7 +323,13 @@ END;
 					$setText .= $field->mSemanticProperty . '={{{' . $field->mFieldName . '|}}}|';
 				}
 			} elseif ( $field->mDisplay == 'nonempty' ) {
-				$tableText .= '[[' . $field->mSemanticProperty . '::{{{' . $field->mFieldName . "|}}}]]}}\n";
+				if ( $template_format == 'standard' || $template_format == 'infobox' ) {
+					$tableText .= '{{!}} ';
+				}
+				if ( $fieldBefore != '' ) {
+					$tableText .= $fieldBefore . ' ';
+				}
+				$tableText .= '[[' . $field->mSemanticProperty . '::{{{' . $field->mFieldName . "|}}}]]}} $fieldAfter\n";
 			} elseif ( $field->mIsList ) {
 				// If this field is meant to contain a list,
 				// add on an 'arraymap' function, that will
@@ -286,7 +349,10 @@ END;
 				}
 				$tableText .= "{{#arraymap:{{{" . $field->mFieldName . "|}}}|" . $field->mDelimiter . "|$var|[[" . $field->mSemanticProperty . "::$var]]}}\n";
 			} else {
-				$tableText .= "[[" . $field->mSemanticProperty . "::{{{" . $field->mFieldName . "|}}}]]\n";
+				if ( $fieldBefore != '' ) {
+					$tableText .= $fieldBefore . ' ';
+				}
+				$tableText .= '[[' . $field->mSemanticProperty . "::{{{" . $field->mFieldName . "|}}}]] $fieldAfter\n";
 			}
 		}
 
@@ -314,13 +380,13 @@ END;
 		// Leave out newlines if there's an internal property
 		// set here (which would mean that there are meant to be
 		// multiple instances of this template.)
-		if ( is_null( $setInternalText ) ) {
+		if ( is_null( $internalObjText ) ) {
 			if ( $template_format == 'standard' || $template_format == 'infobox' ) {
 				$tableText .= "\n";
 			}
 		} else {
-			$setInternalText .= "}}";
-			$text .= $setInternalText;
+			$internalObjText .= "}}";
+			$text .= $internalObjText;
 		}
 
 		// Add a call to #set, if necessary
@@ -330,14 +396,24 @@ END;
 		}
 
 		$text .= $tableText;
-		if ( $category !== '' ) {
+		if ( ( $category !== '' ) && ( $category !== null ) ) {
 			global $wgContLang;
 			$namespace_labels = $wgContLang->getNamespaces();
 			$category_namespace = $namespace_labels[NS_CATEGORY];
 			$text .= "\n[[$category_namespace:$category]]\n";
 		}
+
+		//After text
+		if ( isset($template_options['afterText']) ) {
+			$text .= $template_options['afterText'];
+		}
+
 		$text .= "</includeonly>\n";
 
 		return $text;
+	}
+
+	public function getOptions() {
+		return $this->mOptions;
 	}
 }

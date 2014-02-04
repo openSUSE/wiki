@@ -2,6 +2,21 @@
 /**
  * Handler for PNG images.
  *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
  * @file
  * @ingroup Media
  */
@@ -23,13 +38,13 @@ class PNGHandler extends BitmapHandler {
 	function getMetadata( $image, $filename ) {
 		try {
 			$metadata = BitmapMetadataHandler::PNG( $filename );
-		} catch( Exception $e ) {
+		} catch ( Exception $e ) {
 			// Broken file?
 			wfDebug( __METHOD__ . ': ' . $e->getMessage() . "\n" );
 			return self::BROKEN_FILE;
 		}
 
-		return serialize($metadata);
+		return serialize( $metadata );
 	}
 
 	/**
@@ -59,17 +74,27 @@ class PNGHandler extends BitmapHandler {
 	 */
 	function isAnimatedImage( $image ) {
 		$ser = $image->getMetadata();
-		if ($ser) {
-			$metadata = unserialize($ser);
-			if( $metadata['frameCount'] > 1 ) return true;
+		if ( $ser ) {
+			$metadata = unserialize( $ser );
+			if ( $metadata['frameCount'] > 1 ) {
+				return true;
+			}
 		}
 		return false;
 	}
-	
+	/**
+	 * We do not support making APNG thumbnails, so always false
+	 * @param $image File
+	 * @return bool false
+	 */
+	function canAnimateThumbnail( $image ) {
+		return false;
+	}
+
 	function getMetadataType( $image ) {
 		return 'parsed-png';
 	}
-	
+
 	function isMetadataValid( $image, $metadata ) {
 
 		if ( $metadata === self::BROKEN_FILE ) {
@@ -82,13 +107,13 @@ class PNGHandler extends BitmapHandler {
 		wfRestoreWarnings();
 
 		if ( !$data || !is_array( $data ) ) {
-			wfDebug(__METHOD__ . ' invalid png metadata' );
+			wfDebug( __METHOD__ . " invalid png metadata\n" );
 			return self::METADATA_BAD;
 		}
 
 		if ( !isset( $data['metadata']['_MW_PNG_VERSION'] )
 			|| $data['metadata']['_MW_PNG_VERSION'] != PNGMetadataExtractor::VERSION ) {
-			wfDebug(__METHOD__ . ' old but compatible png metadata' );
+			wfDebug( __METHOD__ . " old but compatible png metadata\n" );
 			return self::METADATA_COMPATIBLE;
 		}
 		return self::METADATA_GOOD;
@@ -103,29 +128,30 @@ class PNGHandler extends BitmapHandler {
 		$original = parent::getLongDesc( $image );
 
 		wfSuppressWarnings();
-		$metadata = unserialize($image->getMetadata());
+		$metadata = unserialize( $image->getMetadata() );
 		wfRestoreWarnings();
 
-		if( !$metadata || $metadata['frameCount'] <= 0 )
+		if ( !$metadata || $metadata['frameCount'] <= 0 ) {
 			return $original;
+		}
 
 		$info = array();
 		$info[] = $original;
-		
+
 		if ( $metadata['loopCount'] == 0 ) {
-			$info[] = wfMsgExt( 'file-info-png-looped', 'parseinline' );
+			$info[] = wfMessage( 'file-info-png-looped' )->parse();
 		} elseif ( $metadata['loopCount'] > 1 ) {
-			$info[] = wfMsgExt( 'file-info-png-repeat', 'parseinline', $metadata['loopCount'] );
+			$info[] = wfMessage( 'file-info-png-repeat' )->numParams( $metadata['loopCount'] )->parse();
 		}
-		
+
 		if ( $metadata['frameCount'] > 0 ) {
-			$info[] = wfMsgExt( 'file-info-png-frames', 'parseinline', $metadata['frameCount'] );
+			$info[] = wfMessage( 'file-info-png-frames' )->numParams( $metadata['frameCount'] )->parse();
 		}
-		
+
 		if ( $metadata['duration'] ) {
 			$info[] = $wgLang->formatTimePeriod( $metadata['duration'] );
 		}
-		
+
 		return $wgLang->commaList( $info );
 	}
 

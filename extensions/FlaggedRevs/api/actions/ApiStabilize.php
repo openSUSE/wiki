@@ -86,9 +86,9 @@ class ApiStabilizeGeneral extends ApiStabilize {
 		$form = new PageStabilityGeneralForm( $wgUser );
 		$form->setPage( $this->title ); # Our target page
 		$form->setWatchThis( $params['watch'] ); # Watch this page
-		$form->setReason( $params['reason'] ); # Reason
+		$form->setReasonExtra( $params['reason'] ); # Reason
 		$form->setReasonSelection( 'other' ); # Reason dropdown
-		$form->setExpiry( $params['expiry'] ); # Expiry
+		$form->setExpiryCustom( $params['expiry'] ); # Expiry
 		$form->setExpirySelection( 'other' ); # Expiry dropdown
 		$restriction = $params['autoreview'];
 
@@ -203,9 +203,9 @@ class ApiStabilizeProtect extends ApiStabilize {
 		$form = new PageStabilityProtectForm( $wgUser );
 		$form->setPage( $this->title ); # Our target page
 		$form->setWatchThis( $params['watch'] ); # Watch this page
-		$form->setReason( $params['reason'] ); # Reason
+		$form->setReasonExtra( $params['reason'] ); # Reason
 		$form->setReasonSelection( 'other' ); # Reason dropdown
-		$form->setExpiry( $params['expiry'] ); # Expiry
+		$form->setExpiryCustom( $params['expiry'] ); # Expiry
 		$form->setExpirySelection( 'other' ); # Expiry dropdown
 
 		$restriction = $params['protectlevel'];

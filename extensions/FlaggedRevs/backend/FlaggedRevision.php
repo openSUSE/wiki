@@ -713,7 +713,9 @@ class FlaggedRevision {
 			# Check for edits/creations/deletions...
 			if ( self::templateChanged( $revIdDraft, $revIdUsed ) ) {
 				$title = Title::makeTitleSafe( $row->tl_namespace, $row->tl_title );
-				$tmpChanges[] = array( $title, $revIdUsed, (bool)$revIdStable );
+				if ( !$title->equals( $this->getTitle() ) ) { // bug 42297
+					$tmpChanges[] = array( $title, $revIdUsed, (bool)$revIdStable );
+				}
 			}
 		}
 		return $tmpChanges;
@@ -802,7 +804,9 @@ class FlaggedRevision {
 			# Check for edits/creations/deletions...
 			$title = Title::makeTitleSafe( NS_FILE, $row->il_to );
 			if ( self::fileChanged( $title, $usedTS, $noForeign ) ) {
-				$fileChanges[] = array( $title, $usedTS, (bool)$stableTS );
+				if ( !$title->equals( $this->getTitle() ) ) { // bug 42297
+					$fileChanges[] = array( $title, $usedTS, (bool)$stableTS );
+				}
 			}
 		}
 		return $fileChanges;

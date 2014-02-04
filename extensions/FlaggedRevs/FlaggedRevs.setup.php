@@ -251,6 +251,8 @@ class FlaggedRevsSetup {
 			$wgHooks['MagicWordwgVariableIDs'][] = 'FlaggedRevsHooks::onMagicWordwgVariableIDs';
 		}
 
+		$wgHooks['EchoGetDefaultNotifiedUsers'][] = 'FlaggedRevsHooks::onEchoGetDefaultNotifiedUsers';
+
 		# ######## User interface #########
 		FlaggedRevsUISetup::defineHookHandlers( $wgHooks );
 		# ########

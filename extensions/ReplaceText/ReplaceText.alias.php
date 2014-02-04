@@ -5,6 +5,7 @@
  * @file
  * @ingroup Extensions
  */
+// @codingStandardsIgnoreFile
 
 $specialPageAliases = array();
 
@@ -40,7 +41,7 @@ $specialPageAliases['de'] = array(
 
 /** Zazaki (Zazaki) */
 $specialPageAliases['diq'] = array(
-	'ReplaceText' => array( 'MetinVurnayış' ),
+	'ReplaceText' => array( 'MetinVırnayış' ),
 );
 
 /** Lower Sorbian (dolnoserbski) */
@@ -50,12 +51,17 @@ $specialPageAliases['dsb'] = array(
 
 /** Divehi (ދިވެހިބަސް) */
 $specialPageAliases['dv'] = array(
-	'ReplaceText' => array( 'ލިޔުން ބަދަލުކުރައްވާ' ),
+	'ReplaceText' => array( 'ލިޔުން_ބަދަލުކުރައްވާ' ),
 );
 
 /** Greek (Ελληνικά) */
 $specialPageAliases['el'] = array(
 	'ReplaceText' => array( 'ΑντικατάστασηΚειμένου' ),
+);
+
+/** Esperanto (Esperanto) */
+$specialPageAliases['eo'] = array(
+	'ReplaceText' => array( 'Anstataŭigi_tekston' ),
 );
 
 /** Persian (فارسی) */
@@ -160,7 +166,7 @@ $specialPageAliases['mk'] = array(
 
 /** Malayalam (മലയാളം) */
 $specialPageAliases['ml'] = array(
-	'ReplaceText' => array( 'പകരംഎഴുത്ത്' ),
+	'ReplaceText' => array( 'എഴുത്ത്മാറ്റിച്ചേർക്കുക' ),
 );
 
 /** Marathi (मराठी) */
@@ -173,12 +179,12 @@ $specialPageAliases['mt'] = array(
 	'ReplaceText' => array( 'BiddelTest' ),
 );
 
-/** Norwegian Bokmål (norsk (bokmål)‎) */
+/** Norwegian Bokmål (norsk bokmål) */
 $specialPageAliases['nb'] = array(
 	'ReplaceText' => array( 'Teksterstatning' ),
 );
 
-/** Nedersaksies (Nedersaksies) */
+/** Low Saxon (Netherlands) (Nedersaksies) */
 $specialPageAliases['nds-nl'] = array(
 	'ReplaceText' => array( 'Tekste_vervangen' ),
 );

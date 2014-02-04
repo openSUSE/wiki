@@ -25,6 +25,7 @@ $messages['en'] = array(
  * @author Aaron Schulz
  * @author Jon Harald Søby
  * @author SPQRobin
+ * @author Shirayuki
  * @author Umherirrender
  */
 $messages['qqq'] = array(
@@ -33,19 +34,28 @@ Name of the Special:ReviewedPages page, which lists out pages that have a stable
 	'reviewedpages-leg' => '{{Flagged Revs}}
 Shown on Special:ReviewedPages.',
 	'reviewedpages-list' => '{{Flagged Revs}}
-Shown on Special:ReviewedPages.
+Shown on [[Special:ReviewedPages]].
 Note that the "highest attained" language is key. If the user viewing the special page specifies "checked", then "quality" pages will not appear.
-Parameter $1 is the number of reviewed pages for use with PLURAL.',
+
+Refers to {{msg-mw|Validationpage}}.
+
+Parameters:
+* $1 - (Optional) the number of reviewed pages for use with PLURAL',
 	'reviewedpages-none' => '{{Flagged Revs}}
 Shown on Special:ReviewedPages.
 {{Identical|There are no pages in this list}}',
 	'reviewedpages-lev-0' => '{{Flagged Revs}}
-{{optional}}',
+{{optional}}
+Default:
+* {{msg-mw|Revreview-lev-basic}}',
 	'reviewedpages-lev-1' => '{{Flagged Revs}}
-{{optional}}',
+{{optional}}
+Default:
+* {{msg-mw|Revreview-lev-quality}}',
 	'reviewedpages-lev-2' => '{{Flagged Revs}}
 {{optional}}
-{{Identical|Featured}}',
+Default:
+* {{msg-mw|Revreview-lev-pristine}}',
 	'reviewedpages-all' => '{{Flagged Revs}}
 Shown on Special:ReviewedPages. Links to Special:ReviewedVersions for a particular page.',
 	'reviewedpages-best' => '{{Flagged Revs}}
@@ -262,11 +272,12 @@ S'ha donat un enllaç cap a l'última versió d'aquell nivell.",
 
 /** Chechen (нохчийн)
  * @author Sasan700
+ * @author Умар
  */
 $messages['ce'] = array(
 	'reviewedpages' => 'Хьойсина агlонаш',
 	'reviewedpages-all' => 'хьаьжина варсийш',
-	'reviewedpages-best' => 'чlогlа дика варси',
+	'reviewedpages-best' => 'чӀогӀа дика верси',
 );
 
 /** Czech (česky)
@@ -494,7 +505,7 @@ $messages['gl'] = array(
 	'reviewedpages-leg' => 'Listar as páxinas que foron revisadas',
 	'reviewedpages-list' => "Estas listas conteñen as páxinas [[{{MediaWiki:Validationpage}}|revisadas]] cuxo nivel de revisión ''máis alto'' (dunha revisión) é o nivel especificado.
 Dáse unha ligazón cara á última revisión dese nivel.",
-	'reviewedpages-none' => 'Non hai páxinas nesta lista',
+	'reviewedpages-none' => 'Non hai páxinas nesta lista.',
 	'reviewedpages-lev-0' => '{{int:revreview-lev-basic}}',
 	'reviewedpages-lev-1' => '{{int:revreview-lev-quality}}',
 	'reviewedpages-lev-2' => '{{int:revreview-lev-pristine}}',
@@ -553,17 +564,19 @@ $messages['he'] = array(
 
 /** Hindi (हिन्दी)
  * @author Kaustubh
+ * @author Siddhartha Ghai
  */
 $messages['hi'] = array(
-	'reviewedpages' => 'परिक्षण हुए पन्ने',
-	'reviewedpages-leg' => 'विशिष्ट गुण मिले पन्ने', # Fuzzy
-	'reviewedpages-list' => 'निम्नलिखित पन्ने विशिष्ट गुण प्राप्त हैं', # Fuzzy
-	'reviewedpages-none' => 'इस सूची में पन्ने नहीं हैं',
-	'reviewedpages-lev-0' => 'चुना हुआ',
-	'reviewedpages-lev-1' => 'गुणवत्ता',
-	'reviewedpages-lev-2' => 'विशेष',
-	'reviewedpages-all' => 'परिक्षण हुए अवतरण',
-	'reviewedpages-best' => 'मूल अवतरण', # Fuzzy
+	'reviewedpages' => 'पुनरीक्षित पृष्ठ',
+	'reviewedpages-leg' => 'पुनरीक्षित पृष्ठों की सूची दिखाएँ',
+	'reviewedpages-list' => "इस सूची में वे [[{{MediaWiki:Validationpage}}|पुनरीक्षित]] पृष्ठ शामिल हैं जिनके किसी अवतरण को ''उच्चतम'' पुनरीक्षण स्तर निर्दिष्ट स्तर मिला है।
+	उस स्तर के नवीनतम अवतरण की कड़ी दी गयी है।",
+	'reviewedpages-none' => 'इस सूची में कोई पृष्ठ नहीं हैं',
+	'reviewedpages-lev-0' => '{{int:revreview-lev-basic}}',
+	'reviewedpages-lev-1' => '{{int:revreview-lev-quality}}',
+	'reviewedpages-lev-2' => '{{int:revreview-lev-pristine}}',
+	'reviewedpages-all' => 'पुनरीक्षित अवतरण',
+	'reviewedpages-best' => 'उत्तम अवतरण',
 );
 
 /** Croatian (hrvatski)
@@ -700,7 +713,7 @@ $messages['ja'] = array(
 	'reviewedpages' => '査読済ページ',
 	'reviewedpages-leg' => '査読済みのページを一覧',
 	'reviewedpages-list' => 'このページは[[{{MediaWiki:Validationpage}}|査読]]結果の最高値が指定した水準にあるページを一覧しています。水準に達している中で最新の版にリンクしています。',
-	'reviewedpages-none' => '表示すべきページはありません',
+	'reviewedpages-none' => '表示すべきページはありません。',
 	'reviewedpages-lev-0' => '{{int:revreview-lev-basic}}',
 	'reviewedpages-lev-1' => '{{int:revreview-lev-quality}}',
 	'reviewedpages-lev-2' => '{{int:revreview-lev-pristine}}',
@@ -790,6 +803,7 @@ $messages['km'] = array(
 /** Korean (한국어)
  * @author Devunt
  * @author Kwj2772
+ * @author 아라
  */
 $messages['ko'] = array(
 	'reviewedpages' => '검토된 문서',
@@ -797,7 +811,7 @@ $messages['ko'] = array(
 	'reviewedpages-list' => "이 목록은 특정 판에 대하여 등급이 가장 ''높은 수준''으로 평가된 것이 주어진 등급에 해당하는 [[{{MediaWiki:Validationpage}}|검토]]된 문서를 포함하고 있습니다.
 해당 수준에서 가장 최근의 편집에 대한 링크가 주어져 있습니다.",
 	'reviewedpages-none' => '이 목록에 문서가 없습니다.',
-	'reviewedpages-all' => '검토된 버전',
+	'reviewedpages-all' => '검토된 판',
 	'reviewedpages-best' => '최고 판',
 );
 
@@ -935,7 +949,7 @@ $messages['nah'] = array(
 	'reviewedpages-lev-1' => 'Cuallōtl',
 );
 
-/** Norwegian Bokmål (norsk (bokmål)‎)
+/** Norwegian Bokmål (norsk bokmål)
  * @author EivindJ
  * @author Nghtwlkr
  */
@@ -960,7 +974,7 @@ En lenke er oppgitt til den siste revisjonen med det nivået.",
 $messages['nl'] = array(
 	'reviewedpages' => "Gecontroleerde pagina's",
 	'reviewedpages-leg' => "Lijst met pagina's die gecontroleerd zijn",
-	'reviewedpages-list' => "De volgende pagina's zijn [[{{MediaWiki:Validationpage}}|gecontroleerd]] tot het '''hoogst aangegeven''' niveau (van een versie).
+	'reviewedpages-list' => "De volgende pagina's zijn [[{{MediaWiki:Validationpage}}|gecontroleerd]] tot het '''hoogst opgegeven''' niveau (van een versie).
 Er wordt een koppeling gegeven naar de laatste versie voor dat niveau.",
 	'reviewedpages-none' => "Er staan geen pagina's in deze lijst.",
 	'reviewedpages-lev-0' => '{{int:revreview-lev-basic}}',
@@ -970,7 +984,7 @@ Er wordt een koppeling gegeven naar de laatste versie voor dat niveau.",
 	'reviewedpages-best' => 'beste versie',
 );
 
-/** Norwegian Nynorsk (norsk (nynorsk)‎)
+/** Norwegian Nynorsk (norsk nynorsk)
  * @author Harald Khan
  * @author Njardarlogar
  */
@@ -1008,7 +1022,7 @@ $messages['oc'] = array(
 	'reviewedpages-best' => 'Melhor revision',
 );
 
-/** Oriya (ଓଡ଼ିଆ)
+/** Oriya (ଓଡ଼ିଆ)
  * @author Ansumang
  */
 $messages['or'] = array(

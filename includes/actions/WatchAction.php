@@ -20,6 +20,11 @@
  * @ingroup Actions
  */
 
+/**
+ * Page addition to a user's watchlist
+ *
+ * @ingroup Actions
+ */
 class WatchAction extends FormAction {
 
 	public function getName() {
@@ -31,7 +36,7 @@ class WatchAction extends FormAction {
 	}
 
 	protected function getDescription() {
-		return wfMsgHtml( 'addwatch' );
+		return $this->msg( 'addwatch' )->escaped();
 	}
 
 	/**
@@ -82,24 +87,72 @@ class WatchAction extends FormAction {
 		return parent::checkCanExecute( $user );
 	}
 
-	public static function doWatch( Title $title, User $user  ) {
-		$page = WikiPage::factory( $title );
-
-		if ( wfRunHooks( 'WatchArticle', array( &$user, &$page ) ) ) {
-			$user->addWatch( $title );
-			wfRunHooks( 'WatchArticleComplete', array( &$user, &$page ) );
+	/**
+	 * Watch or unwatch a page
+	 * @since 1.22
+	 * @param bool $watch Whether to watch or unwatch the page
+	 * @param Title $title Page to watch/unwatch
+	 * @param User $user User who is watching/unwatching
+	 * @return Status
+	 */
+	public static function doWatchOrUnwatch( $watch, Title $title, User $user ) {
+		if ( $user->isLoggedIn() && $user->isWatched( $title, WatchedItem::IGNORE_USER_RIGHTS ) != $watch ) {
+			// If the user doesn't have 'editmywatchlist', we still want to
+			// allow them to add but not remove items via edits and such.
+			if ( $watch ) {
+				return self::doWatch( $title, $user, WatchedItem::IGNORE_USER_RIGHTS );
+			} else {
+				return self::doUnwatch( $title, $user );
+			}
 		}
-		return true;
+		return Status::newGood();
 	}
 
-	public static function doUnwatch( Title $title, User $user  ) {
+	/**
+	 * Watch a page
+	 * @since 1.22 Returns Status, $checkRights parameter added
+	 * @param Title $title Page to watch/unwatch
+	 * @param User $user User who is watching/unwatching
+	 * @param int $checkRights Passed through to $user->addWatch()
+	 * @return Status
+	 */
+	public static function doWatch( Title $title, User $user, $checkRights = WatchedItem::CHECK_USER_RIGHTS ) {
+		if ( $checkRights !== WatchedItem::IGNORE_USER_RIGHTS && !$user->isAllowed( 'editmywatchlist' ) ) {
+			return User::newFatalPermissionDeniedStatus( 'editmywatchlist' );
+		}
+
 		$page = WikiPage::factory( $title );
 
-		if ( wfRunHooks( 'UnwatchArticle', array( &$user, &$page ) ) ) {
+		$status = Status::newFatal( 'hookaborted' );
+		if ( wfRunHooks( 'WatchArticle', array( &$user, &$page, &$status ) ) ) {
+			$status = Status::newGood();
+			$user->addWatch( $title, $checkRights );
+			wfRunHooks( 'WatchArticleComplete', array( &$user, &$page ) );
+		}
+		return $status;
+	}
+
+	/**
+	 * Unwatch a page
+	 * @since 1.22 Returns Status
+	 * @param Title $title Page to watch/unwatch
+	 * @param User $user User who is watching/unwatching
+	 * @return Status
+	 */
+	public static function doUnwatch( Title $title, User $user ) {
+		if ( !$user->isAllowed( 'editmywatchlist' ) ) {
+			return User::newFatalPermissionDeniedStatus( 'editmywatchlist' );
+		}
+
+		$page = WikiPage::factory( $title );
+
+		$status = Status::newFatal( 'hookaborted' );
+		if ( wfRunHooks( 'UnwatchArticle', array( &$user, &$page, &$status ) ) ) {
+			$status = Status::newGood();
 			$user->removeWatch( $title );
 			wfRunHooks( 'UnwatchArticleComplete', array( &$user, &$page ) );
 		}
-		return true;
+		return $status;
 	}
 
 	/**
@@ -136,11 +189,11 @@ class WatchAction extends FormAction {
 	}
 
 	protected function alterForm( HTMLForm $form ) {
-		$form->setSubmitText( wfMsg( 'confirm-watch-button' ) );
+		$form->setSubmitTextMsg( 'confirm-watch-button' );
 	}
 
 	protected function preText() {
-		return wfMessage( 'confirm-watch-top' )->parse();
+		return $this->msg( 'confirm-watch-top' )->parse();
 	}
 
 	public function onSuccess() {
@@ -148,6 +201,11 @@ class WatchAction extends FormAction {
 	}
 }
 
+/**
+ * Page removal from a user's watchlist
+ *
+ * @ingroup Actions
+ */
 class UnwatchAction extends WatchAction {
 
 	public function getName() {
@@ -155,7 +213,7 @@ class UnwatchAction extends WatchAction {
 	}
 
 	protected function getDescription() {
-		return wfMsg( 'removewatch' );
+		return $this->msg( 'removewatch' )->escaped();
 	}
 
 	public function onSubmit( $data ) {
@@ -166,11 +224,11 @@ class UnwatchAction extends WatchAction {
 	}
 
 	protected function alterForm( HTMLForm $form ) {
-		$form->setSubmitText( wfMsg( 'confirm-unwatch-button' ) );
+		$form->setSubmitTextMsg( 'confirm-unwatch-button' );
 	}
 
 	protected function preText() {
-		return wfMessage( 'confirm-unwatch-top' )->parse();
+		return $this->msg( 'confirm-unwatch-top' )->parse();
 	}
 
 	public function onSuccess() {

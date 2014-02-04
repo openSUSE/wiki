@@ -4,12 +4,24 @@
  * @author Antoine Musso
  */
 class ParserPreloadTest extends MediaWikiTestCase {
+	/**
+	 * @var Parser
+	 */
 	private $testParser;
+	/**
+	 * @var ParserOptions
+	 */
 	private $testParserOptions;
+	/**
+	 * @var Title
+	 */
 	private $title;
 
-	function setUp() {
-		$this->testParserOptions = new ParserOptions();
+	protected function setUp() {
+		global $wgContLang;
+
+		parent::setUp();
+		$this->testParserOptions = ParserOptions::newFromUserAndLang( new User, $wgContLang );
 
 		$this->testParser = new Parser();
 		$this->testParser->Options( $this->testParserOptions );
@@ -18,7 +30,9 @@ class ParserPreloadTest extends MediaWikiTestCase {
 		$this->title = Title::newFromText( 'Preload Test' );
 	}
 
-	function tearDown() {
+	protected function tearDown() {
+		parent::tearDown();
+
 		unset( $this->testParser );
 		unset( $this->title );
 	}
@@ -26,14 +40,14 @@ class ParserPreloadTest extends MediaWikiTestCase {
 	/**
 	 * @covers Parser::getPreloadText
 	 */
-	function testPreloadSimpleText() {
+	public function testPreloadSimpleText() {
 		$this->assertPreloaded( 'simple', 'simple' );
 	}
 
 	/**
 	 * @covers Parser::getPreloadText
 	 */
-	function testPreloadedPreIsUnstripped() {
+	public function testPreloadedPreIsUnstripped() {
 		$this->assertPreloaded(
 			'<pre>monospaced</pre>',
 			'<pre>monospaced</pre>',
@@ -44,7 +58,7 @@ class ParserPreloadTest extends MediaWikiTestCase {
 	/**
 	 * @covers Parser::getPreloadText
 	 */
-	function testPreloadedNowikiIsUnstripped() {
+	public function testPreloadedNowikiIsUnstripped() {
 		$this->assertPreloaded(
 			'<nowiki>[[Dummy title]]</nowiki>',
 			'<nowiki>[[Dummy title]]</nowiki>',
@@ -52,7 +66,7 @@ class ParserPreloadTest extends MediaWikiTestCase {
 		);
 	}
 
-	function assertPreloaded( $expected, $text, $msg='') {
+	protected function assertPreloaded( $expected, $text, $msg = '' ) {
 		$this->assertEquals(
 			$expected,
 			$this->testParser->getPreloadText(
@@ -63,5 +77,4 @@ class ParserPreloadTest extends MediaWikiTestCase {
 			$msg
 		);
 	}
-
 }

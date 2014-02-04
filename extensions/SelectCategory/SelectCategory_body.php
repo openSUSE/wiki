@@ -7,8 +7,9 @@
  *
  * @file
  * @ingroup Extensions
- * @author Leon Weber <leon@leonweber.de> & Manuel Schneider <manuel.schneider@wikimedia.ch>
- * @copyright Â© 2006 by Leon Weber & Manuel Schneider
+ * @author Leon Weber <leon@leonweber.de> & Manuel Schneider <manuel.schneider@wikimedia.ch> & Christian Boltz <mediawiki+SelectCategory@cboltz.de>
+ * @copyright © 2006 by Leon Weber & Manuel Schneider
+ * @copyright © 2013 by Christian Boltz
  * @licence GNU General Public Licence 2.0 or later
  */
 
@@ -28,6 +29,7 @@ class SelectCategory {
 			# Register CSS file for our select box
 			global $wgOut, $wgUser, $wgExtensionAssetsPath;
 			global $wgSelectCategoryMaxLevel;
+			global $wgSelectCategoryToplevelAllowed;
 
 			$wgOut->addExtensionStyle( "{$wgExtensionAssetsPath}/SelectCategory/SelectCategory.css" );
 			$wgOut->addExtensionStyle( "{$wgExtensionAssetsPath}/SelectCategory/jquery.treeview.css" );
@@ -37,7 +39,7 @@ class SelectCategory {
 			$skin = $wgUser->getSkin();
 
 			# Get all categories from wiki
-			$allCats = self::getAllCategories( $isUpload ? NS_SPECIAL : $pageObj->mTitle->getNamespace() );
+			$allCats = self::getAllCategories( $isUpload ? NS_IMAGE : $pageObj->mTitle->getNamespace() );
 			# Load system messages
 		
 			# Get the right member variables, depending on if we're on an upload form or not
@@ -106,7 +108,11 @@ class SelectCategory {
 				$catName = str_replace( '_', ' ', $category );
 				$title = Title::newFromText( $category, NS_CATEGORY );
 				# Output the actual checkboxes, indented
-				$pageObj->$place .= '<li' . $open . '><input type="checkbox" name="SelectCategoryList[]" value="'.$category.'" class="checkbox" '.$checked.' />'.$skin->link( $title, $catName )."\n";
+				$pageObj->$place .= '<li' . $open . '>';
+				if ($level > 0 || $wgSelectCategoryToplevelAllowed) {
+					$pageObj->$place .= '<input type="checkbox" name="SelectCategoryList[]" value="'.$category.'" class="checkbox" '.$checked.' />';
+				}
+				$pageObj->$place .=	$skin->link( $title, $catName )."\n";
 				# set id for next level
 				$level_id = 'sc_'.$cat;
 
@@ -155,7 +161,11 @@ class SelectCategory {
 			}
 			# If it is an upload we have to call a different method
 			if ( $isUpload ) {
+				# mUploadDescription has been renamed to mComment (not sure in which version,
+				# http://www.mediawiki.org/wiki/Extension_talk:SelectCategoryTagCloud says it happened in 1.13 alpha or before, but I didn't confirm that).
+				# mUploadDescription is kept for backwards compability.
 				$pageObj->mUploadDescription .= $text;
+				$pageObj->mComment .= $text;
 			} else {
 				$pageObj->textbox1 .= $text;
 			}
@@ -317,7 +327,7 @@ ORDER BY tmpSelectCatPage.page_title ASC;';
 
 		if ($enabledForNamespace
 			&& (!$isSubpage
-				|| $isSubpage && $wgSelectCategoryEnableSubpage)
+				|| $isSubpage && $wgSelectCategoryEnableSubpages)
 			&& $pageObj->section == false) {
 			return true;
 		}

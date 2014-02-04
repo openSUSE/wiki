@@ -25,6 +25,20 @@
 
 $fallback = 'zh-hant, zh-hans';
 
+$namespaceNames = array(
+	NS_USER             => '使用者',
+	NS_USER_TALK        => '使用者討論',
+	NS_HELP             => '使用說明',
+	NS_HELP_TALK        => '使用說明討論',
+);
+
+$namespaceAliases = array(
+	'Image' => NS_FILE,
+	'Image_talk' => NS_FILE_TALK,
+	"圖片" => NS_FILE,
+	"圖片討論" => NS_FILE_TALK,
+);
+
 $specialPageAliases = array(
 	'Ancientpages'              => array( '最舊頁面' ),
 	'Block'                     => array( '查封用戶' ),
@@ -44,20 +58,6 @@ $specialPageAliases = array(
 	'Unwatchedpages'            => array( '未被監視的頁面' ),
 	'Userrights'                => array( '用戶權限' ),
 	'Withoutinterwiki'          => array( '沒有跨語言鏈接的頁面' ),
-);
-
-$namespaceNames = array(
-	NS_USER             => '使用者',
-	NS_USER_TALK        => '使用者討論',
-	NS_HELP             => '使用說明',
-	NS_HELP_TALK        => '使用說明討論',
-);
-
-$namespaceAliases = array(
-	'Image' => NS_FILE,
-	'Image_talk' => NS_FILE_TALK,
-	"圖片" => NS_FILE,
-	"圖片討論" => NS_FILE_TALK,
 );
 
 $datePreferences = array(
@@ -106,7 +106,6 @@ $dateFormats = array(
 $messages = array(
 # User preference toggles
 'tog-underline'            => '連結標注底線',
-'tog-highlightbroken'      => '損毀連結格式為<a href="" class="new">這樣</a>（否則：像這樣<a href="" class="internal">?</a>）',
 'tog-justify'              => '段落對齊',
 'tog-hideminor'            => '近期變動中隱藏細微修改',
 'tog-usenewrc'             => '使用強化的近期變動 (需要JavaScript)',
@@ -326,7 +325,6 @@ $messages = array(
 <span class="plainlinks">[{{fullurl:{{#Special:Log}}|page={{FULLPAGENAMEE}}}} 搜索有關日誌]，
 或[{{fullurl:{{FULLPAGENAME}}|action=edit}} 編輯此頁]</span>。',
 'userpage-userdoesnotexist'  => '使用者帳號「<nowiki>$1</nowiki>」未曾建立。請在建立／編輯這個頁面前先檢查一下。',
-'clearyourcache'             => "'''注意:''' 在儲存以後, 您必須清除瀏覽器的快取才能看到所作出的改變。 '''Mozilla / Firefox / Safari:''' 按著 ''Shift'' 再點擊''重新整理''(或按下''Ctrl-Shift-R''，在蘋果Mac上按下''Cmd-Shift-R'')；'''IE:''' 按著 ''Ctrl'' 再點擊 ''重新整理''，或按下 ''Ctrl-F5''；'''Konqueror:''' 只需點擊 ''重新整理''；'''Opera:''' 使用者需要在 ''工具-設定'' 中完整地清除它們的快取。",
 'usercsspreview'             => "'''注意您只是在預覽您的個人 CSS, 還沒有儲存﹗'''",
 'userjspreview'              => "'''注意您只是在測試／預覽您的個人 JavaScript，還沒有儲存﹗'''",
 'previewnote'                => "'''請記住這只是預覽，內容尚未儲存！'''",
@@ -877,12 +875,7 @@ $NEWPAGE
 只有列示項目（以 * 開頭的項目）會被考慮。第一個連結一定要連接去壞圖片中。
 然後在同一行的連結會考慮作例外，即是幅圖片可以在哪一個頁面中同時顯示。',
 
-/*
-Short names for language variants used for language conversion links.
-To disable showing a particular link, set it to 'disable', e.g.
-'variantname-zh-sg' => 'disable',
-Variants for Chinese language
-*/
+# Variants for Chinese language
 'variantname-zh-tw' => '台灣繁體',
 
 # Metadata

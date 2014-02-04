@@ -34,13 +34,19 @@
  * someone logs in who can be authenticated externally.
  */
 class AuthPlugin {
+
+	/**
+	 * @var string
+	 */
+	protected $domain;
+
 	/**
 	 * Check whether there exists a user account with the given name.
 	 * The name will be normalized to MediaWiki's requirements, so
 	 * you might need to munge it (for instance, for lowercase initial
 	 * letters).
 	 *
-	 * @param $username String: username.
+	 * @param string $username username.
 	 * @return bool
 	 */
 	public function userExists( $username ) {
@@ -54,8 +60,8 @@ class AuthPlugin {
 	 * you might need to munge it (for instance, for lowercase initial
 	 * letters).
 	 *
-	 * @param $username String: username.
-	 * @param $password String: user password.
+	 * @param string $username username.
+	 * @param string $password user password.
 	 * @return bool
 	 */
 	public function authenticate( $username, $password ) {
@@ -67,7 +73,7 @@ class AuthPlugin {
 	 * Modify options in the login template.
 	 *
 	 * @param $template UserLoginTemplate object.
-	 * @param $type String 'signup' or 'login'. Added in 1.16.
+	 * @param string $type 'signup' or 'login'. Added in 1.16.
 	 */
 	public function modifyUITemplate( &$template, &$type ) {
 		# Override this!
@@ -77,16 +83,29 @@ class AuthPlugin {
 	/**
 	 * Set the domain this plugin is supposed to use when authenticating.
 	 *
-	 * @param $domain String: authentication domain.
+	 * @param string $domain authentication domain.
 	 */
 	public function setDomain( $domain ) {
 		$this->domain = $domain;
 	}
 
 	/**
+	 * Get the user's domain
+	 *
+	 * @return string
+	 */
+	public function getDomain() {
+		if ( isset( $this->domain ) ) {
+			return $this->domain;
+		} else {
+			return 'invaliddomain';
+		}
+	}
+
+	/**
 	 * Check to see if the specific domain is a valid domain.
 	 *
-	 * @param $domain String: authentication domain.
+	 * @param string $domain authentication domain.
 	 * @return bool
 	 */
 	public function validDomain( $domain ) {
@@ -103,6 +122,7 @@ class AuthPlugin {
 	 * forget the & on your function declaration.
 	 *
 	 * @param $user User object
+	 * @return bool
 	 */
 	public function updateUser( &$user ) {
 		# Override this and do something
@@ -174,7 +194,7 @@ class AuthPlugin {
 	 * Return true if successful.
 	 *
 	 * @param $user User object.
-	 * @param $password String: password.
+	 * @param string $password password.
 	 * @return bool
 	 */
 	public function setPassword( $user, $password ) {
@@ -189,6 +209,19 @@ class AuthPlugin {
 	 * @return Boolean
 	 */
 	public function updateExternalDB( $user ) {
+		return true;
+	}
+
+	/**
+	 * Update user groups in the external authentication database.
+	 * Return true if successful.
+	 *
+	 * @param $user User object.
+	 * @param $addgroups Groups to add.
+	 * @param $delgroups Groups to remove.
+	 * @return Boolean
+	 */
+	public function updateExternalDBGroups( $user, $addgroups, $delgroups = array() ) {
 		return true;
 	}
 
@@ -231,7 +264,7 @@ class AuthPlugin {
 	 * Check if a user should authenticate locally if the global authentication fails.
 	 * If either this or strict() returns true, local authentication is not used.
 	 *
-	 * @param $username String: username.
+	 * @param string $username username.
 	 * @return Boolean
 	 */
 	public function strictUserAuth( $username ) {
@@ -256,6 +289,8 @@ class AuthPlugin {
 	/**
 	 * If you want to munge the case of an account name before the final
 	 * check, now is your chance.
+	 * @param $username string
+	 * @return string
 	 */
 	public function getCanonicalName( $username ) {
 		return $username;

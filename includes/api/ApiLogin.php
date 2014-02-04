@@ -4,7 +4,7 @@
  *
  * Created on Sep 19, 2006
  *
- * Copyright © 2006-2007 Yuri Astrakhan <Firstname><Lastname>@gmail.com,
+ * Copyright © 2006-2007 Yuri Astrakhan "<Firstname><Lastname>@gmail.com",
  * Daniel Cannon (cannon dot danielc at gmail dot com)
  *
  * This program is free software; you can redistribute it and/or modify
@@ -38,7 +38,7 @@ class ApiLogin extends ApiBase {
 
 	/**
 	 * Executes the log-in attempt using the parameters passed. If
-	 * the log-in succeeeds, it attaches a cookie to the session
+	 * the log-in succeeds, it attaches a cookie to the session
 	 * and outputs the user id, username, and session token. If a
 	 * log-in fails, as the result of a bad password, a nonexistent
 	 * user, or any other reason, the host is cached with an expiry
@@ -46,6 +46,15 @@ class ApiLogin extends ApiBase {
 	 * is reached. The expiry is $this->mLoginThrottle.
 	 */
 	public function execute() {
+		// If we're in JSON callback mode, no tokens can be obtained
+		if ( !is_null( $this->getMain()->getRequest()->getVal( 'callback' ) ) ) {
+			$this->getResult()->addValue( null, 'login', array(
+				'result' => 'Aborted',
+				'reason' => 'Cannot log in when using a callback',
+			) );
+			return;
+		}
+
 		$params = $this->extractRequestParams();
 
 		$result = array();
@@ -78,6 +87,8 @@ class ApiLogin extends ApiBase {
 				$this->getContext()->setUser( $user );
 				$user->setOption( 'rememberpassword', 1 );
 				$user->setCookies( $this->getRequest() );
+
+				ApiQueryInfo::resetTokenCache();
 
 				// Run hooks.
 				// @todo FIXME: Split back and frontend from this hook.
@@ -145,7 +156,7 @@ class ApiLogin extends ApiBase {
 
 			case LoginForm::ABORTED:
 				$result['result'] = 'Aborted';
-				$result['reason'] =  $loginForm->mAbortLoginErrorMsg;
+				$result['reason'] = $loginForm->mAbortLoginErrorMsg;
 				break;
 
 			default:
@@ -178,6 +189,66 @@ class ApiLogin extends ApiBase {
 			'password' => 'Password',
 			'domain' => 'Domain (optional)',
 			'token' => 'Login token obtained in first request',
+		);
+	}
+
+	public function getResultProperties() {
+		return array(
+			'' => array(
+				'result' => array(
+					ApiBase::PROP_TYPE => array(
+						'Success',
+						'NeedToken',
+						'WrongToken',
+						'NoName',
+						'Illegal',
+						'WrongPluginPass',
+						'NotExists',
+						'WrongPass',
+						'EmptyPass',
+						'CreateBlocked',
+						'Throttled',
+						'Blocked',
+						'Aborted'
+					)
+				),
+				'lguserid' => array(
+					ApiBase::PROP_TYPE => 'integer',
+					ApiBase::PROP_NULLABLE => true
+				),
+				'lgusername' => array(
+					ApiBase::PROP_TYPE => 'string',
+					ApiBase::PROP_NULLABLE => true
+				),
+				'lgtoken' => array(
+					ApiBase::PROP_TYPE => 'string',
+					ApiBase::PROP_NULLABLE => true
+				),
+				'cookieprefix' => array(
+					ApiBase::PROP_TYPE => 'string',
+					ApiBase::PROP_NULLABLE => true
+				),
+				'sessionid' => array(
+					ApiBase::PROP_TYPE => 'string',
+					ApiBase::PROP_NULLABLE => true
+				),
+				'token' => array(
+					ApiBase::PROP_TYPE => 'string',
+					ApiBase::PROP_NULLABLE => true
+				),
+				'details' => array(
+					ApiBase::PROP_TYPE => 'string',
+					ApiBase::PROP_NULLABLE => true
+				),
+				'wait' => array(
+					ApiBase::PROP_TYPE => 'integer',
+					ApiBase::PROP_NULLABLE => true
+				),
+				'reason' => array(
+					ApiBase::PROP_TYPE => 'string',
+					ApiBase::PROP_NULLABLE => true
+				)
+			)
 		);
 	}
 
@@ -215,9 +286,5 @@ class ApiLogin extends ApiBase {
 
 	public function getHelpUrls() {
 		return 'https://www.mediawiki.org/wiki/API:Login';
-	}
-
-	public function getVersion() {
-		return __CLASS__ . ': $Id$';
 	}
 }

@@ -13,7 +13,7 @@
 /**
  * @ingroup SFSpecialPages
  */
-class SFUploadWindowProto extends UnlistedSpecialPage {
+class SFUploadWindow extends UnlistedSpecialPage {
 	/**
 	 * Constructor : initialise object
 	 * Get data POSTed through the form and assign them to the object
@@ -624,7 +624,7 @@ END;
 		} elseif ( $exists['warning'] == 'was-deleted' ) {
 			# If the file existed before and was deleted, warn the user of this
 			$ltitle = SpecialPage::getTitleFor( 'Log' );
-			$llink = SFUtils::getLinker()->linkKnown(
+			$llink = Linker::linkKnown(
 				$ltitle,
 				wfMessage( 'deletionlog' )->escaped(),
 				array(),
@@ -997,24 +997,16 @@ class SFUploadForm extends HTMLForm {
 		$wgTitle = SpecialPage::getTitleFor( 'Upload' );
 
 		$wgOut->addModules( array( 'mediawiki.action.edit', 'mediawiki.legacy.upload', 'mediawiki.legacy.wikibits', 'mediawiki.legacy.ajax' ) );
-		if ( method_exists( $wgOut, 'getBottomScripts' ) ) {
-			if ( method_exists( 'Skin', 'setupUserCss' ) ) {
-				// MW 1.18
-				global $wgUser;
-				$sk = $wgUser->getSkin();
-				$head_scripts = $wgOut->getHeadScripts( $sk );
-				$body_scripts = $wgOut->getBottomScripts( $sk );
-			} else {
-				// MW 1.19+
-				$head_scripts = $wgOut->getHeadScripts();
-				$body_scripts = $wgOut->getBottomScripts();
-			}
-		} else {
-			// MW 1.17
+		if ( method_exists( 'Skin', 'setupUserCss' ) ) {
+			// MW 1.18
 			global $wgUser;
 			$sk = $wgUser->getSkin();
-			$head_scripts = '';
-			$body_scripts = $wgOut->getHeadScripts( $sk );
+			$head_scripts = $wgOut->getHeadScripts( $sk );
+			$body_scripts = $wgOut->getBottomScripts( $sk );
+		} else {
+			// MW 1.19+
+			$head_scripts = $wgOut->getHeadScripts();
+			$body_scripts = $wgOut->getBottomScripts();
 		}
 
 		$text = <<<END
@@ -1112,53 +1104,16 @@ class SFUploadSourceField extends HTMLTextField {
 			: 60;
 	}
 	
-}
-
-global $wgVersion;
-$uceMethod = new ReflectionMethod( 'SpecialPage', 'userCanExecute' );
-$uceParams = $uceMethod->getParameters();
-// @TODO The "User" class was added to the function header
-// for SpecialPage::userCanExecute in MW 1.18 (r86407) - somehow
-// both the old and new signatures need to be supported. When support
-// is dropped for MW below 1.18 this should be reintegrated into one
-// class.
-if ( $uceParams[0]->getClass() ) { // found a class definition for param $user
-
 	/**
-	 * Class variant for MW 1.18+
+	 * This page can be shown if uploading is enabled.
+	 * Handle permission checking elsewhere in order to be able to show
+	 * custom error messages.
+	 *
+	 * @param User $user
+	 * @return bool
 	 */
-	class SFUploadWindow extends SFUploadWindowProto {
-		/**
-		 * This page can be shown if uploading is enabled.
-		 * Handle permission checking elsewhere in order to be able to show
-		 * custom error messages.
-		 *
-		 * @param User $user
-		 * @return bool
-		 */
-		public function userCanExecute( User $user ) {
-			return UploadBase::isEnabled() && parent::userCanExecute( $user );
-		}
-
-
+	public function userCanExecute( User $user ) {
+		return UploadBase::isEnabled() && parent::userCanExecute( $user );
 	}
 
-} else {
-
-	/**
-	 * Class variant for MW 1.17
-	 */
-	class SFUploadWindow extends SFUploadWindowProto {
-		/**
-		 * This page can be shown if uploading is enabled.
-		 * Handle permission checking elsewhere in order to be able to show
-		 * custom error messages.
-		 *
-		 * @param User $user
-		 * @return bool
-		 */
-		public function userCanExecute( $user ) {
-			return UploadBase::isEnabled() && parent::userCanExecute( $user );
-		}
-	}
 }

@@ -1,305 +1,354 @@
-module( 'mediawiki.util', QUnit.newMwEnvironment() );
+( function ( mw, $ ) {
+	QUnit.module( 'mediawiki.util', QUnit.newMwEnvironment( {
+		setup: function () {
+			this.taPrefix = mw.util.tooltipAccessKeyPrefix;
+			mw.util.tooltipAccessKeyPrefix = 'ctrl-alt-';
+		},
+		teardown: function () {
+			mw.util.tooltipAccessKeyPrefix = this.taPrefix;
+		}
+	} ) );
 
-test( '-- Initial check', function() {
-	expect(1);
+	QUnit.test( 'rawurlencode', 1, function ( assert ) {
+		assert.equal( mw.util.rawurlencode( 'Test:A & B/Here' ), 'Test%3AA%20%26%20B%2FHere' );
+	} );
 
-	ok( mw.util, 'mw.util defined' );
-});
+	QUnit.test( 'wikiUrlencode', 1, function ( assert ) {
+		assert.equal( mw.util.wikiUrlencode( 'Test:A & B/Here' ), 'Test:A_%26_B/Here' );
+	} );
 
-test( 'rawurlencode', function() {
-	expect(1);
+	QUnit.test( 'getUrl', 4, function ( assert ) {
+		// Not part of startUp module
+		mw.config.set( 'wgArticlePath', '/wiki/$1' );
+		mw.config.set( 'wgPageName', 'Foobar' );
 
-	equal( mw.util.rawurlencode( 'Test:A & B/Here' ), 'Test%3AA%20%26%20B%2FHere' );
-});
+		var href = mw.util.getUrl( 'Sandbox' );
+		assert.equal( href, '/wiki/Sandbox', 'Simple title; Get link for "Sandbox"' );
 
-test( 'wikiUrlencode', function() {
-	expect(1);
+		href = mw.util.getUrl( 'Foo:Sandbox ? 5+5=10 ! (test)/subpage' );
+		assert.equal( href, '/wiki/Foo:Sandbox_%3F_5%2B5%3D10_%21_%28test%29/subpage',
+			'Advanced title; Get link for "Foo:Sandbox ? 5+5=10 ! (test)/subpage"' );
 
-	equal( mw.util.wikiUrlencode( 'Test:A & B/Here' ), 'Test:A_%26_B/Here' );
-});
+		href = mw.util.getUrl();
+		assert.equal( href, '/wiki/Foobar', 'Default title; Get link for current page ("Foobar")' );
 
-test( 'wikiGetlink', function() {
-	expect(3);
+		href = mw.util.getUrl( 'Sandbox', { action: 'edit' } );
+		assert.equal( href, '/wiki/Sandbox?action=edit',
+			'Simple title with query string; Get link for "Sandbox" with action=edit' );
+	} );
 
-	// Not part of startUp module
-	mw.config.set( 'wgArticlePath', '/wiki/$1' );
-	mw.config.set( 'wgPageName', 'Foobar' );
+	QUnit.test( 'wikiScript', 4, function ( assert ) {
+		mw.config.set( {
+			'wgScript': '/w/i.php', // customized wgScript for bug 39103
+			'wgLoadScript': '/w/l.php', // customized wgLoadScript for bug 39103
+			'wgScriptPath': '/w',
+			'wgScriptExtension': '.php'
+		} );
 
-	var hrefA = mw.util.wikiGetlink( 'Sandbox' );
-	equal( hrefA, '/wiki/Sandbox', 'Simple title; Get link for "Sandbox"' );
+		assert.equal( mw.util.wikiScript(), mw.config.get( 'wgScript' ),
+			'wikiScript() returns wgScript'
+		);
+		assert.equal( mw.util.wikiScript( 'index' ), mw.config.get( 'wgScript' ),
+			'wikiScript( index ) returns wgScript'
+		);
+		assert.equal( mw.util.wikiScript( 'load' ), mw.config.get( 'wgLoadScript' ),
+			'wikiScript( load ) returns wgLoadScript'
+		);
+		assert.equal( mw.util.wikiScript( 'api' ), '/w/api.php', 'API path' );
+	} );
 
-	var hrefB = mw.util.wikiGetlink( 'Foo:Sandbox ? 5+5=10 ! (test)/subpage' );
-	equal( hrefB, '/wiki/Foo:Sandbox_%3F_5%2B5%3D10_%21_%28test%29/subpage',
-		'Advanced title; Get link for "Foo:Sandbox ? 5+5=10 ! (test)/subpage"' );
+	QUnit.test( 'addCSS', 3, function ( assert ) {
+		var $el, style;
+		$el = $( '<div>' ).attr( 'id', 'mw-addcsstest' ).appendTo( '#qunit-fixture' );
 
-	var hrefC = mw.util.wikiGetlink();
-	equal( hrefC, '/wiki/Foobar', 'Default title; Get link for current page ("Foobar")' );
-});
+		style = mw.util.addCSS( '#mw-addcsstest { visibility: hidden; }' );
+		assert.equal( typeof style, 'object', 'addCSS returned an object' );
+		assert.strictEqual( style.disabled, false, 'property "disabled" is available and set to false' );
 
-test( 'wikiScript', function() {
-	expect(2);
+		assert.equal( $el.css( 'visibility' ), 'hidden', 'Added style properties are in effect' );
 
-	mw.config.set({
-		'wgScript': '/w/index.php',
-		'wgScriptPath': '/w',
-		'wgScriptExtension': '.php'
-	});
+		// Clean up
+		$( style.ownerNode ).remove();
+	} );
 
-	equal( mw.util.wikiScript(), mw.config.get( 'wgScript' ), 'Defaults to index.php and is equal to wgScript' );
-	equal( mw.util.wikiScript( 'api' ), '/w/api.php', 'API path' );
-});
+	QUnit.asyncTest( 'toggleToc', 4, function ( assert ) {
+		var tocHtml, $toggleLink;
 
-test( 'addCSS', function() {
-	expect(3);
+		function actionC() {
+			QUnit.start();
+		}
 
-	var $testEl = $( '<div>' ).attr( 'id', 'mw-addcsstest' ).appendTo( '#qunit-fixture' );
+		function actionB() {
+			assert.strictEqual( mw.util.toggleToc( $toggleLink, actionC ), true, 'Return boolean true if the TOC is now visible.' );
+		}
 
-	var style = mw.util.addCSS( '#mw-addcsstest { visibility: hidden; }' );
-	equal( typeof style, 'object', 'addCSS returned an object' );
-	strictEqual( style.disabled, false, 'property "disabled" is available and set to false' );
+		function actionA() {
+			assert.strictEqual( mw.util.toggleToc( $toggleLink, actionB ), false, 'Return boolean false if the TOC is now hidden.' );
+		}
 
-	equal( $testEl.css( 'visibility' ), 'hidden', 'Added style properties are in effect' );
+		assert.strictEqual( mw.util.toggleToc(), null, 'Return null if there is no table of contents on the page.' );
 
-	// Clean up
-	$( style.ownerNode ).remove();
-});
-
-test( 'toggleToc', function() {
-	expect(4);
-
-	strictEqual( mw.util.toggleToc(), null, 'Return null if there is no table of contents on the page.' );
-
-	var	tocHtml =
-	'<table id="toc" class="toc"><tr><td>' +
-		'<div id="toctitle">' +
+		tocHtml = '<div id="toc" class="toc">' +
+			'<div id="toctitle">' +
 			'<h2>Contents</h2>' +
 			'<span class="toctoggle">&nbsp;[<a href="#" class="internal" id="togglelink">Hide</a>&nbsp;]</span>' +
-		'</div>' +
-		'<ul><li></li></ul>' +
-	'</td></tr></table>',
-		$toc = $(tocHtml).appendTo( '#qunit-fixture' ),
+			'</div>' +
+			'<ul><li></li></ul>' +
+			'</div>';
+		$( tocHtml ).appendTo( '#qunit-fixture' );
 		$toggleLink = $( '#togglelink' );
 
-	strictEqual( $toggleLink.length, 1, 'Toggle link is appended to the page.' );
+		assert.strictEqual( $toggleLink.length, 1, 'Toggle link is appended to the page.' );
 
-	// Toggle animation is asynchronous
-	// QUnit should not finish this test() untill they are all done
-	stop();
+		actionA();
+	} );
 
-	var actionC = function() {
-		start();
-	};
-	var actionB = function() {
-		start(); stop();
-		strictEqual( mw.util.toggleToc( $toggleLink, actionC ), true, 'Return boolean true if the TOC is now visible.' );
-	};
-	var actionA = function() {
-		strictEqual( mw.util.toggleToc( $toggleLink, actionB ), false, 'Return boolean false if the TOC is now hidden.' );
-	};
+	QUnit.test( 'getParamValue', 5, function ( assert ) {
+		var url;
 
-	actionA();
-});
+		url = 'http://example.org/?foo=wrong&foo=right#&foo=bad';
+		assert.equal( mw.util.getParamValue( 'foo', url ), 'right', 'Use latest one, ignore hash' );
+		assert.strictEqual( mw.util.getParamValue( 'bar', url ), null, 'Return null when not found' );
 
-test( 'getParamValue', function() {
-	expect(5);
+		url = 'http://example.org/#&foo=bad';
+		assert.strictEqual( mw.util.getParamValue( 'foo', url ), null, 'Ignore hash if param is not in querystring but in hash (bug 27427)' );
 
-	var	url1 = 'http://example.org/?foo=wrong&foo=right#&foo=bad';
+		url = 'example.org?' + $.param( { 'TEST': 'a b+c' } );
+		assert.strictEqual( mw.util.getParamValue( 'TEST', url ), 'a b+c', 'Bug 30441: getParamValue must understand "+" encoding of space' );
 
-	equal( mw.util.getParamValue( 'foo', url1 ), 'right', 'Use latest one, ignore hash' );
-	strictEqual( mw.util.getParamValue( 'bar', url1 ), null, 'Return null when not found' );
+		url = 'example.org?' + $.param( { 'TEST': 'a b+c d' } ); // check for sloppy code from r95332 :)
+		assert.strictEqual( mw.util.getParamValue( 'TEST', url ), 'a b+c d', 'Bug 30441: getParamValue must understand "+" encoding of space (multiple spaces)' );
+	} );
 
-	var url2 = 'http://example.org/#&foo=bad';
-	strictEqual( mw.util.getParamValue( 'foo', url2 ), null, 'Ignore hash if param is not in querystring but in hash (bug 27427)' );
+	QUnit.test( 'tooltipAccessKey', 4, function ( assert ) {
+		assert.equal( typeof mw.util.tooltipAccessKeyPrefix, 'string', 'tooltipAccessKeyPrefix must be a string' );
+		assert.equal( $.type( mw.util.tooltipAccessKeyRegexp ), 'regexp', 'tooltipAccessKeyRegexp is a regexp' );
+		assert.ok( mw.util.updateTooltipAccessKeys, 'updateTooltipAccessKeys is non-empty' );
 
-	var url3 = 'example.org?' + $.param({ 'TEST': 'a b+c' });
-	strictEqual( mw.util.getParamValue( 'TEST', url3 ), 'a b+c', 'Bug 30441: getParamValue must understand "+" encoding of space' );
+		'Example [a]'.replace( mw.util.tooltipAccessKeyRegexp, function ( sub, m1, m2, m3, m4, m5, m6 ) {
+			assert.equal( m6, 'a', 'tooltipAccessKeyRegexp finds the accesskey hint' );
+		} );
+	} );
 
-	var url4 = 'example.org?' + $.param({ 'TEST': 'a b+c d' }); // check for sloppy code from r95332 :)
-	strictEqual( mw.util.getParamValue( 'TEST', url4 ), 'a b+c d', 'Bug 30441: getParamValue must understand "+" encoding of space (multiple spaces)' );
-});
+	QUnit.test( '$content', 2, function ( assert ) {
+		assert.ok( mw.util.$content instanceof jQuery, 'mw.util.$content instance of jQuery' );
+		assert.strictEqual( mw.util.$content.length, 1, 'mw.util.$content must have length of 1' );
+	} );
 
-test( 'tooltipAccessKey', function() {
-	expect(3);
+	/**
+	 * Portlet names are prefixed with 'p-test' to avoid conflict with core
+	 * when running the test suite under a wiki page.
+	 * Previously, test elements where invisible to the selector since only
+	 * one element can have a given id.
+	 */
+	QUnit.test( 'addPortletLink', 13, function ( assert ) {
+		var pTestTb, pCustom, vectorTabs, tbRL, cuQuux, $cuQuux, tbMW, $tbMW, tbRLDM, caFoo,
+			addedAfter, tbRLDMnonexistentid, tbRLDMemptyjquery;
 
-	equal( typeof mw.util.tooltipAccessKeyPrefix, 'string', 'mw.util.tooltipAccessKeyPrefix must be a string' );
-	ok( mw.util.tooltipAccessKeyRegexp instanceof RegExp, 'mw.util.tooltipAccessKeyRegexp instance of RegExp' );
-	ok( mw.util.updateTooltipAccessKeys, 'mw.util.updateTooltipAccessKeys' );
-});
+		pTestTb = '\
+		<div class="portlet" id="p-test-tb">\
+			<h3>Toolbox</h3>\
+			<ul class="body"></ul>\
+		</div>';
+		pCustom = '\
+		<div class="portlet" id="p-test-custom">\
+			<h3>Views</h3>\
+			<ul class="body">\
+				<li id="c-foo"><a href="#">Foo</a></li>\
+				<li id="c-barmenu">\
+					<ul>\
+						<li id="c-bar-baz"><a href="#">Baz</a></a>\
+					</ul>\
+				</li>\
+			</ul>\
+		</div>';
+		vectorTabs = '\
+		<div id="p-test-views" class="vectorTabs">\
+			<h3>Views</h3>\
+			<ul></ul>\
+		</div>';
 
-test( '$content', function() {
-	expect(2);
+		$( '#qunit-fixture' ).append( pTestTb, pCustom, vectorTabs );
 
-	ok( mw.util.$content instanceof jQuery, 'mw.util.$content instance of jQuery' );
-	strictEqual( mw.util.$content.length, 1, 'mw.util.$content must have length of 1' );
-});
+		tbRL = mw.util.addPortletLink( 'p-test-tb', '//mediawiki.org/wiki/ResourceLoader',
+			'ResourceLoader', 't-rl', 'More info about ResourceLoader on MediaWiki.org ', 'l'
+		);
 
+		assert.ok( $.isDomElement( tbRL ), 'addPortletLink returns a valid DOM Element according to $.isDomElement' );
 
-/**
- * Portlet names are prefixed with 'p-test' to avoid conflict with core
- * when running the test suite under a wiki page.
- * Previously, test elements where invisible to the selector since only
- * one element can have a given id. 
- */
-test( 'addPortletLink', function() {
-	expect(7);
-
-	var mwPanel = '<div id="mw-panel" class="noprint">\
-	<h5>Toolbox</h5>\
-	<div class="portlet" id="p-test-tb">\
-		<ul class="body"></ul>\
-	</div>\
-</div>',
-	vectorTabs = '<div id="p-test-views" class="vectorTabs">\
-	<h5>Views</h5>\
-	<ul></ul>\
-</div>',
-	$mwPanel = $(mwPanel).appendTo( '#qunit-fixture' ),
-	$vectorTabs = $(vectorTabs).appendTo( '#qunit-fixture' );
-
-	var tbRL = mw.util.addPortletLink( 'p-test-tb', '//mediawiki.org/wiki/ResourceLoader',
-		'ResourceLoader', 't-rl', 'More info about ResourceLoader on MediaWiki.org ', 'l' );
-
-	ok( $.isDomElement( tbRL ), 'addPortletLink returns a valid DOM Element according to $.isDomElement' );
-
-	var	tbMW = mw.util.addPortletLink( 'p-test-tb', '//mediawiki.org/',
-			'MediaWiki.org', 't-mworg', 'Go to MediaWiki.org ', 'm', tbRL ),
+		tbMW = mw.util.addPortletLink( 'p-test-tb', '//mediawiki.org/',
+			'MediaWiki.org', 't-mworg', 'Go to MediaWiki.org ', 'm', tbRL );
 		$tbMW = $( tbMW );
 
+		assert.propEqual(
+			$tbMW.getAttrs(),
+			{
+				id: 't-mworg'
+			},
+			'Validate attributes of created element'
+		);
 
-	equal( $tbMW.attr( 'id' ), 't-mworg', 'Link has correct ID set' );
-	equal( $tbMW.closest( '.portlet' ).attr( 'id' ), 'p-test-tb', 'Link was inserted within correct portlet' );
-	equal( $tbMW.next().attr( 'id' ), 't-rl', 'Link is in the correct position (by passing nextnode)' );
+		assert.propEqual(
+			$tbMW.find( 'a' ).getAttrs(),
+			{
+				href: '//mediawiki.org/',
+				title: 'Go to MediaWiki.org [ctrl-alt-m]',
+				accesskey: 'm'
+			},
+			'Validate attributes of anchor tag in created element'
+		);
 
-	var tbRLDM = mw.util.addPortletLink( 'p-test-tb', '//mediawiki.org/wiki/RL/DM',
-		'Default modules', 't-rldm', 'List of all default modules ', 'd', '#t-rl' );
+		assert.equal( $tbMW.closest( '.portlet' ).attr( 'id' ), 'p-test-tb', 'Link was inserted within correct portlet' );
+		assert.strictEqual( $tbMW.next()[0], tbRL, 'Link is in the correct position (by passing nextnode)' );
 
-	equal( $( tbRLDM ).next().attr( 'id' ), 't-rl', 'Link is in the correct position (by passing CSS selector)' );
+		cuQuux = mw.util.addPortletLink( 'p-test-custom', '#', 'Quux', null, 'Example [shift-x]', 'q' );
+		$cuQuux = $( cuQuux );
 
-	var caFoo = mw.util.addPortletLink( 'p-test-views', '#', 'Foo' );
+		assert.equal( $cuQuux.find( 'a' ).attr( 'title' ), 'Example [ctrl-alt-q]', 'Existing accesskey is stripped and updated' );
 
-	strictEqual( $tbMW.find( 'span').length, 0, 'No <span> element should be added for porlets without vectorTabs class.' );
-	strictEqual( $( caFoo ).find( 'span').length, 1, 'A <span> element should be added for porlets with vectorTabs class.' );
+		assert.equal(
+			$( '#p-test-custom #c-barmenu ul li' ).length,
+			1,
+			'addPortletLink did not add the item to all <ul> elements in the portlet (bug 35082)'
+		);
 
-	// Clean up
-	$( [tbRL, tbMW, tbRLDM, caFoo] ).remove();
-});
+		tbRLDM = mw.util.addPortletLink( 'p-test-tb', '//mediawiki.org/wiki/RL/DM',
+			'Default modules', 't-rldm', 'List of all default modules ', 'd', '#t-rl' );
 
-test( 'jsMessage', function() {
-	expect(1);
+		assert.equal( $( tbRLDM ).next().attr( 'id' ), 't-rl', 'Link is in the correct position (by passing CSS selector)' );
 
-	var a = mw.util.jsMessage( "MediaWiki is <b>Awesome</b>." );
-	ok( a, 'Basic checking of return value' );
+		caFoo = mw.util.addPortletLink( 'p-test-views', '#', 'Foo' );
 
-	// Clean up
-	$( '#mw-js-message' ).remove();
-});
+		assert.strictEqual( $tbMW.find( 'span' ).length, 0, 'No <span> element should be added for porlets without vectorTabs class.' );
+		assert.strictEqual( $( caFoo ).find( 'span' ).length, 1, 'A <span> element should be added for porlets with vectorTabs class.' );
 
-test( 'validateEmail', function() {
-	expect(6);
+		addedAfter = mw.util.addPortletLink( 'p-test-tb', '#', 'After foo', 'post-foo', 'After foo', null, $( tbRL ) );
+		assert.strictEqual( $( addedAfter ).next()[0], tbRL, 'Link is in the correct position (by passing a jQuery object as nextnode)' );
 
-	strictEqual( mw.util.validateEmail( "" ), null, 'Should return null for empty string ' );
-	strictEqual( mw.util.validateEmail( "user@localhost" ), true, 'Return true for a valid e-mail address' );
+		// test case - nonexistent id as next node
+		tbRLDMnonexistentid = mw.util.addPortletLink( 'p-test-tb', '//mediawiki.org/wiki/RL/DM',
+			'Default modules', 't-rldm-nonexistent', 'List of all default modules ', 'd', '#t-rl-nonexistent' );
 
-	// testEmailWithCommasAreInvalids
-	strictEqual( mw.util.validateEmail( "user,foo@example.org" ), false, 'Emails with commas are invalid' );
-	strictEqual( mw.util.validateEmail( "userfoo@ex,ample.org" ), false, 'Emails with commas are invalid' );
+		assert.equal( tbRLDMnonexistentid, $( '#p-test-tb li:last' )[0], 'Nonexistent id as nextnode adds the portlet at end' );
 
-	// testEmailWithHyphens
-	strictEqual( mw.util.validateEmail( "user-foo@example.org" ), true, 'Emails may contain a hyphen' );
-	strictEqual( mw.util.validateEmail( "userfoo@ex-ample.org" ), true, 'Emails may contain a hyphen' );
-});
+		// test case - empty jquery object as next node
+		tbRLDMemptyjquery = mw.util.addPortletLink( 'p-test-tb', '//mediawiki.org/wiki/RL/DM',
+			'Default modules', 't-rldm-empty-jquery', 'List of all default modules ', 'd', $( '#t-rl-nonexistent' ) );
 
-test( 'isIPv6Address', function() {
-	expect(40);
+		assert.equal( tbRLDMemptyjquery, $( '#p-test-tb li:last' )[0], 'Empty jquery as nextnode adds the portlet at end' );
+	} );
 
-	// Shortcuts
-	var	assertFalseIPv6 = function( addy, summary ) {
-			return strictEqual( mw.util.isIPv6Address( addy ), false, summary );
-		},
-		assertTrueIPv6 = function( addy, summary ) {
-			return strictEqual( mw.util.isIPv6Address( addy ), true, summary );
-		};
+	QUnit.test( 'jsMessage', 1, function ( assert ) {
+		var a = mw.util.jsMessage( 'MediaWiki is <b>Awesome</b>.' );
+		assert.ok( a, 'Basic checking of return value' );
 
-	// Based on IPTest.php > testisIPv6
-	assertFalseIPv6( ':fc:100::', 'IPv6 starting with lone ":"' );
-	assertFalseIPv6( 'fc:100:::', 'IPv6 ending with a ":::"' );
-	assertFalseIPv6( 'fc:300', 'IPv6 with only 2 words' );
-	assertFalseIPv6( 'fc:100:300', 'IPv6 with only 3 words' );
+		// Clean up
+		$( '#mw-js-message' ).remove();
+	} );
 
-	$.each(
-	['fc:100::',
-	'fc:100:a::',
-	'fc:100:a:d::',
-	'fc:100:a:d:1::',
-	'fc:100:a:d:1:e::',
-	'fc:100:a:d:1:e:ac::'], function( i, addy ){
-		assertTrueIPv6( addy, addy + ' is a valid IP' );
-	});
+	QUnit.test( 'validateEmail', 6, function ( assert ) {
+		assert.strictEqual( mw.util.validateEmail( '' ), null, 'Should return null for empty string ' );
+		assert.strictEqual( mw.util.validateEmail( 'user@localhost' ), true, 'Return true for a valid e-mail address' );
 
-	assertFalseIPv6( 'fc:100:a:d:1:e:ac:0::', 'IPv6 with 8 words ending with "::"' );
-	assertFalseIPv6( 'fc:100:a:d:1:e:ac:0:1::', 'IPv6 with 9 words ending with "::"' );
+		// testEmailWithCommasAreInvalids
+		assert.strictEqual( mw.util.validateEmail( 'user,foo@example.org' ), false, 'Emails with commas are invalid' );
+		assert.strictEqual( mw.util.validateEmail( 'userfoo@ex,ample.org' ), false, 'Emails with commas are invalid' );
 
-	assertFalseIPv6( ':::' );
-	assertFalseIPv6( '::0:', 'IPv6 ending in a lone ":"' );
+		// testEmailWithHyphens
+		assert.strictEqual( mw.util.validateEmail( 'user-foo@example.org' ), true, 'Emails may contain a hyphen' );
+		assert.strictEqual( mw.util.validateEmail( 'userfoo@ex-ample.org' ), true, 'Emails may contain a hyphen' );
+	} );
 
-	assertTrueIPv6( '::', 'IPv6 zero address' );
-	$.each(
-	['::0',
-	'::fc',
-	'::fc:100',
-	'::fc:100:a',
-	'::fc:100:a:d',
-	'::fc:100:a:d:1',
-	'::fc:100:a:d:1:e',
-	'::fc:100:a:d:1:e:ac',
+	QUnit.test( 'isIPv6Address', 40, function ( assert ) {
+		// Shortcuts
+		function assertFalseIPv6( addy, summary ) {
+			return assert.strictEqual( mw.util.isIPv6Address( addy ), false, summary );
+		}
 
-	'fc:100:a:d:1:e:ac:0'], function( i, addy ){
-		assertTrueIPv6( addy, addy + ' is a valid IP' );
-	});
+		function assertTrueIPv6( addy, summary ) {
+			return assert.strictEqual( mw.util.isIPv6Address( addy ), true, summary );
+		}
 
-	assertFalseIPv6( '::fc:100:a:d:1:e:ac:0', 'IPv6 with "::" and 8 words' );
-	assertFalseIPv6( '::fc:100:a:d:1:e:ac:0:1', 'IPv6 with 9 words' );
+		// Based on IPTest.php > testisIPv6
+		assertFalseIPv6( ':fc:100::', 'IPv6 starting with lone ":"' );
+		assertFalseIPv6( 'fc:100:::', 'IPv6 ending with a ":::"' );
+		assertFalseIPv6( 'fc:300', 'IPv6 with only 2 words' );
+		assertFalseIPv6( 'fc:100:300', 'IPv6 with only 3 words' );
 
-	assertFalseIPv6( ':fc::100', 'IPv6 starting with lone ":"' );
-	assertFalseIPv6( 'fc::100:', 'IPv6 ending with lone ":"' );
-	assertFalseIPv6( 'fc:::100', 'IPv6 with ":::" in the middle' );
+		$.each(
+			['fc:100::',
+				'fc:100:a::',
+				'fc:100:a:d::',
+				'fc:100:a:d:1::',
+				'fc:100:a:d:1:e::',
+				'fc:100:a:d:1:e:ac::'], function ( i, addy ) {
+				assertTrueIPv6( addy, addy + ' is a valid IP' );
+			} );
 
-	assertTrueIPv6( 'fc::100', 'IPv6 with "::" and 2 words' );
-	assertTrueIPv6( 'fc::100:a', 'IPv6 with "::" and 3 words' );
-	assertTrueIPv6( 'fc::100:a:d', 'IPv6 with "::" and 4 words' );
-	assertTrueIPv6( 'fc::100:a:d:1', 'IPv6 with "::" and 5 words' );
-	assertTrueIPv6( 'fc::100:a:d:1:e', 'IPv6 with "::" and 6 words' );
-	assertTrueIPv6( 'fc::100:a:d:1:e:ac', 'IPv6 with "::" and 7 words' );
-	assertTrueIPv6( '2001::df', 'IPv6 with "::" and 2 words' );
-	assertTrueIPv6( '2001:5c0:1400:a::df', 'IPv6 with "::" and 5 words' );
-	assertTrueIPv6( '2001:5c0:1400:a::df:2', 'IPv6 with "::" and 6 words' );
+		assertFalseIPv6( 'fc:100:a:d:1:e:ac:0::', 'IPv6 with 8 words ending with "::"' );
+		assertFalseIPv6( 'fc:100:a:d:1:e:ac:0:1::', 'IPv6 with 9 words ending with "::"' );
 
-	assertFalseIPv6( 'fc::100:a:d:1:e:ac:0', 'IPv6 with "::" and 8 words' );
-	assertFalseIPv6( 'fc::100:a:d:1:e:ac:0:1', 'IPv6 with 9 words' );
-});
+		assertFalseIPv6( ':::' );
+		assertFalseIPv6( '::0:', 'IPv6 ending in a lone ":"' );
 
-test( 'isIPv4Address', function() {
-	expect(11);
+		assertTrueIPv6( '::', 'IPv6 zero address' );
+		$.each(
+			['::0',
+				'::fc',
+				'::fc:100',
+				'::fc:100:a',
+				'::fc:100:a:d',
+				'::fc:100:a:d:1',
+				'::fc:100:a:d:1:e',
+				'::fc:100:a:d:1:e:ac',
 
-	// Shortcuts
-	var	assertFalseIPv4 = function( addy, summary ) {
-			return strictEqual( mw.util.isIPv4Address( addy ), false, summary );
-		},
-		assertTrueIPv4 = function( addy, summary ) {
-			return strictEqual( mw.util.isIPv4Address( addy ), true, summary );
-		};
+				'fc:100:a:d:1:e:ac:0'], function ( i, addy ) {
+				assertTrueIPv6( addy, addy + ' is a valid IP' );
+			} );
 
-	// Based on IPTest.php > testisIPv4
-	assertFalseIPv4( false, 'Boolean false is not an IP' );
-	assertFalseIPv4( true, 'Boolean true is not an IP' );
-	assertFalseIPv4( '', 'Empty string is not an IP' );
-	assertFalseIPv4( 'abc', '"abc" is not an IP' );
-	assertFalseIPv4( ':', 'Colon is not an IP' );
-	assertFalseIPv4( '124.24.52', 'IPv4 not enough quads' );
-	assertFalseIPv4( '24.324.52.13', 'IPv4 out of range' );
-	assertFalseIPv4( '.24.52.13', 'IPv4 starts with period' );
+		assertFalseIPv6( '::fc:100:a:d:1:e:ac:0', 'IPv6 with "::" and 8 words' );
+		assertFalseIPv6( '::fc:100:a:d:1:e:ac:0:1', 'IPv6 with 9 words' );
 
-	assertTrueIPv4( '124.24.52.13', '124.24.52.134 is a valid IP' );
-	assertTrueIPv4( '1.24.52.13', '1.24.52.13 is a valid IP' );
-	assertFalseIPv4( '74.24.52.13/20', 'IPv4 ranges are not recogzized as valid IPs' );
-});
+		assertFalseIPv6( ':fc::100', 'IPv6 starting with lone ":"' );
+		assertFalseIPv6( 'fc::100:', 'IPv6 ending with lone ":"' );
+		assertFalseIPv6( 'fc:::100', 'IPv6 with ":::" in the middle' );
+
+		assertTrueIPv6( 'fc::100', 'IPv6 with "::" and 2 words' );
+		assertTrueIPv6( 'fc::100:a', 'IPv6 with "::" and 3 words' );
+		assertTrueIPv6( 'fc::100:a:d', 'IPv6 with "::" and 4 words' );
+		assertTrueIPv6( 'fc::100:a:d:1', 'IPv6 with "::" and 5 words' );
+		assertTrueIPv6( 'fc::100:a:d:1:e', 'IPv6 with "::" and 6 words' );
+		assertTrueIPv6( 'fc::100:a:d:1:e:ac', 'IPv6 with "::" and 7 words' );
+		assertTrueIPv6( '2001::df', 'IPv6 with "::" and 2 words' );
+		assertTrueIPv6( '2001:5c0:1400:a::df', 'IPv6 with "::" and 5 words' );
+		assertTrueIPv6( '2001:5c0:1400:a::df:2', 'IPv6 with "::" and 6 words' );
+
+		assertFalseIPv6( 'fc::100:a:d:1:e:ac:0', 'IPv6 with "::" and 8 words' );
+		assertFalseIPv6( 'fc::100:a:d:1:e:ac:0:1', 'IPv6 with 9 words' );
+	} );
+
+	QUnit.test( 'isIPv4Address', 11, function ( assert ) {
+		// Shortcuts
+		function assertFalseIPv4( addy, summary ) {
+			assert.strictEqual( mw.util.isIPv4Address( addy ), false, summary );
+		}
+
+		function assertTrueIPv4( addy, summary ) {
+			assert.strictEqual( mw.util.isIPv4Address( addy ), true, summary );
+		}
+
+		// Based on IPTest.php > testisIPv4
+		assertFalseIPv4( false, 'Boolean false is not an IP' );
+		assertFalseIPv4( true, 'Boolean true is not an IP' );
+		assertFalseIPv4( '', 'Empty string is not an IP' );
+		assertFalseIPv4( 'abc', '"abc" is not an IP' );
+		assertFalseIPv4( ':', 'Colon is not an IP' );
+		assertFalseIPv4( '124.24.52', 'IPv4 not enough quads' );
+		assertFalseIPv4( '24.324.52.13', 'IPv4 out of range' );
+		assertFalseIPv4( '.24.52.13', 'IPv4 starts with period' );
+
+		assertTrueIPv4( '124.24.52.13', '124.24.52.134 is a valid IP' );
+		assertTrueIPv4( '1.24.52.13', '1.24.52.13 is a valid IP' );
+		assertFalseIPv4( '74.24.52.13/20', 'IPv4 ranges are not recogzized as valid IPs' );
+	} );
+}( mediaWiki, jQuery ) );

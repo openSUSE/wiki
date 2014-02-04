@@ -1,6 +1,6 @@
 <?php
 /**
- * See docs/deferred.txt
+ * Updater for link tracking tables after a page edit.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,14 +17,19 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  * http://www.gnu.org/copyleft/gpl.html
  *
+ * @file
+ */
+
+/**
+ * See docs/deferred.txt
+ *
  * @todo document (e.g. one-sentence top-level class description).
  */
-class LinksUpdate {
+class LinksUpdate extends SqlDataUpdate {
 
-	/**@{{
-	 * @private
-	 */
-	var $mId,            //!< Page ID of the article linked from
+	// @todo make members protected, but make sure extensions don't break
+
+	public $mId,         //!< Page ID of the article linked from
 		$mTitle,         //!< Title object of the article linked from
 		$mParserOutput,  //!< Parser output
 		$mLinks,         //!< Map of title strings to IDs for the links in the document
@@ -37,7 +42,16 @@ class LinksUpdate {
 		$mDb,            //!< Database connection reference
 		$mOptions,       //!< SELECT options to be used (array)
 		$mRecursive;     //!< Whether to queue jobs for recursive updates
-	/**@}}*/
+
+	/**
+	 * @var null|array Added links if calculated.
+	 */
+	private $linkInsertions = null;
+
+	/**
+	 * @var null|array Deleted links if calculated.
+	 */
+	private $linkDeletions = null;
 
 	/**
 	 * Constructor
@@ -45,25 +59,30 @@ class LinksUpdate {
 	 * @param $title Title of the page we're updating
 	 * @param $parserOutput ParserOutput: output from a full parse of this page
 	 * @param $recursive Boolean: queue jobs for recursive updates?
+	 * @throws MWException
 	 */
 	function __construct( $title, $parserOutput, $recursive = true ) {
-		global $wgAntiLockFlags;
+		parent::__construct( false ); // no implicit transaction
 
-		if ( $wgAntiLockFlags & ALF_NO_LINK_LOCK ) {
-			$this->mOptions = array();
-		} else {
-			$this->mOptions = array( 'FOR UPDATE' );
-		}
-		$this->mDb = wfGetDB( DB_MASTER );
-
-		if ( !is_object( $title ) ) {
+		if ( !( $title instanceof Title ) ) {
 			throw new MWException( "The calling convention to LinksUpdate::LinksUpdate() has changed. " .
 				"Please see Article::editUpdates() for an invocation example.\n" );
 		}
+
+		if ( !( $parserOutput instanceof ParserOutput ) ) {
+			throw new MWException( "The calling convention to LinksUpdate::__construct() has changed. " .
+				"Please see WikiPage::doEditUpdates() for an invocation example.\n" );
+		}
+
 		$this->mTitle = $title;
 		$this->mId = $title->getArticleID();
 
+		if ( !$this->mId ) {
+			throw new MWException( "The Title object did not provide an article ID. Perhaps the page doesn't exist?" );
+		}
+
 		$this->mParserOutput = $parserOutput;
+
 		$this->mLinks = $parserOutput->getLinks();
 		$this->mImages = $parserOutput->getImages();
 		$this->mTemplates = $parserOutput->getTemplates();
@@ -103,14 +122,8 @@ class LinksUpdate {
 	 * Update link tables with outgoing links from an updated article
 	 */
 	public function doUpdate() {
-		global $wgUseDumbLinkUpdate;
-
 		wfRunHooks( 'LinksUpdate', array( &$this ) );
-		if ( $wgUseDumbLinkUpdate ) {
-			$this->doDumbUpdate();
-		} else {
-			$this->doIncrementalUpdate();
-		}
+		$this->doIncrementalUpdate();
 		wfRunHooks( 'LinksUpdateComplete', array( &$this ) );
 	}
 
@@ -119,8 +132,9 @@ class LinksUpdate {
 
 		# Page links
 		$existing = $this->getExistingLinks();
-		$this->incrTableUpdate( 'pagelinks', 'pl', $this->getLinkDeletions( $existing ),
-			$this->getLinkInsertions( $existing ) );
+		$this->linkDeletions = $this->getLinkDeletions( $existing );
+		$this->linkInsertions = $this->getLinkInsertions( $existing );
+		$this->incrTableUpdate( 'pagelinks', 'pl', $this->linkDeletions, $this->linkInsertions );
 
 		# Image links
 		$existing = $this->getExistingImages();
@@ -189,113 +203,36 @@ class LinksUpdate {
 	}
 
 	/**
-	 * Link update which clears the previous entries and inserts new ones
-	 * May be slower or faster depending on level of lock contention and write speed of DB
-	 * Also useful where link table corruption needs to be repaired, e.g. in refreshLinks.php
+	 * Queue recursive jobs for this page
+	 *
+	 * Which means do LinksUpdate on all templates
+	 * that include the current page, using the job queue.
 	 */
-	protected function doDumbUpdate() {
-		wfProfileIn( __METHOD__ );
-
-		# Refresh category pages and image description pages
-		$existing = $this->getExistingCategories();
-		$categoryInserts = array_diff_assoc( $this->mCategories, $existing );
-		$categoryDeletes = array_diff_assoc( $existing, $this->mCategories );
-		$categoryUpdates = $categoryInserts + $categoryDeletes;
-		$existing = $this->getExistingImages();
-		$imageUpdates = array_diff_key( $existing, $this->mImages ) + array_diff_key( $this->mImages, $existing );
-
-		$this->dumbTableUpdate( 'pagelinks',     $this->getLinkInsertions(),     'pl_from' );
-		$this->dumbTableUpdate( 'imagelinks',    $this->getImageInsertions(),    'il_from' );
-		$this->dumbTableUpdate( 'categorylinks', $this->getCategoryInsertions(), 'cl_from' );
-		$this->dumbTableUpdate( 'templatelinks', $this->getTemplateInsertions(), 'tl_from' );
-		$this->dumbTableUpdate( 'externallinks', $this->getExternalInsertions(), 'el_from' );
-		$this->dumbTableUpdate( 'langlinks',     $this->getInterlangInsertions(),'ll_from' );
-		$this->dumbTableUpdate( 'iwlinks',       $this->getInterwikiInsertions(),'iwl_from' );
-		$this->dumbTableUpdate( 'page_props',    $this->getPropertyInsertions(), 'pp_page' );
-
-		# Update the cache of all the category pages and image description
-		# pages which were changed, and fix the category table count
-		$this->invalidateCategories( $categoryUpdates );
-		$this->updateCategoryCounts( $categoryInserts, $categoryDeletes );
-		$this->invalidateImageDescriptions( $imageUpdates );
-
-		# Refresh links of all pages including this page
-		# This will be in a separate transaction
-		if ( $this->mRecursive ) {
-			$this->queueRecursiveJobs();
-		}
-
-		wfProfileOut( __METHOD__ );
-	}
-
 	function queueRecursiveJobs() {
-		global $wgUpdateRowsPerJob;
-		wfProfileIn( __METHOD__ );
-
-		$cache = $this->mTitle->getBacklinkCache();
-		$batches = $cache->partition( 'templatelinks', $wgUpdateRowsPerJob );
-		if ( !$batches ) {
-			wfProfileOut( __METHOD__ );
-			return;
-		}
-		$jobs = array();
-		foreach ( $batches as $batch ) {
-			list( $start, $end ) = $batch;
-			$params = array(
-				'table' => 'templatelinks',
-				'start' => $start,
-				'end' => $end,
-			);
-			$jobs[] = new RefreshLinksJob2( $this->mTitle, $params );
-		}
-		Job::batchInsert( $jobs );
-
-		wfProfileOut( __METHOD__ );
+		self::queueRecursiveJobsForTable( $this->mTitle, 'templatelinks' );
 	}
 
 	/**
-	 * Invalidate the cache of a list of pages from a single namespace
+	 * Queue a RefreshLinks job for any table.
 	 *
-	 * @param $namespace Integer
-	 * @param $dbkeys Array
+	 * @param Title $title Title to do job for
+	 * @param String $table Table to use (e.g. 'templatelinks')
 	 */
-	function invalidatePages( $namespace, $dbkeys ) {
-		if ( !count( $dbkeys ) ) {
-			return;
+	public static function queueRecursiveJobsForTable( Title $title, $table ) {
+		wfProfileIn( __METHOD__ );
+		if ( $title->getBacklinkCache()->hasLinks( $table ) ) {
+			$job = new RefreshLinksJob2(
+				$title,
+				array(
+					'table' => $table,
+				) + Job::newRootJobParams( // "overall" refresh links job info
+					"refreshlinks:{$table}:{$title->getPrefixedText()}"
+				)
+			);
+			JobQueueGroup::singleton()->push( $job );
+			JobQueueGroup::singleton()->deduplicateRootJob( $job );
 		}
-
-		/**
-		 * Determine which pages need to be updated
-		 * This is necessary to prevent the job queue from smashing the DB with
-		 * large numbers of concurrent invalidations of the same page
-		 */
-		$now = $this->mDb->timestamp();
-		$ids = array();
-		$res = $this->mDb->select( 'page', array( 'page_id' ),
-			array(
-				'page_namespace' => $namespace,
-				'page_title IN (' . $this->mDb->makeList( $dbkeys ) . ')',
-				'page_touched < ' . $this->mDb->addQuotes( $now )
-			), __METHOD__
-		);
-		foreach ( $res as $row ) {
-			$ids[] = $row->page_id;
-		}
-		if ( !count( $ids ) ) {
-			return;
-		}
-
-		/**
-		 * Do the update
-		 * We still need the page_touched condition, in case the row has changed since
-		 * the non-locking select above.
-		 */
-		$this->mDb->update( 'page', array( 'page_touched' => $now ),
-			array(
-				'page_id IN (' . $this->mDb->makeList( $ids ) . ')',
-				'page_touched < ' . $this->mDb->addQuotes( $now )
-			), __METHOD__
-		);
+		wfProfileOut( __METHOD__ );
 	}
 
 	/**
@@ -307,8 +244,8 @@ class LinksUpdate {
 
 	/**
 	 * Update all the appropriate counts in the category table.
-	 * @param $added array associative array of category name => sort key
-	 * @param $deleted array associative array of category name => sort key
+	 * @param array $added associative array of category name => sort key
+	 * @param array $deleted associative array of category name => sort key
 	 */
 	function updateCategoryCounts( $added, $deleted ) {
 		$a = WikiPage::factory( $this->mTitle );
@@ -322,21 +259,6 @@ class LinksUpdate {
 	 */
 	function invalidateImageDescriptions( $images ) {
 		$this->invalidatePages( NS_FILE, array_keys( $images ) );
-	}
-
-	/**
-	 * @param $table
-	 * @param $insertions
-	 * @param $fromField
-	 */
-	private function dumbTableUpdate( $table, $insertions, $fromField ) {
-		$this->mDb->delete( $table, array( $fromField => $this->mId ), __METHOD__ );
-		if ( count( $insertions ) ) {
-			# The link array was constructed without FOR UPDATE, so there may
-			# be collisions.  This may cause minor link table inconsistencies,
-			# which is better than crippling the site with lock contention.
-			$this->mDb->insert( $table, $insertions, __METHOD__, array( 'IGNORE' ) );
-		}
 	}
 
 	/**
@@ -384,6 +306,7 @@ class LinksUpdate {
 		}
 		if ( count( $insertions ) ) {
 			$this->mDb->insert( $table, $insertions, __METHOD__, 'IGNORE' );
+			wfRunHooks( 'LinksUpdateAfterInsert', array( $this, $table, $insertions ) );
 		}
 	}
 
@@ -395,15 +318,15 @@ class LinksUpdate {
 	 */
 	private function getLinkInsertions( $existing = array() ) {
 		$arr = array();
-		foreach( $this->mLinks as $ns => $dbkeys ) {
+		foreach ( $this->mLinks as $ns => $dbkeys ) {
 			$diffs = isset( $existing[$ns] )
 				? array_diff_key( $dbkeys, $existing[$ns] )
 				: $dbkeys;
 			foreach ( $diffs as $dbk => $id ) {
 				$arr[] = array(
-					'pl_from'      => $this->mId,
+					'pl_from' => $this->mId,
 					'pl_namespace' => $ns,
-					'pl_title'     => $dbk
+					'pl_title' => $dbk
 				);
 			}
 		}
@@ -417,13 +340,13 @@ class LinksUpdate {
 	 */
 	private function getTemplateInsertions( $existing = array() ) {
 		$arr = array();
-		foreach( $this->mTemplates as $ns => $dbkeys ) {
+		foreach ( $this->mTemplates as $ns => $dbkeys ) {
 			$diffs = isset( $existing[$ns] ) ? array_diff_key( $dbkeys, $existing[$ns] ) : $dbkeys;
 			foreach ( $diffs as $dbk => $id ) {
 				$arr[] = array(
-					'tl_from'      => $this->mId,
+					'tl_from' => $this->mId,
 					'tl_namespace' => $ns,
-					'tl_title'     => $dbk
+					'tl_title' => $dbk
 				);
 			}
 		}
@@ -439,10 +362,10 @@ class LinksUpdate {
 	private function getImageInsertions( $existing = array() ) {
 		$arr = array();
 		$diffs = array_diff_key( $this->mImages, $existing );
-		foreach( $diffs as $iname => $dummy ) {
+		foreach ( $diffs as $iname => $dummy ) {
 			$arr[] = array(
 				'il_from' => $this->mId,
-				'il_to'   => $iname
+				'il_to' => $iname
 			);
 		}
 		return $arr;
@@ -456,12 +379,13 @@ class LinksUpdate {
 	private function getExternalInsertions( $existing = array() ) {
 		$arr = array();
 		$diffs = array_diff_key( $this->mExternals, $existing );
-		foreach( $diffs as $url => $dummy ) {
-			foreach( wfMakeUrlIndexes( $url ) as $index ) {
+		foreach ( $diffs as $url => $dummy ) {
+			foreach ( wfMakeUrlIndexes( $url ) as $index ) {
 				$arr[] = array(
-					'el_from'   => $this->mId,
-					'el_to'     => $url,
-					'el_index'  => $index,
+					'el_id' => $this->mDb->nextSequenceValue( 'externallinks_el_id_seq' ),
+					'el_from' => $this->mId,
+					'el_to' => $url,
+					'el_index' => $index,
 				);
 			}
 		}
@@ -471,7 +395,7 @@ class LinksUpdate {
 	/**
 	 * Get an array of category insertions
 	 *
-	 * @param $existing array mapping existing category names to sort keys. If both
+	 * @param array $existing mapping existing category names to sort keys. If both
 	 * match a link in $this, the link will be omitted from the output
 	 *
 	 * @return array
@@ -500,8 +424,8 @@ class LinksUpdate {
 				$this->mTitle->getCategorySortkey( $prefix ) );
 
 			$arr[] = array(
-				'cl_from'    => $this->mId,
-				'cl_to'      => $name,
+				'cl_from' => $this->mId,
+				'cl_to' => $name,
 				'cl_sortkey' => $sortkey,
 				'cl_timestamp' => $this->mDb->timestamp(),
 				'cl_sortkey_prefix' => $prefix,
@@ -515,17 +439,17 @@ class LinksUpdate {
 	/**
 	 * Get an array of interlanguage link insertions
 	 *
-	 * @param $existing Array mapping existing language codes to titles
+	 * @param array $existing mapping existing language codes to titles
 	 *
 	 * @return array
 	 */
 	private function getInterlangInsertions( $existing = array() ) {
 		$diffs = array_diff_assoc( $this->mInterlangs, $existing );
 		$arr = array();
-		foreach( $diffs as $lang => $title ) {
+		foreach ( $diffs as $lang => $title ) {
 			$arr[] = array(
-				'll_from'  => $this->mId,
-				'll_lang'  => $lang,
+				'll_from' => $this->mId,
+				'll_lang' => $lang,
 				'll_title' => $title
 			);
 		}
@@ -542,9 +466,9 @@ class LinksUpdate {
 		$arr = array();
 		foreach ( $diffs as $name => $value ) {
 			$arr[] = array(
-				'pp_page'      => $this->mId,
-				'pp_propname'  => $name,
-				'pp_value'     => $value,
+				'pp_page' => $this->mId,
+				'pp_propname' => $name,
+				'pp_value' => $value,
 			);
 		}
 		return $arr;
@@ -558,13 +482,13 @@ class LinksUpdate {
 	 */
 	private function getInterwikiInsertions( $existing = array() ) {
 		$arr = array();
-		foreach( $this->mInterwikis as $prefix => $dbkeys ) {
+		foreach ( $this->mInterwikis as $prefix => $dbkeys ) {
 			$diffs = isset( $existing[$prefix] ) ? array_diff_key( $dbkeys, $existing[$prefix] ) : $dbkeys;
 			foreach ( $diffs as $dbk => $id ) {
 				$arr[] = array(
-					'iwl_from'   => $this->mId,
+					'iwl_from' => $this->mId,
 					'iwl_prefix' => $prefix,
-					'iwl_title'  => $dbk
+					'iwl_title' => $dbk
 				);
 			}
 		}
@@ -847,5 +771,123 @@ class LinksUpdate {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Fetch page links added by this LinksUpdate.  Only available after the update is complete.
+	 * @since 1.22
+	 * @return null|array of Titles
+	 */
+	public function getAddedLinks() {
+		if ( $this->linkInsertions === null ) {
+			return null;
+		}
+		$result = array();
+		foreach ( $this->linkInsertions as $insertion ) {
+			$result[] = Title::makeTitle( $insertion[ 'pl_namespace' ], $insertion[ 'pl_title' ] );
+		}
+		return $result;
+	}
+
+	/**
+	 * Fetch page links removed by this LinksUpdate.  Only available after the update is complete.
+	 * @since 1.22
+	 * @return null|array of Titles
+	 */
+	public function getRemovedLinks() {
+		if ( $this->linkDeletions === null ) {
+			return null;
+		}
+		$result = array();
+		foreach ( $this->linkDeletions as $ns => $titles ) {
+			foreach ( $titles as $title => $unused ) {
+				$result[] = Title::makeTitle( $ns, $title );
+			}
+		}
+		return $result;
+	}
+}
+
+/**
+ * Update object handling the cleanup of links tables after a page was deleted.
+ **/
+class LinksDeletionUpdate extends SqlDataUpdate {
+
+	protected $mPage;     //!< WikiPage the wikipage that was deleted
+
+	/**
+	 * Constructor
+	 *
+	 * @param $page WikiPage Page we are updating
+	 * @throws MWException
+	 */
+	function __construct( WikiPage $page ) {
+		parent::__construct( false ); // no implicit transaction
+
+		$this->mPage = $page;
+
+		if ( !$page->exists() ) {
+			throw new MWException( "Page ID not known, perhaps the page doesn't exist?" );
+		}
+	}
+
+	/**
+	 * Do some database updates after deletion
+	 */
+	public function doUpdate() {
+		$title = $this->mPage->getTitle();
+		$id = $this->mPage->getId();
+
+		# Delete restrictions for it
+		$this->mDb->delete( 'page_restrictions', array( 'pr_page' => $id ), __METHOD__ );
+
+		# Fix category table counts
+		$cats = array();
+		$res = $this->mDb->select( 'categorylinks', 'cl_to', array( 'cl_from' => $id ), __METHOD__ );
+
+		foreach ( $res as $row ) {
+			$cats[] = $row->cl_to;
+		}
+
+		$this->mPage->updateCategoryCounts( array(), $cats );
+
+		# If using cascading deletes, we can skip some explicit deletes
+		if ( !$this->mDb->cascadingDeletes() ) {
+			# Delete outgoing links
+			$this->mDb->delete( 'pagelinks', array( 'pl_from' => $id ), __METHOD__ );
+			$this->mDb->delete( 'imagelinks', array( 'il_from' => $id ), __METHOD__ );
+			$this->mDb->delete( 'categorylinks', array( 'cl_from' => $id ), __METHOD__ );
+			$this->mDb->delete( 'templatelinks', array( 'tl_from' => $id ), __METHOD__ );
+			$this->mDb->delete( 'externallinks', array( 'el_from' => $id ), __METHOD__ );
+			$this->mDb->delete( 'langlinks', array( 'll_from' => $id ), __METHOD__ );
+			$this->mDb->delete( 'iwlinks', array( 'iwl_from' => $id ), __METHOD__ );
+			$this->mDb->delete( 'redirect', array( 'rd_from' => $id ), __METHOD__ );
+			$this->mDb->delete( 'page_props', array( 'pp_page' => $id ), __METHOD__ );
+		}
+
+		# If using cleanup triggers, we can skip some manual deletes
+		if ( !$this->mDb->cleanupTriggers() ) {
+			# Clean up recentchanges entries...
+			$this->mDb->delete( 'recentchanges',
+				array( 'rc_type != ' . RC_LOG,
+					'rc_namespace' => $title->getNamespace(),
+					'rc_title' => $title->getDBkey() ),
+				__METHOD__ );
+			$this->mDb->delete( 'recentchanges',
+				array( 'rc_type != ' . RC_LOG, 'rc_cur_id' => $id ),
+				__METHOD__ );
+		}
+	}
+
+	/**
+	 * Update all the appropriate counts in the category table.
+	 * @param array $added associative array of category name => sort key
+	 * @param array $deleted associative array of category name => sort key
+	 */
+	function updateCategoryCounts( $added, $deleted ) {
+		$a = WikiPage::factory( $this->mTitle );
+		$a->updateCategoryCounts(
+			array_keys( $added ), array_keys( $deleted )
+		);
 	}
 }

@@ -5,7 +5,7 @@ class LuceneSearch extends SearchEngine {
 	 * Perform a full text search query and return a result set.
 	 *
 	 * @param string $term - Raw search term
-	 * @return LuceneSearchSet
+	 * @return LuceneSearchSet|Status
 	 * @access public
 	 */
 	function searchText( $term ) {
@@ -17,7 +17,7 @@ class LuceneSearch extends SearchEngine {
 	 * Perform a title-only search query and return a result set.
 	 *
 	 * @param string $term - Raw search term
-	 * @return LuceneSearchSet
+	 * @return null
 	 * @access public
 	 */
 	function searchTitle( $term ) {
@@ -30,7 +30,7 @@ class LuceneSearch extends SearchEngine {
 	static function prefixSearch( $ns, $search, $limit, &$results ) {
 		$it = LuceneSearchSet::newFromQuery( 'prefix', $search, $ns, $limit, 0 );
 		$results = array();
-		if( $it ) { // $it can be null
+		if( $it && !$it instanceof Status ) { // $it can be null
 			while( $res = $it->next() ) {
 				$results[] = $res->getTitle()->getPrefixedText();
 			}
@@ -142,6 +142,15 @@ class LuceneSearch extends SearchEngine {
 			$term = $term.' prefix:'.$this->prefix;
 		}
 		return $term;
+	}
+
+	public function supports( $feature ) {
+		switch ( $feature ) {
+		case 'search-update':
+			return false;
+		default:
+			return parent::supports( $feature );
+		}
 	}
 }
 
@@ -421,7 +430,7 @@ class LuceneSearchSet extends SearchResultSet {
 	 * @param int $limit
 	 * @param int $offset
 	 * @param bool $searchAll
-	 * @return array
+	 * @return LuceneSearchSet|Status
 	 * @access public
 	 */
 	static function newFromQuery( $method, $query, $namespaces = array(),
@@ -431,7 +440,6 @@ class LuceneSearchSet extends SearchResultSet {
 
 		global $wgLuceneHost, $wgLucenePort, $wgDBname, $wgMemc;
 		global $wgLuceneSearchVersion, $wgLuceneSearchCacheExpiry;
-		global $wgLuceneSearchTimeout;
 
 		$hosts = $wgLuceneHost;
 		if( $method == 'prefix'){
@@ -449,7 +457,7 @@ class LuceneSearchSet extends SearchResultSet {
 
 		$enctext = rawurlencode( trim( $query ) );
 		$searchUrl = "http://$host:$wgLucenePort/$method/$wgDBname/$enctext?" .
-			wfArrayToCGI( array(
+			wfArrayToCgi( array(
 				'namespaces' => implode( ',', $namespaces ),
 				'offset'     => $offset,
 				'limit'      => $limit,
@@ -469,23 +477,54 @@ class LuceneSearchSet extends SearchResultSet {
 			}
 		}
 
-		// Search server will be in local network but may not trigger checks on
-		// Http::isLocal(), so suppress usage of $wgHTTPProxy if enabled.
-		$httpOpts = array( 'proxy' => false );
+		$work = new PoolCounterWorkViaCallback( 'LuceneSearchRequest', "_lucene:host:$host",
+			array( 'doWork' => function() use ( $host, $searchUrl ) {
+				global $wgLuceneSearchTimeout;
 
-		wfDebug( "Fetching search data from $searchUrl\n" );
-		wfSuppressWarnings();
-		$httpProfile = __METHOD__ . '-contact-' . $host;
-		wfProfileIn( $httpProfile );
-		$data = Http::get( $searchUrl, $wgLuceneSearchTimeout, $httpOpts);
-		wfProfileOut( $httpProfile );
-		wfRestoreWarnings();
-		if( $data === false ) {
+				wfDebug( "Fetching search data from $searchUrl\n" );
+				wfSuppressWarnings();
+				$httpProfile ="LuceneSearchSet::newFromQuery" . '-contact-' . $host;
+				wfProfileIn( $httpProfile );
+
+				// Search server will be in local network but may not trigger checks on
+				// Http::isLocal(), so suppress usage of $wgHTTPProxy if enabled.
+				$req = MWHttpRequest::factory( $searchUrl,
+					array( 'proxy' => false, 'timeout' => $wgLuceneSearchTimeout ) );
+				$status = $req->execute();
+				$content = $req->getContent();
+				$m = array();
+				if( !$status->isGood() ) {
+					$errors = $status->getErrorsArray();
+					foreach( $errors as $err ) {
+						if( isset( $err[0] ) && $err[0] == 'http-timed-out' ) {
+							wfDebugLog( 'mwsearch', "Search timeout requesting $searchUrl" );
+						}
+					}
+					if ( $req->getStatus() == 500
+						&& $req->getResponseHeader( 'Content-Type' ) == 'text/html'
+						&& preg_match( '/<div>([^>]*)<\/div>/i', $content, $m ) )
+					{
+						$status = Status::newFatal( 'mwsearch-backend-error', $m[1] );
+						wfDebugLog( 'mwsearch', 'Search backend error: ' . $m[1] );
+					}
+				} else {
+					$status->value = $content;
+				}
+
+				wfProfileOut( $httpProfile );
+				wfRestoreWarnings();
+				return $status;
+			}, 'error' => function( $status ) {
+				return $status;
+			} ) );
+		$workStatus = $work->execute();
+
+		if( !$workStatus->isGood() ) {
 			// Network error or server error
 			wfProfileOut( __METHOD__ );
-			return null;
+			return $workStatus;
 		} else {
-			$inputLines = explode( "\n", trim( $data ) );
+			$inputLines = explode( "\n", trim( $workStatus->value ) );
 			$resultLines = array_map( 'trim', $inputLines );
 		}
 

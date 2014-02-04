@@ -190,14 +190,14 @@ class SFFormField {
 			if ( $smwgContLang != null ) {
 				$datatypeLabels = $smwgContLang->getDatatypeLabels();
 				$datatypeLabels['enumeration'] = 'enumeration';
-				$propertyTypeLabel = $datatypeLabels[$template_field->getPropertyType()];
-				if ( class_exists( 'SMWDIProperty' ) ) {
-					// "Type:" namespace was removed in SMW 1.6.
-					// TODO: link to Special:Types instead?
-					$propertyTypeStr = $propertyTypeLabel;
-				} else {
-					$propertyTypeStr = SFUtils::linkText( SMW_NS_TYPE, $propertyTypeLabel );
+
+				$propTypeID = $template_field->getPropertyType();
+
+				// Special handling for SMW 1.9
+				if ( $propTypeID == '_str' && !array_key_exists( '_str', $datatypeLabels ) ) {
+					$propTypeID = '_txt';
 				}
+				$propertyTypeStr = $datatypeLabels[$propTypeID];
 			}
 			$text .= Html::rawElement( 'p', null, wfMessage( $propDisplayMsg, $prop_link_text, $propertyTypeStr )->parse() ) . "\n";
 		}
@@ -246,7 +246,8 @@ END;
 			}
 		}
 
-		$text .= "<fieldset class=\"sfCollapsibleFieldset\"><legend>Other parameters</legend>\n";
+		$other_param_text = wfMessage( 'sf_createform_otherparameters' )->escaped();
+		$text .= "<fieldset class=\"sfCollapsibleFieldset\"><legend>$other_param_text</legend>\n";
 		$text .= Html::rawElement( 'div', array( 'class' => 'otherInputParams' ),
 			SFCreateForm::showInputTypeOptions( $cur_input_type, $field_form_text, $paramValues ) ) . "\n";
 		$text .= "</fieldset>\n";
@@ -264,11 +265,31 @@ END;
 	// such templates in form definitions gets more sophisticated
 	function createMarkup( $part_of_multiple, $is_last_field_in_template ) {
 		$text = "";
+		$descPlaceholder = "";
+		$textBeforeField = "";
+
+		if ( array_key_exists( "Description", $this->mFieldArgs ) ) {
+			if ( $this->mFieldArgs['Description'] != '' ) {
+				if ( isset($this->mFieldArgs['DescriptionTooltipMode']) )
+				{
+					$descPlaceholder = ' {{#info:'.$this->mFieldArgs['Description'].'}}';
+				}else{
+					$descPlaceholder = '<br><p class="sfFieldDescription" style="font-size:0.7em; color:gray;">' . $this->mFieldArgs['Description'] . '</p>';
+				}
+			}
+		}
+
+		if ( array_key_exists( "TextBeforeField", $this->mFieldArgs ) ) {
+			if ( $this->mFieldArgs['TextBeforeField'] != '' ) {
+				$textBeforeField = $this->mFieldArgs['TextBeforeField'];
+			}
+		}
+
 		if ( $this->template_field->getLabel() !== '' ) {
 			if ( $part_of_multiple ) {
-				$text .= "'''" . $this->template_field->getLabel() . ":''' ";
+				$text .= "'''" . $textBeforeField . $this->template_field->getLabel() . ":''' $descPlaceholder";
 			} else {
-				$text .= "! " . $this->template_field->getLabel() . ":\n";
+				$text .= "! " . $textBeforeField . $this->template_field->getLabel() . ":$descPlaceholder\n";
 			}
 		}
 		if ( ! $part_of_multiple ) { $text .= "| "; }
@@ -349,6 +370,7 @@ END;
 
 		global $wgParser;
 		foreach ( $other_args as $argname => $argvalue ) {
+
 			if ( is_string( $argvalue ) ) {
 				$other_args[$argname] =
 					$wgParser->recursiveTagParse( $argvalue );

@@ -32,6 +32,7 @@ $messages['en'] = array(
  * @author Kghbln
  * @author Purodha
  * @author Raymond
+ * @author Shirayuki
  * @author Siebrand
  * @author Umherirrender
  */
@@ -40,15 +41,15 @@ $messages['qqq'] = array(
 	'unreviewedpages' => '{{Flagged Revs}}
 Name of the [[Special:UnreviewedPages]] page, which lists out pages lacking a stable version.',
 	'unreviewedpages-legend' => '{{Flagged Revs}}
-{{Identical|Content page}}
-Used on the page [[Special:UnreviewedPages]].
-Note that "content pages" are any page that *can* be reviewed.',
+Used on the page Special:UnreviewedPages.
+Note that "content pages" are any page that *can* be reviewed.
+{{Identical|Content page}}',
 	'unreviewedpages-category' => '{{Flagged Revs}}
-{{Identical|Category}}
-Used on the page [[Special:UnreviewedPages]].',
+Used on the page Special:UnreviewedPages.
+{{Identical|Category}}',
 	'unreviewedpages-diff' => '{{Flagged Revs}}
-{{Identical|Review}}
-Used on the page [[Special:UnreviewedPages]].',
+Used on the page Special:UnreviewedPages.
+{{Identical|Review}}',
 	'unreviewedpages-unwatched' => '{{Flagged Revs}}
 Used on the page [[Special:UnreviewedPages]].',
 	'unreviewedpages-watched' => '{{Flagged Revs}}
@@ -56,23 +57,27 @@ Used on the page [[Special:UnreviewedPages]].
 * $1 is the number of active users that have the page on their watchlist
 Note that "active" is based roughly on logging in and out',
 	'unreviewedpages-list' => '{{Flagged Revs}}
-{{Identical|Content page}}
+Refers to {{msg-mw|Validationpage}}.
 
 Parameters:
-* $1 - (optional) Number of items in the list, to be used with PLURAL, when unavoidable.',
+* $1 - (Optional) number of items in the list, to be used with PLURAL, when unavoidable
+{{Identical|Content page}}',
 	'unreviewedpages-none' => '{{Flagged Revs}}
 Used on the page [[Special:UnreviewedPages]].',
 	'unreviewedpages-viewing' => '{{Flagged Revs}}
 Used on the page [[Special:UnreviewedPages]].
 Message indicates that someone is looking at this pages for review right now.',
 	'unreviewedpages-hours' => '{{Flagged Revs}}
-Used on the page [[Special:UnreviewedPages]].
-*$1 Number of hours',
+Used on the page [[Special:UnreviewedPages]]. Parameters:
+* $1 - number of hours
+{{Related|Unreviewedpages-hours}}',
 	'unreviewedpages-days' => '{{Flagged Revs}}
-Used on the page [[Special:UnreviewedPages]].
-* $1 Number of days',
+Used on the page [[Special:UnreviewedPages]]. Parameters:
+* $1 - number of days
+{{Related|Unreviewedpages-hours}}',
 	'unreviewedpages-recent' => '{{Flagged Revs}}
-Used on the page [[Special:UnreviewedPages]].',
+Used on the page [[Special:UnreviewedPages]].
+{{Related|Unreviewedpages-hours}}',
 );
 
 /** Afrikaans (Afrikaans)
@@ -198,13 +203,16 @@ $messages['ast'] = array(
 
 /** Azerbaijani (azərbaycanca)
  * @author Cekli829
+ * @author Khan27
  * @author Vugar 1981
  */
 $messages['az'] = array(
+	'unreviewedpages' => 'İncələnməmiş səhifələr',
 	'unreviewedpages-category' => 'Kateqoriya:',
 	'unreviewedpages-diff' => 'yoxlama',
 	'unreviewedpages-hours' => '$1 {{PLURAL:$1|saat|saat}}',
 	'unreviewedpages-days' => '$1 {{PLURAL:$1|gün|gün}}',
+	'unreviewedpages-recent' => '(1 saatdan az)',
 );
 
 /** Southern Balochi (بلوچی مکرانی)
@@ -354,12 +362,14 @@ $messages['ca'] = array(
 
 /** Chechen (нохчийн)
  * @author Sasan700
+ * @author Умар
  */
 $messages['ce'] = array(
-	'unreviewedpages-category' => 'Кадегар:',
+	'action-unreviewedpages' => 'хьажанца йолу агӀонийн могӀане хьажар',
+	'unreviewedpages-category' => 'Категори:',
 	'unreviewedpages-diff' => 'хьажа',
-	'unreviewedpages-unwatched' => '(терго йац)',
-	'unreviewedpages-watched' => '({{PLURAL:$1|терго йеш $1 жигар декъашхо|терго йеш $1 жигар декъашхой}})',
+	'unreviewedpages-unwatched' => '(терго яц)',
+	'unreviewedpages-watched' => '({{PLURAL:$1|терго йеш $1 жигара декъашхо|терго йеш $1 жигара декъашхой}})',
 	'unreviewedpages-viewing' => '(талламяхь йу)',
 	'unreviewedpages-hours' => '($1 {{PLURAL:$1|сахьат|сахьат}})',
 	'unreviewedpages-days' => '($1 {{PLURAL:$1|де|де}})',
@@ -628,6 +638,17 @@ $messages['fi'] = array(
 	'unreviewedpages-recent' => '(alle yksi tunti)',
 );
 
+/** Faroese (føroyskt)
+ * @author EileenSanda
+ */
+$messages['fo'] = array(
+	'action-unreviewedpages' => 'sí lista yvir síður sum ikki eru eftirhugdar',
+	'unreviewedpages-category' => 'Bólkar:',
+	'unreviewedpages-hours' => '($1 {{PLURAL:$1|tími|tímar}})',
+	'unreviewedpages-days' => '($1 {{PLURAL:$1|dagur|dagar}})',
+	'unreviewedpages-recent' => '(minni enn 1 tími)',
+);
+
 /** French (français)
  * @author DavidL
  * @author Grondin
@@ -774,20 +795,22 @@ $messages['he'] = array(
 /** Hindi (हिन्दी)
  * @author Ansumang
  * @author Kaustubh
+ * @author Siddhartha Ghai
  */
 $messages['hi'] = array(
-	'unreviewedpages' => 'परिक्षण ना हुए पन्ने',
-	'unreviewedpages-legend' => 'न देखें हुए लेखोंकी सूची बनायें',
+	'action-unreviewedpages' => 'सभी अनिरीक्षित पृष्ठों की सूची देखने',
+	'unreviewedpages' => 'अनिरीक्षित पृष्ठ',
+	'unreviewedpages-legend' => 'अनिरीक्षित सामग्री पृष्ठों की सूची दिखाएँ',
 	'unreviewedpages-category' => 'श्रेणी:',
-	'unreviewedpages-diff' => 'जाँचे',
-	'unreviewedpages-unwatched' => '(न देखे हुए)',
-	'unreviewedpages-watched' => '($1 {{PLURAL:$1|सदस्यने|सदस्योंने}} ध्यान रखा हैं)', # Fuzzy
-	'unreviewedpages-list' => 'यह पन्ना ऐसे लेख दर्शाता हैं जिन्हें जाँचा नहीं गया हैं।', # Fuzzy
-	'unreviewedpages-none' => 'इस क्राइटेरिआ से मिलने वाले पन्ने नहीं हैं',
-	'unreviewedpages-viewing' => '(समिक्षा अंतर्गत)',
+	'unreviewedpages-diff' => 'पुनरीक्षित करें',
+	'unreviewedpages-unwatched' => '(किसी की ध्यानसूची में नहीं)',
+	'unreviewedpages-watched' => '($1 सक्रिय {{PLURAL:$1|सदस्य|सदस्यों}} ने ध्यान रखा है)',
+	'unreviewedpages-list' => 'यह पृष्ठ ऐसे पृष्ठों की सूची दर्शाता है जिन्हें निर्दिष्ट स्तर तक [[{{MediaWiki:Validationpage}}|पुनरीक्षित]] नहीं किया गया है।',
+	'unreviewedpages-none' => 'इन मानदंडों को पूर्ण करने वाले इस समय कोई पृष्ठ नहीं हैं',
+	'unreviewedpages-viewing' => '(पुनरीक्षण के अंतर्गत)',
 	'unreviewedpages-hours' => '($1 {{PLURAL:$1|घंटा|घंटे}})',
-	'unreviewedpages-days' => '($1 {{PLURAL:$1|दिन|दिन}})',
-	'unreviewedpages-recent' => '(१ घंटेसे कम समय)',
+	'unreviewedpages-days' => '($1 {{PLURAL:$1|दिन}})',
+	'unreviewedpages-recent' => '(एक घंटे से कम समय)',
 );
 
 /** Fiji Hindi (Latin script) (Fiji Hindi)
@@ -1092,12 +1115,12 @@ $messages['ko'] = array(
 	'unreviewedpages-category' => '분류:',
 	'unreviewedpages-diff' => '검토',
 	'unreviewedpages-unwatched' => '(주시되지 않음)',
-	'unreviewedpages-watched' => '(활동적인 사용자 $1명이 주시중)',
+	'unreviewedpages-watched' => '(활동적인 {{PLURAL:$1|사용자}} $1명이 주시 중)',
 	'unreviewedpages-list' => '이 특수 문서는 특정한 등급으로 [[{{MediaWiki:Validationpage}}|검토]]되지 않은 문서의 목록을 보여 주고 있습니다.',
 	'unreviewedpages-none' => '조건에 맞는 문서가 없습니다.',
 	'unreviewedpages-viewing' => '(확인 중)',
 	'unreviewedpages-hours' => '($1{{PLURAL:$1|시간}})',
-	'unreviewedpages-days' => '($1일)',
+	'unreviewedpages-days' => '($1{{PLURAL:$1|일}})',
 	'unreviewedpages-recent' => '(1시간 미만)',
 );
 
@@ -1143,7 +1166,7 @@ $messages['kw'] = array(
 	'unreviewedpages-category' => 'Klass:',
 );
 
-/** Kirghiz (Кыргызча)
+/** Kyrgyz (Кыргызча)
  * @author Growingup
  */
 $messages['ky'] = array(
@@ -1318,7 +1341,7 @@ $messages['nah'] = array(
 	'unreviewedpages-category' => 'Tlaìxmatkàtlàlilòtl:',
 );
 
-/** Norwegian Bokmål (norsk (bokmål)‎)
+/** Norwegian Bokmål (norsk bokmål)
  * @author Harald Khan
  * @author Nghtwlkr
  * @author Simny
@@ -1359,7 +1382,7 @@ $messages['nl'] = array(
 	'unreviewedpages-diff' => 'controle',
 	'unreviewedpages-unwatched' => '(niet op een volglijst)',
 	'unreviewedpages-watched' => '($1 actieve {{PLURAL:$1|gebruiker heeft|gebruikers hebben}} deze pagina op {{PLURAL:$1|zijn|hun}} volglijst)',
-	'unreviewedpages-list' => "Deze pagina geeft een overzicht van [[{{MediaWiki:Validationpage}}|ongecontroleerde]] pagina's tot het aangegeven niveau.",
+	'unreviewedpages-list' => "Deze pagina geeft een overzicht van [[{{MediaWiki:Validationpage}}|ongecontroleerde]] pagina's tot het opgegeven niveau.",
 	'unreviewedpages-none' => "Er zijn geen pagina's die aan deze criteria voldoen",
 	'unreviewedpages-viewing' => '(wordt gecontroleerd)',
 	'unreviewedpages-hours' => '({{PLURAL:$1|één uur|$1 uur}})',
@@ -1367,7 +1390,7 @@ $messages['nl'] = array(
 	'unreviewedpages-recent' => '(minder dan één uur)',
 );
 
-/** Norwegian Nynorsk (norsk (nynorsk)‎)
+/** Norwegian Nynorsk (norsk nynorsk)
  * @author Harald Khan
  * @author Jon Harald Søby
  * @author Nghtwlkr
@@ -1416,7 +1439,7 @@ $messages['oc'] = array(
 	'unreviewedpages-recent' => "(mens d'una ora)",
 );
 
-/** Oriya (ଓଡ଼ିଆ)
+/** Oriya (ଓଡ଼ିଆ)
  * @author Ansumang
  */
 $messages['or'] = array(
@@ -1500,18 +1523,21 @@ $messages['ps'] = array(
 
 /** Portuguese (português)
  * @author Giro720
+ * @author GoEThe
  * @author Hamilton Abreu
  * @author Lijealso
+ * @author Luckas
  * @author Malafaya
  * @author 555
  */
 $messages['pt'] = array(
+	'action-unreviewedpages' => 'ver a lista de páginas não revistas',
 	'unreviewedpages' => 'Páginas não revistas',
 	'unreviewedpages-legend' => 'Listar páginas de conteúdo não revistas',
 	'unreviewedpages-category' => 'Categoria:',
 	'unreviewedpages-diff' => 'rever',
 	'unreviewedpages-unwatched' => '(não vigiada)',
-	'unreviewedpages-watched' => '(vigiada por $1 {{PLURAL:$1|utilizador activo|utilizadores activos}})',
+	'unreviewedpages-watched' => '(vigiada por $1 {{PLURAL:$1|utilizador ativo|utilizadores ativos}})',
 	'unreviewedpages-list' => "Esta página lista as páginas de conteúdo que ''ainda'' não foram [[{{MediaWiki:Validationpage}}|revistas]] até ao nível escolhido.",
 	'unreviewedpages-none' => 'De momento, não há páginas que se enquadrem nestes critérios',
 	'unreviewedpages-viewing' => '(em revisão)',
@@ -1523,8 +1549,10 @@ $messages['pt'] = array(
 /** Brazilian Portuguese (português do Brasil)
  * @author Eduardo.mps
  * @author Giro720
+ * @author Raylton P. Sousa
  */
 $messages['pt-br'] = array(
+	'action-unreviewedpages' => 'ver a lista de páginas não revisadas',
 	'unreviewedpages' => 'Páginas não analisadas',
 	'unreviewedpages-legend' => 'Lista páginas de conteúdo a serem analisadas',
 	'unreviewedpages-category' => 'Categoria:',
@@ -1583,6 +1611,7 @@ $messages['roa-tara'] = array(
  * @author EugeneZelenko
  * @author Ferrer
  * @author Kaganer
+ * @author NBS
  * @author Putnik
  * @author Sergey kudryavtsev
  * @author Александр Сигачёв
@@ -1600,7 +1629,7 @@ $messages['ru'] = array(
 	'unreviewedpages-viewing' => '(проверяется)',
 	'unreviewedpages-hours' => '($1 {{PLURAL:$1|час|часа|часов}})',
 	'unreviewedpages-days' => '($1 {{PLURAL:$1|день|дня|дней}})',
-	'unreviewedpages-recent' => '(менее, чем 1 час)',
+	'unreviewedpages-recent' => '(менее 1 часа)',
 );
 
 /** Rusyn (русиньскый)
@@ -1794,6 +1823,7 @@ $messages['su'] = array(
  * @author WikiPhoenix
  */
 $messages['sv'] = array(
+	'action-unreviewedpages' => 'se listan över icke-granskade sidor',
 	'unreviewedpages' => 'Ogranskade sidor',
 	'unreviewedpages-legend' => 'Lista ogranskade innehållssidor',
 	'unreviewedpages-category' => 'Kategori:',

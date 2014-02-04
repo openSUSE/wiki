@@ -1,6 +1,7 @@
 --------------------------------------------------------------------------
 README for the CategoryTree extension
 Copyright © 2006 by Leon Weber & Manuel Schneider
+Copyright © 2013 by Christian Boltz
 Licenses: GNU General Public Licence (GPL)
           GNU Free Documentation License (GFDL)
 --------------------------------------------------------------------------
@@ -89,6 +90,13 @@ $wgSelectCategoryEnableSubpages
    Default is true, as subpages are disabled in MediaWiki by default.
  - Example:
    $wgSelectCategoryEnableSubpages = false;
+
+$wgSelectCategoryToplevelAllowed
+ - defines if authors should be allowed to select the toplevel (root) category
+ - default is true
+ - false will hide the checkbox for the toplevel category
+ - Note: if you set this to false, the toplevel category will be removed
+   from the page on next edit
 
 APPEARANCE
 --------------------------------------------------------------------------

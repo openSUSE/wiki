@@ -1,44 +1,35 @@
-module( 'jquery.tabIndex', QUnit.newMwEnvironment() );
+( function ( $ ) {
+	QUnit.module( 'jquery.tabIndex', QUnit.newMwEnvironment() );
 
-test( '-- Initial check', function() {
-	expect(2);
+	QUnit.test( 'firstTabIndex', 2, function ( assert ) {
+		var html, $testA, $testB;
+		html = '<form>' +
+			'<input tabindex="7" />' +
+			'<input tabindex="9" />' +
+			'<textarea tabindex="2">Foobar</textarea>' +
+			'<textarea tabindex="5">Foobar</textarea>' +
+			'</form>';
 
-	ok( $.fn.firstTabIndex, '$.fn.firstTabIndex defined' );
-	ok( $.fn.lastTabIndex, '$.fn.lastTabIndex defined' );
-});
+		$testA = $( '<div>' ).html( html ).appendTo( '#qunit-fixture' );
+		assert.strictEqual( $testA.firstTabIndex(), 2, 'First tabindex should be 2 within this context.' );
 
-test( 'firstTabIndex', function() {
-	expect(2);
+		$testB = $( '<div>' );
+		assert.strictEqual( $testB.firstTabIndex(), null, 'Return null if none available.' );
+	} );
 
-	var testEnvironment =
-'<form>' +
-	'<input tabindex="7" />' +
-	'<input tabindex="9" />' +
-	'<textarea tabindex="2">Foobar</textarea>' +
-	'<textarea tabindex="5">Foobar</textarea>' +
-'</form>';
+	QUnit.test( 'lastTabIndex', 2, function ( assert ) {
+		var html, $testA, $testB;
+		html = '<form>' +
+			'<input tabindex="7" />' +
+			'<input tabindex="9" />' +
+			'<textarea tabindex="2">Foobar</textarea>' +
+			'<textarea tabindex="5">Foobar</textarea>' +
+			'</form>';
 
-	var $testA = $( '<div>' ).html( testEnvironment ).appendTo( '#qunit-fixture' );
-	strictEqual( $testA.firstTabIndex(), 2, 'First tabindex should be 2 within this context.' );
+		$testA = $( '<div>' ).html( html ).appendTo( '#qunit-fixture' );
+		assert.strictEqual( $testA.lastTabIndex(), 9, 'Last tabindex should be 9 within this context.' );
 
-	var $testB = $( '<div>' );
-	strictEqual( $testB.firstTabIndex(), null, 'Return null if none available.' );
-});
-
-test( 'lastTabIndex', function() {
-	expect(2);
-
-	var testEnvironment =
-'<form>' +
-	'<input tabindex="7" />' +
-	'<input tabindex="9" />' +
-	'<textarea tabindex="2">Foobar</textarea>' +
-	'<textarea tabindex="5">Foobar</textarea>' +
-'</form>';
-
-	var $testA = $( '<div>' ).html( testEnvironment ).appendTo( '#qunit-fixture' );
-	strictEqual( $testA.lastTabIndex(), 9, 'Last tabindex should be 9 within this context.' );
-
-	var $testB = $( '<div>' );
-	strictEqual( $testB.lastTabIndex(), null, 'Return null if none available.' );
-});
+		$testB = $( '<div>' );
+		assert.strictEqual( $testB.lastTabIndex(), null, 'Return null if none available.' );
+	} );
+}( jQuery ) );

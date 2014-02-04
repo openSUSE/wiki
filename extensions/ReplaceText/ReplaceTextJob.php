@@ -65,7 +65,13 @@ class ReplaceTextJob extends Job {
 					wfProfileOut( __METHOD__ );
 					return false;
 				}
-				$article_text = $wikiPage->getContent()->getNativeData();
+				$wikiPageContent = $wikiPage->getContent();
+				if ( is_null( $wikiPageContent ) ) {
+					$this->error = 'replaceText: No contents found for wiki page at "' . $this->title->getPrefixedDBkey() . '."';
+					wfProfileOut( __METHOD__ );
+					return false;
+				}
+				$article_text = $wikiPageContent->getNativeData();
 			} else {
 				$article = new Article( $this->title, 0 );
 				if ( !$article ) {

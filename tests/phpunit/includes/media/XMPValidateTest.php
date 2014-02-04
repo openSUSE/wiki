@@ -2,15 +2,16 @@
 class XMPValidateTest extends MediaWikiTestCase {
 
 	/**
-	 * @dataProvider providerDate
+	 * @dataProvider provideDates
+	 * @covers XMPValidate::validateDate
 	 */
-	function testValidateDate( $value, $expected ) {
+	public function testValidateDate( $value, $expected ) {
 		// The method should modify $value.
 		XMPValidate::validateDate( array(), $value, true );
 		$this->assertEquals( $expected, $value );
 	}
 
-	function providerDate() {
+	public static function provideDates() {
 		/* For reference valid date formats are:
 		 * YYYY
 		 * YYYY-MM
@@ -41,7 +42,5 @@ class XMPValidateTest extends MediaWikiTestCase {
 			array( '2001-05-12T15', null ),
 			array( '2001-12T15:13', null ),
 		);
-
 	}
-
 }

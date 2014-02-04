@@ -7,48 +7,99 @@
  */
 
 /** Tests for MediaWiki languages/classes/LanguageRu.php */
-class LanguageRuTest extends MediaWikiTestCase {
-	private $lang;
-
-	function setUp() {
-		$this->lang = Language::factory( 'ru' );
-	}
-	function tearDown() {
-		unset( $this->lang );
-	}
-
-	/** @dataProvider providePluralFourForms */
-	function testPluralFourForms( $result, $value ) {
-		$forms = array( 'one', 'few', 'many', 'other' );
-		$this->assertEquals( $result, $this->lang->convertPlural( $value, $forms ) );
+class LanguageRuTest extends LanguageClassesTestCase {
+	/**
+	 * @dataProvider providePlural
+	 * @covers Language::convertPlural
+	 */
+	public function testPlural( $result, $value ) {
+		$forms = array( 'one', 'many', 'other' );
+		$this->assertEquals( $result, $this->getLang()->convertPlural( $value, $forms ) );
 	}
 
-	function providePluralFourForms() {
-		return array (
+	/**
+	 * Test explicit plural forms - n=FormN forms
+	 * @covers Language::convertPlural
+	 */
+	public function testExplicitPlural() {
+		$forms = array( 'one','many', 'other', '12=dozen' );
+		$this->assertEquals( 'dozen', $this->getLang()->convertPlural( 12, $forms ) );
+		$forms = array( 'one', 'many', '100=hundred', 'other', '12=dozen' );
+		$this->assertEquals( 'hundred', $this->getLang()->convertPlural( 100, $forms ) );
+	}
+
+	/**
+	 * @dataProvider providePlural
+	 * @covers Language::getPluralRuleType
+	 */
+	public function testGetPluralRuleType( $result, $value ) {
+		$this->assertEquals( $result, $this->getLang()->getPluralRuleType( $value ) );
+	}
+
+	public static function providePlural() {
+		return array(
 			array( 'one', 1 ),
 			array( 'many', 11 ),
 			array( 'one', 91 ),
 			array( 'one', 121 ),
-			array( 'few', 2 ),
-			array( 'few', 3 ),
-			array( 'few', 4 ),
-			array( 'few', 334 ),
+			array( 'other', 2 ),
+			array( 'other', 3 ),
+			array( 'other', 4 ),
+			array( 'other', 334 ),
 			array( 'many', 5 ),
 			array( 'many', 15 ),
 			array( 'many', 120 ),
 		);
 	}
-	/** @dataProvider providePluralTwoForms */
-	function testPluralTwoForms( $result, $value ) {
-		$forms =  array( 'one', 'several' );
-		$this->assertEquals( $result, $this->lang->convertPlural( $value, $forms ) );
+
+	/**
+	 * @dataProvider providePluralTwoForms
+	 * @covers Language::convertPlural
+	 */
+	public function testPluralTwoForms( $result, $value ) {
+		$forms = array( '1=one', 'other' );
+		$this->assertEquals( $result, $this->getLang()->convertPlural( $value, $forms ) );
 	}
-	function providePluralTwoForms() {
-		return array (
+
+	public static function providePluralTwoForms() {
+		return array(
 			array( 'one', 1 ),
-			array( 'several', 11 ),
-			array( 'several', 91 ),
-			array( 'several', 121 ),
+			array( 'other', 11 ),
+			array( 'other', 91 ),
+			array( 'other', 121 ),
+		);
+	}
+
+	/**
+	 * @dataProvider providerGrammar
+	 * @covers Language::convertGrammar
+	 */
+	public function testGrammar( $result, $word, $case ) {
+		$this->assertEquals( $result, $this->getLang()->convertGrammar( $word, $case ) );
+	}
+
+	public static function providerGrammar() {
+		return array(
+			array(
+				'Википедии',
+				'Википедия',
+				'genitive',
+			),
+			array(
+				'Викитеки',
+				'Викитека',
+				'genitive',
+			),
+			array(
+				'Викитеке',
+				'Викитека',
+				'prepositional',
+			),
+			array(
+				'Викиданных',
+				'Викиданные',
+				'prepositional',
+			),
 		);
 	}
 }

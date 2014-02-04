@@ -38,7 +38,7 @@ $magicWords['br'] = array(
 
 /** Chechen (нохчийн) */
 $magicWords['ce'] = array(
-	'categorytree' => array( 0, 'кадегардит', 'деревокатегорий', 'categorytree' ),
+	'categorytree' => array( 0, 'категоридит', 'деревокатегорий' ),
 );
 
 /** German (Deutsch) */
@@ -71,9 +71,19 @@ $magicWords['fa'] = array(
 	'categorytree' => array( 0, 'درخت‌رده', 'درخت_رده' ),
 );
 
+/** French (français) */
+$magicWords['fr'] = array(
+	'categorytree' => array( 0, 'arbrecatégories', 'arbrecats' ),
+);
+
 /** Galician (galego) */
 $magicWords['gl'] = array(
 	'categorytree' => array( 0, 'árboredecategorías' ),
+);
+
+/** Hebrew (עברית) */
+$magicWords['he'] = array(
+	'categorytree' => array( 0, 'עץ_קטגוריה' ),
 );
 
 /** Igbo (Igbo) */
@@ -133,15 +143,15 @@ $magicWords['ml'] = array(
 
 /** Marathi (मराठी) */
 $magicWords['mr'] = array(
-	'categorytree' => array( 0, 'वर्गवृक्ष', 'categorytree' ),
+	'categorytree' => array( 0, 'वर्गवृक्ष' ),
 );
 
-/** Norwegian Bokmål (norsk (bokmål)‎) */
+/** Norwegian Bokmål (norsk bokmål) */
 $magicWords['nb'] = array(
 	'categorytree' => array( 0, 'kategoritre' ),
 );
 
-/** Nedersaksies (Nedersaksies) */
+/** Low Saxon (Netherlands) (Nedersaksies) */
 $magicWords['nds-nl'] = array(
 	'categorytree' => array( 0, 'kategorieboom', 'categorieboom' ),
 );
@@ -191,9 +201,14 @@ $magicWords['tt-cyrl'] = array(
 	'categorytree' => array( 0, 'төркемнәр_шәҗәрәсе' ),
 );
 
+/** Tuvinian (тыва дыл) */
+$magicWords['tyv'] = array(
+	'categorytree' => array( 0, 'аңгылал_ыяжы' ),
+);
+
 /** Ukrainian (українська) */
 $magicWords['uk'] = array(
-	'categorytree' => array( 0, 'деревокатегорій', 'деревокатегорий' ),
+	'categorytree' => array( 0, 'деревокатегорій' ),
 );
 
 /** Urdu (اردو) */
@@ -214,4 +229,9 @@ $magicWords['vi'] = array(
 /** Simplified Chinese (中文（简体）‎) */
 $magicWords['zh-hans'] = array(
 	'categorytree' => array( 0, '分类树' ),
+);
+
+/** Traditional Chinese (中文（繁體）‎) */
+$magicWords['zh-hant'] = array(
+	'categorytree' => array( 0, '分類樹' ),
 );

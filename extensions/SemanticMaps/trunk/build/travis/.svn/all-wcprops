@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/JeroenDeDauw/SemanticMaps/!svn/ver/1027/trunk/build/travis
+END
+before_script.sh
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/JeroenDeDauw/SemanticMaps/!svn/ver/1027/trunk/build/travis/before_script.sh
+END
+after_success.sh
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/JeroenDeDauw/SemanticMaps/!svn/ver/1007/trunk/build/travis/after_success.sh
+END
+script.sh
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/JeroenDeDauw/SemanticMaps/!svn/ver/1007/trunk/build/travis/script.sh
+END

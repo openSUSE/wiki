@@ -23,6 +23,7 @@ Some settings might change which version is displayed to readers or further rest
  * @author EugeneZelenko
  * @author Purodha
  * @author Raymond
+ * @author Shirayuki
  * @author Umherirrender
  * @author Yekrats
  */
@@ -35,15 +36,14 @@ Used on Special:ConfiguredPages.
 Parameters:
 * $1 - (optional) Number of items in the list, to be used with PLURAL, when unavoidable.',
 	'configuredpages-none' => '{{Flagged Revs}}
-Used on Special:ConfiguredPages.',
+Used on Special:ConfiguredPages.
+{{Identical|There are no pages in this list}}',
 	'configuredpages-config' => '{{Flagged Revs}}
-{{Identical|Configuration}}
-Used on Special:ConfiguredPages. Refers to the combination of settings of how the stable version is used and who can review the page.',
+Used on Special:ConfiguredPages. Refers to the combination of settings of how the stable version is used and who can review the page.
+{{Identical|Configuration}}',
 	'configuredpages-def-draft' => '{{Flagged Revs}}
-{{identical|latest version}}
 Used on Special:ConfiguredPages.',
 	'configuredpages-def-stable' => '{{Flagged Revs}}
-{{identical|stable version}}
 Used on Special:ConfiguredPages.',
 );
 
@@ -203,9 +203,10 @@ Algunes podrien canviar amb la versió afixada pels lectors o restringeix la lli
 
 /** Chechen (нохчийн)
  * @author Sasan700
+ * @author Умар
  */
 $messages['ce'] = array(
-	'configuredpages-def-draft' => 'тlаьххьара варси',
+	'configuredpages-def-draft' => 'тlаьххьара верси',
 	'configuredpages-def-stable' => 'чутоьхна йолу варси',
 );
 
@@ -302,6 +303,7 @@ Kelkaj agordoj eble ŝanĝos kiun version estos montrita al legantoj aŭ plu lim
 
 /** Spanish (español)
  * @author Dferg
+ * @author MarcoAurelio
  * @author Peter17
  */
 $messages['es'] = array(
@@ -362,20 +364,21 @@ $messages['fa'] = array(
 $messages['fi'] = array(
 	'configuredpages' => 'Sivut, joilla on oletusarvoista poikkeavia arviointiasetuksia',
 	'configuredpages-list' => 'Alla on luettelo sivuista, joilla on oletusasetuksista poikkeavat arvioinnin hyväksymisasetukset.
-Jotkut asetukset saattavat vaikuttaa siihen, mikä versio näytetään lukijoille tai rajoittaa sitä, kuka voi tehdä sellaisia muokkauksia, jotka eivät vaadi arviointia.',
+Jotkut asetukset saattavat vaikuttaa siihen, mikä versio näytetään lukijoille, tai rajoittaa sitä, kuka voi tehdä sellaisia muokkauksia, jotka eivät vaadi arviointia.',
 	'configuredpages-none' => 'Tällä listalla ei ole sivuja.',
 	'configuredpages-config' => 'Asetukset',
-	'configuredpages-def-draft' => 'viimeisin versio',
+	'configuredpages-def-draft' => 'uusin versio',
 	'configuredpages-def-stable' => 'vakaa versio',
 );
 
 /** French (français)
  * @author Peter17
+ * @author Urhixidur
  */
 $messages['fr'] = array(
 	'configuredpages' => 'Pages avec des configurations de relecture',
-	'configuredpages-list' => "La liste ci-dessous contient les pages qui ont des paramètres d'approbation différents de ceux par défaut pour ce site.
-Certains paramètres peuvent faire apparaître une version différente pour les lecteurs ou restreindre la liste des contributeurs dont les modifications n'ont pas besoin d'être vérifiées.",
+	'configuredpages-list' => 'La liste ci-dessous contient les pages qui ont des paramètres d’approbation différents de ceux par défaut pour ce site.
+Certains paramètres peuvent faire apparaître une version différente pour les lecteurs ou restreindre la liste des contributeurs dont les modifications n’ont pas besoin d’être vérifiées.',
 	'configuredpages-none' => 'Il n’y a aucune page dans cette liste.',
 	'configuredpages-config' => 'Configuration',
 	'configuredpages-def-draft' => 'dernière version',
@@ -439,8 +442,11 @@ $messages['he'] = array(
 
 /** Hindi (हिन्दी)
  * @author Ansumang
+ * @author Siddhartha Ghai
  */
 $messages['hi'] = array(
+	'configuredpages' => 'पुनरीक्षण विकल्प प्रयोग करने वाले पृष्ठ',
+	'configuredpages-list' => 'इस पृष्ठ पर उन पृष्ठों की सूची है जिन पर पुनरीक्षण विकल्प साइट के डिफ़ॉल्ट विकल्पों से भिन्न रखे गए हैं। विकल्प ये बदल सकते हैं कि कौनसा अवतरण पाठकों को दिखाया जाएगा अथवा कौन ऐसे बदलाव कर सकता है जिन्हें पुनरीक्षण की आवश्यकता नहीं है।',
 	'configuredpages-none' => 'इस सूची में कोई पृष्ठ नहीं हैं ।',
 	'configuredpages-config' => 'कॉन्फिगरेशन',
 	'configuredpages-def-draft' => 'नवीनतम रूपांतर',
@@ -577,8 +583,8 @@ $messages['ko'] = array(
 어떤 설정은 독자에게 보여지는 판을 바꾸거나 검토 없이 편집할 수 있는 사용자를 제한할 수 있습니다.',
 	'configuredpages-none' => '이 목록에 문서가 없습니다.',
 	'configuredpages-config' => '설정',
-	'configuredpages-def-draft' => '최신 버전',
-	'configuredpages-def-stable' => '공개된 버전',
+	'configuredpages-def-draft' => '최신 판',
+	'configuredpages-def-stable' => '배포판',
 );
 
 /** Colognian (Ripoarisch)
@@ -589,12 +595,12 @@ $messages['ksh'] = array(
 	'configuredpages-list' => 'Heh kütt en Leß met {{PLURAL:$1|dä Sigg|dä Sigge|kein Sigge}} met eije Enstellunge för Aanzeije un Nohkike, di anders sin, wi der Standatt för et Wiki.
 Enstellunge künne jemaat wääde, öm faßzelääje, wat för en Version de Lässer ze sinn kritt, udder öm zohsäzlesch ze beschrängke, wä Änderonge maache kann, di keiner nohkike udder beschtääteje moß.',
 	'configuredpages-none' => 'En heh dä Leß sin kein Sigge dren.',
-	'configuredpages-config' => 'Enshtellung',
+	'configuredpages-config' => 'Enschtällunge',
 	'configuredpages-def-draft' => 'de neuste Version',
 	'configuredpages-def-stable' => 'de Version för de Öffentleschkeit',
 );
 
-/** Kirghiz (Кыргызча)
+/** Kyrgyz (Кыргызча)
  * @author Growingup
  */
 $messages['ky'] = array(
@@ -700,7 +706,7 @@ $messages['mt'] = array(
 	'configuredpages-def-stable' => 'verżjoni stabbli',
 );
 
-/** Norwegian Bokmål (norsk (bokmål)‎)
+/** Norwegian Bokmål (norsk bokmål)
  * @author Nghtwlkr
  */
 $messages['nb'] = array(
@@ -726,7 +732,7 @@ Instellingen wijzigen welke versie wordt weergegeven aan lezers of beperken wie 
 	'configuredpages-def-stable' => 'gepubliceerde versie',
 );
 
-/** Norwegian Nynorsk (norsk (nynorsk)‎)
+/** Norwegian Nynorsk (norsk nynorsk)
  * @author Nghtwlkr
  */
 $messages['nn'] = array(
@@ -743,7 +749,7 @@ $messages['oc'] = array(
 	'configuredpages-def-stable' => 'version publicada',
 );
 
-/** Oriya (ଓଡ଼ିଆ)
+/** Oriya (ଓଡ଼ିଆ)
  * @author Ansumang
  */
 $messages['or'] = array(

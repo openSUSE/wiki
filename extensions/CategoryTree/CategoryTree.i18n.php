@@ -33,9 +33,9 @@ If you have a very old browser, or have JavaScript disabled, it will not work.',
 
 	'categorytree-collapse'         => 'collapse',
 	'categorytree-expand'           => 'expand',
-	'categorytree-collapse-bullet'  => '[<b>−</b>]', # do not translate or duplicate this message to other languages
-	'categorytree-expand-bullet'    => '[<b>+</b>]', # do not translate or duplicate this message to other languages
-	'categorytree-empty-bullet'     => '[<b>×</b>]', # do not translate or duplicate this message to other languages
+	'categorytree-collapse-bullet'  => '▼', # do not translate or duplicate this message to other languages
+	'categorytree-expand-bullet'    => '►', # only translate this message to other languages if you have to change it
+	'categorytree-empty-bullet'     => '►', # only translate this message to other languages if you have to change it
 	'categorytree-page-bullet'      => '&nbsp;', # do not translate or duplicate this message to other languages
 
 	'categorytree-member-counts'    => 'Contains {{PLURAL:$1|1 subcategory|$1 subcategories}}, {{PLURAL:$2|1 page|$2 pages}}, and {{PLURAL:$3|1 file|$3 files}}', # $1=subcategories, $2=subpages, $3=files, $4=total, $5=shown-in-tree
@@ -61,6 +61,7 @@ If you have a very old browser, or have JavaScript disabled, it will not work.',
  * @author Aotake
  * @author EugeneZelenko
  * @author Jon Harald Søby
+ * @author Lloffiwr
  * @author Malafaya
  * @author McDutchie
  * @author Meno25
@@ -75,72 +76,95 @@ If you have a very old browser, or have JavaScript disabled, it will not work.',
  * @author פוילישער
  */
 $messages['qqq'] = array(
-	'categorytree' => 'Title of [[Special:CategoryTree]]',
-	'categorytree-portlet' => '{{Identical|Categories}}
-
-Title for the CategoryPortlet, when shown in the side bar',
+	'categorytree' => '{{doc-special|CategoryTree}}',
+	'categorytree-portlet' => 'Title for the CategoryPortlet, when shown in the side bar.
+{{Identical|Category}}',
 	'categorytree-legend' => 'Legend of the fieldset around the input form of [[Special:Categorytree]].',
 	'categorytree-desc' => '{{desc|name=Category Tree|url=http://www.mediawiki.org/wiki/Extension:CategoryTree}}',
 	'categorytree-header' => 'Header-text shown on [[Special:CategoryTree]]',
-	'categorytree-category' => '{{Identical|Category}}
-
-Label for the category input field on Special:CategoryTree',
+	'categorytree-category' => 'Label for the category input field on Special:CategoryTree.
+{{Identical|Category}}',
 	'categorytree-go' => 'Label for the submit button on [[Special:CategoryTree]]',
-	'categorytree-parents' => 'Label for the list of parent categories on [[Special:CategoryTree]]',
+	'categorytree-parents' => 'Label for the list of parent categories on [[Special:CategoryTree]].
+{{Identical|Parent}}',
+	'categorytree-mode-label' => 'Used as label for "Mode" select box.
+
+This message follows the input box {{msg-mw|categorytree-category}}.
+
+This message is followed by the select box {{msg-mw|namespace}}.',
 	'categorytree-mode-categories' => 'Item for the mode choice on [[Special:CategoryTree]], indicating that only categories are listed',
 	'categorytree-mode-pages' => 'Item for the mode choice on [[Special:CategoryTree]], indicating that no images in categories are listed',
 	'categorytree-mode-all' => 'Item for the mode choice on [[Special:CategoryTree]], indicating that all pages are listed.
 
 {{Identical|All pages}}',
-	'categorytree-collapse' => 'Tooltip for the "collapse" button',
-	'categorytree-expand' => 'Tooltip for the "expand" button',
+	'categorytree-collapse' => 'Tooltip for the "collapse" button.
+{{Identical|Collapse}}',
+	'categorytree-expand' => 'Tooltip for the "expand" button.
+{{Identical|Expand}}',
 	'categorytree-collapse-bullet' => '{{notranslate}}',
-	'categorytree-expand-bullet' => '{{notranslate}}',
-	'categorytree-empty-bullet' => '{{notranslate}}',
+	'categorytree-expand-bullet' => 'For right-to-left scripts, set this message to the single character ◄ . Otherwise, do not translate this message.
+{{optional}}',
+	'categorytree-empty-bullet' => 'Used if number of subcategories (or something) is 0.',
 	'categorytree-page-bullet' => '{{notranslate}}',
 	'categorytree-member-counts' => 'Tooltip showing a detailed summary of subcategory member counts. Parameters:
-* $1 = number of subcategories,
-* $2 = number of pages (without subcategories and files),
-* $3 = number of files,
-* $4 = total number of members,
-* $5 = members to be shown in the tree, depending on mode.
+* $1 - number of subcategories
+* $2 - number of pages (without subcategories and files)
+* $3 - number of files
+* $4 - (Unused) total number of members
+* $5 - (Unused) members to be shown in the tree, depending on mode
 Use with <nowiki>{{PLURAL}}</nowiki>',
 	'categorytree-member-num' => '{{notranslate}}
+However, if needed, you can localise the parentheses.
+
 (From http://www.mediawiki.org/wiki/Extension:CategoryTree#categorytree-member-num):
 By default, when listing subcategories on a category page, each subcategory is followed by an integer indicating how many subcategories lie beneath it:
 <pre>
 My category name (5)
 </pre>
-You can change this behaviour by overriding this system message. It receives five parameters:
-
-* $1 	Number of subcategories
-* $2 	Number of articles (not including category pages or file pages)
-* $3 	Number of uploaded files
-* $4 	Total number of member pages, including category pages and file pages
-* $5 	(Varies depending on CategoryTree mode....Can someone describe it?)
-
-The default value is ($5).
+You can change this behavior by overriding this system message. Parameters:
+* $1 - (Unused) number of subcategories
+* $2 - (Unused) number of articles (not including category pages or file pages)
+* $3 - (Unused) number of uploaded files
+* $4 - (Unused) total number of member pages, including category pages and file pages
+* $5 - (Varies depending on CategoryTree mode....Can someone describe it?)
 
 Tip: Use the ParserFunctions extension (http://www.mediawiki.org/wiki/Help:Extension:ParserFunctions) to provide if/then/else logic to display different parts conditionally. For example:
 <pre>
 {{#ifeq:$1|0||$1 categories}}
 </pre>',
-	'categorytree-num-categories' => 'Number of sub-categories in a category. The word "categories" should be abbreviated. Appears in brackets after a name of an empty category. This message supports PLURAL.',
-	'categorytree-num-pages' => 'Number of pages in a category. The word "pages" should be abbreviated. Appears in brackets after a name of an empty category. This message supports PLURAL.',
-	'categorytree-num-files' => 'Number of files in a category. The word "files" should be abbreviated.  Appears in brackets after a name of an empty category. This message supports PLURAL.',
+	'categorytree-num-categories' => 'Number of sub-categories in a category. Appears in brackets after a name of an empty category.
+
+The word "categories" should be abbreviated.
+
+Parameters:
+* $1 - number of sub-categories. Can be used for PLURAL.
+{{Related|Categorytree-num}}',
+	'categorytree-num-pages' => 'Number of pages in a category. Appears in brackets after a name of an empty category.
+
+The word "pages" should be abbreviated.
+
+Parameters:
+* $1 - number of pages. Can be used for PLURAL.
+{{Related|Categorytree-num}}',
+	'categorytree-num-files' => 'Number of files in a category. Appears in brackets after a name of an empty category.
+
+The word "files" should be abbreviated.
+
+Parameters:
+* $1 - number of files. Can be used for PLURAL.
+{{Related|Categorytree-num}}',
 	'categorytree-num-empty' => 'The word "empty", as in "empty category". Appears in brackets after a name of an empty category.
 {{Identical|Empty}}',
-	'categorytree-load' => '{{Identical|Load}}
-
-Tooltip for the "expand" button, if the content was not yet loaded',
-	'categorytree-loading' => '{{Identical|Loading}}
-
-Status message shown while loading content',
+	'categorytree-load' => 'Tooltip for the "expand" button, if the content was not yet loaded.
+{{Identical|Load}}',
+	'categorytree-loading' => 'Status message shown while loading content.
+{{Identical|Loading}}',
 	'categorytree-nothing-found' => 'Indicates items with matching criteria have been found',
 	'categorytree-no-subcategories' => 'Indicates that there are no subcategories to be shown',
 	'categorytree-no-parent-categories' => 'Indicates that there are no parent categories to be shown',
 	'categorytree-no-pages' => 'Indicates that there are no pages or subcategories to be shown',
-	'categorytree-not-found' => 'Indicates that the given category ($1) was not found',
+	'categorytree-not-found' => 'Indicates that the given category ($1) was not found. Parameters:
+* $1 - category name',
 	'categorytree-error' => "Indicates that an error has occurred while loading the node's content",
 	'categorytree-retry' => 'Instruction to try again later',
 );
@@ -155,7 +179,7 @@ $messages['af'] = array(
 	'categorytree-portlet' => 'Kategorieë',
 	'categorytree-legend' => 'Wys kategorieboom',
 	'categorytree-desc' => "Bekyk en navigeer deur die [[Special:CategoryTree|kategoriestruktuur]] van 'n wiki",
-	'categorytree-header' => "Tik 'n kategorienaam om sy inhoud as 'n boomstruktuur te sien. Hierdie benodig gevorderde JavaScript-funksionaliteit bekend as AJAX. Met 'n baie ou blaaier, of as JavaScript gedeaktiveer is, sal dit nie werk nie.",
+	'categorytree-header' => "Tik 'n kategorienaam om die inhoud as 'n boomstruktuur te sien. Hierdie benodig gevorderde JavaScript-funksionaliteit, bekend as AJAX. Dit sal egter nie werk as u 'n baie ou blaaier gebruik of as JavaScript gedeaktiveer is nie.",
 	'categorytree-category' => 'Kategorie:',
 	'categorytree-go' => 'Wys boom',
 	'categorytree-parents' => 'ouers',
@@ -218,6 +242,7 @@ $messages['an'] = array(
 	'categorytree-category' => 'Categoría:',
 	'categorytree-go' => "Amostrar l'Árbol",
 	'categorytree-parents' => 'Categorías mais',
+	'categorytree-mode-label' => 'Modo:',
 	'categorytree-mode-categories' => 'amostrar nomás categorías',
 	'categorytree-mode-pages' => 'pachinas pero no ficheros',
 	'categorytree-mode-all' => 'todas as pachinas',
@@ -242,6 +267,7 @@ $messages['an'] = array(
 /** Arabic (العربية)
  * @author AwamerT
  * @author Meno25
+ * @author Mido
  * @author OsamaK
  * @author زكريا
  */
@@ -256,11 +282,14 @@ $messages['ar'] = array(
 	'categorytree-category' => ':تصنيف',
 	'categorytree-go' => 'عرض الشجرة',
 	'categorytree-parents' => 'مصنف تحت',
+	'categorytree-mode-label' => 'الوضع:',
 	'categorytree-mode-categories' => 'تصنيفات فقط',
 	'categorytree-mode-pages' => 'الصفحات ماعدا الملفات',
 	'categorytree-mode-all' => 'كل الصفحات',
 	'categorytree-collapse' => 'اطو',
 	'categorytree-expand' => 'فرد',
+	'categorytree-expand-bullet' => '◄',
+	'categorytree-empty-bullet' => '◄',
 	'categorytree-member-counts' => 'يحتوي على {{PLURAL:$1|1 تصنيف فرعي|$1 تصنيف فرعي}}، {{PLURAL:$2|1 صفحة|$2 صفحة}}، و {{PLURAL:$3|1 ملف|$3 ملف}}',
 	'categorytree-num-categories' => '$1 ت',
 	'categorytree-num-pages' => ' $1 ص',
@@ -290,7 +319,9 @@ $messages['arc'] = array(
 	'categorytree-mode-pages' => 'ܦܐܬܬ̈ܐ ܫܒܘܩ ܕܠܦܦ̈ܐ',
 	'categorytree-mode-all' => 'ܟܠ ܦܐܬܬ̈ܐ',
 	'categorytree-collapse' => 'ܐܟܪܟ',
-	'categorytree-expand' => 'ܪܘܚ',
+	'categorytree-expand' => 'ܐܪܘܚ',
+	'categorytree-expand-bullet' => '◄',
+	'categorytree-empty-bullet' => '◄',
 	'categorytree-member-counts' => 'ܚܒܫ ܥܠ {{PLURAL:$1|1 ܣܕܪܐ ܦܪܥܝܐ|$1 ܣܕܪ̈ ܦܪ̈ܥܝܐ}}، {{PLURAL:$2|1 ܦܐܬܐ|$2 ܦܐܬܬ̈ܐ}}، ܘ{{PLURAL:$3|1 ܠܦܦܐ|$3 ܠܦܦ̈ܐ}}',
 	'categorytree-num-categories' => '$1 ܣ',
 	'categorytree-num-pages' => ' $1 ܦ',
@@ -323,6 +354,8 @@ $messages['arz'] = array(
 	'categorytree-mode-all' => 'كل الصفحات',
 	'categorytree-collapse' => 'اضغط',
 	'categorytree-expand' => 'اتوسع',
+	'categorytree-expand-bullet' => '◄',
+	'categorytree-empty-bullet' => '◄',
 	'categorytree-member-counts' => 'فيه {{PLURAL:$1|1 تصنيف فرعي|$1 تصنيف فرعي}}، {{PLURAL:$2|1 صفحة|$2 صفحة}}، و {{PLURAL:$3|1 ملف|$3 ملف}}',
 	'categorytree-num-categories' => '$1 ت',
 	'categorytree-num-pages' => ' $1 ص',
@@ -338,7 +371,7 @@ $messages['arz'] = array(
 	'categorytree-retry' => 'لو سمحت تستنا لحظة و بعدين حاول تاني',
 );
 
-/** Assamese (অসমীয়া)
+/** Assamese (অসমীয়া)
  * @author Bishnu Saikia
  * @author Chaipau
  * @author Gitartha.bordoloi
@@ -444,6 +477,7 @@ Ede va guazafi exulesiki favel oke ede JavaScript fliaceem tir metegis, batcoba 
 
 /** Aymara (Aymar aru)
  * @author Dferg
+ * @author MarcoAurelio
  */
 $messages['ay'] = array(
 	'categorytree-category' => 'Patawi:',
@@ -505,6 +539,8 @@ $messages['azb'] = array(
 	'categorytree-mode-all' => 'بوتون صحیفه‌لر',
 	'categorytree-collapse' => 'گیزلت',
 	'categorytree-expand' => 'گئنیشلندیر',
+	'categorytree-expand-bullet' => '◄',
+	'categorytree-empty-bullet' => '◄',
 	'categorytree-member-counts' => '{{PLURAL:$1|1 آلت بولمه|$1 آلت بولمه}}، {{PLURAL:$2|1 صهیف|$2 صحیفه}}، و {{PLURAL:$3|1 شکیل|$3 شکیل}}دن عبارت‌دیر',
 	'categorytree-num-categories' => '$1 ر',
 	'categorytree-num-pages' => '$1 ص',
@@ -594,6 +630,23 @@ De Seiten braucht bstimmte JavaScript-Funkzionen (Ajax) und funkzionird meeglich
 	'categorytree-retry' => 'Bittschee wort a Momenterl und vasuachs dånn nuamoi.',
 );
 
+/** Batak Toba (Batak Toba)
+ * @author Stephensuleeman
+ */
+$messages['bbc-latn'] = array(
+	'categorytree-num-categories' => '$1 C',
+	'categorytree-num-pages' => '$1 P',
+	'categorytree-num-files' => '$1 F',
+	'categorytree-num-empty' => 'rumar',
+	'categorytree-load' => 'mangisi',
+	'categorytree-loading' => 'mangisi...',
+	'categorytree-nothing-found' => 'ndang adong jumpang',
+	'categorytree-no-subcategories' => 'ndang adong subkategori',
+	'categorytree-no-parent-categories' => 'ndang adong kategori na tumimbo',
+	'categorytree-no-pages' => 'ndang adong alaman manang subkategori',
+	'categorytree-not-found' => 'Kategori <i>$1</i> ndang jumpang',
+);
+
 /** Southern Balochi (بلوچی مکرانی)
  * @author Mostafadaneshvar
  */
@@ -613,6 +666,8 @@ $messages['bcc'] = array(
 	'categorytree-mode-all' => 'کل صفحات',
 	'categorytree-collapse' => 'سقوط',
 	'categorytree-expand' => 'پچ',
+	'categorytree-expand-bullet' => '◄',
+	'categorytree-empty-bullet' => '◄',
 	'categorytree-load' => 'لود',
 	'categorytree-loading' => 'لودبیت...',
 	'categorytree-nothing-found' => 'هچی در نه بوت',
@@ -626,16 +681,37 @@ $messages['bcc'] = array(
 
 /** Bikol Central (Bikol Central)
  * @author Filipinayzd
+ * @author Geopoet
  */
 $messages['bcl'] = array(
-	'categorytree-category' => 'Kategorya:',
+	'categorytree' => 'Kahoy nin Kategoriya',
+	'categorytree-portlet' => 'Mga Kategoriya',
+	'categorytree-legend' => 'Ipatanaw an kahoy nin kategoriya',
+	'categorytree-desc' => 'Dinamikong dumanan an [[Special:CategoryTree|estruktura nin kategoriya]]',
+	'categorytree-header' => 'Ikaag an sarong pangaran nin kategoriya tanganing mahiling an kalamnan kaini bilang sarong estruktura nin kahoy. Tandai na ini minahagad nin abantidong JavaScript na punksyonalidad na bisto bilang AJAX. Kun ika igwa nin grabe kagurang na pangilyaw, o pinag-untok an JavaScript, ini dae maandar.',
+	'categorytree-category' => 'Kategoriya',
+	'categorytree-go' => 'Ipatanaw an kahoy',
+	'categorytree-parents' => 'Kamagurangan',
+	'categorytree-mode-label' => 'Moda:',
+	'categorytree-mode-categories' => 'mga kategoriya sana',
+	'categorytree-mode-pages' => 'mga pahina laen lang sa mga sagunson',
 	'categorytree-mode-all' => 'gabos na mga pahina',
+	'categorytree-collapse' => 'komyuson',
+	'categorytree-expand' => 'halawigon',
+	'categorytree-member-counts' => 'Minalaman nin {{PLURAL:$1|1 subkategoriya|$1 mga subkategoriya}},{{PLURAL:$2|1 pahina|$2 mga pahina}}, asin {{PLURAL:$3|1 sagunson|$3 mga sagunson}}',
+	'categorytree-num-categories' => '$1 C',
+	'categorytree-num-pages' => '$1 P',
+	'categorytree-num-files' => '$1 F',
+	'categorytree-num-empty' => 'bokya',
 	'categorytree-load' => 'ikarga',
 	'categorytree-loading' => 'pigkakarga',
-	'categorytree-nothing-found' => 'mayong nahanap',
+	'categorytree-nothing-found' => 'mayong nanumpungan',
 	'categorytree-no-subcategories' => 'mayong mga sub-kategorya',
+	'categorytree-no-parent-categories' => 'mayong ginikanang mga kategoriya',
 	'categorytree-no-pages' => 'mayong mga pahina o sub-kategorya',
-	'categorytree-retry' => 'Paki halat mûna tapos probaran giraray.',
+	'categorytree-not-found' => 'Kategoriya <i>$1</i> dae nanagboan',
+	'categorytree-error' => 'Problema sa pagkakarga nin datos.',
+	'categorytree-retry' => 'Pakihalat ngûna tapos probaran giraray.',
 );
 
 /** Belarusian (беларуская)
@@ -751,13 +827,6 @@ $messages['bg'] = array(
 	'categorytree-retry' => 'Изчакайте малко и опитайте отново.',
 );
 
-/** Bihari (भोजपुरी)
- * @author Ganesh
- */
-$messages['bh'] = array(
-	'categorytree-portlet' => 'श्रेणी',
-);
-
 /** Bhojpuri (भोजपुरी)
  * @author Ganesh
  */
@@ -848,6 +917,7 @@ $messages['bo'] = array(
 );
 
 /** Breton (brezhoneg)
+ * @author Fohanno
  * @author Fulup
  */
 $messages['br'] = array(
@@ -861,6 +931,7 @@ M'eo kozh-mat stumm ho merdeer pe m'eo diweredekaet JavaScript ganeoc'h, ne'z ai
 	'categorytree-category' => 'Rummad :',
 	'categorytree-go' => 'Diskouez ar gwezennadur',
 	'categorytree-parents' => 'Usrummadoù',
+	'categorytree-mode-label' => 'Mod :',
 	'categorytree-mode-categories' => 'Rummadoù hepken',
 	'categorytree-mode-pages' => 'pajennoù hep ar skeudennoù',
 	'categorytree-mode-all' => 'an holl bajennoù',
@@ -966,37 +1037,46 @@ $messages['cbk-zam'] = array(
 
 /** Min Dong Chinese (Mìng-dĕ̤ng-ngṳ̄)
  * @author GnuDoyng
+ * @author Yejianfei
  */
 $messages['cdo'] = array(
-	'categorytree' => 'Lôi-biék chéu',
+	'categorytree' => '類別樹',
 	'categorytree-header' => 'Sṳ̆-ĭk lôi-biék miàng-chĭng, káng ĭ gì chéu-hìng giék-gáiu. Chiāng cé̤ṳ-é, ciā hiĕk-miêng sāi-ê̤ṳng siŏh cṳ̄ng gŏ̤-gék JavaScript gé-sŭk, giéu lō̤ AJAX. Nṳ̄ nâ sāi-ê̤ṳng guó-sì gì báuk-lāng-ké, hĕ̤k-ciā cĕk lâi JavaScript, cêu mâ̤ ciáng-siòng gĕ̤ng-cáuk.',
-	'categorytree-category' => 'Hŭng-lôi',
-	'categorytree-go' => 'Hiēng-sê chéu',
-	'categorytree-mode-categories' => 'nâ ô lôi-biék',
-	'categorytree-mode-pages' => 'dù-piéng ī-nguôi gì hiĕk-miêng',
-	'categorytree-mode-all' => 'tĕ̤k-chṳ̄',
-	'categorytree-loading' => 'tĕ̤k-chṳ̄',
-	'categorytree-no-subcategories' => 'mò̤ cṳ̄-lôi-biék',
-	'categorytree-no-pages' => 'mò̤ hiĕk-miêng hĕ̤k cṳ̄-lôi-biék',
-	'categorytree-not-found' => 'Mò̤ tō̤ diŏh lôi-biék <i>$1</i>',
+	'categorytree-category' => '分類：',
+	'categorytree-go' => '顯示樹',
+	'categorytree-mode-categories' => '囇有類別',
+	'categorytree-mode-pages' => '無文件其頁面',
+	'categorytree-mode-all' => '全部頁面',
+	'categorytree-loading' => '載入…',
+	'categorytree-no-subcategories' => '無子類別',
+	'categorytree-no-pages' => '無頁面或者子類別',
+	'categorytree-not-found' => '無處討類別<i>$1</i>',
 );
 
 /** Chechen (нохчийн)
  * @author Sasan700
+ * @author Умар
  */
 $messages['ce'] = array(
-	'categorytree' => 'Кадегарши дит',
-	'categorytree-portlet' => 'Кадегарш',
-	'categorytree-legend' => 'Гайта кадегарши дит',
-	'categorytree-category' => 'Кадегар:',
+	'categorytree' => 'Категореши дит',
+	'categorytree-portlet' => 'Категореш',
+	'categorytree-legend' => 'Гайта категореши дит',
+	'categorytree-header' => 'Язъе категорин цӀе тӀакха иза гойтур ю диттан кепара.
+ХӀара таро ю хьан браузеро AJAX ловш елахь.
+ХӀан браузер шира ела елахь я JavaScript дӀаяйина елахь, бухара категореш диттан кепара гойтур яц.',
+	'categorytree-category' => 'Категори:',
 	'categorytree-go' => 'Чуйаккха',
-	'categorytree-parents' => 'Кхолламан кадегарш',
+	'categorytree-parents' => 'Кхолламан категореш',
+	'categorytree-mode-label' => 'РогӀехь:',
+	'categorytree-mode-categories' => 'екъ категореш',
+	'categorytree-mode-pages' => 'файлийн совнаха',
 	'categorytree-mode-all' => 'массо агlонаш',
-	'categorytree-collapse' => 'къайла яккха',
+	'categorytree-collapse' => 'къайлаяккха',
 	'categorytree-expand' => 'хьайаста',
+	'categorytree-load' => 'чуяккха',
 	'categorytree-loading' => 'чуйолуш…',
-	'categorytree-no-subcategories' => 'йац бухаркадегарш',
-	'categorytree-not-found' => 'Кадегар «$1» ца карийна.',
+	'categorytree-no-subcategories' => 'бухара категореш яц',
+	'categorytree-not-found' => 'Категори «$1» ца карийна.',
 );
 
 /** Cebuano (Cebuano)
@@ -1026,6 +1106,8 @@ $messages['ckb'] = array(
 	'categorytree-mode-all' => 'ھەموو پەڕەکان',
 	'categorytree-collapse' => 'کۆیبکەوە',
 	'categorytree-expand' => 'بڵاویبکەوە',
+	'categorytree-expand-bullet' => '◄',
+	'categorytree-empty-bullet' => '◄',
 	'categorytree-member-counts' => '{{PLURAL:$1|یەک ژێرپۆل|$1 ژێرپۆل}}، {{PLURAL:$2|یەک پەڕە|$2 پەڕە}}، and {{PLURAL:$3|یەک پەڕگە|$3 پەڕگە}} لەبەردەگرێتەوە',
 	'categorytree-num-categories' => '$1 پۆل',
 	'categorytree-num-pages' => '$1 پەڕە',
@@ -1111,6 +1193,7 @@ Ni lwydda'r gofyniad os yw'ch porwr yn hen iawn neu os nad yw Sgript Java wedi e
 	'categorytree-category' => 'Categori:',
 	'categorytree-go' => 'Dangos y Goeden',
 	'categorytree-parents' => 'Rhieni',
+	'categorytree-mode-label' => 'Modd:',
 	'categorytree-mode-categories' => 'categorïau yn unig',
 	'categorytree-mode-pages' => 'tudalennau ag eithrio ffeiliau',
 	'categorytree-mode-all' => 'pob tudalen',
@@ -1241,7 +1324,7 @@ Eka browseyê tu kihanî ya zi tu JavaScript qefilmayiyo, program nihebitiyeno.'
 	'categorytree-go' => 'Barfi',
 	'categorytree-parents' => 'Ser kategoriy',
 	'categorytree-mode-label' => 'Modê cı:',
-	'categorytree-mode-categories' => 'kategoriya tenya',
+	'categorytree-mode-categories' => 'tenya kategoriy',
 	'categorytree-mode-pages' => 'Teyna pelan, dosyayan hesab meke',
 	'categorytree-mode-all' => 'peley pêro',
 	'categorytree-collapse' => 'ake/racne',
@@ -1459,6 +1542,7 @@ Kui sul on väga vana veebilehitseja või JavaScrip keelatud, see ei toimi.',
 	'categorytree-category' => 'Kategooria:',
 	'categorytree-go' => 'Näita puud',
 	'categorytree-parents' => 'Ülemkategooriad',
+	'categorytree-mode-label' => 'Moodus:',
 	'categorytree-mode-categories' => 'ainult kategooriad',
 	'categorytree-mode-pages' => 'failideta',
 	'categorytree-mode-all' => 'kõik leheküljed',
@@ -1548,6 +1632,8 @@ $messages['fa'] = array(
 	'categorytree-mode-all' => 'همهٔ صفحه‌ها',
 	'categorytree-collapse' => 'نهفتن',
 	'categorytree-expand' => 'گسترش',
+	'categorytree-expand-bullet' => '◄',
+	'categorytree-empty-bullet' => '◄',
 	'categorytree-member-counts' => 'شامل {{PLURAL:$1|یک زیررده|$1 زیررده}}، {{PLURAL:$2|یک صفحه|$2 صفحه}} و {{PLURAL:$3|یک پرونده|$3 پرونده است}}',
 	'categorytree-num-categories' => '$1 ر',
 	'categorytree-num-pages' => '$1 ص',
@@ -1705,7 +1791,7 @@ $messages['fr'] = array(
 	'categorytree-no-subcategories' => 'aucune sous-catégorie',
 	'categorytree-no-parent-categories' => 'aucune catégorie parente',
 	'categorytree-no-pages' => 'aucune page ou sous-catégorie',
-	'categorytree-not-found' => 'Catégorie <tt>$1</tt> introuvable',
+	'categorytree-not-found' => 'Catégorie <i>$1</i> introuvable',
 	'categorytree-error' => 'Problème de chargement des données.',
 	'categorytree-retry' => 'Veuillez attendre un instant puis réessayer.',
 );
@@ -1741,9 +1827,43 @@ Se vos avéd un rudo viely navigator ou ben se vos éd pas activâ la fonccional
 	'categorytree-no-subcategories' => 'Gins de sot-catègorie.',
 	'categorytree-no-parent-categories' => 'gins de catègorie parenta',
 	'categorytree-no-pages' => 'Gins d’articllo ou de sot-catègorie.',
-	'categorytree-not-found' => 'La catègorie <tt>$1</tt> at pas étâ trovâ.',
+	'categorytree-not-found' => 'La catègorie <i>$1</i> at pas étâ trovâ.',
 	'categorytree-error' => 'Problèmo de chargement de les balyês.',
 	'categorytree-retry' => 'Atendéd un moment et pués tornâd èprovar.',
+);
+
+/** Northern Frisian (Nordfriisk)
+ * @author Murma174
+ */
+$messages['frr'] = array(
+	'categorytree' => 'Kategoriibuum',
+	'categorytree-portlet' => 'Kategoriin',
+	'categorytree-legend' => 'Kategoriibuum wise',
+	'categorytree-desc' => 'Diarmä könst dü lachter det  [[Special:CategoryTree|kategorii struktuur]] beluke',
+	'categorytree-header' => 'Wiset onerkategoriin üs en buum. Detdiar sidj brükt JavaScript (Ajax) an werket ferlicht ei mä en ualen browser.',
+	'categorytree-category' => 'Kategorii:',
+	'categorytree-go' => 'Kategoriibuum uunwise',
+	'categorytree-parents' => 'Auerkategoriin',
+	'categorytree-mode-label' => 'Modus:',
+	'categorytree-mode-categories' => 'bluas kategoriin',
+	'categorytree-mode-pages' => 'sidjen saner dateien',
+	'categorytree-mode-all' => 'Aal a sidjen',
+	'categorytree-collapse' => 'Fersteeg',
+	'categorytree-expand' => 'Wise',
+	'categorytree-member-counts' => 'Diar san {{PLURAL:$1|1 onerkategorii|$1 onerkategoriin}}, {{PLURAL:$2|1 sidj|$2 sidjen}} an {{PLURAL:$3|1 datei|$3 datein}} uun.',
+	'categorytree-num-categories' => '$1 K',
+	'categorytree-num-pages' => '$1 S',
+	'categorytree-num-files' => '$1 D',
+	'categorytree-num-empty' => 'leesag',
+	'categorytree-load' => 'loose',
+	'categorytree-loading' => 'loose ...',
+	'categorytree-nothing-found' => 'Niks fünjen.',
+	'categorytree-no-subcategories' => 'Nian onerkategoriin',
+	'categorytree-no-parent-categories' => 'Nian auerkategoriin',
+	'categorytree-no-pages' => 'Nian sidjen of onerkategoriin',
+	'categorytree-not-found' => 'Det kategorii „$1“ as ei fünjen wurden.',
+	'categorytree-error' => "Bi't loosin faan dooten as wat skiaf gingen.",
+	'categorytree-retry' => 'Teew en uugenblak an fersjük det do noch ans.',
 );
 
 /** Friulian (furlan)
@@ -2011,7 +2131,7 @@ $messages['ha'] = array(
 	'categorytree-category' => 'Rukuni:',
 );
 
-/** Hakka (Hak-kâ-fa)
+/** Hakka (客家語/Hak-kâ-ngî)
  * @author Hakka
  */
 $messages['hak'] = array(
@@ -2050,6 +2170,8 @@ $messages['he'] = array(
 	'categorytree-mode-all' => 'כל הדפים',
 	'categorytree-collapse' => 'כיווץ',
 	'categorytree-expand' => 'הרחבה',
+	'categorytree-expand-bullet' => '◄',
+	'categorytree-empty-bullet' => '◄',
 	'categorytree-member-counts' => 'כוללת {{PLURAL:$1|קטגוריית משנה אחת|$1 קטגוריות משנה}}, {{PLURAL:$2|דף אחד|$2 דפים}}, ו{{PLURAL:$3|קובץ אחד|־$3 קבצים}}',
 	'categorytree-num-categories' => "{{PLURAL:$1|קט' אחת|$1 קט'}}",
 	'categorytree-num-pages' => '{{PLURAL:$1|דף אחד|$1 דפים}}',
@@ -2071,37 +2193,39 @@ $messages['he'] = array(
  * @author Kaustubh
  * @author Pooja.srivastava
  * @author Shyam123.ckp
+ * @author Siddhartha Ghai
  */
 $messages['hi'] = array(
 	'categorytree' => 'श्रेणीवृक्ष',
 	'categorytree-portlet' => 'श्रेणियाँ',
 	'categorytree-legend' => 'श्रेणीवृक्ष दिखायें',
-	'categorytree-desc' => 'विकिकी [[Special:CategoryTree|श्रेणीयाँ]] दिखानेके लिये AJAX से बना औज़ार',
+	'categorytree-desc' => 'विकि की [[Special:CategoryTree|श्रेणी संरचना]] देखें',
 	'categorytree-header' => 'एक श्रेणीके कन्टेन्ट्स वृक्ष के रूपमें देखने के लिये उसका नाम दें।
 इस सुविधाके लिये AJAX नाम के एक जावास्क्रीप्ट की जरुरत होती हैं, इसपर ध्यान दें।
 अगर आपका ब्राउज़र बहुत पुराना हैं, या जावास्क्रीप्ट बंद रखी हुई हैं तो यह काम नहीं करेगा।',
 	'categorytree-category' => 'श्रेणी:',
 	'categorytree-go' => 'वृक्ष दिखायें',
 	'categorytree-parents' => 'पालक',
+	'categorytree-mode-label' => 'मोड:',
 	'categorytree-mode-categories' => 'सिर्फ श्रेणीयाँ',
 	'categorytree-mode-pages' => 'श्रेणी पेड़ मोड पृष्ठों',
 	'categorytree-mode-all' => 'सभी पन्ने',
 	'categorytree-collapse' => 'छोटा करें',
-	'categorytree-expand' => 'बडा करें',
+	'categorytree-expand' => 'विस्तार करें',
 	'categorytree-member-counts' => 'इसमे {{PLURAL:$1| 1 श्रेणि | $1  श्रेणियाँ}},  {{PLURAL:$2| 1 पृष्ठ| $2  पृष्ठों}}, और  {{PLURAL:$3| 1 फाइल | $3  फ़ाइलें}} हे ।',
-	'categorytree-num-categories' => '$1 C',
-	'categorytree-num-pages' => '$1 P',
-	'categorytree-num-files' => '$1 F',
+	'categorytree-num-categories' => '$1 श्र',
+	'categorytree-num-pages' => '$1 पृ',
+	'categorytree-num-files' => '$1 फ़ा',
 	'categorytree-num-empty' => 'खाली',
 	'categorytree-load' => 'लोड करें',
-	'categorytree-loading' => 'लोड कर रहें हैं...',
-	'categorytree-nothing-found' => 'कुछ भी मिला नहीं',
+	'categorytree-loading' => 'लोड हो रहा है...',
+	'categorytree-nothing-found' => 'कुछ भी नहीं मिला',
 	'categorytree-no-subcategories' => 'उपश्रेणीयाँ नहीं हैं',
 	'categorytree-no-parent-categories' => 'कोई उपर् कि श्रेणियाँ नहि हे',
-	'categorytree-no-pages' => 'लेख या उपश्रेणीयाँ नहीं हैं',
-	'categorytree-not-found' => 'श्रेणी <i>$1</i> मिली नहीं',
+	'categorytree-no-pages' => 'कोई पृष्ठ या उपश्रेणीयाँ नहीं हैं',
+	'categorytree-not-found' => 'श्रेणी <i>$1</i> नहीं मिली',
 	'categorytree-error' => 'डाटा लोड करने में समस्या।',
-	'categorytree-retry' => 'कृपया थोडे समय के बाद फिरसे यत्न करें।',
+	'categorytree-retry' => 'कृपया थोड़े समय पश्चात पुनः यत्न करें।',
 );
 
 /** Fiji Hindi (Latin script) (Fiji Hindi)
@@ -2288,6 +2412,8 @@ $messages['hy'] = array(
 	'categorytree-collapse' => 'փակել',
 	'categorytree-expand' => 'բացել',
 	'categorytree-member-counts' => 'պարունակում է {{PLURAL:$1|1 ենթակատեգորիա|$1 ենթակատեգորիա}}, {{PLURAL:$2|1 էջ|$2 էջ}} և {{PLURAL:$3|1 նիշք|$3 նիշք}}',
+	'categorytree-num-categories' => '$1 Կ',
+	'categorytree-num-pages' => '$1 Է',
 	'categorytree-load' => 'բեռնել',
 	'categorytree-loading' => 'բեռնվում է',
 	'categorytree-nothing-found' => 'ոչինչ չի գտնվել',
@@ -2314,6 +2440,7 @@ Si tu ha un navigator multo vetule, o ha disactivate JavaScript, isto non functi
 	'categorytree-category' => 'Categoria:',
 	'categorytree-go' => 'Monstrar arbore',
 	'categorytree-parents' => 'Categorias superior',
+	'categorytree-mode-label' => 'Modo:',
 	'categorytree-mode-categories' => 'categorias solmente',
 	'categorytree-mode-pages' => 'paginas excepte files',
 	'categorytree-mode-all' => 'tote le paginas',
@@ -2339,6 +2466,7 @@ Si tu ha un navigator multo vetule, o ha disactivate JavaScript, isto non functi
  * @author Bennylin
  * @author Farras
  * @author IvanLanin
+ * @author Iwan Novirion
  * @author Rex
  */
 $messages['id'] = array(
@@ -2359,9 +2487,9 @@ Jika Anda menggunakan penjelajah web lama, atau mematikan fungsi JavaScript Anda
 	'categorytree-collapse' => 'tutup',
 	'categorytree-expand' => 'buka',
 	'categorytree-member-counts' => 'memiliki {{PLURAL:$1|1 subkategori|$1 subkategori}}, {{PLURAL:$2|1 halaman|$2 halaman}}, dan {{PLURAL:$3|1 berkas|$3 berkas}}',
-	'categorytree-num-categories' => '$1 C',
-	'categorytree-num-pages' => '$1 P',
-	'categorytree-num-files' => '$1 F',
+	'categorytree-num-categories' => '$1 K',
+	'categorytree-num-pages' => '$1 H',
+	'categorytree-num-files' => '$1 B',
 	'categorytree-num-empty' => 'kosong',
 	'categorytree-load' => 'muatkan',
 	'categorytree-loading' => 'memuat...',
@@ -2405,36 +2533,36 @@ $messages['ig'] = array(
  * @author Lam-ang
  */
 $messages['ilo'] = array(
-	'categorytree' => 'Kategoria a kayo',
-	'categorytree-portlet' => 'Dagiti kategoria',
-	'categorytree-legend' => 'Ipakita ti kategoria a kayo',
-	'categorytree-desc' => 'Agpadaliasat a dinamik ti [[Special:CategoryTree|pinakapatakder ti kategoria]]',
-	'categorytree-header' => 'Ikabil ti nagan ti kategoria tapno makita dagiti nagyan na a kasla kayo a pinakatakder .
-Kitaem a  daytoy ket masapul na ti JavaScript nga opisio a makunkuna nga AJAX.
-No adda daan a pagbasabasam, wenno nabaldado ti JavaScript mo, saan daytoy nga agbalin.',
+	'categorytree' => 'Kayo ti kategoria',
+	'categorytree-portlet' => 'Katkategoria',
+	'categorytree-legend' => 'Ipakita ti kayo ti kategoria',
+	'categorytree-desc' => 'Dinamik nga agdaliasat iti [[Special:CategoryTree|estrukrura ti kategoria]]',
+	'categorytree-header' => 'Ikabil ti nagan ti kategoria tapno makita dagiti nagyanna a kasla estruktura ti kayo.
+Laglagipem a daytoy ket makasapul ti JavaScript nga opisio a makunkuna a kas AJAX.
+No addaanka ti daan a pagbasabasam, wenno nabaldado ti JavaScript, saan daytoy a mabalin.',
 	'categorytree-category' => 'Kategoria:',
 	'categorytree-go' => 'Ipakita ti kayo',
 	'categorytree-parents' => 'Nagannak',
 	'categorytree-mode-label' => 'Wagas:',
-	'categorytree-mode-categories' => 'dagiti kategoria laeng',
+	'categorytree-mode-categories' => 'katkategoria laeng',
 	'categorytree-mode-pages' => 'dagiti panid mailaksid dagiti papeles',
 	'categorytree-mode-all' => 'amin a pampanid',
-	'categorytree-collapse' => 'parbaen',
+	'categorytree-collapse' => 'rebbaen',
 	'categorytree-expand' => 'palawaen',
-	'categorytree-member-counts' => 'Naglaon {{PLURAL:$1|1 ti apo ti kategoria|$1 dagiti apo ti kategoria}}, {{PLURAL:$2|1 panid|$2 dagiti panid}}, ken {{PLURAL:$3|1 papeles|$3 dagiti papeles}}',
+	'categorytree-member-counts' => 'Naglaon ti {{PLURAL:$1|1 a subkategoria|$1 a subkatkategoria}}, {{PLURAL:$2|1 a panid|$2 a pampanid}}, ken {{PLURAL:$3|1 a papeles|$3 a pappapeles}}',
 	'categorytree-num-categories' => '$1 K',
 	'categorytree-num-pages' => '$1 P',
 	'categorytree-num-files' => '$1 F',
-	'categorytree-num-empty' => 'awan ti nagyan na',
+	'categorytree-num-empty' => 'awan ti nagyanna',
 	'categorytree-load' => 'agkarga',
 	'categorytree-loading' => 'agkarkarga...',
 	'categorytree-nothing-found' => 'awan ti nabirukan',
-	'categorytree-no-subcategories' => 'awan dagiti apo ti kategoria',
-	'categorytree-no-parent-categories' => 'awan ti nagannak a kategoria',
-	'categorytree-no-pages' => 'awan dagiti panid wenno dagiti apo ti kategoria',
-	'categorytree-not-found' => 'Kategoria <i>$1</i> saan a nabirukan',
+	'categorytree-no-subcategories' => 'awan dagiti subkategoria',
+	'categorytree-no-parent-categories' => 'awan ti nagannak a katkategoria',
+	'categorytree-no-pages' => 'awan ti pampanid wenno dagiti subkategoria',
+	'categorytree-not-found' => 'Ti kategoria <i>$1</i> ket saan a nabirukan',
 	'categorytree-error' => 'Parikut ti pinagkarga ti linaon.',
-	'categorytree-retry' => 'Pangngaasi ti aguray ti madamdama ken ipadas mo manen.',
+	'categorytree-retry' => 'Pangngaasi nga aguray iti madamdama ken ipadas manen.',
 );
 
 /** Ingush (ГӀалгӀай)
@@ -2531,7 +2659,7 @@ $messages['it'] = array(
 	'categorytree-desc' => 'Accessorio AJAX per visualizzare la [[Special:CategoryTree|struttura delle categorie]] del sito',
 	'categorytree-header' => 'Inserire il nome della categoria di cui si desidera vedere il contenuto sotto forma di struttura ad albero. Si noti che la pagina richiede le funzionalità avanzate di JavaScript chiamate AJAX; qualora si stia usando un browser molto vecchio o le funzioni JavaScript siano disabilitate, questa pagina non funzionerà.',
 	'categorytree-category' => 'Categoria:',
-	'categorytree-go' => 'Carica',
+	'categorytree-go' => 'Mostra albero',
 	'categorytree-parents' => 'Categorie superiori',
 	'categorytree-mode-label' => 'Modalità:',
 	'categorytree-mode-categories' => 'mostra solo le categorie',
@@ -2545,7 +2673,7 @@ $messages['it'] = array(
 	'categorytree-num-files' => '$1 F',
 	'categorytree-num-empty' => 'vuota',
 	'categorytree-load' => 'carica',
-	'categorytree-loading' => 'caricamento in corso',
+	'categorytree-loading' => 'caricamento in corso…',
 	'categorytree-nothing-found' => 'nessun risultato',
 	'categorytree-no-subcategories' => 'nessuna sottocategoria.',
 	'categorytree-no-parent-categories' => 'nessuna categoria superiore',
@@ -2587,7 +2715,7 @@ $messages['ja'] = array(
 	'categorytree-num-files' => '$1F',
 	'categorytree-num-empty' => '空',
 	'categorytree-load' => '読み込んで展開する',
-	'categorytree-loading' => '読み込み中...',
+	'categorytree-loading' => '読み込み中…',
 	'categorytree-nothing-found' => '何も見つかりませんでした',
 	'categorytree-no-subcategories' => '下位カテゴリはありません',
 	'categorytree-no-parent-categories' => '上位カテゴリはありません',
@@ -2765,25 +2893,36 @@ $messages['kk-arab'] = array(
 );
 
 /** Kazakh (Cyrillic script) (қазақша (кирил)‎)
+ * @author Arystanbek
  */
 $messages['kk-cyrl'] = array(
 	'categorytree' => 'Санат бұтақтары',
+	'categorytree-portlet' => 'Санаттар',
+	'categorytree-legend' => 'Санат бұтағын көрсету',
+	'categorytree-desc' => '[[Special:CategoryTree|Санат құрылымын]] серпінді шарлау',
 	'categorytree-header' => 'Санат мазмұның бұтақтар түрде көру үшін атауын енгізіңіз.
 Аңғарпта: Бұл іске JavaScript құралының AJAX деген кеңейтілген қабілеті қажет болады.
 Егер шолғышыңыз өте ескі, немесе JavaScript өшірілген болса, бұл іске асырылмайды.',
 	'categorytree-category' => 'Санат:',
 	'categorytree-go' => 'Бұтақтарын көрсет',
 	'categorytree-parents' => 'Жоғарғылар',
+	'categorytree-mode-label' => 'Режим:',
 	'categorytree-mode-categories' => 'тек санаттар',
 	'categorytree-mode-pages' => 'беттер (суреттерді санамай)',
-	'categorytree-mode-all' => 'барлық бет',
+	'categorytree-mode-all' => 'барлық беттер',
 	'categorytree-collapse' => 'тарылту',
 	'categorytree-expand' => 'кеңейту',
+	'categorytree-member-counts' => 'Қамтылғандар {{PLURAL:$1|1 санатша|$1 санатша}}, {{PLURAL:$2|1 бет|$2 бет}}, және {{PLURAL:$3|1 файл|$3 файл}}',
+	'categorytree-num-categories' => '$1 санатша',
+	'categorytree-num-pages' => '$1 бет',
+	'categorytree-num-files' => '$1 Файл',
+	'categorytree-num-empty' => 'бос',
 	'categorytree-load' => 'жүктеу',
-	'categorytree-loading' => 'жүктеуде',
+	'categorytree-loading' => 'жүктеуде...',
 	'categorytree-nothing-found' => 'ештеңе табылмады',
 	'categorytree-no-subcategories' => 'санатшалары жоқ',
-	'categorytree-no-pages' => 'беттері не санатшалары жоқ',
+	'categorytree-no-parent-categories' => 'аталық санаттар жоқ',
+	'categorytree-no-pages' => 'беттері немесе санатшалары жоқ',
 	'categorytree-not-found' => '<i>$1</i> деген санат табылмады',
 	'categorytree-error' => 'Деректерді жүктеу кезінде шатақ шықты.',
 	'categorytree-retry' => 'Бір сәт күте тұрып қайталаңыз.',
@@ -2891,7 +3030,7 @@ $messages['ko'] = array(
 	'categorytree' => '분류 트리',
 	'categorytree-portlet' => '분류',
 	'categorytree-legend' => '분류 트리 보기',
-	'categorytree-desc' => '[[Special:CategoryTree|분류 구조]]를 동적으로 볼 수 있는 AJAX 도구',
+	'categorytree-desc' => '[[Special:CategoryTree|분류 구조]]를 동적으로 둘러볼 수 있습니다',
 	'categorytree-header' => '트리 구조로 볼 분류 이름을 입력해주세요.
 이 기능을 사용하려면 웹 브라우저에서 AJAX를 지원해야 합니다.
 오래 된 브라우저를 사용하거나, 브라우저에서 자바스크립트를 사용하지 않도록 설정했다면 트리 기능이 동작하지 않습니다.',
@@ -2899,25 +3038,25 @@ $messages['ko'] = array(
 	'categorytree-go' => '트리 보기',
 	'categorytree-parents' => '상위 분류',
 	'categorytree-mode-label' => '모드:',
-	'categorytree-mode-categories' => '분류 문서만 표시',
+	'categorytree-mode-categories' => '분류 문서만 보기',
 	'categorytree-mode-pages' => '파일을 제외한 모든 문서를 표시',
 	'categorytree-mode-all' => '모든 문서를 표시',
 	'categorytree-collapse' => '접기',
 	'categorytree-expand' => '펼치기',
-	'categorytree-member-counts' => '하위 분류 $1개, 문서 $2개, 파일 $3개를 포함하고 있습니다.',
+	'categorytree-member-counts' => '{{PLURAL:$1|하위 분류 1개|하위 분류 $1개}}, {{PLURAL:$2|문서 1개|문서 $2개}}, {{PLURAL:$3|파일 1개|파일 $3개}}를 포함하고 있습니다',
 	'categorytree-num-categories' => '$1 C',
 	'categorytree-num-pages' => '$1 P',
 	'categorytree-num-files' => '$1 F',
 	'categorytree-num-empty' => '비었음',
 	'categorytree-load' => '불러오기',
-	'categorytree-loading' => '불러오는 중',
+	'categorytree-loading' => '불러오는 중…',
 	'categorytree-nothing-found' => '결과 없음',
 	'categorytree-no-subcategories' => '하위 분류 없음',
 	'categorytree-no-parent-categories' => '상위 분류가 없습니다.',
-	'categorytree-no-pages' => '문서/하위 분류 없음',
+	'categorytree-no-pages' => '문서나 하위 분류 없음',
 	'categorytree-not-found' => '$1 분류가 없습니다',
 	'categorytree-error' => '값을 불러오는 중 오류 발생',
-	'categorytree-retry' => '잠시 후에 다시 시도해주세요.',
+	'categorytree-retry' => '잠시 기다리고 나서 다시 시도하세요.',
 );
 
 /** Karachay-Balkar (къарачай-малкъар)
@@ -2938,6 +3077,8 @@ $messages['krj'] = array(
  */
 $messages['ks-arab'] = array(
 	'categorytree-category' => 'زٲژ:',
+	'categorytree-expand-bullet' => '◄',
+	'categorytree-empty-bullet' => '◄',
 );
 
 /** Colognian (Ripoarisch)
@@ -3007,10 +3148,10 @@ $messages['ku-latn'] = array(
 $messages['kw'] = array(
 	'categorytree-portlet' => 'Klassys',
 	'categorytree-category' => 'Klass:',
-	'categorytree-mode-all' => 'an oll folednow',
+	'categorytree-mode-all' => 'keniver folen',
 );
 
-/** Kirghiz (Кыргызча)
+/** Kyrgyz (Кыргызча)
  * @author Chorobek
  */
 $messages['ky'] = array(
@@ -3103,6 +3244,7 @@ $messages['lad'] = array(
 /** Luxembourgish (Lëtzebuergesch)
  * @author Kaffi
  * @author Robby
+ * @author Soued031
  */
 $messages['lb'] = array(
 	'categorytree' => 'Struktur vun de Kategorien',
@@ -3110,8 +3252,8 @@ $messages['lb'] = array(
 	'categorytree-legend' => 'Weis Kategoriestruktur',
 	'categorytree-desc' => "Gadget deen op Ajax opgebaut ass fir d'[[Special:CategoryTree|Kategorie-Struktur]] vun enger Wiki duerzestellen",
 	'categorytree-header' => 'Gitt den Numm vun enger Kategorie an, fir hiren Inhalt als Bam-Struktur ze gesinn.
-Bedenkt, datt dës Fonctioun Java Script Funktioune benotzt, déi als AJAX bekannt sinn.
-Wann Dir ee ganz ale Browser hutt, oder wann Dir JavaScript ausgeschalt hutt, da fonktionnéiert dëst bei Iech net.',
+Bedenkt, datt dës Funktioun Java Script Funktioune benotzt, déi als AJAX bekannt sinn.
+Wann Dir ee ganz ale Browser hutt, oder wann Dir JavaScript ausgeschalt hutt, da funktionéiert dëst bei Iech net.',
 	'categorytree-category' => 'Kategorie:',
 	'categorytree-go' => 'Struktur weisen',
 	'categorytree-parents' => 'Uewerkategorien',
@@ -3271,6 +3413,26 @@ $messages['lo'] = array(
 	'categorytree-retry' => 'ກະລຸນາຮອສັກຄູ່ ແລ້ວລອງໂຫຼດໃໝ່',
 );
 
+/** لوری (لوری)
+ * @author Mogoeilor
+ */
+$messages['lrc'] = array(
+	'categorytree-category' => 'دسه:',
+	'categorytree-go' => 'وه شلك دار نشون بيه',
+	'categorytree-parents' => 'حونواديا',
+	'categorytree-mode-label' => 'مد:',
+	'categorytree-collapse' => 'جم كردن',
+	'categorytree-expand' => 'وا كردن',
+	'categorytree-num-categories' => '$1 س',
+	'categorytree-num-pages' => ' $1 پ',
+	'categorytree-num-files' => ' $1 ف',
+	'categorytree-num-empty' => 'حالی',
+	'categorytree-load' => 'سوار كرد',
+	'categorytree-loading' => 'د حالت سوار كرد',
+	'categorytree-nothing-found' => 'هيچی پيدا نبی',
+	'categorytree-no-subcategories' => 'بی زيردسه يا',
+);
+
 /** Lithuanian (lietuvių)
  * @author Eitvys200
  * @author Garas
@@ -3390,6 +3552,7 @@ Ja tev ir veca interneta pārlūkprogramma vai arī JavaScript ir atslēgts, š�
 	'categorytree-category' => 'Kategorija:',
 	'categorytree-go' => 'Parādīt koku',
 	'categorytree-parents' => 'Augšējā līmeņa kategorijas',
+	'categorytree-mode-label' => 'Režīms:',
 	'categorytree-mode-categories' => 'tikai kategorijas',
 	'categorytree-mode-pages' => 'lapas (bez attēlu lapām)',
 	'categorytree-mode-all' => 'visas lapas',
@@ -3460,6 +3623,40 @@ $messages['mg'] = array(
 	'categorytree-mode-pages' => 'pejy tsy misy sary',
 );
 
+/** Minangkabau (Baso Minangkabau)
+ * @author Iwan Novirion
+ */
+$messages['min'] = array(
+	'categorytree' => 'Pohon kategori',
+	'categorytree-portlet' => 'Kategori',
+	'categorytree-legend' => 'Tunjuakan pohon kategori',
+	'categorytree-desc' => 'Manavigasi sacaro dinamih [[Special:CategoryTree|struktur kategori]]',
+	'categorytree-header' => 'Masuakan suatu kategori untuak mancaliak isinyo dalam bantuak sruktur pohon.
+Paralu diparatian koq fitur ko haruih ado dukuangan JavaScript tingkek lanjuik nan dikenal sabagai AJAX.
+Jikok Sanak manggunoan paramban web versi lamo, atau mamatian fungsi JavaScript, fitur ko indak dapek bajalan.',
+	'categorytree-category' => 'Kategori:',
+	'categorytree-go' => 'Tunjuakan',
+	'categorytree-mode-label' => 'Mode:',
+	'categorytree-mode-categories' => 'hanyo kategori',
+	'categorytree-mode-pages' => 'laman salain berkas',
+	'categorytree-mode-all' => 'kasado laman',
+	'categorytree-collapse' => 'tutuik',
+	'categorytree-expand' => 'bukak',
+	'categorytree-member-counts' => 'Barisi {{PLURAL:$1|$1 subkategori}}, {{PLURAL:$2|$2 laman}}, jo {{PLURAL:$3|$3 berkas}}',
+	'categorytree-num-categories' => '$1 K',
+	'categorytree-num-pages' => '$1 L',
+	'categorytree-num-files' => '$1 B',
+	'categorytree-num-empty' => 'kosong',
+	'categorytree-load' => 'muek',
+	'categorytree-loading' => 'mamuek...',
+	'categorytree-nothing-found' => 'indak basobok',
+	'categorytree-no-subcategories' => 'indak ado subkategori',
+	'categorytree-no-pages' => 'indak ado laman atau subkategori',
+	'categorytree-not-found' => 'Kategori <i>$1</i> indak basobok',
+	'categorytree-error' => 'Problem mamuek data.',
+	'categorytree-retry' => 'Tunggu sabanta dan cubo lai.',
+);
+
 /** Macedonian (македонски)
  * @author Bjankuloski06
  * @author Brest
@@ -3480,7 +3677,7 @@ $messages['mk'] = array(
 	'categorytree-mode-categories' => 'само категории',
 	'categorytree-mode-pages' => 'страници без податотеки',
 	'categorytree-mode-all' => 'сите страници',
-	'categorytree-collapse' => 'затвори',
+	'categorytree-collapse' => 'собери',
 	'categorytree-expand' => 'отвори',
 	'categorytree-member-counts' => 'содржи {{PLURAL:$1|една поткатегорија|$1 поткатегории}}, {{PLURAL:$2|една страница|$2 страници}} и {{PLURAL:$3|една податотека|$3 податотеки}}',
 	'categorytree-num-categories' => '$1 К',
@@ -3511,7 +3708,7 @@ $messages['ml'] = array(
 ഇതു പ്രവർത്തിക്കണമെങ്കിൽ അജാക്സ് എന്ന ചുരുക്കനാമത്തിലറിയപ്പെടുന്ന നൂതന ജാവാസ്ക്രിപ്റ്റ് സാങ്കേതികവിദ്യ ആവശ്യമാണ്‌.
 താങ്കളുടെ ബ്രൗസറിൽ ജാവാസ്ക്രിപ്റ്റ് പ്രവർത്തനരഹിതമാക്കിയതാണെങ്കിലോ അല്ലെങ്കിൽ ബ്രൗസർ കാലഹരണപ്പെട്ടതാണെങ്കിലോ ഇതു പ്രവർത്തിക്കില്ല.',
 	'categorytree-category' => 'വർഗ്ഗം:',
-	'categorytree-go' => 'വൃക്ഷം പ്രദർശിപ്പിക്കുക',
+	'categorytree-go' => 'വർഗ്ഗവൃക്ഷം പ്രദർശിപ്പിക്കുക',
 	'categorytree-parents' => 'താവഴി',
 	'categorytree-mode-label' => 'സമ്പ്രദായം:',
 	'categorytree-mode-categories' => 'വർഗ്ഗങ്ങൾ മാത്രം',
@@ -3525,7 +3722,7 @@ $messages['ml'] = array(
 	'categorytree-num-files' => '$1 പ്ര',
 	'categorytree-num-empty' => 'ശൂന്യം',
 	'categorytree-load' => 'ശേഖരിക്കുക',
-	'categorytree-loading' => 'ശേഖരിച്ചുകൊണ്ടിരിക്കുന്നു…',
+	'categorytree-loading' => 'ശേഖരിക്കുന്നു…',
 	'categorytree-nothing-found' => 'ഒന്നും കണ്ടെത്തിയില്ല',
 	'categorytree-no-subcategories' => 'ഉപവർഗ്ഗങ്ങളില്ല',
 	'categorytree-no-parent-categories' => 'മാതൃവർഗ്ഗങ്ങൾ ഇല്ല',
@@ -3573,6 +3770,7 @@ $messages['mn'] = array(
  * @author Mahitgar
  * @author Mvkulkarni23
  * @author Rahuldeshmukh101
+ * @author V.narsikar
  */
 $messages['mr'] = array(
 	'categorytree' => 'वर्गवृक्ष',
@@ -3584,6 +3782,7 @@ $messages['mr'] = array(
 	'categorytree-category' => 'वर्ग:',
 	'categorytree-go' => 'वृक्ष दाखवा',
 	'categorytree-parents' => 'पालक',
+	'categorytree-mode-label' => 'पद्धति:',
 	'categorytree-mode-categories' => 'केवळ वर्ग',
 	'categorytree-mode-pages' => 'चित्रे नसलेली पाने',
 	'categorytree-mode-all' => 'सर्व पाने',
@@ -3749,7 +3948,26 @@ $messages['nan'] = array(
 	'categorytree-no-subcategories' => 'bô ē-lūi-pia̍t',
 );
 
-/** Norwegian Bokmål (norsk (bokmål)‎)
+/** Neapolitan (Napulitano)
+ * @author Chelin
+ */
+$messages['nap'] = array(
+	'categorytree-portlet' => 'Categurìe',
+	'categorytree-category' => 'Categurìa:',
+	'categorytree-parents' => 'Categurìe superiore',
+	'categorytree-mode-label' => 'Modalità:',
+	'categorytree-mode-categories' => "mostra solo 'e categurìe",
+	'categorytree-mode-all' => "Tutte 'e paggene",
+	'categorytree-collapse' => 'annascune',
+	'categorytree-expand' => 'fa vede',
+	'categorytree-num-categories' => '$1 C',
+	'categorytree-num-pages' => '$1 P',
+	'categorytree-num-files' => '$1 F',
+	'categorytree-num-empty' => 'vuota',
+	'categorytree-load' => 'careca',
+);
+
+/** Norwegian Bokmål (norsk bokmål)
  * @author Audun
  * @author Event
  */
@@ -3813,7 +4031,7 @@ $messages['nds'] = array(
 	'categorytree-retry' => 'Tööv en beten un denn versöök dat noch wedder.',
 );
 
-/** Nedersaksisch (Nedersaksisch)
+/** Low Saxon (Netherlands) (Nedersaksies)
  * @author Servien
  */
 $messages['nds-nl'] = array(
@@ -3826,6 +4044,7 @@ NB: veur disse funksie he'j de JavaScript-funksionaliteit AJAX neudig. A'j n hel
 	'categorytree-category' => 'Kategorie:',
 	'categorytree-go' => 'Laojen',
 	'categorytree-parents' => 'Ouwerkategorieën',
+	'categorytree-mode-label' => 'Modus:',
 	'categorytree-mode-categories' => 'allinnig kategorieën',
 	'categorytree-mode-pages' => 'ziejen, gien aofbeeldingen',
 	'categorytree-mode-all' => 'alle ziejen',
@@ -3927,7 +4146,7 @@ Let op: deze functie gebruikt JavaScript-functionaliteit die bekend staat als AJ
 Als je een verouderde browser hebt of JavaScript uitgeschakeld is, dan werkt deze functie niet.',
 );
 
-/** Norwegian Nynorsk (norsk (nynorsk)‎)
+/** Norwegian Nynorsk (norsk nynorsk)
  * @author Eirik
  * @author Harald Khan
  * @author Njardarlogar
@@ -3989,12 +4208,17 @@ $messages['oc'] = array(
 	'categorytree-category' => 'Categoria :',
 	'categorytree-go' => "Mostrar l'arborescéncia",
 	'categorytree-parents' => 'Subrecategoria(s)',
+	'categorytree-mode-label' => 'Mòde:',
 	'categorytree-mode-categories' => 'pas que las categorias',
 	'categorytree-mode-pages' => 'paginas sens los imatges',
 	'categorytree-mode-all' => 'totas las paginas',
 	'categorytree-collapse' => 'Rebatre',
 	'categorytree-expand' => 'Desplegar',
 	'categorytree-member-counts' => 'conten {{PLURAL:$1|1 soscategoria|$1 soscategorias}}, {{PLURAL:$2|1 pagina|$2 paginas}}, e {{PLURAL:$3|1 fichièr|$3 fichièrs}}',
+	'categorytree-num-categories' => '$1 C',
+	'categorytree-num-pages' => '$1 P',
+	'categorytree-num-files' => '$1 F',
+	'categorytree-num-empty' => 'void',
 	'categorytree-load' => 'Dobrir',
 	'categorytree-loading' => 'dobertura...',
 	'categorytree-nothing-found' => 'Cap de soscategoria',
@@ -4006,7 +4230,7 @@ $messages['oc'] = array(
 	'categorytree-retry' => 'Esperatz un moment puèi tornatz ensajar.',
 );
 
-/** Oriya (ଓଡ଼ିଆ)
+/** Oriya (ଓଡ଼ିଆ)
  * @author Jnanaranjan Sahu
  * @author Odisha1
  * @author Psubhashish
@@ -4072,32 +4296,37 @@ $messages['os'] = array(
 
 /** Punjabi (ਪੰਜਾਬੀ)
  * @author Aalam
+ * @author Babanwalia
  * @author Gman124
+ * @author Raj Singh
  * @author TariButtar
  */
 $messages['pa'] = array(
-	'categorytree' => 'ਕੈਟਾਗਰੀ ਲੜੀ',
-	'categorytree-portlet' => 'ਕੈਟਾਗਰੀਆਂ',
-	'categorytree-legend' => 'ਕੈਟਾਗਰੀ ਲੜੀ ਵੇਖੋ',
+	'categorytree' => 'ਸ਼੍ਰੇਣੀ ਰੁੱਖ',
+	'categorytree-portlet' => 'ਸ਼੍ਰੇਣੀਆਂ',
+	'categorytree-legend' => 'ਸ਼੍ਰੇਣੀ ਰੁੱਖ ਵਿਖਾਓ',
 	'categorytree-category' => 'ਸ਼੍ਰੇਣੀ:',
-	'categorytree-go' => 'ਲੜੀ ਵੇਖੋ',
-	'categorytree-parents' => 'ਮੁੱਢਲਾ',
-	'categorytree-mode-categories' => 'ਕੇਵਲ ਕੈਟਾਗਰੀ',
-	'categorytree-mode-pages' => 'ਫ਼ਾਈਲਾਂ ਤੋਂ ਇਲਾਵਾ ਸਫ਼ੇ',
+	'categorytree-go' => 'ਰੁੱਖ ਵੇਖੋ',
+	'categorytree-parents' => 'ਮੁਢਲੀਆਂ ਸ਼੍ਰੇਣੀਆਂ',
+	'categorytree-mode-label' => 'ਰੂਪ:',
+	'categorytree-mode-categories' => 'ਸਿਰਫ਼ ਸ਼੍ਰੇਣੀਆਂ',
+	'categorytree-mode-pages' => 'ਫ਼ਾਈਲਾਂ ਤੋਂ ਛੁੱਟ ਸਫ਼ੇ',
 	'categorytree-mode-all' => 'ਸਭ ਸਫ਼ੇ',
 	'categorytree-collapse' => 'ਸਮੇਟੋ',
 	'categorytree-expand' => 'ਫੈਲਾਓ',
-	'categorytree-num-categories' => '$1 C',
-	'categorytree-num-pages' => '$1 P',
-	'categorytree-num-files' => '$1 F',
-	'categorytree-num-empty' => 'ਖਾਲੀ',
+	'categorytree-num-categories' => '$1 ਸ਼',
+	'categorytree-num-pages' => '$1 ਸ',
+	'categorytree-num-files' => '$1 ਫ਼',
+	'categorytree-num-empty' => 'ਖ਼ਾਲੀ',
 	'categorytree-load' => 'ਲੋਡ ਕਰੋ',
 	'categorytree-loading' => 'ਲੋਡ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ...',
 	'categorytree-nothing-found' => 'ਕੁਝ ਨਹੀਂ ਲੱਭਾ',
-	'categorytree-no-subcategories' => 'ਕੋਈ ਸਬ-ਕੈਟਾਗਰੀ ਨਹੀਂ',
-	'categorytree-no-parent-categories' => 'ਕੋਈ ਮੁੱਢਲੀ ਕੈਟਾਗਰੀ ਨਹੀਂ',
-	'categorytree-error' => 'ਡਾਟਾ ਲੋਡ ਕਰਨ ਦੌਰਾਨ ਸਮੱਸਿਆ।',
-	'categorytree-retry' => 'ਕੁਝ ਪਲ ਉਡੀਕੋ ਅਤੇ ਫੇਰ ਕੋਸ਼ਿਸ਼ ਕਰੋ।',
+	'categorytree-no-subcategories' => 'ਕੋਈ ਉਪ-ਸ਼੍ਰੇਣੀਆਂ ਨਹੀਂ',
+	'categorytree-no-parent-categories' => 'ਕੋਈ ਮੁਢਲੀ ਸ਼੍ਰੇਣੀਆਂ ਨਹੀਂ',
+	'categorytree-no-pages' => 'ਕੋਈ ਸਫ਼ੇ ਜਾਂ ਉਪ-ਸ਼੍ਰੇਣੀਆਂ ਨਹੀਂ',
+	'categorytree-not-found' => 'ਸ਼੍ਰੇਣੀ <i>$1</i> ਨਹੀਂ ਲੱਭੀ',
+	'categorytree-error' => 'ਸਮੱਗਰੀ ਲੋਡ ਕਰਨ ਮੌਕੇ ਔਕੜ।',
+	'categorytree-retry' => 'ਕੁਝ ਪਲ ਉਡੀਕੋ ਅਤੇ ਮੁੜ ਕੋਸ਼ਿਸ਼ ਕਰੋ।',
 );
 
 /** Pangasinan (Pangasinan)
@@ -4277,6 +4506,8 @@ If you have a very old browser, or have JavaScript disabled, it will not work.',
 	'categorytree-mode-all' => 'سارے صفے',
 	'categorytree-collapse' => 'مک گیا',
 	'categorytree-expand' => 'ودھاؤ',
+	'categorytree-expand-bullet' => '◄',
+	'categorytree-empty-bullet' => '◄',
 	'categorytree-member-counts' => 'ایدے چ  {{PLURAL:$1|1 نکی گٹھ|$1 گٹھاں}}, {{PLURAL:$2|1 صفحہ|$2 صفحے}}, تے {{PLURAL:$3|1 فائل|$3 فائلاں}} ہیگیاں نیں۔',
 	'categorytree-num-categories' => '$1 سی',
 	'categorytree-num-pages' => '$1 پی',
@@ -4318,6 +4549,8 @@ $messages['ps'] = array(
 	'categorytree-mode-all' => 'ټول مخونه',
 	'categorytree-collapse' => 'پرځول',
 	'categorytree-expand' => 'غځول',
+	'categorytree-expand-bullet' => '◄',
+	'categorytree-empty-bullet' => '◄',
 	'categorytree-member-counts' => '{{PLURAL:$1|1 څېرمه وېشنيزه|$1 څېرمه وېشنيزې}}، {{PLURAL:$2|1 مخ|$2 مخونه}} او {{PLURAL:$3|1 دوتنه|$3 دوتنې}} لري',
 	'categorytree-num-categories' => '$1 و',
 	'categorytree-num-pages' => '$1 م',
@@ -4334,22 +4567,25 @@ $messages['ps'] = array(
 );
 
 /** Portuguese (português)
+ * @author Dicionarista
  * @author Giro720
  * @author Hamilton Abreu
  * @author João Sousa
+ * @author Luckas
  * @author 555
  */
 $messages['pt'] = array(
 	'categorytree' => 'Árvore de categorias',
 	'categorytree-portlet' => 'Categorias',
-	'categorytree-legend' => 'Mostrar a árvore de categorias',
+	'categorytree-legend' => 'Mostrar árvore de categorias',
 	'categorytree-desc' => "Acessório ''(gadget)'' baseado em AJAX que apresenta a [[Special:CategoryTree|estrutura]] de uma wiki",
 	'categorytree-header' => 'Introduza o nome de uma categoria para ver o seu conteúdo numa estrutura de árvore.
 Note que isto requer uma funcionalidade avançada do JavaScript, conhecida por AJAX.
-Caso o seu browser seja razoavelmente antigo ou o JavaScript esteja desactivado, não funcionará.',
+Caso o seu browser seja razoavelmente antigo ou o JavaScript esteja desativado, não funcionará.',
 	'categorytree-category' => 'Categoria:',
 	'categorytree-go' => 'Mostrar árvore',
 	'categorytree-parents' => 'Categorias superiores',
+	'categorytree-mode-label' => 'Modo:',
 	'categorytree-mode-categories' => 'mostrar apenas as categorias',
 	'categorytree-mode-pages' => 'páginas, exceto imagens',
 	'categorytree-mode-all' => 'todas as páginas',
@@ -4361,7 +4597,7 @@ Caso o seu browser seja razoavelmente antigo ou o JavaScript esteja desactivado,
 	'categorytree-num-files' => '$1 F',
 	'categorytree-num-empty' => 'vazia',
 	'categorytree-load' => 'carregar',
-	'categorytree-loading' => 'carregando',
+	'categorytree-loading' => 'carregando...',
 	'categorytree-nothing-found' => 'não foi encontrado nada',
 	'categorytree-no-subcategories' => 'sem subcategorias',
 	'categorytree-no-parent-categories' => 'não há categorias superiores',
@@ -4373,6 +4609,7 @@ Caso o seu browser seja razoavelmente antigo ou o JavaScript esteja desactivado,
 
 /** Brazilian Portuguese (português do Brasil)
  * @author Carla404
+ * @author Dicionarista
  * @author Eduardo.mps
  * @author Rafael Vargas
  * @author 555
@@ -4380,7 +4617,7 @@ Caso o seu browser seja razoavelmente antigo ou o JavaScript esteja desactivado,
 $messages['pt-br'] = array(
 	'categorytree' => 'Árvore de categorias',
 	'categorytree-portlet' => 'Categorias',
-	'categorytree-legend' => 'Exibir a árvore de categorias',
+	'categorytree-legend' => 'Mostrar árvore de categorias',
 	'categorytree-desc' => 'Navegação dinâmica pela [[Special:CategoryTree|estrutura de categorias]]',
 	'categorytree-header' => 'Insira o nome de uma categoria para ver seu conteúdo como uma estrutura de "árvore".
 Note que isso requer funcionalidades avançadas de JavaScript conhecidas como AJAX.
@@ -4394,7 +4631,7 @@ Caso o seu navegador seja razoavelmente antigo ou tenha o JavaScript desativado,
 	'categorytree-mode-all' => 'todas as páginas',
 	'categorytree-collapse' => 'recolher',
 	'categorytree-expand' => 'expandir',
-	'categorytree-member-counts' => 'Contém {{PLURAL:$1|1 subcategoria|$1 subcategorias}}, {{PLURAL:$2|1 página|$2 páginas}} e {{PLURAL:$3|1 arquivo|$3 arquivos}}',
+	'categorytree-member-counts' => 'possui {{PLURAL:$1|1 subcategoria|$1 subcategorias}}, {{PLURAL:$2|1 página|$2 páginas}} e {{PLURAL:$3|1 arquivo|$3 arquivos}}',
 	'categorytree-num-categories' => '$1 C',
 	'categorytree-num-pages' => '$1 P',
 	'categorytree-num-files' => '$1 A',
@@ -4423,6 +4660,7 @@ Musyariy, kaytaqa AJAX nisqa sapaq JavaScript ruranallawanmi llamk'achiyta atink
 	'categorytree-category' => 'Katiguriya:',
 	'categorytree-go' => "Sach'ata rikuchiy",
 	'categorytree-parents' => 'Mama katiguriyakuna',
+	'categorytree-mode-label' => 'Hina:',
 	'categorytree-mode-categories' => 'Katiguriyakunalla',
 	'categorytree-mode-pages' => "p'anqakuna amataq rikchakuna",
 	'categorytree-mode-all' => "tukuy p'anqakuna",
@@ -4843,6 +5081,7 @@ AJAX නමින් හැඳින්වෙන ප්‍රගත ජාවා
 
 /** Slovak (slovenčina)
  * @author Helix84
+ * @author Sudo77(new)
  * @author Teslaton
  */
 $messages['sk'] = array(
@@ -4856,6 +5095,7 @@ Ak máte veľmi starý prehliadač alebo máte vypnutý JavaScrpt, nebude fungov
 	'categorytree-category' => 'Kategória:',
 	'categorytree-go' => 'Zobraziť strom',
 	'categorytree-parents' => 'Nadradené kategórie',
+	'categorytree-mode-label' => 'Režim:',
 	'categorytree-mode-categories' => 'iba kategórie',
 	'categorytree-mode-pages' => 'stránky okrem obrázkov',
 	'categorytree-mode-all' => 'všetky stránky',
@@ -4914,10 +5154,12 @@ $messages['sl'] = array(
 );
 
 /** Somali (Soomaaliga)
+ * @author Abshirdheere
  * @author Maax
  */
 $messages['so'] = array(
 	'categorytree-category' => 'Qeybta:',
+	'categorytree-no-subcategories' => 'Ma jiraan wax laamaha qaybaha ah',
 	'categorytree-not-found' => 'Qeybta  <i>$1</i> lama helin',
 );
 
@@ -5380,7 +5622,7 @@ $messages['th'] = array(
 	'categorytree-nothing-found' => 'ไม่พบที่ต้องการ',
 	'categorytree-no-subcategories' => 'ไม่มีหมวดหมู่ย่อย',
 	'categorytree-no-parent-categories' => 'ไม่มีหมวดหมู่ระดับบน',
-	'categorytree-no-pages' => 'ไม่มีบทความหรือหมวดหมู่ย่อย',
+	'categorytree-no-pages' => 'ไม่มีหน้าหรือหมวดหมู่ย่อย',
 	'categorytree-not-found' => 'ไม่พบหมวดหมู่ <i>$1</i>',
 	'categorytree-error' => 'การโหลดข้อมูลมีปัญหา',
 	'categorytree-retry' => 'กรุณารอสักครู่ แล้วลองโหลดใหม่อีกครั้ง',
@@ -5570,6 +5812,7 @@ $messages['ts'] = array(
 );
 
 /** Tatar (Cyrillic script) (татарча)
+ * @author Ajdar
  * @author Ильнар
  */
 $messages['tt-cyrl'] = array(
@@ -5583,12 +5826,17 @@ $messages['tt-cyrl'] = array(
 	'categorytree-category' => 'Төркем:',
 	'categorytree-go' => 'Йөкләү',
 	'categorytree-parents' => 'Төп төркемнәр',
+	'categorytree-mode-label' => 'Режим:',
 	'categorytree-mode-categories' => 'бары тик төркемнәр генә урнаштырылган',
 	'categorytree-mode-pages' => 'файллардан башка',
 	'categorytree-mode-all' => 'барлык битләр',
 	'categorytree-collapse' => 'яшерү',
 	'categorytree-expand' => 'ачарга',
 	'categorytree-member-counts' => '$1 {{PLURAL:$1|тәркемчәне|тәркемчәләрне|тәркемчәләрдән}}, $2 {{PLURAL:$2|битне|битләрне|битләрдән}} и $3 {{PLURAL:$3|файл|файл|файллар}} ны үз эченә ала',
+	'categorytree-num-categories' => '$1 К',
+	'categorytree-num-pages' => '$1 С',
+	'categorytree-num-files' => '$1 Ф',
+	'categorytree-num-empty' => 'буш',
 	'categorytree-load' => 'йөкләү',
 	'categorytree-loading' => 'йөкләү бара…',
 	'categorytree-nothing-found' => 'бернидә табылмады',
@@ -5618,8 +5866,22 @@ $messages['tzm'] = array(
 	'categorytree' => 'ⵜⴰⴷⴷⴰⴳⵜ ⵏ ⵜⴰⴳⴳⴰⵢⵜ',
 	'categorytree-portlet' => 'ⵜⴰⴳⴳⴰⵢⵉⵏ',
 	'categorytree-category' => 'ⵜⴰⴳⴳⴰⵢⵜ',
+	'categorytree-go' => 'ⵥⵕ ⵜⴰⴷⴷⴰⴳⵜ',
+	'categorytree-mode-categories' => 'ⵜⴰⴳⴳⴰⵢⵉⵏ ⵚⴰⴼⵉ',
 	'categorytree-mode-all' => 'ⵎⴰⵕⵕⴰ ⵜⵉⵙⵏⴰⵡⵉⵏ',
+	'categorytree-expand' => 'ⴰⴼⵔⴷⵉⵙ',
 	'categorytree-num-categories' => '$1 C',
+	'categorytree-num-pages' => '$1 ⵜ',
+	'categorytree-num-files' => '$1 ⴼ',
+	'categorytree-num-empty' => 'ⵓⵔ ⴷⵉⵙ ⴰⵎⵢⴰ',
+	'categorytree-nothing-found' => 'ⵓⵔ ⵉⵍⵍⴰ ⵓⵎⵢⴰ',
+);
+
+/** Udmurt (удмурт)
+ * @author Kaganer
+ */
+$messages['udm'] = array(
+	'categorytree-collapse' => 'ватоно',
 );
 
 /** Uyghur (Arabic script) (ئۇيغۇرچە)
@@ -5639,6 +5901,8 @@ $messages['ug-arab'] = array(
 	'categorytree-mode-all' => 'ھەممە بەتلەر',
 	'categorytree-collapse' => 'قاتلا',
 	'categorytree-expand' => 'ياي',
+	'categorytree-expand-bullet' => '◄',
+	'categorytree-empty-bullet' => '◄',
 	'categorytree-num-categories' => '$1 تۈر',
 	'categorytree-num-pages' => '$1 بەت',
 	'categorytree-num-files' => '$1 ھۆججەت',
@@ -5709,6 +5973,8 @@ $messages['ur'] = array(
 	'categorytree-mode-all' => 'تمام صفحات',
 	'categorytree-collapse' => 'خاتمے',
 	'categorytree-expand' => 'وسیع کریں',
+	'categorytree-expand-bullet' => '◄',
+	'categorytree-empty-bullet' => '◄',
 	'categorytree-num-categories' => '$1 C',
 	'categorytree-num-pages' => '$1 P',
 	'categorytree-num-files' => '$1 F',
@@ -5742,12 +6008,17 @@ $messages['vec'] = array(
 	'categorytree-category' => 'Categoria',
 	'categorytree-go' => "Mostra l'àlbaro",
 	'categorytree-parents' => 'Categorie superiori',
+	'categorytree-mode-label' => 'Modałità:',
 	'categorytree-mode-categories' => 'mostra solo le categorie',
 	'categorytree-mode-pages' => 'tute le pagine, via de i file',
 	'categorytree-mode-all' => 'tute le pagine',
 	'categorytree-collapse' => 'conprimi',
 	'categorytree-expand' => 'espandi',
 	'categorytree-member-counts' => 'la contien {{PLURAL:$1|1 sotocategoria|$1 sotocategorie}}, {{PLURAL:$2|1 pagina|$2 pagine}} e {{PLURAL:$3|1 file|$3 file}}',
+	'categorytree-num-categories' => '$1 C',
+	'categorytree-num-pages' => '$1 P',
+	'categorytree-num-files' => '$1 F',
+	'categorytree-num-empty' => 'voda',
 	'categorytree-load' => 'carga',
 	'categorytree-loading' => "so' drio cargar…",
 	'categorytree-nothing-found' => 'nissun risultato',
@@ -5918,6 +6189,8 @@ $messages['yi'] = array(
 	'categorytree-mode-all' => 'אַלע בלעטער',
 	'categorytree-collapse' => 'אײַנציען',
 	'categorytree-expand' => 'פֿאַרברייטערן',
+	'categorytree-expand-bullet' => '◄',
+	'categorytree-empty-bullet' => '◄',
 	'categorytree-member-counts' => 'אנטהאלט {{PLURAL:$1|1 אונטערקאטעגאריע|$1 אונטערקאטעגאריעס}}, {{PLURAL:$2|1 בלאט|$2 בלעטער}}, און {{PLURAL:$3|1 טעקע|$3 טעקעס}}',
 	'categorytree-num-categories' => '$1 קאַט',
 	'categorytree-num-pages' => '$1 ב',
@@ -6070,9 +6343,11 @@ $messages['zh-hans'] = array(
 
 /** Traditional Chinese (中文（繁體）‎)
  * @author Alexsh
+ * @author Liangent
  * @author Mark85296341
  * @author Oapbtommy
  * @author Shinjiman
+ * @author Simon Shek
  */
 $messages['zh-hant'] = array(
 	'categorytree' => '分類樹',
@@ -6085,6 +6360,7 @@ $messages['zh-hant'] = array(
 	'categorytree-category' => '類別：',
 	'categorytree-go' => '顯示樹狀結構',
 	'categorytree-parents' => '父分類',
+	'categorytree-mode-label' => '模式：',
 	'categorytree-mode-categories' => '只顯示分類',
 	'categorytree-mode-pages' => '除去圖片頁面',
 	'categorytree-mode-all' => '所有頁面',

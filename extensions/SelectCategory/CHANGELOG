@@ -1,3 +1,19 @@
+Changes since the last release:
+  - [Bug 23106] fix $wgSelectCategoryEnableSubpages
+  - [Bug 24439] Categories are not saved when doing upload of files
+  - [Bug 38374] option to disallow selecting the top-level category
+    (new config option $wgSelectCategoryToplevelAllowed)
+  - [Bug 24911] $wgSelectCategoryRoot ignored on Special:Upload
+  - add Christian Boltz to the list of authors
+
+* v0.8.2 - 2013-02-28
+  - moved to git
+  - [Bug 30557] fix broken html output
+  - Removed usage of $wgTitle
+  - Use OutputPage::addExtensionStyle() and OutputPage::addScriptFile() instead of
+    OutputPage::addLink() and OutputPage::addScript()
+  - renamed SelectCategoryFunctions.php renamed to SelectCategory_body.php
+
 * v0.8.1 - 2011-06-07
   - Fix for code structure and variable names (Yaron Koren)
 

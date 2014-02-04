@@ -65,4 +65,3 @@ class WikiDialogs_Links extends WikiDialogs_Links_Setup {
     }
 
 }
-?>

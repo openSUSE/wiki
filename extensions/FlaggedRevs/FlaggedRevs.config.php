@@ -76,10 +76,11 @@ $wgFlaggedRevsRestrictionLevels = array( '', 'sysop' );
 $wgFlaggedRevsProtection = false;
 
 # Define our basic reviewer class of established editors (Editors)
-$wgGroupPermissions['editor']['review']          = true;
-$wgGroupPermissions['editor']['autoreview']      = true;
-$wgGroupPermissions['editor']['autoconfirmed']   = true;
-$wgGroupPermissions['editor']['unreviewedpages'] = true;
+$wgGroupPermissions['editor']['review']            = true;
+$wgGroupPermissions['editor']['autoreview']        = true;
+$wgGroupPermissions['editor']['autoconfirmed']     = true;
+$wgGroupPermissions['editor']['editsemiprotected'] = true;
+$wgGroupPermissions['editor']['unreviewedpages']   = true;
 
 # Define when users get automatically promoted to Editors. Set as false to disable.
 # Once users meet these requirements they will be promoted, unless previously demoted.
@@ -121,12 +122,13 @@ $wgFlaggedRevsAutoconfirm = array(
 */
 
 # Defines extra rights for advanced reviewer class (Reviewers)
-$wgGroupPermissions['reviewer']['validate']        = true;
+$wgGroupPermissions['reviewer']['validate']          = true;
 # Let this stand alone just in case...
-$wgGroupPermissions['reviewer']['review']          = true;
-$wgGroupPermissions['reviewer']['autoreview']      = true;
-$wgGroupPermissions['reviewer']['autoconfirmed']   = true;
-$wgGroupPermissions['reviewer']['unreviewedpages'] = true;
+$wgGroupPermissions['reviewer']['review']            = true;
+$wgGroupPermissions['reviewer']['autoreview']        = true;
+$wgGroupPermissions['reviewer']['autoconfirmed']     = true;
+$wgGroupPermissions['reviewer']['editsemiprotected'] = true;
+$wgGroupPermissions['reviewer']['unreviewedpages']   = true;
 
 # Sysops have their edits autoreviewed
 $wgGroupPermissions['sysop']['autoreview'] = true;

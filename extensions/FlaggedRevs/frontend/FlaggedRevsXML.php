@@ -119,6 +119,8 @@ class FlaggedRevsXML {
 				'none', $selected == 'none' );
 		}
 		foreach ( FlaggedRevs::getRestrictionLevels() as $perm ) {
+			// Give grep a chance to find the usages:
+			// revreview-restriction-any, revreview-restriction-none
 			$key = "revreview-restriction-{$perm}";
 			if ( wfMessage( $key )->isDisabled() ) {
 				$msg = $perm; // fallback to user right key
@@ -199,17 +201,25 @@ class FlaggedRevsXML {
 			$tag .= "<table id='mw-fr-revisionratings-box' align='center' class='$css' cellpadding='0'>";
 		}
 		foreach ( FlaggedRevs::getTags() as $quality ) {
+			// Give grep a chance to find the usages:
+			// revreview-accuracy-0, revreview-accuracy-1, revreview-accuracy-2, revreview-accuracy-3, revreview-accuracy-4,
+			// revreview-depth-0, revreview-depth-1, revreview-depth-2, revreview-depth-3, revreview-depth-4,
+			// revreview-style-0, revreview-style-1, revreview-style-2, revreview-style-3, revreview-style-4
 			$level = isset( $flags[$quality] ) ? $flags[$quality] : 0;
 			$encValueText = wfMessage( "revreview-$quality-$level" )->escaped();
 			$level = $flags[$quality];
 
 			$levelmarker = $level * 20 + 20;
 			if ( $prettyBox ) {
+				// Give grep a chance to find the usages:
+				// revreview-accuracy, revreview-depth, revreview-style
 				$tag .= "<tr><td class='fr-text' valign='middle'>" .
 					wfMessage( "revreview-$quality" )->escaped() .
 					"</td><td class='fr-value$levelmarker' valign='middle'>" .
 					$encValueText . "</td></tr>\n";
 			} else {
+				// Give grep a chance to find the usages:
+				// revreview-accuracy, revreview-depth, revreview-style
 				$tag .= "&#160;<span class='fr-marker-$levelmarker'><strong>" .
 					wfMessage( "revreview-$quality" )->escaped() .
 					"</strong>: <span class='fr-text-value'>$encValueText&#160;</span>&#160;" .
@@ -319,13 +329,16 @@ class FlaggedRevsXML {
 
 	/**
 	 * Generates (show/hide) JS toggle HTML
+	 * @param  $href string|null If set, make the toggle link link to this URL and don't hide it
 	 * @return string
 	 */
-	public static function diffToggle() {
-		$toggle = '<a class="fr-toggle-text" title="' .
-			wfMessage( 'revreview-diff-toggle-title' )->escaped() . '" >' .
+	public static function diffToggle( $href = null ) {
+		$toggle = '<a class="fr-toggle-text" ' .
+			'title="' . wfMessage( 'revreview-diff-toggle-title' )->escaped() .
+			( $href === null ? '' : '" href="' . htmlspecialchars( $href ) ) .
+			'" >' .
 			wfMessage( 'revreview-diff-toggle-show' )->escaped() . '</a>';
-		return '<span id="mw-fr-difftoggle" style="display:none;">' .
+		return '<span id="mw-fr-difftoggle"' . ( $href === null ? ' style="display:none;"' : '' ) . '>' .
 			wfMessage( 'parentheses' )->rawParams( $toggle )->escaped() . '</span>';
 	}
 
@@ -407,6 +420,14 @@ class FlaggedRevsXML {
 	 * Creates "stable rev reviewed on"/"x pending edits" message
 	 */
 	public static function pendingEditNotice( $flaggedArticle, $frev, $revsSince ) {
+		$msg = self::pendingEditNoticeMessage( $flaggedArticle, $frev, $revsSince );
+		return $msg->parse();
+	}
+
+	/**
+	 * Same as pendingEditNotice(), but returns a Message object.
+	 */
+	public static function pendingEditNoticeMessage( $flaggedArticle, $frev, $revsSince ) {
 		global $wgLang;
 		$flags = $frev->getTags();
 		$time = $wgLang->date( $frev->getTimestamp(), true );
@@ -414,8 +435,7 @@ class FlaggedRevsXML {
 		$msg = FlaggedRevs::isQuality( $flags )
 			? 'revreview-pending-quality'
 			: 'revreview-pending-basic';
-		$tag = wfMessage( $msg, $frev->getRevId(), $time, $revsSince )->parse();
-		return $tag;
+		return wfMessage( $msg, $frev->getRevId(), $time )->numParams( $revsSince );
 	}
 
 	/*

@@ -1,18 +1,31 @@
 <?php
 
-// TODO
+/**
+ * @group Xml
+ */
 class XmlSelectTest extends MediaWikiTestCase {
+
+	/**
+	 * @var XmlSelect
+	 */
 	protected $select;
 
 	protected function setUp() {
+		parent::setUp();
+		$this->setMwGlobals( array(
+			'wgWellFormedXml' => true,
+		) );
 		$this->select = new XmlSelect();
 	}
+
 	protected function tearDown() {
+		parent::tearDown();
 		$this->select = null;
 	}
 
-	### START OF TESTS ###
-
+	/**
+	 * @covers XmlSelect::__construct
+	 */
 	public function testConstructWithoutParameters() {
 		$this->assertEquals( '<select></select>', $this->select->getHTML() );
 	}
@@ -20,6 +33,7 @@ class XmlSelectTest extends MediaWikiTestCase {
 	/**
 	 * Parameters are $name (false), $id (false), $default (false)
 	 * @dataProvider provideConstructionParameters
+	 * @covers XmlSelect::__construct
 	 */
 	public function testConstructParameters( $name, $id, $default, $expected ) {
 		$this->select = new XmlSelect( $name, $id, $default );
@@ -33,9 +47,8 @@ class XmlSelectTest extends MediaWikiTestCase {
 	 *  - $id      (default: false)
 	 *  - $default (default: false)
 	 * Provides a fourth parameters representing the expected HTML output
-	 *
 	 */
-	public function provideConstructionParameters() {
+	public static function provideConstructionParameters() {
 		return array(
 			/**
 			 * Values are set following a 3-bit Gray code where two successive
@@ -43,51 +56,68 @@ class XmlSelectTest extends MediaWikiTestCase {
 			 * See http://en.wikipedia.org/wiki/Gray_code
 			 */
 			#      $name   $id    $default
-			array( false , false, false,  '<select></select>' ),
-			array( false , false, 'foo',  '<select></select>' ),
-			array( false , 'id' , 'foo',  '<select id="id"></select>' ),
-			array( false , 'id' , false,  '<select id="id"></select>' ),
-			array( 'name', 'id' , false,  '<select name="name" id="id"></select>' ),
-			array( 'name', 'id' , 'foo',  '<select name="name" id="id"></select>' ),
-			array( 'name', false, 'foo',  '<select name="name"></select>' ),
-			array( 'name', false, false,  '<select name="name"></select>' ),
+			array( false, false, false, '<select></select>' ),
+			array( false, false, 'foo', '<select></select>' ),
+			array( false, 'id', 'foo', '<select id="id"></select>' ),
+			array( false, 'id', false, '<select id="id"></select>' ),
+			array( 'name', 'id', false, '<select name="name" id="id"></select>' ),
+			array( 'name', 'id', 'foo', '<select name="name" id="id"></select>' ),
+			array( 'name', false, 'foo', '<select name="name"></select>' ),
+			array( 'name', false, false, '<select name="name"></select>' ),
 		);
 	}
 
-	# Begin XmlSelect::addOption() similar to Xml::option
+	/**
+	 * @covers XmlSelect::addOption
+	 */
 	public function testAddOption() {
 		$this->select->addOption( 'foo' );
 		$this->assertEquals( '<select><option value="foo">foo</option></select>', $this->select->getHTML() );
 	}
+
+	/**
+	 * @covers XmlSelect::addOption
+	 */
 	public function testAddOptionWithDefault() {
 		$this->select->addOption( 'foo', true );
 		$this->assertEquals( '<select><option value="1">foo</option></select>', $this->select->getHTML() );
 	}
+
+	/**
+	 * @covers XmlSelect::addOption
+	 */
 	public function testAddOptionWithFalse() {
 		$this->select->addOption( 'foo', false );
 		$this->assertEquals( '<select><option value="foo">foo</option></select>', $this->select->getHTML() );
 	}
+
+	/**
+	 * @covers XmlSelect::addOption
+	 */
 	public function testAddOptionWithValueZero() {
 		$this->select->addOption( 'foo', 0 );
 		$this->assertEquals( '<select><option value="0">foo</option></select>', $this->select->getHTML() );
 	}
-	# End XmlSelect::addOption() similar to Xml::option
 
+	/**
+	 * @covers XmlSelect::setDefault
+	 */
 	public function testSetDefault() {
 		$this->select->setDefault( 'bar1' );
 		$this->select->addOption( 'foo1' );
 		$this->select->addOption( 'bar1' );
 		$this->select->addOption( 'foo2' );
 		$this->assertEquals(
-'<select><option value="foo1">foo1</option>' . "\n" .
-'<option value="bar1" selected="">bar1</option>' . "\n" .
-'<option value="foo2">foo2</option></select>', $this->select->getHTML() );
+			'<select><option value="foo1">foo1</option>' . "\n" .
+				'<option value="bar1" selected="">bar1</option>' . "\n" .
+				'<option value="foo2">foo2</option></select>', $this->select->getHTML() );
 	}
 
 	/**
 	 * Adding default later on should set the correct selection or
 	 * raise an exception.
 	 * To handle this, we need to render the options in getHtml()
+	 * @covers XmlSelect::setDefault
 	 */
 	public function testSetDefaultAfterAddingOptions() {
 		$this->select->addOption( 'foo1' );
@@ -95,11 +125,15 @@ class XmlSelectTest extends MediaWikiTestCase {
 		$this->select->addOption( 'foo2' );
 		$this->select->setDefault( 'bar1' ); # setting default after adding options
 		$this->assertEquals(
-'<select><option value="foo1">foo1</option>' . "\n" .
-'<option value="bar1" selected="">bar1</option>' . "\n" .
-'<option value="foo2">foo2</option></select>', $this->select->getHTML() );
+			'<select><option value="foo1">foo1</option>' . "\n" .
+				'<option value="bar1" selected="">bar1</option>' . "\n" .
+				'<option value="foo2">foo2</option></select>', $this->select->getHTML() );
 	}
 
+	/**
+	 * @covers XmlSelect::setAttribute
+	 * @covers XmlSelect::getAttribute
+	 */
 	public function testGetAttributes() {
 		# create some attributes
 		$this->select->setAttribute( 'dummy', 0x777 );
@@ -129,7 +163,7 @@ class XmlSelectTest extends MediaWikiTestCase {
 		# verify string / integer
 		$this->assertEquals(
 			$this->select->getAttribute( '1911' ),
-			'razor'	
+			'razor'
 		);
 		$this->assertEquals(
 			$this->select->getAttribute( 'dummy' ),

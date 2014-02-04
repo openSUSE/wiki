@@ -45,6 +45,7 @@ class SFCreateProperty extends SpecialPage {
 			$text .= "\n\n" . wfMessage( 'sf_property_allowedvals' )
 				->numParams( count( $allowed_values_array ) )->inContentLanguage()->text();
 			foreach ( $allowed_values_array as $i => $value ) {
+				if ( $value == '' ) continue;
 				// replace beep back with comma, trim
 				$value = str_replace( "\a", $sfgListSeparator, trim( $value ) );
 				$prop_labels = $smwgContLang->getPropertyLabels();
@@ -78,7 +79,14 @@ class SFCreateProperty extends SpecialPage {
 		$save_page = $wgRequest->getCheck( 'wpSave' );
 		$preview_page = $wgRequest->getCheck( 'wpPreview' );
 		if ( $save_page || $preview_page ) {
-			# validate property name
+			$validToken = $this->getUser()->matchEditToken( $wgRequest->getVal( 'csrf' ), 'CreateProperty' );
+			if ( !$validToken ) {
+				$text = "This appears to be a cross-site request forgery; canceling save.";
+				$wgOut->addHTML( $text );
+				return;
+			}
+
+			// Validate property name.
 			if ( $property_name === '' ) {
 				$property_name_error_str = wfMessage( 'sf_blank_error' )->text();
 			} else {
@@ -92,12 +100,20 @@ class SFCreateProperty extends SpecialPage {
 			}
 		}
 
-		$datatype_labels = $smwgContLang->getDatatypeLabels();
+		$datatypeLabels = $smwgContLang->getDatatypeLabels();
+		$pageTypeLabel = $datatypeLabels['_wpg'];
+		if ( array_key_exists( '_str', $datatypeLabels ) ) {
+			$stringTypeLabel = $datatypeLabels['_str'];
+		} else {
+			$stringTypeLabel = $datatypeLabels['_txt'];
+		}
+		$numberTypeLabel = $datatypeLabels['_num'];
+		$emailTypeLabel = $datatypeLabels['_ema'];
 
 		$javascript_text = <<<END
 function toggleDefaultForm(property_type) {
 	var default_form_div = document.getElementById("default_form_div");
-	if (property_type == '{$datatype_labels['_wpg']}') {
+	if (property_type == '$pageTypeLabel') {
 		default_form_div.style.display = "";
 	} else {
 		default_form_div.style.display = "none";
@@ -106,12 +122,12 @@ function toggleDefaultForm(property_type) {
 
 function toggleAllowedValues(property_type) {
 	var allowed_values_div = document.getElementById("allowed_values");
-	// Page, String, Number, Email - is that a reasonable set of types
-	// for which enumerations should be allowed?
-	if (property_type == '{$datatype_labels['_wpg']}' ||
-		property_type == '{$datatype_labels['_str']}' ||
-		property_type == '{$datatype_labels['_num']}' ||
-		property_type == '{$datatype_labels['_ema']}') {
+	// Page, String (or Text, for SMW 1.9+), Number, Email - is that a
+	// reasonable set of types for which enumerations should be allowed?
+	if (property_type == '$pageTypeLabel' ||
+		property_type == '$stringTypeLabel' ||
+		property_type == '$numberTypeLabel' ||
+		property_type == '$emailTypeLabel') {
 		allowed_values_div.style.display = "";
 	} else {
 		allowed_values_div.style.display = "none";
@@ -138,7 +154,7 @@ END;
 		}
 		$text .= "\n$type_label\n";
 		$select_body = "";
-		foreach ( $datatype_labels as $label ) {
+		foreach ( $datatypeLabels as $label ) {
 			$select_body .= "\t" . Html::element( 'option', null, $label ) . "\n";
 		}
 		$text .= Html::rawElement( 'select', array( 'id' => 'property_dropdown', 'name' => 'property_type', 'onChange' => 'toggleDefaultForm(this.value); toggleAllowedValues(this.value);' ), $select_body ) . "\n";
@@ -156,6 +172,11 @@ END;
 	</div>
 
 END;
+
+		if ( method_exists( 'User', 'getEditToken' ) ) {
+			$text .= "\t" . Html::hidden( 'csrf', $this->getUser()->getEditToken( 'CreateProperty' ) ) . "\n";
+		}
+
 		$edit_buttons = "\t" . Html::input( 'wpSave', $save_button_text, 'submit', array( 'id' => 'wpSave' ) );
 		$edit_buttons .= "\t" . Html::input( 'wpPreview', $preview_button_text, 'submit', array( 'id' => 'wpPreview' ) );
 		$text .= "\t" . Html::rawElement( 'div', array( 'class' => 'editButtons' ), $edit_buttons ) . "\n";

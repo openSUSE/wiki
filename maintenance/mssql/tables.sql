@@ -76,10 +76,10 @@ CREATE TABLE /*$wgDBprefix*/user_newtalk (
 CREATE INDEX /*$wgDBprefix*/user_group_id ON /*$wgDBprefix*/user_newtalk([user_id]);
 CREATE INDEX /*$wgDBprefix*/user_ip       ON /*$wgDBprefix*/user_newtalk(user_ip);
 
--- 
+--
 -- User preferences and other fun stuff
 -- replaces old user.user_options BLOB
--- 
+--
 CREATE TABLE /*$wgDBprefix*/user_properties (
 	up_user INT NOT NULL,
 	up_property NVARCHAR(32) NOT NULL,
@@ -157,8 +157,9 @@ CREATE TABLE /*$wgDBprefix*/text (
 -- The fields generally correspond to the page, revision, and text
 -- fields, with several caveats.
 -- Cannot reasonably create views on this table, due to the presence of TEXT
--- columns. 
+-- columns.
 CREATE TABLE /*$wgDBprefix*/archive (
+   ar_id NOT NULL PRIMARY KEY clustered IDENTITY,
    ar_namespace SMALLINT NOT NULL DEFAULT 0,
    ar_title NVARCHAR(255) NOT NULL DEFAULT '',
    ar_text NVARCHAR(MAX) NOT NULL,
@@ -234,7 +235,7 @@ CREATE INDEX /*$wgDBprefix*/cl_sortkey   ON /*$wgDBprefix*/categorylinks(cl_to,c
 CREATE INDEX /*$wgDBprefix*/cl_timestamp ON /*$wgDBprefix*/categorylinks(cl_to,cl_timestamp);
 --;
 
--- 
+--
 -- Track all existing categories.  Something is a category if 1) it has an en-
 -- try somewhere in categorylinks, or 2) it once did.  Categories might not
 -- have corresponding pages, so they need to be tracked separately.
@@ -279,16 +280,16 @@ CREATE TABLE /*$wgDBprefix*/valid_tag (
   vt_tag varchar(255) NOT NULL PRIMARY KEY
 );
 
--- 
+--
 -- Table for storing localisation data
--- 
+--
 CREATE TABLE /*$wgDBprefix*/l10n_cache (
 	-- language code
 	lc_lang NVARCHAR(32) NOT NULL,
-	
+
 	-- cache key
 	lc_key NVARCHAR(255) NOT NULL,
-	
+
 	-- Value
 	lc_value TEXT NOT NULL DEFAULT '',
 );
@@ -298,23 +299,13 @@ CREATE INDEX /*$wgDBprefix*/lc_lang_key ON /*$wgDBprefix*/l10n_cache (lc_lang, l
 -- Track links to external URLs
 -- IE >= 4 supports no more than 2083 characters in a URL
 CREATE TABLE /*$wgDBprefix*/externallinks (
+   el_id INT NOT NULL PRIMARY KEY clustered IDENTITY,
    el_from INT NOT NULL DEFAULT '0',
    el_to VARCHAR(2083) NOT NULL,
    el_index VARCHAR(896) NOT NULL,
 );
 -- Maximum key length ON SQL Server is 900 bytes
 CREATE INDEX /*$wgDBprefix*/externallinks_index   ON /*$wgDBprefix*/externallinks(el_index);
-
--- 
--- Track external user accounts, if ExternalAuth is used
--- 
-CREATE TABLE /*$wgDBprefix*/external_user (
-	-- Foreign key to user_id
-	eu_local_id INT NOT NULL PRIMARY KEY,
-	-- opaque identifier provided by the external database
-	eu_external_id NVARCHAR(255) NOT NULL,
-);
-CREATE UNIQUE INDEX /*$wgDBprefix*/eu_external_idx ON /*$wgDBprefix*/external_user(eu_external_id);
 
 --
 -- Track INTerlanguage links
@@ -327,16 +318,16 @@ CREATE TABLE /*$wgDBprefix*/langlinks (
 );
 CREATE UNIQUE INDEX /*$wgDBprefix*/langlinks_reverse_key ON /*$wgDBprefix*/langlinks(ll_lang,ll_title);
 
--- 
+--
 -- Track inline interwiki links
--- 
+--
 CREATE TABLE /*$wgDBprefix*/iwlinks (
 	-- page_id of the referring page
 	iwl_from INT NOT NULL DEFAULT 0,
-	
+
 	-- Interwiki prefix code of the target
 	iwl_prefix NVARCHAR(20) NOT NULL DEFAULT '',
-	
+
 	-- Title of the target, including namespace
 	iwl_title NVARCHAR(255) NOT NULL DEFAULT '',
 );
@@ -396,6 +387,7 @@ CREATE TABLE /*$wgDBprefix*/ipblocks (
 	ipb_deleted BIT NOT NULL DEFAULT 0,
 	ipb_block_email BIT NOT NULL DEFAULT 0,
 	ipb_allow_usertalk BIT NOT NULL DEFAULT 0,
+	ipb_parent_block_id   INT DEFAULT NULL,
 );
 -- Unique index to support "user already blocked" messages
 -- Any new options which prevent collisions should be included
@@ -515,8 +507,6 @@ CREATE TABLE /*$wgDBprefix*/recentchanges (
    rc_this_oldid INT DEFAULT 0,
    rc_last_oldid INT DEFAULT 0,
    rc_type tinyint DEFAULT 0,
-   rc_moved_to_ns BIT DEFAULT 0,
-   rc_moved_to_title NVARCHAR(255)  DEFAULT '',
    rc_patrolled BIT DEFAULT 0,
    rc_ip NCHAR(40) DEFAULT '',
    rc_old_len INT DEFAULT 0,
@@ -727,7 +717,7 @@ CREATE TABLE /*$wgDBprefix*/updatelog (
   PRIMARY KEY (ul_key)
 );
 
--- NOTE To enable full text indexing on SQL 2008 you need to create an account FDH$MSSQLSERVER 
+-- NOTE To enable full text indexing on SQL 2008 you need to create an account FDH$MSSQLSERVER
 -- AND assign a password for the FDHOST process to run under
 -- Once you have assigned a password to that account, you need to run the following stored procedure
 -- replacing XXXXX with the password you used.

@@ -51,7 +51,7 @@ class ProblemChanges extends SpecialPage {
 			'category'  => $request->getVal( 'category' ),
 		);
 		$this->getOutput()->setSyndicated( true );
-		$this->getOutput()->setFeedAppendQuery( wfArrayToCGI( $queryParams ) );
+		$this->getOutput()->setFeedAppendQuery( wfArrayToCgi( $queryParams ) );
 	}
 
 	public function showForm() {
@@ -319,11 +319,8 @@ class ProblemChangesPager extends AlphabeticPager {
 	}
 
 	function getQueryInfo() {
-		global $wgOldChangeTagsIndex;
 		$tables = array( 'revision', 'change_tag', 'page' );
 		$fields = array( 'page_namespace' , 'page_title', 'page_latest' );
-		$ctIndex = $wgOldChangeTagsIndex ?
-			'ct_rev_id' : 'change_tag_rev_tag';
 		# Show outdated "stable" pages
 		if ( $this->level < 0 ) {
 			$fields[] = 'fp_stable AS stable';
@@ -339,7 +336,7 @@ class ProblemChangesPager extends AlphabeticPager {
 			}
 			$conds[] = 'page_id = fp_page_id';
 			$useIndex = array(
-				'flaggedpages' => 'fp_pending_since', 'change_tag' => $ctIndex );
+				'flaggedpages' => 'fp_pending_since', 'change_tag' => 'change_tag_rev_tag' );
 			# Filter by category
 			if ( $this->category != '' ) {
 				array_unshift( $tables, 'categorylinks' ); // order matters
@@ -364,7 +361,7 @@ class ProblemChangesPager extends AlphabeticPager {
 			$conds[] = 'rev_id = ct_rev_id';
 			$conds['ct_tag'] = $this->tag;
 			$useIndex = array(
-				'flaggedpage_pending' => 'fpp_quality_pending', 'change_tag' => $ctIndex );
+				'flaggedpage_pending' => 'fpp_quality_pending', 'change_tag' => 'change_tag_rev_tag' );
 			# Filter by review level
 			$conds['fpp_quality'] = $this->level;
 			# Filter by category

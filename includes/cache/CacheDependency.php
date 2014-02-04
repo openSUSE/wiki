@@ -1,11 +1,32 @@
 <?php
 /**
+ * Data caching with dependencies.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
+ * @file
+ * @ingroup Cache
+ */
+
+/**
  * This class stores an arbitrary value along with its dependencies.
  * Users should typically only use DependencyWrapper::getValueFromCache(),
  * rather than instantiating one of these objects directly.
  * @ingroup Cache
  */
-
 class DependencyWrapper {
 	var $value;
 	var $deps;
@@ -53,7 +74,7 @@ class DependencyWrapper {
 
 	/**
 	 * Get the user-defined value
-	 * @return bool|\Mixed
+	 * @return bool|Mixed
 	 */
 	function getValue() {
 		return $this->value;
@@ -77,11 +98,11 @@ class DependencyWrapper {
 	 * calculated value will be stored to the cache in a wrapper.
 	 *
 	 * @param $cache BagOStuff a cache object such as $wgMemc
-	 * @param $key String: the cache key
+	 * @param string $key the cache key
 	 * @param $expiry Integer: the expiry timestamp or interval in seconds
 	 * @param $callback Mixed: the callback for generating the value, or false
-	 * @param $callbackParams Array: the function parameters for the callback
-	 * @param $deps Array: the dependencies to store on a cache miss. Note: these
+	 * @param array $callbackParams the function parameters for the callback
+	 * @param array $deps the dependencies to store on a cache miss. Note: these
 	 *    are not the dependencies used on a cache hit! Cache hits use the stored
 	 *    dependency array.
 	 *
@@ -132,7 +153,7 @@ class FileDependency extends CacheDependency {
 	/**
 	 * Create a file dependency
 	 *
-	 * @param $filename String: the name of the file, preferably fully qualified
+	 * @param string $filename the name of the file, preferably fully qualified
 	 * @param $timestamp Mixed: the unix last modified timestamp, or false if the
 	 *        file does not exist. If omitted, the timestamp will be loaded from
 	 *        the file.
@@ -383,7 +404,7 @@ class GlobalDependency extends CacheDependency {
 	 * @return bool
 	 */
 	function isExpired() {
-		if( !isset($GLOBALS[$this->name]) ) {
+		if ( !isset( $GLOBALS[$this->name] ) ) {
 			return true;
 		}
 		return $GLOBALS[$this->name] != $this->value;

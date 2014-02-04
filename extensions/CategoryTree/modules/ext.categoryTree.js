@@ -1,6 +1,5 @@
-/*
- * JavaScript functions for the CategoryTree extension, an AJAX based gadget
- * to display the category structure of a wiki
+/**
+ * JavaScript for the CategoryTree extension.
  *
  * @file
  * @ingroup Extensions
@@ -9,23 +8,23 @@
  * @licence GNU General Public Licence 2.0 or later
  */
 
-(function( $, mw ) {
+( function ( $, mw ) {
 
 var categoryTree = {
 	/**
 	 * Sets display inline to tree toggle
 	 */
-	showToggles: function() {
+	showToggles: function () {
 		$( 'span.CategoryTreeToggle' ).css( 'display', 'inline' );
 	},
-	
+
 	/**
 	 * Handles clicks on the expand buttons, and calls the appropriate function
 	 *
 	 * @context {Element} CategoryTreeToggle
 	 * @param e {jQuery.Event}
 	 */
-	handleNode: function( e ) {
+	handleNode: function ( e ) {
 		var $link = $( this );
 		if ( $link.data( 'ct-state' ) === 'collapsed' ) {
 			categoryTree.expandNode( $link );
@@ -39,7 +38,7 @@ var categoryTree = {
 	 *
 	 * @param {jQuery} $link
 	 */
-	expandNode: function( $link ) {
+	expandNode: function ( $link ) {
 		// Show the children node
 		var $children = $link.parents( '.CategoryTreeItem' )
 				.siblings( '.CategoryTreeChildren' );
@@ -60,7 +59,7 @@ var categoryTree = {
 	 *
 	 * @param {jQuery} $link
 	 */
-	collapseNode: function( $link ) {
+	collapseNode: function ( $link ) {
 		// Hide the children node
 		$link.parents( '.CategoryTreeItem' )
 			.siblings( '.CategoryTreeChildren' ).hide();
@@ -77,7 +76,7 @@ var categoryTree = {
 	 * @param {jQuery} $link
 	 * @param {jQuery} $children
 	 */
-	loadChildren: function( $link, $children ) {
+	loadChildren: function ( $link, $children ) {
 		var $linkParentCTTag, ctTitle, ctMode, ctOptions;
 
 		/**
@@ -167,9 +166,9 @@ var categoryTree = {
 };
 
 // Register click events and show toggle buttons
-$( function( $ ) {
+$( function ( $ ) {
 	$( '.CategoryTreeToggle' ).click( categoryTree.handleNode );
 	categoryTree.showToggles();
 } );
 
-} )( jQuery, mediaWiki );
+}( jQuery, mediaWiki ) );

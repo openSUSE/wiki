@@ -23,7 +23,12 @@ class SFTextWithAutocompleteInput extends SFTextInput {
 	}
 
 	public static function getOtherPropTypesHandled() {
-		return array( '_str' );
+		if ( defined( 'SMWDataItem::TYPE_STRING' ) ) {
+			// SMW < 1.9
+			return array( '_str' );
+		} else {
+			return array( '_txt' );
+		}
 	}
 
 	public static function getDefaultPropTypeLists() {
@@ -33,7 +38,12 @@ class SFTextWithAutocompleteInput extends SFTextInput {
 	}
 
 	public static function getOtherPropTypeListsHandled() {
-		return array( '_str' );
+		if ( defined( 'SMWDataItem::TYPE_STRING' ) ) {
+			// SMW < 1.9
+			return array( '_str' );
+		} else {
+			return array( '_txt' );
+		}
 	}
 
 	public static function getAutocompletionTypeAndSource( &$field_args ) {

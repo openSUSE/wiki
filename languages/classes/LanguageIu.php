@@ -1,29 +1,44 @@
 <?php
 /**
-  * @addtogroup Language
-  */
+ * Inuktitut specific code.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
+ * @file
+ * @ingroup Language
+ */
 
-/*
-* Conversion script between Latin and Syllabics for Inuktitut.
-* - Syllabics -> lowercase Latin
-* - lowercase/uppercase Latin -> Syllabics
-*
-*
-* Based on:
-*   - http://commons.wikimedia.org/wiki/Image:Inuktitut.png
-*   - LanguageSr.php
-*
-* @ingroup Language
-*/
-require_once( dirname( __FILE__ ) . '/../LanguageConverter.php' );
+require_once __DIR__ . '/../LanguageConverter.php';
 
 /**
+ * Conversion script between Latin and Syllabics for Inuktitut.
+ * - Syllabics -> lowercase Latin
+ * - lowercase/uppercase Latin -> Syllabics
  *
+ *
+ * Based on:
+ *   - http://commons.wikimedia.org/wiki/Image:Inuktitut.png
+ *   - LanguageSr.php
+ *
+ * @ingroup Language
  */
 class IuConverter extends LanguageConverter {
 
 	protected $mDoContentConvert;
-	var $mToLatin = array(
+	public $mToLatin = array(
 		'ᐦ' => 'h',   'ᐃ' => 'i',    'ᐄ' => 'ii',    'ᐅ' => 'u',    'ᐆ' => 'uu',    'ᐊ' => 'a',    'ᐋ' => 'aa',
 		'ᑉ' => 'p',   'ᐱ' => 'pi',   'ᐲ' => 'pii',   'ᐳ' => 'pu',   'ᐴ' => 'puu',   'ᐸ' => 'pa',   'ᐹ' => 'paa',
 		'ᑦ' => 't',   'ᑎ' => 'ti',   'ᑏ' => 'tii',   'ᑐ' => 'tu',   'ᑑ' => 'tuu',   'ᑕ' => 'ta',   'ᑖ' => 'taa',
@@ -43,7 +58,7 @@ class IuConverter extends LanguageConverter {
 		'ᖦ' => 'ɫ',   'ᖠ' => 'ɫi',    'ᖡ' => 'ɫii',   'ᖢ' => 'ɫu',    'ᖣ' => 'ɫuu',   'ᖤ' => 'ɫa',    'ᖥ' => 'ɫaa',
 	);
 
-	var $mUpperToLowerCaseLatin = array(
+	public $mUpperToLowerCaseLatin = array(
 		'A' => 'a',	'B' => 'b',	'C' => 'c',	'D' => 'd',	'E' => 'e',
 		'F' => 'f',	'G' => 'g',	'H' => 'h',	'I' => 'i',	'J' => 'j',
 		'K' => 'k',	'L' => 'l',	'M' => 'm',	'N' => 'n',	'O' => 'o',
@@ -52,7 +67,7 @@ class IuConverter extends LanguageConverter {
 		'Z' => 'z',
 	);
 
-	var $mToSyllabics = array(
+	public $mToSyllabics = array(
 		'h' => 'ᐦ',   'i' => 'ᐃ',    'ii' => 'ᐄ',    'u' => 'ᐅ',    'uu' => 'ᐆ',    'a' => 'ᐊ',    'aa' => 'ᐋ',
 		'p' => 'ᑉ',   'pi' => 'ᐱ',   'pii' => 'ᐲ',   'pu' => 'ᐳ',   'puu' => 'ᐴ',   'pa' => 'ᐸ',   'paa' => 'ᐹ',
 		't' => 'ᑦ',   'ti' => 'ᑎ',   'tii' => 'ᑏ',   'tu' => 'ᑐ',   'tuu' => 'ᑑ',   'ta' => 'ᑕ',   'taa' => 'ᑖ',
@@ -77,7 +92,7 @@ class IuConverter extends LanguageConverter {
 			'lowercase' => new ReplacementArray( $this->mUpperToLowerCaseLatin ),
 			'ike-cans' => new ReplacementArray( $this->mToSyllabics ),
 			'ike-latn' => new ReplacementArray( $this->mToLatin ),
-			'iu'    => new ReplacementArray()
+			'iu' => new ReplacementArray()
 		);
 	}
 
@@ -129,32 +144,19 @@ class IuConverter extends LanguageConverter {
 	 * @param $ignoreOtherCond bool
 	 */
 	function findVariantLink( &$link, &$nt, $ignoreOtherCond = false ) {
-		 // check for user namespace
+		// check for user namespace
 		if ( is_object( $nt ) ) {
 			$ns = $nt->getNamespace();
-			if ( $ns == NS_USER || $ns == NS_USER_TALK )
+			if ( $ns == NS_USER || $ns == NS_USER_TALK ) {
 				return;
+			}
 		}
 
 		$oldlink = $link;
 		parent::findVariantLink( $link, $nt, $ignoreOtherCond );
-		if ( $this->getPreferredVariant() == $this->mMainLanguageCode )
+		if ( $this->getPreferredVariant() == $this->mMainLanguageCode ) {
 			$link = $oldlink;
-	}
-
-	/**
-	 * We want our external link captions to be converted in variants,
-	 * so we return the original text instead -{$text}-, except for URLs
-	 *
-	 * @param $text string
-	 * @param $noParse bool
-	 *
-	 * @return string
-	 */
-	function markNoConversion( $text, $noParse = false ) {
-		if ( $noParse || preg_match( "/^https?:\/\/|ftp:\/\/|irc:\/\//", $text ) )
-			return parent::markNoConversion( $text );
-		return $text;
+		}
 	}
 
 	/**
@@ -168,9 +170,11 @@ class IuConverter extends LanguageConverter {
 	 */
 	function autoConvert( $text, $toVariant = false ) {
 		global $wgTitle;
-		if ( is_object( $wgTitle ) && $wgTitle->getNameSpace() == NS_FILE ) {
+		if ( is_object( $wgTitle ) && $wgTitle->getNamespace() == NS_FILE ) {
 			$imagename = $wgTitle->getNsText();
-			if ( preg_match( "/^$imagename:/", $text ) ) return $text;
+			if ( preg_match( "/^$imagename:/", $text ) ) {
+				return $text;
+			}
 		}
 		return parent::autoConvert( $text, $toVariant );
 	}
@@ -189,7 +193,7 @@ class IuConverter extends LanguageConverter {
 		if ( trim( $text ) ) {
 			$this->loadTables();
 			// To syllabics, first translate uppercase to lowercase Latin
-			if($toVariant == 'ike-cans') {
+			if ( $toVariant == 'ike-cans' ) {
 				$text = $this->mTables['lowercase']->replace( $text );
 			}
 			$text = $this->mTables[$toVariant]->replace( $text );
@@ -218,6 +222,6 @@ class LanguageIu extends Language {
 
 		$flags = array();
 		$this->mConverter = new IuConverter( $this, 'iu', $variants, $variantfallbacks, $flags );
-		$wgHooks['ArticleSaveComplete'][] = $this->mConverter;
+		$wgHooks['PageContentSaveComplete'][] = $this->mConverter;
 	}
 }

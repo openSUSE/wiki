@@ -1,12 +1,34 @@
 <?php
 /**
- * The Message class provides methods which fullfil two basic services:
+ * Fetching and processing of interface messages.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
+ * @file
+ * @author Niklas Laxström
+ */
+
+/**
+ * The Message class provides methods which fulfil two basic services:
  *  - fetching interface messages
  *  - processing messages into a variety of formats
  *
- * First implemented with MediaWiki 1.17, the Message class is intented to
+ * First implemented with MediaWiki 1.17, the Message class is intended to
  * replace the old wfMsg* functions that over time grew unusable.
- * @see https://www.mediawiki.org/wiki/New_messages_API for equivalences
+ * @see https://www.mediawiki.org/wiki/Manual:Messages_API for equivalences
  * between old and new functions.
  *
  * You should use the wfMessage() global function which acts as a wrapper for
@@ -90,8 +112,7 @@
  *         ->plain();
  * @endcode
  *
- * @note You cannot parse the text except in the content or interface
- * @note languages
+ * @note You can parse the text only in the content or interface languages
  *
  * @section message_compare_old Comparison with old wfMsg* functions:
  *
@@ -134,7 +155,6 @@
  * @see https://www.mediawiki.org/wiki/Localisation
  *
  * @since 1.17
- * @author Niklas Laxström
  */
 class Message {
 	/**
@@ -183,14 +203,20 @@ class Message {
 	protected $title = null;
 
 	/**
+	 * Content object representing the message
+	 */
+	protected $content = null;
+
+	/**
 	 * @var string
 	 */
 	protected $message;
 
 	/**
 	 * Constructor.
+	 * @since 1.17
 	 * @param $key: message key, or array of message keys to try and use the first non-empty message for
-	 * @param $params Array message parameters
+	 * @param array $params message parameters
 	 * @return Message: $this
 	 */
 	public function __construct( $key, $params = array() ) {
@@ -201,10 +227,50 @@ class Message {
 	}
 
 	/**
+	 * Returns the message key
+	 *
+	 * @since 1.21
+	 *
+	 * @return string
+	 */
+	public function getKey() {
+		if ( is_array( $this->key ) ) {
+			// May happen if some kind of fallback is applied.
+			// For now, just use the first key. We really need a better solution.
+			return $this->key[0];
+		} else {
+			return $this->key;
+		}
+	}
+
+	/**
+	 * Returns the message parameters
+	 *
+	 * @since 1.21
+	 *
+	 * @return string[]
+	 */
+	public function getParams() {
+		return $this->parameters;
+	}
+
+	/**
+	 * Returns the message format
+	 *
+	 * @since 1.21
+	 *
+	 * @return string
+	 */
+	public function getFormat() {
+		return $this->format;
+	}
+
+	/**
 	 * Factory function that is just wrapper for the real constructor. It is
-	 * intented to be used instead of the real constructor, because it allows
+	 * intended to be used instead of the real constructor, because it allows
 	 * chaining method calls, while new objects don't.
-	 * @param $key String: message key
+	 * @since 1.17
+	 * @param string $key message key
 	 * @param Varargs: parameters as Strings
 	 * @return Message: $this
 	 */
@@ -218,15 +284,16 @@ class Message {
 	 * Factory function accepting multiple message keys and returning a message instance
 	 * for the first message which is non-empty. If all messages are empty then an
 	 * instance of the first message key is returned.
+	 * @since 1.18
 	 * @param Varargs: message keys (or first arg as an array of all the message keys)
 	 * @return Message: $this
 	 */
 	public static function newFallbackSequence( /*...*/ ) {
 		$keys = func_get_args();
 		if ( func_num_args() == 1 ) {
-			if ( is_array($keys[0]) ) {
+			if ( is_array( $keys[0] ) ) {
 				// Allow an array to be passed as the first argument instead
-				$keys = array_values($keys[0]);
+				$keys = array_values( $keys[0] );
 			} else {
 				// Optimize a single string to not need special fallback handling
 				$keys = $keys[0];
@@ -237,6 +304,7 @@ class Message {
 
 	/**
 	 * Adds parameters to the parameter list of this message.
+	 * @since 1.17
 	 * @param Varargs: parameters as Strings, or a single argument that is an array of Strings
 	 * @return Message: $this
 	 */
@@ -255,6 +323,7 @@ class Message {
 	 * In other words the parsing process cannot access the contents
 	 * of this type of parameter, and you need to make sure it is
 	 * sanitized beforehand.  The parser will see "$n", instead.
+	 * @since 1.17
 	 * @param Varargs: raw parameters as Strings (or single argument that is an array of raw parameters)
 	 * @return Message: $this
 	 */
@@ -263,7 +332,7 @@ class Message {
 		if ( isset( $params[0] ) && is_array( $params[0] ) ) {
 			$params = $params[0];
 		}
-		foreach( $params as $param ) {
+		foreach ( $params as $param ) {
 			$this->parameters[] = self::rawParam( $param );
 		}
 		return $this;
@@ -272,6 +341,7 @@ class Message {
 	/**
 	 * Add parameters that are numeric and will be passed through
 	 * Language::formatNum before substitution
+	 * @since 1.18
 	 * @param Varargs: numeric parameters (or single argument that is array of numeric parameters)
 	 * @return Message: $this
 	 */
@@ -280,21 +350,112 @@ class Message {
 		if ( isset( $params[0] ) && is_array( $params[0] ) ) {
 			$params = $params[0];
 		}
-		foreach( $params as $param ) {
+		foreach ( $params as $param ) {
 			$this->parameters[] = self::numParam( $param );
 		}
 		return $this;
 	}
 
 	/**
+	 * Add parameters that are durations of time and will be passed through
+	 * Language::formatDuration before substitution
+	 * @since 1.22
+	 * @param Varargs: numeric parameters (or single argument that is array of numeric parameters)
+	 * @return Message: $this
+	 */
+	public function durationParams( /*...*/ ) {
+		$params = func_get_args();
+		if ( isset( $params[0] ) && is_array( $params[0] ) ) {
+			$params = $params[0];
+		}
+		foreach ( $params as $param ) {
+			$this->parameters[] = self::durationParam( $param );
+		}
+		return $this;
+	}
+
+	/**
+	 * Add parameters that are expiration times and will be passed through
+	 * Language::formatExpiry before substitution
+	 * @since 1.22
+	 * @param Varargs: numeric parameters (or single argument that is array of numeric parameters)
+	 * @return Message: $this
+	 */
+	public function expiryParams( /*...*/ ) {
+		$params = func_get_args();
+		if ( isset( $params[0] ) && is_array( $params[0] ) ) {
+			$params = $params[0];
+		}
+		foreach ( $params as $param ) {
+			$this->parameters[] = self::expiryParam( $param );
+		}
+		return $this;
+	}
+
+	/**
+	 * Add parameters that are time periods and will be passed through
+	 * Language::formatTimePeriod before substitution
+	 * @since 1.22
+	 * @param Varargs: numeric parameters (or single argument that is array of numeric parameters)
+	 * @return Message: $this
+	 */
+	public function timeperiodParams( /*...*/ ) {
+		$params = func_get_args();
+		if ( isset( $params[0] ) && is_array( $params[0] ) ) {
+			$params = $params[0];
+		}
+		foreach ( $params as $param ) {
+			$this->parameters[] = self::timeperiodParam( $param );
+		}
+		return $this;
+	}
+
+	/**
+	 * Add parameters that are file sizes and will be passed through
+	 * Language::formatSize before substitution
+	 * @since 1.22
+	 * @param Varargs: numeric parameters (or single argument that is array of numeric parameters)
+	 * @return Message: $this
+	 */
+	public function sizeParams( /*...*/ ) {
+		$params = func_get_args();
+		if ( isset( $params[0] ) && is_array( $params[0] ) ) {
+			$params = $params[0];
+		}
+		foreach ( $params as $param ) {
+			$this->parameters[] = self::sizeParam( $param );
+		}
+		return $this;
+	}
+
+	/**
+	 * Add parameters that are bitrates and will be passed through
+	 * Language::formatBitrate before substitution
+	 * @since 1.22
+	 * @param Varargs: numeric parameters (or single argument that is array of numeric parameters)
+	 * @return Message: $this
+	 */
+	public function bitrateParams( /*...*/ ) {
+		$params = func_get_args();
+		if ( isset( $params[0] ) && is_array( $params[0] ) ) {
+			$params = $params[0];
+		}
+		foreach ( $params as $param ) {
+			$this->parameters[] = self::bitrateParam( $param );
+		}
+		return $this;
+	}
+
+	/**
 	 * Set the language and the title from a context object
-	 *
+	 * @since 1.19
 	 * @param $context IContextSource
 	 * @return Message: $this
 	 */
 	public function setContext( IContextSource $context ) {
 		$this->inLanguage( $context->getLanguage() );
 		$this->title( $context->getTitle() );
+		$this->interface = true;
 
 		return $this;
 	}
@@ -303,14 +464,16 @@ class Message {
 	 * Request the message in any language that is supported.
 	 * As a side effect interface message status is unconditionally
 	 * turned off.
+	 * @since 1.17
 	 * @param $lang Mixed: language code or Language object.
+	 * @throws MWException
 	 * @return Message: $this
 	 */
 	public function inLanguage( $lang ) {
 		if ( $lang instanceof Language || $lang instanceof StubUserLang ) {
 			$this->language = $lang;
 		} elseif ( is_string( $lang ) ) {
-			if( $this->language->getCode() != $lang ) {
+			if ( $this->language->getCode() != $lang ) {
 				$this->language = Language::factory( $lang );
 			}
 		} else {
@@ -326,6 +489,7 @@ class Message {
 	/**
 	 * Request the message in the wiki's content language,
 	 * unless it is disabled for this message.
+	 * @since 1.17
 	 * @see $wgForceUIMsgAsContentMsg
 	 * @return Message: $this
 	 */
@@ -342,18 +506,31 @@ class Message {
 	}
 
 	/**
+	 * Allows manipulating the interface message flag directly.
+	 * Can be used to restore the flag after setting a language.
+	 * @param $value bool
+	 * @return Message: $this
+	 * @since 1.20
+	 */
+	public function setInterfaceMessageFlag( $value ) {
+		$this->interface = (bool)$value;
+		return $this;
+	}
+
+	/**
 	 * Enable or disable database use.
+	 * @since 1.17
 	 * @param $value Boolean
 	 * @return Message: $this
 	 */
 	public function useDatabase( $value ) {
-		$this->useDatabase = (bool) $value;
+		$this->useDatabase = (bool)$value;
 		return $this;
 	}
 
 	/**
 	 * Set the Title object to use as context when transforming the message
-	 *
+	 * @since 1.18
 	 * @param $title Title object
 	 * @return Message: $this
 	 */
@@ -363,27 +540,57 @@ class Message {
 	}
 
 	/**
+	 * Returns the message as a Content object.
+	 * @return Content
+	 */
+	public function content() {
+		if ( !$this->content ) {
+			$this->content = new MessageContent( $this );
+		}
+
+		return $this->content;
+	}
+
+	/**
 	 * Returns the message parsed from wikitext to HTML.
+	 * @since 1.17
 	 * @return String: HTML
 	 */
 	public function toString() {
-		$string = $this->getMessageText();
+		$string = $this->fetchMessage();
+
+		if ( $string === false ) {
+			$key = htmlspecialchars( is_array( $this->key ) ? $this->key[0] : $this->key );
+			if ( $this->format === 'plain' ) {
+				return '<' . $key . '>';
+			}
+			return '&lt;' . $key . '&gt;';
+		}
+
+		# Replace $* with a list of parameters for &uselang=qqx.
+		if ( strpos( $string, '$*' ) !== false ) {
+			$paramlist = '';
+			if ( $this->parameters !== array() ) {
+				$paramlist = ': $' . implode( ', $', range( 1, count( $this->parameters ) ) );
+			}
+			$string = str_replace( '$*', $paramlist, $string );
+		}
 
 		# Replace parameters before text parsing
 		$string = $this->replaceParameters( $string, 'before' );
 
 		# Maybe transform using the full parser
-		if( $this->format === 'parse' ) {
+		if ( $this->format === 'parse' ) {
 			$string = $this->parseText( $string );
 			$m = array();
-			if( preg_match( '/^<p>(.*)\n?<\/p>\n?$/sU', $string, $m ) ) {
+			if ( preg_match( '/^<p>(.*)\n?<\/p>\n?$/sU', $string, $m ) ) {
 				$string = $m[1];
 			}
-		} elseif( $this->format === 'block-parse' ){
+		} elseif ( $this->format === 'block-parse' ) {
 			$string = $this->parseText( $string );
-		} elseif( $this->format === 'text' ){
+		} elseif ( $this->format === 'text' ) {
 			$string = $this->transformText( $string );
-		} elseif( $this->format === 'escaped' ){
+		} elseif ( $this->format === 'escaped' ) {
 			$string = $this->transformText( $string );
 			$string = htmlspecialchars( $string, ENT_QUOTES, 'UTF-8', false );
 		}
@@ -396,16 +603,35 @@ class Message {
 
 	/**
 	 * Magic method implementation of the above (for PHP >= 5.2.0), so we can do, eg:
-	 *     $foo = Message::get($key);
+	 *     $foo = Message::get( $key );
 	 *     $string = "<abbr>$foo</abbr>";
+	 * @since 1.18
 	 * @return String
 	 */
 	public function __toString() {
-		return $this->toString();
+		// PHP doesn't allow __toString to throw exceptions and will
+		// trigger a fatal error if it does. So, catch any exceptions.
+
+		try {
+			return $this->toString();
+		} catch ( Exception $ex ) {
+			try {
+				trigger_error( "Exception caught in " . __METHOD__ . " (message " . $this->key . "): "
+					. $ex, E_USER_WARNING );
+			} catch ( Exception $ex ) {
+				// Doh! Cause a fatal error after all?
+			}
+
+			if ( $this->format === 'plain' ) {
+				return '<' . $this->key . '>';
+			}
+			return '&lt;' . $this->key . '&gt;';
+		}
 	}
 
 	/**
 	 * Fully parse the text from wikitext to HTML
+	 * @since 1.17
 	 * @return String parsed HTML
 	 */
 	public function parse() {
@@ -415,6 +641,7 @@ class Message {
 
 	/**
 	 * Returns the message text. {{-transformation is done.
+	 * @since 1.17
 	 * @return String: Unescaped message text.
 	 */
 	public function text() {
@@ -423,7 +650,8 @@ class Message {
 	}
 
 	/**
-	 * Returns the message text as-is, only parameters are subsituted.
+	 * Returns the message text as-is, only parameters are substituted.
+	 * @since 1.17
 	 * @return String: Unescaped untransformed message text.
 	 */
 	public function plain() {
@@ -433,6 +661,7 @@ class Message {
 
 	/**
 	 * Returns the parsed message text which is always surrounded by a block element.
+	 * @since 1.17
 	 * @return String: HTML
 	 */
 	public function parseAsBlock() {
@@ -443,6 +672,7 @@ class Message {
 	/**
 	 * Returns the message text. {{-transformation is done and the result
 	 * is escaped excluding any raw parameters.
+	 * @since 1.17
 	 * @return String: Escaped message text.
 	 */
 	public function escaped() {
@@ -452,6 +682,7 @@ class Message {
 
 	/**
 	 * Check whether a message key has been defined currently.
+	 * @since 1.17
 	 * @return Bool: true if it is and false if not.
 	 */
 	public function exists() {
@@ -460,6 +691,7 @@ class Message {
 
 	/**
 	 * Check whether a message does not exist, or is an empty string
+	 * @since 1.18
 	 * @return Bool: true if is is and false if not
 	 * @todo FIXME: Merge with isDisabled()?
 	 */
@@ -470,7 +702,8 @@ class Message {
 
 	/**
 	 * Check whether a message does not exist, is an empty string, or is "-"
-	 * @return Bool: true if is is and false if not
+	 * @since 1.18
+	 * @return Bool: true if it is and false if not
 	 */
 	public function isDisabled() {
 		$message = $this->fetchMessage();
@@ -478,6 +711,7 @@ class Message {
 	}
 
 	/**
+	 * @since 1.17
 	 * @param $value
 	 * @return array
 	 */
@@ -486,6 +720,7 @@ class Message {
 	}
 
 	/**
+	 * @since 1.18
 	 * @param $value
 	 * @return array
 	 */
@@ -494,17 +729,63 @@ class Message {
 	}
 
 	/**
-	 * Substitutes any paramaters into the message text.
-	 * @param $message String: the message text
-	 * @param $type String: either before or after
+	 * @since 1.22
+	 * @param $value
+	 * @return array
+	 */
+	public static function durationParam( $value ) {
+		return array( 'duration' => $value );
+	}
+
+	/**
+	 * @since 1.22
+	 * @param $value
+	 * @return array
+	 */
+	public static function expiryParam( $value ) {
+		return array( 'expiry' => $value );
+	}
+
+	/**
+	 * @since 1.22
+	 * @param $value
+	 * @return array
+	 */
+	public static function timeperiodParam( $value ) {
+		return array( 'period' => $value );
+	}
+
+	/**
+	 * @since 1.22
+	 * @param $value
+	 * @return array
+	 */
+	public static function sizeParam( $value ) {
+		return array( 'size' => $value );
+	}
+
+	/**
+	 * @since 1.22
+	 * @param $value
+	 * @return array
+	 */
+	public static function bitrateParam( $value ) {
+		return array( 'bitrate' => $value );
+	}
+
+	/**
+	 * Substitutes any parameters into the message text.
+	 * @since 1.17
+	 * @param string $message the message text
+	 * @param string $type either before or after
 	 * @return String
 	 */
 	protected function replaceParameters( $message, $type = 'before' ) {
 		$replacementKeys = array();
-		foreach( $this->parameters as $n => $param ) {
+		foreach ( $this->parameters as $n => $param ) {
 			list( $paramType, $value ) = $this->extractParam( $param );
 			if ( $type === $paramType ) {
-				$replacementKeys['$' . ($n + 1)] = $value;
+				$replacementKeys['$' . ( $n + 1 )] = $value;
 			}
 		}
 		$message = strtr( $message, $replacementKeys );
@@ -513,39 +794,60 @@ class Message {
 
 	/**
 	 * Extracts the parameter type and preprocessed the value if needed.
-	 * @param $param String|Array: Parameter as defined in this class.
+	 * @since 1.18
+	 * @param string|array $param Parameter as defined in this class.
 	 * @return Tuple(type, value)
 	 */
 	protected function extractParam( $param ) {
-		if ( is_array( $param ) && isset( $param['raw'] ) ) {
-			return array( 'after', $param['raw'] );
-		} elseif ( is_array( $param ) && isset( $param['num'] ) ) {
-			// Replace number params always in before step for now.
-			// No support for combined raw and num params
-			return array( 'before', $this->language->formatNum( $param['num'] ) );
-		} elseif ( !is_array( $param ) ) {
-			return array( 'before', $param );
+		if ( is_array( $param ) ) {
+			if ( isset( $param['raw'] ) ) {
+				return array( 'after', $param['raw'] );
+			} elseif ( isset( $param['num'] ) ) {
+				// Replace number params always in before step for now.
+				// No support for combined raw and num params
+				return array( 'before', $this->language->formatNum( $param['num'] ) );
+			} elseif ( isset( $param['duration'] ) ) {
+				return array( 'before', $this->language->formatDuration( $param['duration'] ) );
+			} elseif ( isset( $param['expiry'] ) ) {
+				return array( 'before', $this->language->formatExpiry( $param['expiry'] ) );
+			} elseif ( isset( $param['period'] ) ) {
+				return array( 'before', $this->language->formatTimePeriod( $param['period'] ) );
+			} elseif ( isset( $param['size'] ) ) {
+				return array( 'before', $this->language->formatSize( $param['size'] ) );
+			} elseif ( isset( $param['bitrate'] ) ) {
+				return array( 'before', $this->language->formatBitrate( $param['bitrate'] ) );
+			} else {
+				trigger_error(
+					"Invalid message parameter: " . htmlspecialchars( serialize( $param ) ),
+					E_USER_WARNING
+				);
+				return array( 'before', '[INVALID]' );
+			}
+		} elseif ( $param instanceof Message ) {
+			// Message objects should not be before parameters because
+			// then they'll get double escaped. If the message needs to be
+			// escaped, it'll happen right here when we call toString().
+			return array( 'after', $param->toString() );
 		} else {
-			trigger_error(
-				"Invalid message parameter: " . htmlspecialchars( serialize( $param ) ),
-				E_USER_WARNING
-			);
-			return array( 'before', '[INVALID]' );
+			return array( 'before', $param );
 		}
 	}
 
 	/**
 	 * Wrapper for what ever method we use to parse wikitext.
-	 * @param $string String: Wikitext message contents
+	 * @since 1.17
+	 * @param string $string Wikitext message contents
 	 * @return string Wikitext parsed into HTML
 	 */
 	protected function parseText( $string ) {
-		return MessageCache::singleton()->parse( $string, $this->title, /*linestart*/true, $this->interface, $this->language )->getText();
+		$out = MessageCache::singleton()->parse( $string, $this->title, /*linestart*/true, $this->interface, $this->language );
+		return is_object( $out ) ? $out->getText() : $out;
 	}
 
 	/**
 	 * Wrapper for what ever method we use to {{-transform wikitext.
-	 * @param $string String: Wikitext message contents
+	 * @since 1.17
+	 * @param string $string Wikitext message contents
 	 * @return string Wikitext with {{-constructs replaced with their values.
 	 */
 	protected function transformText( $string ) {
@@ -553,21 +855,9 @@ class Message {
 	}
 
 	/**
-	 * Returns the textual value for the message.
-	 * @return Message contents or placeholder
-	 */
-	protected function getMessageText() {
-		$message = $this->fetchMessage();
-		if ( $message === false ) {
-			return '&lt;' . htmlspecialchars( is_array($this->key) ? $this->key[0] : $this->key ) . '&gt;';
-		} else {
-			return $message;
-		}
-	}
-
-	/**
 	 * Wrapper for what ever method we use to get message contents
-	 *
+	 * @since 1.17
+	 * @throws MWException
 	 * @return string
 	 */
 	protected function fetchMessage() {
@@ -591,4 +881,46 @@ class Message {
 		return $this->message;
 	}
 
+}
+
+/**
+ * Variant of the Message class.
+ *
+ * Rather than treating the message key as a lookup
+ * value (which is passed to the MessageCache and
+ * translated as necessary), a RawMessage key is
+ * treated as the actual message.
+ *
+ * All other functionality (parsing, escaping, etc.)
+ * is preserved.
+ *
+ * @since 1.21
+ */
+class RawMessage extends Message {
+	/**
+	 * Call the parent constructor, then store the key as
+	 * the message.
+	 *
+	 * @param string $key Message to use
+	 * @param array $params Parameters for the message
+	 * @see Message::__construct
+	 */
+	public function __construct( $key, $params = array() ) {
+		parent::__construct( $key, $params );
+		// The key is the message.
+		$this->message = $key;
+	}
+
+	/**
+	 * Fetch the message (in this case, the key).
+	 *
+	 * @return string
+	 */
+	public function fetchMessage() {
+		// Just in case the message is unset somewhere.
+		if ( !isset( $this->message ) ) {
+			$this->message = $this->key;
+		}
+		return $this->message;
+	}
 }

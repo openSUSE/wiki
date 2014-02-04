@@ -1,6 +1,21 @@
 <?php
 /**
- * Include most things that's need to customize the site
+ * Include most things that's need to customize the site.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
  *
  * @file
  */
@@ -29,45 +44,59 @@ if ( !isset( $wgVersion ) ) {
 }
 
 // Set various default paths sensibly...
-if ( $wgScript === false ) $wgScript = "$wgScriptPath/index$wgScriptExtension";
-if ( $wgRedirectScript === false ) $wgRedirectScript = "$wgScriptPath/redirect$wgScriptExtension";
-if ( $wgLoadScript === false ) $wgLoadScript = "$wgScriptPath/load$wgScriptExtension";
+if ( $wgScript === false ) {
+	$wgScript = "$wgScriptPath/index$wgScriptExtension";
+}
+if ( $wgLoadScript === false ) {
+	$wgLoadScript = "$wgScriptPath/load$wgScriptExtension";
+}
 
 if ( $wgArticlePath === false ) {
 	if ( $wgUsePathInfo ) {
-		$wgArticlePath      = "$wgScript/$1";
+		$wgArticlePath = "$wgScript/$1";
 	} else {
-		$wgArticlePath      = "$wgScript?title=$1";
+		$wgArticlePath = "$wgScript?title=$1";
 	}
 }
 
-if ( !empty($wgActionPaths) && !isset($wgActionPaths['view']) ) {
+if ( !empty( $wgActionPaths ) && !isset( $wgActionPaths['view'] ) ) {
 	# 'view' is assumed the default action path everywhere in the code
 	# but is rarely filled in $wgActionPaths
 	$wgActionPaths['view'] = $wgArticlePath;
 }
 
-if ( !empty($wgActionPaths) && !isset($wgActionPaths['view']) ) {
-	# 'view' is assumed the default action path everywhere in the code
-	# but is rarely filled in $wgActionPaths 
-	$wgActionPaths['view'] = $wgArticlePath ;
+if ( $wgStylePath === false ) {
+	$wgStylePath = "$wgScriptPath/skins";
+}
+if ( $wgLocalStylePath === false ) {
+	$wgLocalStylePath = "$wgScriptPath/skins";
+}
+if ( $wgStyleDirectory === false ) {
+	$wgStyleDirectory = "$IP/skins";
+}
+if ( $wgExtensionAssetsPath === false ) {
+	$wgExtensionAssetsPath = "$wgScriptPath/extensions";
 }
 
-if ( $wgStylePath === false ) $wgStylePath = "$wgScriptPath/skins";
-if ( $wgLocalStylePath === false ) $wgLocalStylePath = "$wgScriptPath/skins";
-if ( $wgStyleDirectory === false ) $wgStyleDirectory   = "$IP/skins";
-if ( $wgExtensionAssetsPath === false ) $wgExtensionAssetsPath = "$wgScriptPath/extensions";
+if ( $wgLogo === false ) {
+	$wgLogo = "$wgStylePath/common/images/wiki.png";
+}
 
-if ( $wgLogo === false ) $wgLogo = "$wgStylePath/common/images/wiki.png";
-
-if ( $wgUploadPath === false ) $wgUploadPath = "$wgScriptPath/images";
-if ( $wgUploadDirectory === false ) $wgUploadDirectory = "$IP/images";
-
-if ( $wgTmpDirectory === false ) $wgTmpDirectory = "{$wgUploadDirectory}/tmp";
-
-if ( $wgReadOnlyFile === false ) $wgReadOnlyFile = "{$wgUploadDirectory}/lock_yBgMBwiR";
-if ( $wgFileCacheDirectory === false ) $wgFileCacheDirectory = "{$wgUploadDirectory}/cache";
-if ( $wgDeletedDirectory === false ) $wgDeletedDirectory = "{$wgUploadDirectory}/deleted";
+if ( $wgUploadPath === false ) {
+	$wgUploadPath = "$wgScriptPath/images";
+}
+if ( $wgUploadDirectory === false ) {
+	$wgUploadDirectory = "$IP/images";
+}
+if ( $wgReadOnlyFile === false ) {
+	$wgReadOnlyFile = "{$wgUploadDirectory}/lock_yBgMBwiR";
+}
+if ( $wgFileCacheDirectory === false ) {
+	$wgFileCacheDirectory = "{$wgUploadDirectory}/cache";
+}
+if ( $wgDeletedDirectory === false ) {
+	$wgDeletedDirectory = "{$wgUploadDirectory}/deleted";
+}
 
 if ( isset( $wgFileStore['deleted']['directory'] ) ) {
 	$wgDeletedDirectory = $wgFileStore['deleted']['directory'];
@@ -118,13 +147,13 @@ $wgNamespaceAliases['Image_talk'] = NS_FILE_TALK;
  * Initialise $wgLockManagers to include basic FS version
  */
 $wgLockManagers[] = array(
-	'name'          => 'fsLockManager',
-	'class'         => 'FSLockManager',
+	'name' => 'fsLockManager',
+	'class' => 'FSLockManager',
 	'lockDirectory' => "{$wgUploadDirectory}/lockdir",
 );
 $wgLockManagers[] = array(
-	'name'          => 'nullLockManager',
-	'class'         => 'NullLockManager',
+	'name' => 'nullLockManager',
+	'class' => 'NullLockManager',
 );
 
 /**
@@ -190,15 +219,15 @@ if ( $wgUseSharedUploads ) {
 }
 if ( $wgUseInstantCommons ) {
 	$wgForeignFileRepos[] = array(
-		'class'                  => 'ForeignAPIRepo',
-		'name'                   => 'wikimediacommons',
-		'apibase'                => WebRequest::detectProtocol() === 'https' ?
+		'class' => 'ForeignAPIRepo',
+		'name' => 'wikimediacommons',
+		'apibase' => WebRequest::detectProtocol() === 'https' ?
 			'https://commons.wikimedia.org/w/api.php' :
 			'http://commons.wikimedia.org/w/api.php',
-		'hashLevels'             => 2,
-		'fetchDescription'       => true,
+		'hashLevels' => 2,
+		'fetchDescription' => true,
 		'descriptionCacheExpiry' => 43200,
-		'apiThumbCacheExpiry'    => 86400,
+		'apiThumbCacheExpiry' => 86400,
 	);
 }
 /*
@@ -264,6 +293,13 @@ if ( $wgMetaNamespace === false ) {
 	$wgMetaNamespace = str_replace( ' ', '_', $wgSitename );
 }
 
+
+// Default value is either the suhosin limit or -1 for unlimited
+if ( $wgResourceLoaderMaxQueryLength === false ) {
+	$maxValueLength = ini_get( 'suhosin.get.max_value_length' );
+	$wgResourceLoaderMaxQueryLength = $maxValueLength > 0 ? $maxValueLength : -1;
+}
+
 /**
  * Definitions of the NS_ constants are in Defines.php
  * @private
@@ -289,7 +325,7 @@ $wgCanonicalNamespaceNames = array(
 );
 
 /// @todo UGLY UGLY
-if( is_array( $wgExtraNamespaces ) ) {
+if ( is_array( $wgExtraNamespaces ) ) {
 	$wgCanonicalNamespaceNames = $wgCanonicalNamespaceNames + $wgExtraNamespaces;
 }
 
@@ -305,26 +341,23 @@ if ( $wgUseFileCache || $wgUseSquid ) {
 	$wgDebugToolbar = false;
 }
 
-# $wgAllowRealName and $wgAllowUserSkin were removed in 1.16
-# in favor of $wgHiddenPrefs, handle b/c here
-if ( !$wgAllowRealName ) {
-	$wgHiddenPrefs[] = 'realname';
-}
-
 # Doesn't make sense to have if disabled.
 if ( !$wgEnotifMinorEdits ) {
 	$wgHiddenPrefs[] = 'enotifminoredits';
 }
 
 # $wgDisabledActions is deprecated as of 1.18
-foreach( $wgDisabledActions as $action ){
+foreach ( $wgDisabledActions as $action ) {
 	$wgActions[$action] = false;
 }
-if( !$wgAllowPageInfo ){
-	$wgActions['info'] = false;
-}
 
-if ( !$wgHtml5Version && $wgHtml5 && $wgAllowRdfaAttributes ) {
+# We always output HTML5 since 1.22, overriding these is no longer supported
+# we set them here for extensions that depend on its value.
+$wgHtml5 = true;
+$wgXhtmlDefaultNamespace = 'http://www.w3.org/1999/xhtml';
+$wgJsMimeType = 'text/javascript';
+
+if ( !$wgHtml5Version && $wgAllowRdfaAttributes ) {
 	# see http://www.w3.org/TR/rdfa-in-html/#document-conformance
 	if ( $wgMimeType == 'application/xhtml+xml' ) {
 		$wgHtml5Version = 'XHTML+RDFa 1.0';
@@ -334,7 +367,7 @@ if ( !$wgHtml5Version && $wgHtml5 && $wgAllowRdfaAttributes ) {
 }
 
 # Blacklisted file extensions shouldn't appear on the "allowed" list
-$wgFileExtensions = array_diff ( $wgFileExtensions, $wgFileBlacklist );
+$wgFileExtensions = array_values( array_diff ( $wgFileExtensions, $wgFileBlacklist ) );
 
 if ( $wgArticleCountMethod === null ) {
 	$wgArticleCountMethod = $wgUseCommaCount ? 'comma' : 'link';
@@ -344,21 +377,29 @@ if ( $wgInvalidateCacheOnLocalSettingsChange ) {
 	$wgCacheEpoch = max( $wgCacheEpoch, gmdate( 'YmdHis', @filemtime( "$IP/LocalSettings.php" ) ) );
 }
 
-if ( $wgAjaxUploadDestCheck ) {
-	$wgAjaxExportList[] = 'SpecialUpload::ajaxGetExistsWarning';
-}
-
 if ( $wgNewUserLog ) {
 	# Add a new log type
-	$wgLogTypes[]                        = 'newusers';
-	$wgLogNames['newusers']              = 'newuserlogpage';
-	$wgLogHeaders['newusers']            = 'newuserlogpagetext';
-	# newusers, create, create2, autocreate
-	$wgLogActionsHandlers['newusers/*']  = 'NewUsersLogFormatter';
+	$wgLogTypes[] = 'newusers';
+	$wgLogNames['newusers'] = 'newuserlogpage';
+	$wgLogHeaders['newusers'] = 'newuserlogpagetext';
+	$wgLogActionsHandlers['newusers/newusers'] = 'NewUsersLogFormatter';
+	$wgLogActionsHandlers['newusers/create'] = 'NewUsersLogFormatter';
+	$wgLogActionsHandlers['newusers/create2'] = 'NewUsersLogFormatter';
+	$wgLogActionsHandlers['newusers/byemail'] = 'NewUsersLogFormatter';
+	$wgLogActionsHandlers['newusers/autocreate'] = 'NewUsersLogFormatter';
 }
 
 if ( $wgCookieSecure === 'detect' ) {
-	$wgCookieSecure = ( substr( $wgServer, 0, 6 ) === 'https:' );
+	$wgCookieSecure = ( WebRequest::detectProtocol() === 'https' );
+}
+
+if ( $wgRC2UDPAddress ) {
+	$wgRCFeeds['default'] = array(
+		'formatter' => 'IRCColourfulRCFeedFormatter',
+		'uri' => "udp://$wgRC2UDPAddress:$wgRC2UDPPort/$wgRC2UDPPrefix",
+		'add_interwiki_prefix' => &$wgRC2UDPInterwikiPrefix,
+		'omit_bots' => &$wgRC2UDPOmitBots,
+	);
 }
 
 // Disable MWDebug for command line mode, this prevents MWDebug from eating up
@@ -368,27 +409,51 @@ if ( $wgDebugToolbar && !$wgCommandLineMode ) {
 	MWDebug::init();
 }
 
-if ( !defined( 'MW_COMPILED' ) ) {
-	if ( !MWInit::classExists( 'AutoLoader' ) ) {
-		require_once( "$IP/includes/AutoLoader.php" );
-	}
-
-	wfProfileIn( $fname . '-exception' );
-	MWExceptionHandler::installHandler();
-	wfProfileOut( $fname . '-exception' );
-
-	wfProfileIn( $fname . '-includes' );
-	require_once( "$IP/includes/normal/UtfNormalUtil.php" );
-	require_once( "$IP/includes/GlobalFunctions.php" );
-	require_once( "$IP/includes/ProxyTools.php" );
-	require_once( "$IP/includes/ImageFunctions.php" );
-	require_once( "$IP/includes/normal/UtfNormalDefines.php" );
-	wfProfileOut( $fname . '-includes' );
+if ( !class_exists( 'AutoLoader' ) ) {
+	require_once "$IP/includes/AutoLoader.php";
 }
 
-# Now that GlobalFunctions is loaded, set the default for $wgCanonicalServer
+wfProfileIn( $fname . '-exception' );
+MWExceptionHandler::installHandler();
+wfProfileOut( $fname . '-exception' );
+
+wfProfileIn( $fname . '-includes' );
+require_once "$IP/includes/normal/UtfNormalUtil.php";
+require_once "$IP/includes/GlobalFunctions.php";
+require_once "$IP/includes/ProxyTools.php";
+require_once "$IP/includes/normal/UtfNormalDefines.php";
+wfProfileOut( $fname . '-includes' );
+
+if ( $wgSecureLogin && substr( $wgServer, 0, 2 ) !== '//' ) {
+	$wgSecureLogin = false;
+	wfWarn( 'Secure login was enabled on a server that only supports HTTP or HTTPS. Disabling secure login.' );
+}
+
+# Now that GlobalFunctions is loaded, set defaults that depend
+# on it.
+if ( $wgTmpDirectory === false ) {
+	$wgTmpDirectory = wfTempDir();
+}
+
 if ( $wgCanonicalServer === false ) {
 	$wgCanonicalServer = wfExpandUrl( $wgServer, PROTO_HTTP );
+}
+
+// $wgHTCPMulticastRouting got renamed to $wgHTCPRouting in MediaWiki 1.22
+// ensure back compatibility.
+if ( !$wgHTCPRouting && $wgHTCPMulticastRouting ) {
+	$wgHTCPRouting = $wgHTCPMulticastRouting;
+}
+
+// Initialize $wgHTCPRouting from backwards-compatible settings that
+// comes from pre 1.20 version.
+if ( !$wgHTCPRouting && $wgHTCPMulticastAddress ) {
+	$wgHTCPRouting = array(
+		'' => array(
+			'host' => $wgHTCPMulticastAddress,
+			'port' => $wgHTCPPort,
+		)
+	);
 }
 
 wfProfileIn( $fname . '-misc1' );
@@ -401,14 +466,14 @@ wfMemoryLimit();
  * that happens whenever you use a date function without the timezone being
  * explicitly set. Inspired by phpMyAdmin's treatment of the problem.
  */
-if ( is_null( $wgLocaltimezone) ) {
+if ( is_null( $wgLocaltimezone ) ) {
 	wfSuppressWarnings();
 	$wgLocaltimezone = date_default_timezone_get();
 	wfRestoreWarnings();
 }
 
 date_default_timezone_set( $wgLocaltimezone );
-if( is_null( $wgLocalTZoffset ) ) {
+if ( is_null( $wgLocalTZoffset ) ) {
 	$wgLocalTZoffset = date( 'Z' ) / 60;
 }
 
@@ -421,16 +486,16 @@ if ( $wgCommandLineMode ) {
 	# Can't stub this one, it sets up $_GET and $_REQUEST in its constructor
 	$wgRequest = new WebRequest;
 
-	$debug = "Start request\n\n{$_SERVER['REQUEST_METHOD']} {$wgRequest->getRequestURL()}";
+	$debug = "\n\nStart request {$wgRequest->getMethod()} {$wgRequest->getRequestURL()}\n";
 
 	if ( $wgDebugPrintHttpHeaders ) {
-		$debug .= "\nHTTP HEADERS:\n";
+		$debug .= "HTTP HEADERS:\n";
 
 		foreach ( $wgRequest->getAllHeaders() as $name => $value ) {
 			$debug .= "$name: $value\n";
 		}
 	}
-	wfDebug( "$debug\n" );
+	wfDebug( $debug );
 }
 
 wfProfileOut( $fname . '-misc1' );
@@ -439,6 +504,7 @@ wfProfileIn( $fname . '-memcached' );
 $wgMemc = wfGetMainCache();
 $messageMemc = wfGetMessageCacheStorage();
 $parserMemc = wfGetParserCacheStorage();
+$wgLangConvMemc = wfGetLangConverterCacheStorage();
 
 wfDebug( 'CACHES: ' . get_class( $wgMemc ) . '[main] ' .
 	get_class( $messageMemc ) . '[message] ' .
@@ -458,11 +524,9 @@ if ( !wfIniGetBool( 'session.auto_start' ) ) {
 
 if ( !defined( 'MW_NO_SESSION' ) && !$wgCommandLineMode ) {
 	if ( $wgRequest->checkSessionCookie() || isset( $_COOKIE[$wgCookiePrefix . 'Token'] ) ) {
-		wfIncrStats( 'request_with_session' );
 		wfSetupSession();
 		$wgSessionStarted = true;
 	} else {
-		wfIncrStats( 'request_without_session' );
 		$wgSessionStarted = false;
 	}
 }
@@ -479,7 +543,7 @@ $wgRequest->interpolateTitle();
 $wgUser = RequestContext::getMain()->getUser(); # BackCompat
 
 /**
- * @var Language
+ * @var $wgLang Language
  */
 $wgLang = new StubUserLang;
 
@@ -489,7 +553,7 @@ $wgLang = new StubUserLang;
 $wgOut = RequestContext::getMain()->getOutput(); # BackCompat
 
 /**
- * @var Parser
+ * @var $wgParser Parser
  */
 $wgParser = new StubObject( 'wgParser', $wgParserConf['class'], array( $wgParserConf ) );
 
@@ -515,10 +579,11 @@ foreach ( $wgExtensionFunctions as $func ) {
 	if ( is_object( $func ) && $func instanceof Closure ) {
 		$profName = $fname . '-extensions-closure';
 	} elseif ( is_array( $func ) ) {
-		if ( is_object( $func[0] ) )
+		if ( is_object( $func[0] ) ) {
 			$profName = $fname . '-extensions-' . get_class( $func[0] ) . '::' . $func[1];
-		else
+		} else {
 			$profName = $fname . '-extensions-' . implode( '::', $func );
+		}
 	} else {
 		$profName = $fname . '-extensions-' . strval( $func );
 	}

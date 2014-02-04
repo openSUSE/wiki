@@ -1,5 +1,27 @@
 <?php
 /**
+ * Page existence cache.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
+ * @file
+ * @ingroup Cache
+ */
+
+/**
  * Cache for article titles (prefixed DB keys) and ids linked from one source
  *
  * @ingroup Cache
@@ -13,18 +35,44 @@ class LinkCache {
 	private $mGoodLinkFields = array();
 	private $mBadLinks = array();
 	private $mForUpdate = false;
+	private $useDatabase = true;
 
 	/**
-	 * Get an instance of this class
+	 * @var LinkCache
+	 */
+	protected static $instance;
+
+	/**
+	 * Get an instance of this class.
 	 *
 	 * @return LinkCache
 	 */
 	static function &singleton() {
-		static $instance;
-		if ( !isset( $instance ) ) {
-			$instance = new LinkCache;
+		if ( self::$instance ) {
+			return self::$instance;
 		}
-		return $instance;
+		self::$instance = new LinkCache;
+		return self::$instance;
+	}
+
+	/**
+	 * Destroy the singleton instance, a new one will be created next time
+	 * singleton() is called.
+	 * @since 1.22
+	 */
+	static function destroySingleton() {
+		self::$instance = null;
+	}
+
+	/**
+	 * Set the singleton instance to a given object.
+	 * Since we do not have an interface for LinkCache, you have to be sure the
+	 * given object implements all the LinkCache public methods.
+	 * @param LinkCache $instance
+	 * @since 1.22
+	 */
+	static function setSingleton( LinkCache $instance ) {
+		self::$instance = $instance;
 	}
 
 	/**
@@ -52,11 +100,11 @@ class LinkCache {
 	 * Get a field of a title object from cache.
 	 * If this link is not good, it will return NULL.
 	 * @param $title Title
-	 * @param $field String: ('length','redirect','revision')
+	 * @param string $field ('length','redirect','revision','model')
 	 * @return mixed
 	 */
 	public function getGoodLinkFieldObj( $title, $field ) {
-		$dbkey = $title->getPrefixedDbKey();
+		$dbkey = $title->getPrefixedDBkey();
 		if ( array_key_exists( $dbkey, $this->mGoodLinkFields ) ) {
 			return $this->mGoodLinkFields[$dbkey][$field];
 		} else {
@@ -80,14 +128,16 @@ class LinkCache {
 	 * @param $len Integer: text's length
 	 * @param $redir Integer: whether the page is a redirect
 	 * @param $revision Integer: latest revision's ID
+	 * @param $model Integer: latest revision's content model ID
 	 */
-	public function addGoodLinkObj( $id, $title, $len = -1, $redir = null, $revision = false ) {
-		$dbkey = $title->getPrefixedDbKey();
+	public function addGoodLinkObj( $id, $title, $len = -1, $redir = null, $revision = false, $model = false ) {
+		$dbkey = $title->getPrefixedDBkey();
 		$this->mGoodLinks[$dbkey] = intval( $id );
 		$this->mGoodLinkFields[$dbkey] = array(
 			'length' => intval( $len ),
 			'redirect' => intval( $redir ),
-			'revision' => intval( $revision ) );
+			'revision' => intval( $revision ),
+			'model' => intval( $model ) );
 	}
 
 	/**
@@ -95,15 +145,16 @@ class LinkCache {
 	 * @since 1.19
 	 * @param $title Title
 	 * @param $row object which has the fields page_id, page_is_redirect,
-	 *  page_latest
+	 *  page_latest and page_content_model
 	 */
 	public function addGoodLinkObjFromRow( $title, $row ) {
-		$dbkey = $title->getPrefixedDbKey();
+		$dbkey = $title->getPrefixedDBkey();
 		$this->mGoodLinks[$dbkey] = intval( $row->page_id );
 		$this->mGoodLinkFields[$dbkey] = array(
 			'length' => intval( $row->page_len ),
 			'redirect' => intval( $row->page_is_redirect ),
 			'revision' => intval( $row->page_latest ),
+			'model' => !empty( $row->page_content_model ) ? strval( $row->page_content_model ) : null,
 		);
 	}
 
@@ -111,7 +162,7 @@ class LinkCache {
 	 * @param $title Title
 	 */
 	public function addBadLinkObj( $title ) {
-		$dbkey = $title->getPrefixedDbKey();
+		$dbkey = $title->getPrefixedDBkey();
 		if ( !$this->isBadLink( $dbkey ) ) {
 			$this->mBadLinks[$dbkey] = 1;
 		}
@@ -125,28 +176,46 @@ class LinkCache {
 	 * @param $title Title
 	 */
 	public function clearLink( $title ) {
-		$dbkey = $title->getPrefixedDbKey();
+		$dbkey = $title->getPrefixedDBkey();
 		unset( $this->mBadLinks[$dbkey] );
 		unset( $this->mGoodLinks[$dbkey] );
 		unset( $this->mGoodLinkFields[$dbkey] );
 	}
 
-	public function getGoodLinks() { return $this->mGoodLinks; }
-	public function getBadLinks() { return array_keys( $this->mBadLinks ); }
+	public function getGoodLinks() {
+		return $this->mGoodLinks;
+	}
+
+	public function getBadLinks() {
+		return array_keys( $this->mBadLinks );
+	}
 
 	/**
 	 * Add a title to the link cache, return the page_id or zero if non-existent
 	 *
-	 * @param $title String: title to add
+	 * @param string $title title to add
 	 * @return Integer
 	 */
 	public function addLink( $title ) {
 		$nt = Title::newFromDBkey( $title );
-		if( $nt ) {
+		if ( $nt ) {
 			return $this->addLinkObj( $nt );
 		} else {
 			return 0;
 		}
+	}
+
+	/**
+	 * Enable or disable database use.
+	 * @since 1.22
+	 * @param $value Boolean
+	 * @return Boolean
+	 */
+	public function useDatabase( $value = null ) {
+		if ( $value !== null ) {
+			$this->useDatabase = (bool)$value;
+		}
+		return $this->useDatabase;
 	}
 
 	/**
@@ -156,7 +225,8 @@ class LinkCache {
 	 * @return Integer
 	 */
 	public function addLinkObj( $nt ) {
-		global $wgAntiLockFlags;
+		global $wgAntiLockFlags, $wgContentHandlerUseDB;
+
 		wfProfileIn( __METHOD__ );
 
 		$key = $nt->getPrefixedDBkey();
@@ -175,6 +245,10 @@ class LinkCache {
 			return 0;
 		}
 
+		if( !$this->useDatabase ) {
+			return 0;
+		}
+
 		# Some fields heavily used for linking...
 		if ( $this->mForUpdate ) {
 			$db = wfGetDB( DB_MASTER );
@@ -188,8 +262,12 @@ class LinkCache {
 			$options = array();
 		}
 
-		$s = $db->selectRow( 'page',
-			array( 'page_id', 'page_len', 'page_is_redirect', 'page_latest' ),
+		$f = array( 'page_id', 'page_len', 'page_is_redirect', 'page_latest' );
+		if ( $wgContentHandlerUseDB ) {
+			$f[] = 'page_content_model';
+		}
+
+		$s = $db->selectRow( 'page', $f,
 			array( 'page_namespace' => $nt->getNamespace(), 'page_title' => $nt->getDBkey() ),
 			__METHOD__, $options );
 		# Set fields...

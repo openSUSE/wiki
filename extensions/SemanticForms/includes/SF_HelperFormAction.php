@@ -8,11 +8,6 @@
  * @ingroup SF
  */
 
-// TODO: Action class did not exist until MW 1.18
-if ( ! class_exists( 'Action') ) {
-	class Action{}
-}
-
 class SFHelperFormAction extends Action 
 {
 	/**
@@ -134,20 +129,9 @@ class SFHelperFormAction extends Action
 
 	/**
 	 * The function called if we're in index.php (as opposed to one of the
-	 * special pages)
+	 * special pages).
 	 */
 	static function displayForm( $action, $article ) {
-		// TODO: This function will be called as a hook handler and $action will
-		//  be a string before MW 1.18. From 1.18 onwards this function will#
-		//  only be called for formcreate actions, i.e. the if statement can be
-		//  removed then.
-
-		// return "true" if the call failed (meaning, pass on handling
-		// of the hook to others), and "false" otherwise
-		if ( is_string( $action ) && $action !== 'formcreate' ) {
-			return true;
-		}
-
 		$title = $article->getTitle();
 		if ( $title->getNamespace() == SMW_NS_PROPERTY ) {
 			$createPropertyPage = new SFCreateProperty();

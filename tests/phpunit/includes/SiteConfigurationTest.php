@@ -10,6 +10,7 @@ function getSiteParams( $conf, $wiki ) {
 			break;
 		}
 	}
+
 	return array(
 		'suffix' => $site,
 		'lang' => $lang,
@@ -23,12 +24,18 @@ function getSiteParams( $conf, $wiki ) {
 }
 
 class SiteConfigurationTest extends MediaWikiTestCase {
-	var $mConf;
 
-	function setUp() {
+	/**
+	 * @var SiteConfiguration
+	 */
+	protected $mConf;
+
+	protected function setUp() {
+		parent::setUp();
+
 		$this->mConf = new SiteConfiguration;
 
-		$this->mConf->suffixes = array( 'wiki' );
+		$this->mConf->suffixes = array( 'wikipedia' => 'wiki' );
 		$this->mConf->wikis = array( 'enwiki', 'dewiki', 'frwiki' );
 		$this->mConf->settings = array(
 			'simple' => array(
@@ -92,8 +99,10 @@ class SiteConfigurationTest extends MediaWikiTestCase {
 		$GLOBALS['global'] = array( 'global' => 'global' );
 	}
 
-
-	function testSiteFromDb() {
+	/**
+	 * @covers SiteConfiguration::siteFromDB
+	 */
+	public function testSiteFromDb() {
 		$this->assertEquals(
 			array( 'wikipedia', 'en' ),
 			$this->mConf->siteFromDB( 'enwiki' ),
@@ -118,7 +127,10 @@ class SiteConfigurationTest extends MediaWikiTestCase {
 		);
 	}
 
-	function testGetLocalDatabases() {
+	/**
+	 * @covers SiteConfiguration::getLocalDatabases
+	 */
+	public function testGetLocalDatabases() {
 		$this->assertEquals(
 			array( 'enwiki', 'dewiki', 'frwiki' ),
 			$this->mConf->getLocalDatabases(),
@@ -126,7 +138,10 @@ class SiteConfigurationTest extends MediaWikiTestCase {
 		);
 	}
 
-	function testGetConfVariables() {
+	/**
+	 * @covers SiteConfiguration::get
+	 */
+	public function testGetConfVariables() {
 		$this->assertEquals(
 			'enwiki',
 			$this->mConf->get( 'simple', 'enwiki', 'wiki' ),
@@ -238,7 +253,10 @@ class SiteConfigurationTest extends MediaWikiTestCase {
 		);
 	}
 
-	function testSiteFromDbWithCallback() {
+	/**
+	 * @covers SiteConfiguration::siteFromDB
+	 */
+	public function testSiteFromDbWithCallback() {
 		$this->mConf->siteParamsCallback = 'getSiteParams';
 
 		$this->assertEquals(
@@ -258,7 +276,10 @@ class SiteConfigurationTest extends MediaWikiTestCase {
 		);
 	}
 
-	function testParameterReplacement() {
+	/**
+	 * @covers SiteConfiguration::get
+	 */
+	public function testParameterReplacement() {
 		$this->mConf->siteParamsCallback = 'getSiteParams';
 
 		$this->assertEquals(
@@ -288,7 +309,10 @@ class SiteConfigurationTest extends MediaWikiTestCase {
 		);
 	}
 
-	function testGetAllGlobals() {
+	/**
+	 * @covers SiteConfiguration::getAll
+	 */
+	public function testGetAllGlobals() {
 		$this->mConf->siteParamsCallback = 'getSiteParams';
 
 		$getall = array(
@@ -305,7 +329,7 @@ class SiteConfigurationTest extends MediaWikiTestCase {
 		$this->assertEquals( $getall['simple'], $GLOBALS['simple'], 'extractAllGlobals(): simple setting' );
 		$this->assertEquals( $getall['fallback'], $GLOBALS['fallback'], 'extractAllGlobals(): fallback setting' );
 		$this->assertEquals( $getall['params'], $GLOBALS['params'], 'extractAllGlobals(): parameter replacement' );
-		$this->assertEquals( $getall['global'], $GLOBALS['global'],  'extractAllGlobals(): merging with global' );
-		$this->assertEquals( $getall['merge'], $GLOBALS['merge'],  'extractAllGlobals(): merging setting' );
+		$this->assertEquals( $getall['global'], $GLOBALS['global'], 'extractAllGlobals(): merging with global' );
+		$this->assertEquals( $getall['merge'], $GLOBALS['merge'], 'extractAllGlobals(): merging setting' );
 	}
 }

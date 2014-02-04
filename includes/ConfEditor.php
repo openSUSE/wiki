@@ -1,4 +1,24 @@
 <?php
+/**
+ * Configuration file editor.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
+ * @file
+ */
 
 /**
  * This is a state machine style parser with two internal stacks:
@@ -45,7 +65,6 @@ class ConfEditor {
 	 * element will be popped off and become the next parser state.
 	 */
 	var $stateStack;
-
 
 	/**
 	 * The path stack is a stack of associative arrays with the following elements:
@@ -108,7 +127,7 @@ class ConfEditor {
 
 	/**
 	 * Edit the text. Returns the edited text.
-	 * @param $ops Array of operations.
+	 * @param array $ops of operations.
 	 *
 	 * Operations are given as an associative array, with members:
 	 *    type:     One of delete, set, append or insert (required)
@@ -139,6 +158,8 @@ class ConfEditor {
 	 * insert
 	 *    Insert a new element at the start of the array.
 	 *
+	 * @throws MWException
+	 * @return string
 	 */
 	public function edit( $ops ) {
 		$this->parse();
@@ -257,19 +278,23 @@ class ConfEditor {
 	function getVars() {
 		$vars = array();
 		$this->parse();
-		foreach( $this->pathInfo as $path => $data ) {
-			if ( $path[0] != '$' )
+		foreach ( $this->pathInfo as $path => $data ) {
+			if ( $path[0] != '$' ) {
 				continue;
+			}
 			$trimmedPath = substr( $path, 1 );
 			$name = $data['name'];
-			if ( $name[0] == '@' )
+			if ( $name[0] == '@' ) {
 				continue;
-			if ( $name[0] == '$' )
+			}
+			if ( $name[0] == '$' ) {
 				$name = substr( $name, 1 );
+			}
 			$parentPath = substr( $trimmedPath, 0,
 				strlen( $trimmedPath ) - strlen( $name ) );
-			if( substr( $parentPath, -1 ) == '/' )
+			if ( substr( $parentPath, -1 ) == '/' ) {
 				$parentPath = substr( $parentPath, 0, -1 );
+			}
 
 			$value = substr( $this->text, $data['valueStartByte'],
 				$data['valueEndByte'] - $data['valueStartByte']
@@ -285,7 +310,7 @@ class ConfEditor {
 	 * setVar( $arr, 'foo/bar', 'baz', 3 ); will set
 	 * $arr['foo']['bar']['baz'] = 3;
 	 * @param $array array
-	 * @param $path string slash-delimited path
+	 * @param string $path slash-delimited path
 	 * @param $key mixed Key
 	 * @param $value mixed Value
 	 */
@@ -294,13 +319,15 @@ class ConfEditor {
 		$target =& $array;
 		if ( $path !== '' ) {
 			foreach ( $pathArr as $p ) {
-				if( !isset( $target[$p] ) )
+				if ( !isset( $target[$p] ) ) {
 					$target[$p] = array();
+				}
 				$target =& $target[$p];
 			}
 		}
-		if ( !isset( $target[$key] ) )
+		if ( !isset( $target[$key] ) ) {
 			$target[$key] = $value;
+		}
 	}
 
 	/**
@@ -308,25 +335,30 @@ class ConfEditor {
 	 * @return mixed Parsed value
 	 */
 	function parseScalar( $str ) {
-		if ( $str !== '' && $str[0] == '\'' )
+		if ( $str !== '' && $str[0] == '\'' ) {
 			// Single-quoted string
 			// @todo FIXME: trim() call is due to mystery bug where whitespace gets
 			// appended to the token; without it we ended up reading in the
 			// extra quote on the end!
 			return strtr( substr( trim( $str ), 1, -1 ),
 				array( '\\\'' => '\'', '\\\\' => '\\' ) );
-		if ( $str !== '' && $str[0] == '"' )
+		}
+		if ( $str !== '' && $str[0] == '"' ) {
 			// Double-quoted string
 			// @todo FIXME: trim() call is due to mystery bug where whitespace gets
 			// appended to the token; without it we ended up reading in the
 			// extra quote on the end!
 			return stripcslashes( substr( trim( $str ), 1, -1 ) );
-		if ( substr( $str, 0, 4 ) == 'true' )
+		}
+		if ( substr( $str, 0, 4 ) == 'true' ) {
 			return true;
-		if ( substr( $str, 0, 5 ) == 'false' )
+		}
+		if ( substr( $str, 0, 5 ) == 'false' ) {
 			return false;
-		if ( substr( $str, 0, 4 ) == 'null' )
+		}
+		if ( substr( $str, 0, 4 ) == 'null' ) {
 			return null;
+		}
 		// Must be some kind of numeric value, so let PHP's weak typing
 		// be useful for a change
 		return $str;
@@ -371,6 +403,9 @@ class ConfEditor {
 	 * Finds the source byte region which you would want to delete, if $pathName
 	 * was to be deleted. Includes the leading spaces and tabs, the trailing line
 	 * break, and any comments in between.
+	 * @param $pathName
+	 * @throws MWException
+	 * @return array
 	 */
 	function findDeletionRegion( $pathName ) {
 		if ( !isset( $this->pathInfo[$pathName] ) ) {
@@ -428,6 +463,9 @@ class ConfEditor {
 	 * or semicolon.
 	 *
 	 * The end position is the past-the-end (end + 1) value as per convention.
+	 * @param $pathName
+	 * @throws MWException
+	 * @return array
 	 */
 	function findValueRegion( $pathName ) {
 		if ( !isset( $this->pathInfo[$pathName] ) ) {
@@ -444,6 +482,7 @@ class ConfEditor {
 	 * Find the path name of the last element in the array.
 	 * If the array is empty, this will return the \@extra interstitial element.
 	 * If the specified path is not found or is not an array, it will return false.
+	 * @return bool|int|string
 	 */
 	function findLastArrayElement( $path ) {
 		// Try for a real element
@@ -480,6 +519,7 @@ class ConfEditor {
 	 * Find the path name of first element in the array.
 	 * If the array is empty, this will return the \@extra interstitial element.
 	 * If the specified path is not found or is not an array, it will return false.
+	 * @return bool|int|string
 	 */
 	function findFirstArrayElement( $path ) {
 		// Try for an ordinary element
@@ -504,10 +544,11 @@ class ConfEditor {
 	/**
 	 * Get the indent string which sits after a given start position.
 	 * Returns false if the position is not at the start of the line.
+	 * @return array
 	 */
 	function getIndent( $pos, $key = false, $arrowPos = false ) {
 		$arrowIndent = ' ';
-		if ( $pos == 0 || $this->text[$pos-1] == "\n" ) {
+		if ( $pos == 0 || $this->text[$pos - 1] == "\n" ) {
 			$indentLength = strspn( $this->text, " \t", $pos );
 			$indent = substr( $this->text, $pos, $indentLength );
 		} else {
@@ -529,7 +570,7 @@ class ConfEditor {
 	public function parse() {
 		$this->initParse();
 		$this->pushState( 'file' );
-		$this->pushPath( '@extra-' . ($this->serial++) );
+		$this->pushPath( '@extra-' . ( $this->serial++ ) );
 		$token = $this->firstToken();
 
 		while ( !$token->isEnd() ) {
@@ -587,19 +628,21 @@ class ConfEditor {
 				$this->expect( '=' );
 				$this->skipSpace();
 				$this->startPathValue();
-				if ( $arrayAssign )
+				if ( $arrayAssign ) {
 					$this->pushState( 'expression', 'array assign end' );
-				else
+				} else {
 					$this->pushState( 'expression', 'statement end' );
+				}
 				break;
 			case 'array assign end':
 			case 'statement end':
 				$this->endPathValue();
-				if ( $state == 'array assign end' )
+				if ( $state == 'array assign end' ) {
 					$this->popPath();
+				}
 				$this->skipSpace();
 				$this->expect( ';' );
-				$this->nextPath( '@extra-' . ($this->serial++) );
+				$this->nextPath( '@extra-' . ( $this->serial++ ) );
 				break;
 			case 'expression':
 				$token = $this->skipSpace();
@@ -619,7 +662,7 @@ class ConfEditor {
 				$this->skipSpace();
 				$this->expect( '(' );
 				$this->skipSpace();
-				$this->pushPath( '@extra-' . ($this->serial++) );
+				$this->pushPath( '@extra-' . ( $this->serial++ ) );
 				if ( $this->isAhead( ')' ) ) {
 					// Empty array
 					$this->pushState( 'array end' );
@@ -651,7 +694,7 @@ class ConfEditor {
 					$this->endPathValue();
 					$this->markComma();
 					$this->nextToken();
-					$this->nextPath( '@extra-' . ($this->serial++) );
+					$this->nextPath( '@extra-' . ( $this->serial++ ) );
 					// Look ahead to find ending bracket
 					if ( $this->isAhead( ")" ) ) {
 						// Found ending bracket, no continuation
@@ -725,6 +768,7 @@ class ConfEditor {
 
 	/**
 	 * Create a ConfEditorToken from an element of token_get_all()
+	 * @return ConfEditorToken
 	 */
 	function newTokenObj( $internalToken ) {
 		if ( is_array( $internalToken ) ) {
@@ -776,6 +820,7 @@ class ConfEditor {
 	/**
 	 * Get the token $offset steps ahead of the current position.
 	 * $offset may be negative, to get tokens behind the current position.
+	 * @return ConfEditorToken
 	 */
 	function getTokenAhead( $offset ) {
 		$pos = $this->pos + $offset;
@@ -821,6 +866,7 @@ class ConfEditor {
 
 	/**
 	 * Pop a state from the state stack.
+	 * @return mixed
 	 */
 	function popState() {
 		return array_pop( $this->stateStack );
@@ -829,6 +875,7 @@ class ConfEditor {
 	/**
 	 * Returns true if the user input path is valid.
 	 * This exists to allow "/" and "@" to be reserved for string path keys
+	 * @return bool
 	 */
 	function validatePath( $path ) {
 		return strpos( $path, '/' ) === false && substr( $path, 0, 1 ) != '@';
@@ -949,6 +996,7 @@ class ConfEditor {
 
 	/**
 	 * Get a readable name for the given token type.
+	 * @return string
 	 */
 	function getTypeName( $type ) {
 		if ( is_int( $type ) ) {
@@ -962,6 +1010,7 @@ class ConfEditor {
 	 * Looks ahead to see if the given type is the next token type, starting
 	 * from the current position plus the given offset. Skips any intervening
 	 * whitespace.
+	 * @return bool
 	 */
 	function isAhead( $type, $offset = 0 ) {
 		$ahead = $offset;
@@ -1020,9 +1069,10 @@ class ConfEditorParseError extends MWException {
 		$lines = StringUtils::explode( "\n", $text );
 		foreach ( $lines as $lineNum => $line ) {
 			if ( $lineNum == $this->lineNum - 1 ) {
-				return "$line\n" .str_repeat( ' ', $this->colNum - 1 ) . "^\n";
+				return "$line\n" . str_repeat( ' ', $this->colNum - 1 ) . "^\n";
 			}
 		}
+		return '';
 	}
 
 }
@@ -1057,4 +1107,3 @@ class ConfEditorToken {
 		return $this->type == 'END';
 	}
 }
-

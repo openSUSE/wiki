@@ -48,7 +48,7 @@ $wgExtensionCredits['parserhook'][] = array(
 );
 
 // Internationalization file
-$dir = dirname(__FILE__) . '/';
+$dir = __DIR__ . '/';
 $wgExtensionMessagesFiles['DynamicPageList'] = $dir . 'DynamicPageList.i18n.php';
 
 // Parser tests
@@ -302,7 +302,7 @@ function renderDynamicPageList( $input, $args, $mwParser ) {
 						if ( !$wgDisableCounters ) {
 							$orderMethod = 'popularity';
 						} else {
-							$orderMethod = 'categoyadd'; // default if hitcounter disabled.
+							$orderMethod = 'categoryadd'; // default if hitcounter disabled.
 						}
 						break;
 					case 'categoryadd':
@@ -548,9 +548,11 @@ function renderDynamicPageList( $input, $args, $mwParser ) {
 			$sqlSort = 'page_counter';
 			break;
 		case 'categoryadd':
-		default:
 			$sqlSort = 'c1.cl_timestamp';
 			break;
+		default:
+			# Should never reach here
+			throw new MWException( "Invalid ordermethod $orderMethod" );
 	}
 
 	$options['ORDER BY'] = "$sqlSort $sqlOrder";

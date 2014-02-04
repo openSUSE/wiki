@@ -42,11 +42,13 @@ function disableFormAndCategoryInputs() {
 		jQuery('label[for="form_name"]').css('color', 'gray').css('font-style', 'italic');
 		jQuery('#category_name').attr('disabled', 'disabled');
 		jQuery('label[for="category_name"]').css('color', 'gray').css('font-style', 'italic');
+		jQuery('#connecting_property_div').show('fast');
 	} else {
 		jQuery('#form_name').removeAttr('disabled');
 		jQuery('label[for="form_name"]').css('color', '').css('font-style', '');
 		jQuery('#category_name').removeAttr('disabled');
 		jQuery('label[for="category_name"]').css('color', '').css('font-style', '');
+		jQuery('#connecting_property_div').hide('fast');
 	}
 }
 
@@ -100,32 +102,64 @@ END;
 			}
 		}
 
+		// Also create the "connecting property", if there is one.
+		$connectingProperty = trim( $wgRequest->getVal('connecting_property') );
+		if ( $connectingProperty != '' ) {
+			global $smwgContLang;
+			$datatypeLabels = $smwgContLang->getDatatypeLabels();
+			$property_type = $datatypeLabels['_wpg'];
+			$full_text = SFCreateProperty::createPropertyText( $property_type, '', $allowed_values );
+			$property_title = Title::makeTitleSafe( SMW_NS_PROPERTY, $connectingProperty );
+			$params = array();
+			$params['user_id'] = $wgUser->getId();
+			$params['page_text'] = $full_text;
+			$jobs[] = new SFCreatePageJob( $property_title, $params );
+		}
+
 		// Create the template, and save it (might as well save
 		// one page, instead of just creating jobs for all of them).
-		$full_text = SFTemplateField::createTemplateText( $template_name, $fields, null, $category_name, null, null, null );
+		$template_format = $wgRequest->getVal( "template_format" );
+		$connecting_property = $wgRequest->getVal( "connecting_property" );
+		$full_text = SFTemplateField::createTemplateText( $template_name, $fields, $connecting_property, $category_name, null, null, $template_format );
 		$template_title = Title::makeTitleSafe( NS_TEMPLATE, $template_name );
-		$template_article = new Article( $template_title, 0 );
 		$edit_summary = '';
-		$template_article->doEdit( $full_text, $edit_summary );
+		if ( method_exists( 'WikiPage', 'doEditContent' ) ) {
+			// MW 1.21+
+			$template_page = new WikiPage( $template_title );
+			$content = new WikitextContent( $full_text );
+			$template_page->doEditContent( $content, $edit_summary );
+		} else {
+			// MW <= 1.20
+			$template_article = new Article( $template_title );
+			$template_article->doEdit( $full_text, $edit_summary );
+		}
 
 		// Create the form, and make a job for it.
-		$form_template = SFTemplateInForm::create( $template_name, '', false );
-		$form_templates = array( $form_template );
-		$form = SFForm::create( $form_name, $form_templates );
-		$full_text = $form->createMarkup();
-		$form_title = Title::makeTitleSafe( SF_NS_FORM, $form_name );
-		$params = array();
-		$params['user_id'] = $wgUser->getId();
-		$params['page_text'] = $full_text;
-		$jobs[] = new SFCreatePageJob( $form_title, $params );
+		if ( $form_name != '' ) {
+			$form_template = SFTemplateInForm::create( $template_name, '', false );
+			$form_items = array();
+			$form_items[] = array( 'type' => 'template',
+							'name' => $form_template->getTemplateName(),
+							'item' => $form_template );
+			$form = SFForm::create( $form_name, $form_items );
+			$full_text = $form->createMarkup();
+			$form_title = Title::makeTitleSafe( SF_NS_FORM, $form_name );
+			$params = array();
+			$params['user_id'] = $wgUser->getId();
+			$params['page_text'] = $full_text;
+			$jobs[] = new SFCreatePageJob( $form_title, $params );
+		}
 
 		// Create the category, and make a job for it.
-		$full_text = SFCreateCategory::createCategoryText( $form_name, $category_name, '' );
-		$category_title = Title::makeTitleSafe( NS_CATEGORY, $category_name );
-		$params = array();
-		$params['user_id'] = $wgUser->getId();
-		$params['page_text'] = $full_text;
-		$jobs[] = new SFCreatePageJob( $category_title, $params );
+		if ( $category_name != '' ) {
+			$full_text = SFCreateCategory::createCategoryText( $form_name, $category_name, '' );
+			$category_title = Title::makeTitleSafe( NS_CATEGORY, $category_name );
+			$params = array();
+			$params['user_id'] = $wgUser->getId();
+			$params['page_text'] = $full_text;
+			$jobs[] = new SFCreatePageJob( $category_title, $params );
+		}
+
 		Job::batchInsert( $jobs );
 
 		$wgOut->addWikiMsg( 'sf_createclass_success' );
@@ -148,6 +182,17 @@ END;
 
 		$createAll = $wgRequest->getCheck( 'createAll' );
 		if ( $createAll ) {
+			// Guard against cross-site request forgeries (CSRF),
+			// for MW >= 1.19.
+			if ( method_exists( 'User', 'getEditToken' ) ) {
+				$validToken = $this->getUser()->matchEditToken( $wgRequest->getVal( 'csrf' ), 'CreateClass' );
+				if ( !$validToken ) {
+					$text = "This appears to be a cross-site request forgery; canceling save.";
+					$wgOut->addHTML( $text );
+					return;
+				}
+			}
+
 			self::createAllPages();
 			return;
 		}
@@ -182,6 +227,22 @@ END;
 				'id' => 'template_multiple',
 				'onclick' => "disableFormAndCategoryInputs()",
 			) ) . ' ' . wfMessage( 'sf_createtemplate_multipleinstance' )->text() ) . "\n";
+		// Either #set_internal or #subobject will be added to the
+		// template, depending on whether Semantic Internal Objects is
+		// installed.
+		global $smwgDefaultStore;
+		if ( defined( 'SIO_VERSION' ) || $smwgDefaultStore == "SMWSQLStore3" ) {
+			$templateInfo .= Html::rawElement( 'div',
+				array (
+					'id' => 'connecting_property_div',
+					'style' => 'display: none;',
+				),
+				wfMessage( 'sf_createtemplate_connectingproperty' )->text() . "\n" .
+				Html::element( 'input', array(
+					'type' => 'text',
+					'name' => 'connecting_property',
+				) ) ) . "\n";
+		}
 		$text .= Html::rawElement( 'blockquote', null, $templateInfo );
 
 		$text .= "\t" . Html::rawElement( 'p', null, Html::element( 'label', array( 'for' => 'form_name' ), $form_name_label ) . ' ' . Html::element( 'input', array( 'size' => '30', 'name' => 'form_name', 'id' => 'form_name' ), null ) ) . "\n";
@@ -252,6 +313,11 @@ END;
 		// Set 'title' as hidden field, in case there's no URL niceness
 		$cc = $this->getTitle();
 		$text .= Html::hidden( 'title', SFUtils::titleURLString( $cc ) );
+
+		if ( method_exists( 'User', 'getEditToken' ) ) {
+			$text .= "\t" . Html::hidden( 'csrf', $this->getUser()->getEditToken( 'CreateClass' ) ) . "\n";
+		}
+
 		$text .= Html::element( 'input',
 			array(
 				'type' => 'submit',

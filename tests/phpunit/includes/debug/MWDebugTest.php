@@ -3,40 +3,49 @@
 class MWDebugTest extends MediaWikiTestCase {
 
 
-	function setUp() {
+	protected function setUp() {
+		parent::setUp();
 		// Make sure MWDebug class is enabled
 		static $MWDebugEnabled = false;
-		if( !$MWDebugEnabled ) {
+		if ( !$MWDebugEnabled ) {
 			MWDebug::init();
 			$MWDebugEnabled = true;
 		}
 		/** Clear log before each test */
 		MWDebug::clearLog();
+		wfSuppressWarnings();
 	}
 
-	function testAddLog() {
+	protected function tearDown() {
+		wfRestoreWarnings();
+		parent::tearDown();
+	}
+
+	public function testAddLog() {
 		MWDebug::log( 'logging a string' );
-		$this->assertEquals( array( array(
-			'msg' => 'logging a string',
-			'type' => 'log',
-			'caller' => __METHOD__ ,
+		$this->assertEquals(
+			array( array(
+				'msg' => 'logging a string',
+				'type' => 'log',
+				'caller' => __METHOD__,
 			) ),
 			MWDebug::getLog()
 		);
 	}
 
-	function testAddWarning() {
+	public function testAddWarning() {
 		MWDebug::warning( 'Warning message' );
-		$this->assertEquals( array( array(
-			'msg' => 'Warning message',
-			'type' => 'warn',
-			'caller' => 'MWDebug::warning',
+		$this->assertEquals(
+			array( array(
+				'msg' => 'Warning message',
+				'type' => 'warn',
+				'caller' => 'MWDebugTest::testAddWarning',
 			) ),
 			MWDebug::getLog()
 		);
 	}
 
-	function testAvoidDuplicateDeprecations() {
+	public function testAvoidDuplicateDeprecations() {
 		MWDebug::deprecated( 'wfOldFunction', '1.0', 'component' );
 		MWDebug::deprecated( 'wfOldFunction', '1.0', 'component' );
 
@@ -47,7 +56,7 @@ class MWDebugTest extends MediaWikiTestCase {
 		);
 	}
 
-	function testAvoidNonConsecutivesDuplicateDeprecations() {
+	public function testAvoidNonConsecutivesDuplicateDeprecations() {
 		MWDebug::deprecated( 'wfOldFunction', '1.0', 'component' );
 		MWDebug::warning( 'some warning' );
 		MWDebug::log( 'we could have logged something too' );

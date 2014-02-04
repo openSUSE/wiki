@@ -1,5 +1,27 @@
 <?php
 /**
+ * This file contains database-related utility classes.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
+ * @file
+ * @ingroup Database
+ */
+
+/**
  * Utility class.
  * @ingroup Database
  */
@@ -116,7 +138,7 @@ class ResultWrapper implements Iterator {
 
 	/**
 	 * Fetch the next row from the given result object, in associative array
-	 * form.  Fields are retrieved with $row['fieldname'].
+	 * form. Fields are retrieved with $row['fieldname'].
 	 *
 	 * @return Array
 	 * @throws DBUnexpectedError Thrown if the database returns an error
@@ -197,9 +219,9 @@ class ResultWrapper implements Iterator {
  * doesn't go anywhere near an actual database.
  */
 class FakeResultWrapper extends ResultWrapper {
-	var $result     = array();
-	var $db         = null;	// And it's going to stay that way :D
-	var $pos        = 0;
+	var $result = array();
+	var $db = null; // And it's going to stay that way :D
+	var $pos = 0;
 	var $currentRow = null;
 
 	function __construct( $array ) {
@@ -220,14 +242,19 @@ class FakeResultWrapper extends ResultWrapper {
 			$this->currentRow = false;
 		}
 		$this->pos++;
-		return $this->currentRow;
+		if ( is_object( $this->currentRow ) ) {
+			return get_object_vars( $this->currentRow );
+		} else {
+			return $this->currentRow;
+		}
 	}
 
 	function seek( $row ) {
 		$this->pos = $row;
 	}
 
-	function free() {}
+	function free() {
+	}
 
 	// Callers want to be able to access fields with $this->fieldName
 	function fetchObject() {
@@ -259,7 +286,7 @@ class LikeMatch {
 	/**
 	 * Store a string into a LikeMatch marker object.
 	 *
-	 * @param String $s
+	 * @param string $s
 	 */
 	public function __construct( $s ) {
 		$this->str = $s;
@@ -280,4 +307,3 @@ class LikeMatch {
  */
 interface DBMasterPos {
 }
-

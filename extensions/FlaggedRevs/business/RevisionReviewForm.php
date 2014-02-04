@@ -335,6 +335,39 @@ class RevisionReviewForm extends FRGenericSubmitForm {
 				$new_text, $this->getComment(), 0, $baseRevId, $this->user );
 
 			$status = $editStatus->isOK() ? true : 'review_cannot_undo';
+
+			if ( $editStatus->isOK() && class_exists( 'EchoEvent' ) && $editStatus->value['revision'] ) {
+				$affectedRevisions = array(); // revid -> userid
+				$revisions = wfGetDB( DB_SLAVE )->select(
+					'revision',
+					array( 'rev_id', 'rev_user' ),
+					array(
+						'rev_id <= ' . $newRev->getId(),
+						'rev_timestamp <= ' . $newRev->getTimestamp(),
+						'rev_id > ' . $oldRev->getId(),
+						'rev_timestamp > ' . $oldRev->getTimestamp(),
+						'rev_page' => $article->getId(),
+					),
+					__METHOD__
+				);
+				foreach ( $revisions as $row ) {
+					$affectedRevisions[$row->rev_id] = $row->rev_user;
+				}
+
+				EchoEvent::create( array(
+					'type' => 'reverted',
+					'title' => $this->page,
+					'extra' => array(
+						'revid' => $editStatus->value['revision']->getId(),
+						'reverted-users-ids' => array_values( $affectedRevisions ),
+						'reverted-revision-ids' => array_keys( $affectedRevisions ),
+						'method' => 'flaggedrevs-reject',
+					),
+					'agent' => $this->user,
+				) );
+
+			}
+
 			# If this undid one edit by another logged-in user, update user tallies
 			if ( $status === true
 				&& $newRev->getParentId() == $oldRev->getId()

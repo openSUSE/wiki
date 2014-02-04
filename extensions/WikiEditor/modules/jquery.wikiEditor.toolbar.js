@@ -1,7 +1,7 @@
 /**
  * Toolbar module for wikiEditor
  */
-( function( $ ) { $.wikiEditor.modules.toolbar = {
+( function ( mw, $ ) { $.wikiEditor.modules.toolbar = {
 
 /**
  * API accessible functions
@@ -157,7 +157,7 @@ api : {
 					// Save for later checking if empty
 					group = target;
 					// Tool
-					target += ' span[rel="' + data.tool + '"].tool';
+					target += ' a[rel="' + data.tool + '"].tool';
 				}
 			} else if ( typeof data.page == 'string' ) {
 				// Booklet page
@@ -236,28 +236,6 @@ fn: {
 	 * @param {Object} source
 	 */
 	doAction : function( context, action, source ) {
-		// Verify that this has been called from a source that's within the toolbar
-		// 'trackAction' defined in click tracking
-		if ( mw.config.get( 'wgWikiEditorToolbarClickTracking' ) && $.trackAction !== undefined && source.closest( '.wikiEditor-ui-toolbar' ).size() ) {
-			// Build a unique id for this action by tracking the parent rel attributes up to the toolbar level
-			var rels = [];
-			var step = source;
-			var i = 0;
-			while ( !step.hasClass( 'wikiEditor-ui-toolbar' ) ) {
-				if ( i > 25 ) {
-					break;
-				}
-				i++;
-				var rel = step.attr( 'rel' );
-				if ( rel ) {
-					rels.push( step.attr( 'rel' ) );
-				}
-				step = step.parent();
-			}
-			rels.reverse();
-			var id = rels.join( '.' );
-			$.trackAction( id );
-		}
 		switch ( action.type ) {
 			case 'replace':
 			case 'encapsulate':
@@ -300,7 +278,7 @@ fn: {
 		var $group = $( '<div/>' ).attr( { 'class' : 'group group-' + id, 'rel' : id } );
 		var label = $.wikiEditor.autoMsg( group, 'label' );
 		if ( label ) {
-			$group.append( '<div class="label">' + label + '</div>' );
+			$group.append( '<span class="label">' + label + '</div>' );
 		}
 		var empty = true;
 		if ( 'tools' in group ) {
@@ -336,13 +314,13 @@ fn: {
 					var offsetOrIcon = $.wikiEditor.autoIconOrOffset( tool.icon, tool.offset,
 						$.wikiEditor.imgPath + 'toolbar/'
 					);
-					if ( typeof offsetOrIcon == 'object' ) {
+					if ( typeof offsetOrIcon === 'object' ) {
 						$button = $( '<a/>' )
 							.attr( {
 								'href' : '#',
-								'alt' : label,
 								'title' : label,
 								'rel' : id,
+								'role' : 'button',
 								'class' : 'tool tool-button wikiEditor-toolbar-spritedButton'
 							} )
 							.text( label )
@@ -358,6 +336,7 @@ fn: {
 							'alt' : label,
 							'title' : label,
 							'rel' : id,
+							'role' : 'button',
 							'class' : 'tool tool-button'
 						} );
 				}
@@ -461,10 +440,6 @@ fn: {
 					$(this).attr( 'rel' ),
 					{ expires: 30, path: '/' }
 				);
-				// Click tracking
-				if ( mw.config.get( 'wgWikiEditorToolbarClickTracking' ) && $.trackAction !== undefined ) {
-					$.trackAction(section + '.' + $(this).attr('rel'));
-				}
 				context.fn.restoreCursorAndScrollTop();
 				// No dragging!
 				event.preventDefault();
@@ -563,6 +538,8 @@ fn: {
 					}
 				}
 			};
+		// In some cases the label for the character isn't the same as the
+		// character that gets inserted (e.g. Hebrew vowels)
 		} else if ( character && 0 in character && 1 in character ) {
 			character = {
 				'label' : character[0],
@@ -577,7 +554,15 @@ fn: {
 		}
 		if ( character && 'action' in character && 'label' in character ) {
 			actions[character.label] = character.action;
-			return '<span rel="' + character.label + '">' + character.label + '</span>';
+			if ( character.titleMsg !== undefined ) {
+				return mw.html.element(
+					'span',
+					{ 'rel': character.label, 'title': mw.msg( character.titleMsg ) },
+					character.label
+				);
+			} else {
+				return mw.html.element( 'span', { 'rel': character.label }, character.label );
+			}
 		}
 		mw.log( "A character for the toolbar was undefined. This is not supposed to happen. Double check the config." );
 		return ""; // bug 31673; also an additional fix for bug 24208...
@@ -591,7 +576,12 @@ fn: {
 		var $link =
 			$( '<a/>' )
 				.addClass( selected == id ? 'current' : null )
-				.attr( 'href', '#' )
+				.attr( {
+					href: '#',
+					role: 'button',
+					'aria-pressed': 'false',
+					'aria-controls': 'wikiEditor-section-' + id
+				} )
 				.text( $.wikiEditor.autoMsg( section, 'label' ) )
 				.data( 'context', context )
 				.mouseup( function( e ) {
@@ -603,14 +593,23 @@ fn: {
 					return false;
 				} )
 				.click( function( e ) {
+					// We have to set aria-pressed over here, as NVDA wont recognize it
+					// if we do it in the below .each as it seems
+					$(this).attr( 'aria-pressed', 'true' );
+					$( '.tab > a' ).each( function( i, elem ) {
+						if ( elem !== e.target ) {
+							$( elem ).attr( 'aria-pressed', 'false' );
+						}
+					} );
 					var $sections = $(this).data( 'context' ).$ui.find( '.sections' );
 					var $section =
 						$(this).data( 'context' ).$ui.find( '.section-' + $(this).parent().attr( 'rel' ) );
 					var show = $section.css( 'display' ) == 'none';
-					var $previousSections = $section.parent().find( '.section-visible' );
-					$previousSections.css( 'position', 'absolute' );
-					$previousSections.removeClass( 'section-visible' );
-					$previousSections.fadeOut( 'fast', function() { $(this).css( 'position', 'static' ); } );
+					$section.parent().find( '.section-visible' )
+						.css( 'position', 'absolute' )
+						.attr( 'aria-expanded', 'false' )
+						.removeClass( 'section-visible' )
+						.fadeOut( 'fast', function() { $(this).css( 'position', 'static' ); } );
 					$(this).parent().parent().find( 'a' ).removeClass( 'current' );
 					$sections.css( 'overflow', 'hidden' );
 					var animate = function( $that ) {
@@ -622,8 +621,9 @@ fn: {
 						} );
 					};
 					if ( show ) {
-						$section.addClass( 'section-visible' );
-						$section.fadeIn( 'fast' );
+						$section.addClass( 'section-visible' )
+							.attr( 'aria-expanded', 'true' )
+							.fadeIn( 'fast' );
 						if ( $section.hasClass( 'loading' ) ) {
 							// Loading of this section was deferred, load it now
 							var $that = $(this);
@@ -645,10 +645,6 @@ fn: {
 								context.fn.trigger( 'resize' );
 							} );
 					}
-					// Click tracking
-					if ( mw.config.get( 'wgWikiEditorToolbarClickTracking' ) && $.trackAction !== undefined ) {
-						$.trackAction( $section.attr('rel') + '.' + ( show ? 'show': 'hide' )  );
-					}
 					// Save the currently visible section
 					$.cookie(
 						'wikiEditor-' + $(this).data( 'context' ).instance + '-toolbar-section',
@@ -666,7 +662,11 @@ fn: {
 			.append( $link );
 	},
 	buildSection: function( context, id, section ) {
-		var $section = $( '<div/>' ).attr( { 'class': section.type + ' section section-' + id, 'rel': id } );
+		var $section = $( '<div/>' ).attr( {
+			'class': section.type + ' section section-' + id,
+			'rel': id,
+			id: 'wikiEditor-section-' + id
+		} );
 		var selected = $.cookie( 'wikiEditor-' + context.instance + '-toolbar-section' );
 		var show = selected == id;
 
@@ -683,7 +683,10 @@ fn: {
 
 		// Show or hide section
 		if ( id !== 'main' ) {
-			$section.css( 'display', show ? 'block' : 'none' );
+			$section
+				.css( 'display', show ? 'block' : 'none' )
+				.attr( 'aria-expanded', show ? 'true' : 'false' );
+
 			if ( show ) {
 				$section.addClass( 'section-visible' );
 			}
@@ -766,6 +769,8 @@ fn: {
 				var oldValue = $( 'body' ).css( 'position' );
 				$( 'body' ).css( 'position', 'static' );
 				$( 'body' ).css( 'position', oldValue );
+
+				context.$textarea.trigger( 'wikiEditor-toolbar-doneInitialSections' );
 			},
 			'loop' : function( i, s ) {
 				s.$sections.append( $.wikiEditor.modules.toolbar.fn.buildSection( s.context, s.id, s.config ) );
@@ -780,4 +785,4 @@ fn: {
 	}
 }
 
-}; } )( jQuery );
+}; } )( mediaWiki, jQuery );

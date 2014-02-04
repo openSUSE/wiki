@@ -49,8 +49,7 @@ class SFRunQuery extends IncludableSpecialPage {
 		}
 
 		// Initialize variables.
-		$form_article = new Article( $form_title, 0 );
-		$form_definition = $form_article->getContent();
+		$form_definition = SFUtils::getPageText( $form_title );
 		if ( $embedded ) {
 			$run_query = false;
 			$content = null;
@@ -77,7 +76,7 @@ class SFRunQuery extends IncludableSpecialPage {
 			$is_text_source = true;
 		}
 		list ( $form_text, $javascript_text, $data_text, $form_page_title ) =
-			$sfgFormPrinter->formHTML( $form_definition, $form_submitted, $is_text_source, $form_article->getID(), $edit_content, null, null, true, $embedded );
+			$sfgFormPrinter->formHTML( $form_definition, $form_submitted, $is_text_source, $form_title->getArticleID(), $edit_content, null, null, true, $embedded );
 		$text = "";
 
 		// Get the text of the results.

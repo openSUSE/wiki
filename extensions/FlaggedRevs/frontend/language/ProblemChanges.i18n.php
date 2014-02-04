@@ -21,21 +21,25 @@ $messages['en'] = array(
  * @author EugeneZelenko
  * @author IAlex
  * @author Purodha
+ * @author Shirayuki
  */
 $messages['qqq'] = array(
 	'problemchanges' => '{{Flagged Revs}}
 Name of Special:ProblemChanges, which lists out tagged (via recent changes change tags) pending changes.',
 	'problemchanges-list' => '{{Flagged Revs}}
-Used on the Special:ProblemPages page.
+Used on the [[Special:ProblemPages]] page.
+
+Refers to {{msg-mw|Validationpage}}.
+
 Parameters:
-* $1 - (optional) Number of items in the list, to be used with PLURAL, when unavoidable.',
+* $1 - (Optional) number of items in the list, to be used with PLURAL, when unavoidable',
 	'problemchanges-legend' => '{{Flagged Revs}}
 Used on the Special:ProblemPages page.',
 	'problemchanges-none' => '{{Flagged Revs}}
 Used on the Special:ProblemPages page.',
 	'problemchanges-category' => '{{Flagged Revs}}
-{{Identical|Category}}
-Used on the Special:ProblemPages page.',
+Used on the Special:ProblemPages page.
+{{Identical|Category}}',
 );
 
 /** Afrikaans (Afrikaans)
@@ -102,6 +106,7 @@ $messages['az'] = array(
  */
 $messages['be'] = array(
 	'problemchanges' => 'Адзначаныя неправераныя змены',
+	'problemchanges-list' => 'На гэтай старонцы пералічаны [[{{MediaWiki:Validationpage}}|правераныя]] старонкі, якія маюць пазначаныя неправераныя праўкі. Гл. спіс [[Special:Tags|дапушчальных пазнак]].',
 	'problemchanges-legend' => 'Пералік старонак з адзначанымі праўкамі, якія чакаюць праверкі',
 	'problemchanges-none' => 'У цяперашні час няма старонак, якія адпавядаюць гэтым умовам',
 	'problemchanges-category' => 'Катэгорыя:',
@@ -174,9 +179,10 @@ $messages['ca'] = array(
 
 /** Chechen (нохчийн)
  * @author Sasan700
+ * @author Умар
  */
 $messages['ce'] = array(
-	'problemchanges-category' => 'Кадегар:',
+	'problemchanges-category' => 'Категори:',
 );
 
 /** Sorani Kurdish (کوردی)
@@ -407,10 +413,13 @@ $messages['he'] = array(
 
 /** Hindi (हिन्दी)
  * @author Ansumang
+ * @author Siddhartha Ghai
  */
 $messages['hi'] = array(
-	'problemchanges' => 'बाकी बदलाव टैग हुए',
-	'problemchanges-none' => 'अभी वहाँ कोई पृष्ठ नहीं है जो इस मापदंड से मैच हो',
+	'problemchanges' => 'टैग हुए अनिरीक्षित बदलाव',
+	'problemchanges-list' => 'इस पृष्ठ पर उन [[{{MediaWiki:Validationpage}}|पुनरीक्षित]] पृष्ठों की सूची है जिनमें एक या अधिक टैग हुए सम्पादनों का पुनरीक्षण बाकी है। [[Special:Tags|मान्य बदलाव टैगों]] की सूची उपलब्ध है।',
+	'problemchanges-legend' => 'टैग किये हुए अनिरीक्षित बदलावों वाले पृष्ठों की सूची दिखाएँ',
+	'problemchanges-none' => 'इन मानदंडों को पूर्ण करने वाले इस समय कोई पृष्ठ नहीं हैं',
 	'problemchanges-category' => 'श्रेणी:',
 );
 
@@ -529,9 +538,11 @@ $messages['jv'] = array(
  * @author BRUTE
  * @author David1010
  * @author Dawid Deutschland
+ * @author Nodar Kherkheulidze
  */
 $messages['ka'] = array(
 	'problemchanges' => 'მონიშნულია შეუმოწმებელი ცვლილებები',
+	'problemchanges-list' => 'ამ გვერდზე მოცემულია [[{{MediaWiki:Validationpage}}|შემოწმებული გვერდები]], რომლებშიც არის ერთი არ რამდენიმე მონიშნული რედაქტირება, რომელიც ელოდება შემოწმებას. იხილეთ [[Special:Tags|მონიშვნათა სია]].',
 	'problemchanges-legend' => 'სია იმ გვერდებისა, რომელთა ბოლო ვერსია ჯერ კიდევ შეუმოწმებელია',
 	'problemchanges-none' => 'ამ დროისათვის არ არსებობს სტატიები ასეთი კრიტერიუმებით',
 	'problemchanges-category' => 'კატეგორია:',
@@ -558,8 +569,8 @@ $messages['kn'] = array(
  */
 $messages['ko'] = array(
 	'problemchanges' => '표시된 보류 중인 바뀜 내용',
-	'problemchanges-list' => '이 문서는 하나 이상의 표시된 보류중인 [[{{MediaWiki:Validationpage}}|검토된]] 문서를 나열합니다. [[Special:Tags|유효한 바뀜 표시]] 목록을 사용할 수 있습니다.',
-	'problemchanges-legend' => '검토해야 할 편집들이 표시된 목록',
+	'problemchanges-list' => '이 문서는 하나 이상의 표시된 보류 중인 [[{{MediaWiki:Validationpage}}|검토된]] 문서를 나열합니다. [[Special:Tags|올바른 바뀜 표시]] 목록을 사용할 수 있습니다.',
+	'problemchanges-legend' => '검토해야 할 편집이 표시된 목록',
 	'problemchanges-none' => '이 조건에 맞는 문서가 없습니다.',
 	'problemchanges-category' => '분류:',
 );
@@ -583,7 +594,7 @@ $messages['ku-latn'] = array(
 	'problemchanges-category' => 'Kategorî:',
 );
 
-/** Kirghiz (Кыргызча)
+/** Kyrgyz (Кыргызча)
  * @author Growingup
  */
 $messages['ky'] = array(
@@ -662,7 +673,7 @@ $messages['mt'] = array(
 	'problemchanges-category' => 'Kategorija:',
 );
 
-/** Norwegian Bokmål (norsk (bokmål)‎)
+/** Norwegian Bokmål (norsk bokmål)
  * @author Laaknor
  * @author Nghtwlkr
  * @author Simny
@@ -673,6 +684,13 @@ $messages['nb'] = array(
 	'problemchanges-legend' => 'Vis sider som inneholder merkede redigeringer som trenger gjennomsyn',
 	'problemchanges-none' => 'Det er for øyeblikket ingen sider som passer med disse kjennetegnene',
 	'problemchanges-category' => 'Kategori:',
+);
+
+/** Low German (Plattdüütsch)
+ * @author Joachim Mos
+ */
+$messages['nds'] = array(
+	'problemchanges-category' => 'Kategorie:',
 );
 
 /** Dutch (Nederlands)
@@ -686,7 +704,7 @@ $messages['nl'] = array(
 	'problemchanges-category' => 'Categorie:',
 );
 
-/** Norwegian Nynorsk (norsk (nynorsk)‎)
+/** Norwegian Nynorsk (norsk nynorsk)
  * @author Nghtwlkr
  */
 $messages['nn'] = array(
@@ -698,12 +716,13 @@ $messages['nn'] = array(
  */
 $messages['oc'] = array(
 	'problemchanges' => 'Modificacions balisadas en espèra',
+	'problemchanges-list' => "Aquesta pagina fa la lista de las [[{{MediaWiki:Validationpage}}|paginas en revision]] qu'an un o mantuna modificacion en espèra d'una revision. Una lista de las [[Special:Tags|balisas autorizadas]] es disponibla.",
 	'problemchanges-legend' => 'Listar las paginas amb de modificacions balisadas en espèra de relectura',
 	'problemchanges-none' => 'Pel moment, i a pas cap de pagina que satisfasca aqueles critèris',
 	'problemchanges-category' => 'Categoria :',
 );
 
-/** Oriya (ଓଡ଼ିଆ)
+/** Oriya (ଓଡ଼ିଆ)
  * @author Ansumang
  */
 $messages['or'] = array(

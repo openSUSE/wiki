@@ -17,36 +17,20 @@ class MockSearch extends SearchEngine {
 
 /**
  * @group Search
+ * @group Database
  */
 class SearchUpdateTest extends MediaWikiTestCase {
-	static $searchType;
 
-	function update( $text, $title = 'Test', $id = 1 ) {
-		$u = new SearchUpdate( $id, $title, $text );
-		$u->doUpdate();
-		return array( MockSearch::$title, MockSearch::$text );
+	protected function setUp() {
+		parent::setUp();
+		$this->setMwGlobals( 'wgSearchType', 'MockSearch' );
 	}
 
 	function updateText( $text ) {
-		list( , $resultText ) = $this->update( $text );
-		$resultText = trim( $resultText ); // abstract from some implementation details
-		return $resultText;
+		return trim( SearchUpdate::updateText( $text ) );
 	}
 
-	function setUp() {
-		global $wgSearchType;
-
-		self::$searchType  = $wgSearchType;
-		$wgSearchType = 'MockSearch';
-	}
-
-	function tearDown() {
-		global $wgSearchType;
-
-		$wgSearchType = self::$searchType;
-	}
-
-	function testUpdateText() {
+	public function testUpdateText() {
 		$this->assertEquals(
 			'test',
 			$this->updateText( '<div>TeSt</div>' ),
@@ -78,7 +62,7 @@ EOT
 		);
 	}
 
-	function testBug32712() {
+	public function testBug32712() {
 		$text = "text „http://example.com“ text";
 		$result = $this->updateText( $text );
 		$processed = preg_replace( '/Q/u', 'Q', $result );

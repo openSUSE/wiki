@@ -1,18 +1,13 @@
 <?php
 /**
  * Handles the formedit action.
- * 
+ *
  * @author Stephan Gambke
  * @file
  * @ingroup SF
  */
 
-// TODO: Action class did not exist until MW 1.18
-if ( ! class_exists( 'Action') ) {
-	class Action{}
-}
-
-class SFFormEditAction extends Action 
+class SFFormEditAction extends Action
 {
 	/**
 	 * Return the name of the action this object responds to
@@ -21,7 +16,7 @@ class SFFormEditAction extends Action
 	public function getName(){
 		return 'formedit';
 	}
-	
+
 	/**
 	 * The main action entry point.  Do all output for display and send it to the context
 	 * output.  Do not use globals $wgOut, $wgRequest, etc, in implementations; use
@@ -66,10 +61,10 @@ class SFFormEditAction extends Action
 			return true;
 		}
 
-		global $wgRequest, $wgUser;
+		global $wgRequest;
 		global $sfgRenameEditTabs, $sfgRenameMainEditTab;
 
-		$user_can_edit = $wgUser->isAllowed( 'edit' ) && $title->userCan( 'edit' );
+		$user_can_edit = $title->userCan( 'edit' );
 		// Create the form edit tab, and apply whatever changes are
 		// specified by the edit-tab global variables.
 		if ( $sfgRenameEditTabs ) {
@@ -156,19 +151,6 @@ class SFFormEditAction extends Action
 	 * special pages)
 	 */
 	static function displayForm( $action, $article ) {
-		global $sfgUseFormEditPage;
-
-		// TODO: This function will be called as a hook handler and $action will
-		//  be a string before MW 1.18. From 1.18 onwards this function will#
-		//  only be called for formedit actions, i.e. the if statement can be
-		//  removed then.
-
-		// return "true" if the call failed (meaning, pass on handling
-		// of the hook to others), and "false" otherwise
-		if ( is_string( $action ) && $action !== 'formedit' ) {
-			return true;
-		}
-
 		// @todo: This looks like bad code. If we can't find a form, we
 		// should be showing an informative error page rather than
 		// making it look like an edit form page does not exist.
@@ -178,48 +160,17 @@ class SFFormEditAction extends Action
 			return true;
 		}
 
-		// For backward-compatibility
-		if ( is_string( $action ) ) {
-			global $wgOut;
-			$output = $wgOut;
-		} else {
-			$output = $action->getOutput();
-		}
+		$output = $action->getOutput();
 
 		if ( count( $form_names ) > 1 ) {
 			$warning_text = "\t" . '<div class="warningbox">' . wfMessage( 'sf_formedit_morethanoneform' )->text() . "</div>\n";
 			$output->addWikiText( $warning_text );
 		}
+		
 		$form_name = $form_names[0];
-
-		if ( $sfgUseFormEditPage ) {
-			# Experimental new feature extending from the internal
-			# EditPage class
-			$editor = new SFFormEditPage( $article, $form_name );
-			$editor->edit();
-			return false;
-		}
-
 		$page_name = SFUtils::titleString( $title );
 
-		$msg = SFFormEdit::printForm( $form_name, $page_name );
-
-		if ( $msg ) {
-			// Some error occurred - display it.
-			$msgdata = null;
-			if ( is_array( $msg ) ) {
-				if ( count( $msg ) > 1 ) {
-					$msgdata = $msg[1];
-				}
-				$msg = $msg[0];
-			}
-
-			$output->addHTML( Html::element(
-				'p',
-				array( 'class' => 'error' ),
-				wfMessage( $msg, $msgdata )->text()
-			) );
-		}
+		SFFormEdit::printForm( $form_name, $page_name );
 
 		return false;
 	}

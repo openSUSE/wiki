@@ -236,7 +236,7 @@ class MultipleUpload extends SpecialUpload {
 				if( $warning == 'exists' ) {
 					$msg = "\t<li>" . self::getExistsWarning( $args ) . "</li>\n";
 				} elseif( $warning == 'duplicate' ) {
-					$msg = self::getDupeWarning( $args, $this->mLocalFile->getTitle() );
+					$msg = $this->getDupeWarning( $args, $this->mLocalFile->getTitle() );
 				} elseif( $warning == 'duplicate-archive' ) {
 					$msg = "\t<li>" . wfMsgExt( 'file-deleted-duplicate', 'parseinline',
 							array( Title::makeTitle( NS_FILE, $args )->getPrefixedText() ) )
@@ -351,7 +351,7 @@ class MultipleUpload extends SpecialUpload {
 	 * Construct a warning and a gallery from an array of duplicate files.
 	 * Override because the original doesn't say which file is a dupe
 	 */
-	public static function getDupeWarning( $dupes, $dupeTitle = null ) {
+	public function getDupeWarning( $dupes, $dupeTitle = null ) {
 		$result = parent::getDupeWarning( $dupes );
 		return preg_replace( '@<li>@', "<li>{$dupeTitle->getText()}", $result );
 	}

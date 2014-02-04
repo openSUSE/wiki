@@ -293,4 +293,3 @@ class WikiDialogs_Links_Setup extends SeleniumTestCase {
 	}
 
 }
-?>

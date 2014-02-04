@@ -33,6 +33,7 @@ $messages['en'] = array(
  * @author Purodha
  * @author Raymond
  * @author SPQRobin
+ * @author Shirayuki
  * @author Yekrats
  */
 $messages['qqq'] = array(
@@ -43,33 +44,52 @@ Used on [http://en.labs.wikimedia.org/wiki/Special:OldReviewedPages Special:OldR
 	'pendingchanges-list' => '{{Flagged Revs}}
 Used on [http://en.labs.wikimedia.org/wiki/Special:OldReviewedPages Special:OldReviewedPages].
 
-Parameter $1 is the number of pages going to be listed, to be used with PLURAL.',
+Refers to {{msg-mw|Validationpage}}.
+
+Parameters:
+* $1 - (Optional) the number of pages going to be listed, to be used with PLURAL',
 	'pendingchanges-none' => '{{Flagged Revs}}
 Used on [http://en.labs.wikimedia.org/wiki/Special:OldReviewedPages Special:OldReviewedPages].',
 	'pendingchanges-hours' => '{{Flagged Revs}}
-Used on [http://en.labs.wikimedia.org/wiki/Special:OldReviewedPages Special:OldReviewedPages] to denote the age of the last unreviewed change to a listed page.',
-	'pendingchanges-days' => '{{Flagged Revs}}
-Used on [http://en.labs.wikimedia.org/wiki/Special:OldReviewedPages Special:OldReviewedPages] to denote the age of the last unreviewed change to a listed page.',
-	'pendingchanges-recent' => '{{Flagged Revs}}
-Used on [http://en.labs.wikimedia.org/wiki/Special:OldReviewedPages Special:OldReviewedPages] to denote the age of the last unreviewed change to a listed page.',
-	'pendingchanges-category' => '{{Flagged Revs}}
-{{Identical|Category}}
+Used on [[Special:OldReviewedPages]] to denote the age of the last unreviewed change to a listed page.
 
-Used on [http://en.labs.wikimedia.org/wiki/Special:OldReviewedPages Special:OldReviewedPages] as a label for an input field in the form.',
+Parameters:
+* $1 - number of hours
+{{Related|Pendingchanges}}',
+	'pendingchanges-days' => '{{Flagged Revs}}
+Used on [[Special:OldReviewedPages]] to denote the age of the last unreviewed change to a listed page.
+
+Parameters:
+* $1 - number of days
+{{Related|Pendingchanges}}',
+	'pendingchanges-recent' => '{{Flagged Revs}}
+Used on [[Special:OldReviewedPages]] to denote the age of the last unreviewed change to a listed page.
+{{Related|Pendingchanges}}',
+	'pendingchanges-category' => '{{Flagged Revs}}
+Used on [http://en.labs.wikimedia.org/wiki/Special:OldReviewedPages Special:OldReviewedPages] as a label for an input field in the form.
+{{Identical|Category}}',
 	'pendingchanges-onwatchlist' => '{{Flagged Revs}}',
 	'pendingchanges-stable' => '{{Flagged Revs}}',
 	'pendingchanges-diff' => '{{Flagged Revs}}
+Used as link text in [[Special:PendingChanges]]. The link points to the diff page (the diff between the latest revision and the pending revision).
 
-Used on [http://en.labs.wikimedia.org/wiki/Special:OldReviewedPages Special:OldReviewedPages] as a link anchor going to the sighting page for a listed page.
-
+See example: [[mw:Special:PendingChanges]].
 {{Identical|Review}}',
 	'pendingchanges-size' => '{{Flagged Revs}}
 
 Used on [http://en.labs.wikimedia.org/wiki/Special:OldReviewedPages Special:OldReviewedPages] as a label for an input field in the form.',
 	'pendingchanges-unwatched' => '{{Flagged Revs-small}}
-Used on [http://en.labs.wikimedia.org/wiki/Special:OldReviewedPages Special:OldReviewedPages] when nobody is watching the page.',
+Used on [[Special:OldReviewedPages]] when nobody is watching the page.
+
+See also:
+* {{msg-mw|Pendingchanges-watched}}',
 	'pendingchanges-watched' => '{{Flagged Revs-small}}
-Used on [http://en.labs.wikimedia.org/wiki/Special:OldReviewedPages Special:OldReviewedPages] when active users are watching the page.',
+Used on [[Special:OldReviewedPages]] when active users are watching the page.
+
+Parameters:
+* $1 - number of users watching page
+See also:
+* {{msg-mw|Pendingchanges-unwatched}}',
 	'pendingchanges-viewing' => '{{Flagged Revs-small}}
 Used on [http://en.labs.wikimedia.org/wiki/Special:OldReviewedPages Special:OldReviewedPages] when someone has recently requested the sighting page for a listed page.',
 );
@@ -258,7 +278,7 @@ $messages['bcc'] = array(
 $messages['be'] = array(
 	'pendingchanges' => 'Старонкі з неправеранымі зменамі',
 	'pendingchanges-legend' => 'Пералік правераных старонак з неправеранымі версіямі',
-	'pendingchanges-list' => 'На гэтай старонцы пералічаны правераныя старонкі, якія ў далейшым правіліся', # Fuzzy
+	'pendingchanges-list' => 'На гэтай старонцы пералічаны [[{{MediaWiki:Validationpage}}|правераныя]] старонкі, якія ў далейшым правіліся',
 	'pendingchanges-none' => 'У цяперашні час няма старонак, якія задавальняюць гэтым умовам',
 	'pendingchanges-hours' => '($1 {{PLURAL:$1|гадзіну|гадзіны|гадзін}})',
 	'pendingchanges-days' => '($1 {{PLURAL:$1|дзень|дня|дзён}})',
@@ -396,15 +416,16 @@ $messages['ca'] = array(
 
 /** Chechen (нохчийн)
  * @author Sasan700
+ * @author Умар
  */
 $messages['ce'] = array(
 	'pendingchanges-hours' => '($1 {{PLURAL:$1|сахьат|сахьат}})',
-	'pendingchanges-days' => '($1 {{PLURAL:$1|де|де}})',
+	'pendingchanges-days' => '($1 {{PLURAL:$1|де|денош|денош}})', # Fuzzy
 	'pendingchanges-recent' => '(лаххар 1 сахьтехь)',
-	'pendingchanges-category' => 'Кадегар:',
+	'pendingchanges-category' => 'Категори:',
 	'pendingchanges-diff' => 'хьажа',
-	'pendingchanges-unwatched' => '(терго йац)',
-	'pendingchanges-watched' => '({{PLURAL:$1|терго йеш $1 жигар декъашхо|терго йеш $1 жигар декъашхой}})',
+	'pendingchanges-unwatched' => '(терго яц)',
+	'pendingchanges-watched' => '({{PLURAL:$1|терго йеш $1 жигар декъашхо|терго йеш $1 жигара декъашхой}})',
 	'pendingchanges-viewing' => '(хьовсамехь йу)',
 );
 
@@ -436,7 +457,7 @@ $messages['cs'] = array(
  * @author ОйЛ
  */
 $messages['cu'] = array(
-	'pendingchanges-category' => 'катигорі́ꙗ :',
+	'pendingchanges-category' => 'катигорїꙗ :',
 );
 
 /** Danish (dansk)
@@ -581,6 +602,7 @@ $messages['eo'] = array(
  * @author Crazymadlover
  * @author Dferg
  * @author Locos epraix
+ * @author MarcoAurelio
  * @author Sanbec
  * @author Translationista
  */
@@ -654,7 +676,7 @@ $messages['eu'] = array(
 $messages['fa'] = array(
 	'pendingchanges' => 'صفحه‌های دارای تغییرات در حال انتظار',
 	'pendingchanges-legend' => 'فهرست صفحه‌های بازبینی شده با ویرایش‌های بازبینی نشده',
-	'pendingchanges-list' => 'این صفحه فهرستی از صفحه‌های [[{{MediaWiki:Validationpage}}|بازبینی شده]] دارای یک یا چند تغییر در حال انتظار می‌باشد.',
+	'pendingchanges-list' => 'این صفحه فهرستی از صفحه‌های [[{{MediaWiki:Validationpage}}|بازبینی‌شده]] دارای یک یا چند تغییر در حال انتظار است.',
 	'pendingchanges-none' => 'در حال حاضر صفحه‌ای که با این معیارها سازگار باشد وجود ندارد',
 	'pendingchanges-hours' => '($1 {{PLURAL:$1|ساعت|ساعت}})',
 	'pendingchanges-days' => '($1 {{PLURAL:$1|روز|روز}})',
@@ -839,23 +861,24 @@ $messages['he'] = array(
 /** Hindi (हिन्दी)
  * @author Ansumang
  * @author Kaustubh
+ * @author Siddhartha Ghai
  */
 $messages['hi'] = array(
-	'pendingchanges' => 'पुराने जाँचे हुए पन्ने', # Fuzzy
-	'pendingchanges-legend' => 'जिन जाँचे हुए पन्नोंको न जाँचे हुए अवतरण हैं उनकी सूची दर्शायें',
-	'pendingchanges-list' => 'यह पन्ना ऐसे जाँचे हुए पन्नोंकी सूची दर्शाता हैं जिनमें न जाँचे हुए बदलाव हैं।', # Fuzzy
-	'pendingchanges-none' => 'इस क्राइटेरिआ से मिलने वाले पन्ने नहीं हैं',
+	'pendingchanges' => 'अनिरीक्षित बदलावों वाले पृष्ठ',
+	'pendingchanges-legend' => 'अनिरीक्षित बदलावों वाले पुनरीक्षित पृष्ठों की सूची दर्शायें',
+	'pendingchanges-list' => 'यह पृष्ठ ऐसे [[{{MediaWiki:Validationpage}}|पुनरीक्षित]] पृष्ठों की सूची दर्शाता है जिनमें अनिरीक्षित बदलाव हैं।',
+	'pendingchanges-none' => 'इन मानदंडों को पूर्ण करने वाले कोई पृष्ठ नहीं हैं',
 	'pendingchanges-hours' => '($1 {{PLURAL:$1|घंटा|घंटे}})',
-	'pendingchanges-days' => '($1 {{PLURAL:$1|दिन|दिन}})',
-	'pendingchanges-recent' => '(१ घंटेसे कम समय)',
+	'pendingchanges-days' => '($1 {{PLURAL:$1|दिन}})',
+	'pendingchanges-recent' => '(एक घंटे से कम समय)',
 	'pendingchanges-category' => 'श्रेणी:',
-	'pendingchanges-onwatchlist' => 'मेरी ध्यानसूची में पृष्ठों',
-	'pendingchanges-stable' => 'चुना हुआ', # Fuzzy
-	'pendingchanges-diff' => 'जाँच',
-	'pendingchanges-size' => 'ज़्यादा से ज़्यादा बदलाव (बाइटस) :',
-	'pendingchanges-unwatched' => '(न देखे हुए)',
-	'pendingchanges-watched' => '($1 {{PLURAL:$1|सदस्यने|सदस्योंने}} ध्यान रखा हैं)', # Fuzzy
-	'pendingchanges-viewing' => '(समिक्षा अंतर्गत)',
+	'pendingchanges-onwatchlist' => 'मेरी ध्यानसूची के पृष्ठ',
+	'pendingchanges-stable' => 'स्थिर अवतरण डिफ़ॉल्ट है',
+	'pendingchanges-diff' => 'पुनरीक्षण करें',
+	'pendingchanges-size' => 'अधिकतम बदलाव (बाइट्स):',
+	'pendingchanges-unwatched' => '(किसी की ध्यानसूची में नहीं)',
+	'pendingchanges-watched' => '($1 सक्रिय {{PLURAL:$1|सदस्य|सदस्यों}} ने ध्यान रखा है)',
+	'pendingchanges-viewing' => '(पुनरीक्षण के अंतर्गत)',
 );
 
 /** Croatian (hrvatski)
@@ -1147,20 +1170,20 @@ $messages['kn'] = array(
  * @author 아라
  */
 $messages['ko'] = array(
-	'pendingchanges' => '보류중인 편을 가지고 있는 문서',
+	'pendingchanges' => '보류 중인 편을 가지고 있는 문서',
 	'pendingchanges-legend' => '검토 대기 중인 편집이 있는 검토된 문서의 목록',
-	'pendingchanges-list' => '이 페이지에서는 이전에 [[{{MediaWiki:Validationpage}}|검토]]된 적이 있는 문서 중 검토 대기 중인 {{PLURAL:$1|편집}}이 하나 이상 있는 문서를 나열하고 있습니다.',
+	'pendingchanges-list' => '이 페이지에서는 [[{{MediaWiki:Validationpage}}|검토]] 대기 중인 편집이 하나 이상 있는 검토된 문서를 나열합니다.',
 	'pendingchanges-none' => '조건에 맞는 문서가 없습니다.',
-	'pendingchanges-hours' => '($1{{PLURAL:$1|시간}} 전)',
-	'pendingchanges-days' => '($1일 전)',
+	'pendingchanges-hours' => '($1{{PLURAL:$1|시간}})',
+	'pendingchanges-days' => '($1{{PLURAL:$1|일}})',
 	'pendingchanges-recent' => '(1시간 미만)',
 	'pendingchanges-category' => '분류:',
 	'pendingchanges-onwatchlist' => '내 주시문서 목록에 있는 문서',
-	'pendingchanges-stable' => '안정 버전이 기본값입니다.',
+	'pendingchanges-stable' => '배포판이 기본값입니다',
 	'pendingchanges-diff' => '검토',
 	'pendingchanges-size' => '최대 변화량 (바이트):',
 	'pendingchanges-unwatched' => '(주시되지 않음)',
-	'pendingchanges-watched' => '(활동적인 사용자 $1명이 주시중)',
+	'pendingchanges-watched' => '(활동적인 {{PLURAL:$1|사용자}} $1명이 주시 중)',
 	'pendingchanges-viewing' => '(확인 중)',
 );
 
@@ -1198,11 +1221,11 @@ $messages['ku-latn'] = array(
  * @author Nrowe
  */
 $messages['kw'] = array(
-	'pendingchanges-days' => '($1 {{PLURAL:$1|dydh|dydh}})',
+	'pendingchanges-days' => '($1 {{PLURAL:$1|jydh|dydh}})',
 	'pendingchanges-category' => 'Klass:',
 );
 
-/** Kirghiz (Кыргызча)
+/** Kyrgyz (Кыргызча)
  * @author Growingup
  */
 $messages['ky'] = array(
@@ -1410,7 +1433,7 @@ $messages['nah'] = array(
 	'pendingchanges-watched' => '($1 āyini  {{PLURAL:$1|tlatequitiltilīlli quichiya|tlatequitiltilīltin quichiyah}})',
 );
 
-/** Norwegian Bokmål (norsk (bokmål)‎)
+/** Norwegian Bokmål (norsk bokmål)
  * @author EivindJ
  * @author Nghtwlkr
  */
@@ -1464,7 +1487,7 @@ $messages['nl'] = array(
 	'pendingchanges-viewing' => '(wordt gecontroleerd)',
 );
 
-/** Norwegian Nynorsk (norsk (nynorsk)‎)
+/** Norwegian Nynorsk (norsk nynorsk)
  * @author Harald Khan
  */
 $messages['nn'] = array(
@@ -1496,7 +1519,7 @@ $messages['oc'] = array(
 	'pendingchanges-days' => '($1 {{PLURAL:$1|jorn|jorns}})',
 	'pendingchanges-recent' => "(mens qu'una ora)",
 	'pendingchanges-category' => 'Categoria :',
-	'pendingchanges-stable' => 'visat', # Fuzzy
+	'pendingchanges-stable' => 'La version establa es la per defaut',
 	'pendingchanges-diff' => 'relectura',
 	'pendingchanges-size' => 'Cambiament maximal de la talha (en octets) :',
 	'pendingchanges-unwatched' => '(pas observat)',
@@ -1504,7 +1527,7 @@ $messages['oc'] = array(
 	'pendingchanges-viewing' => '(en revision)',
 );
 
-/** Oriya (ଓଡ଼ିଆ)
+/** Oriya (ଓଡ଼ିଆ)
  * @author Ansumang
  */
 $messages['or'] = array(
@@ -1585,6 +1608,7 @@ $messages['ps'] = array(
 /** Portuguese (português)
  * @author Capmo
  * @author Hamilton Abreu
+ * @author Luckas
  * @author Malafaya
  * @author Waldir
  * @author 555
@@ -1603,13 +1627,14 @@ $messages['pt'] = array(
 	'pendingchanges-diff' => 'rever',
 	'pendingchanges-size' => 'Alteração máx. (bytes):',
 	'pendingchanges-unwatched' => '(não vigiada)',
-	'pendingchanges-watched' => '($1 {{PLURAL:$1|utilizador activo|utilizadores activos}} a vigiar)',
+	'pendingchanges-watched' => '(vigiada por $1 {{PLURAL:$1|utilizador ativo|utilizadores ativos}})',
 	'pendingchanges-viewing' => '(em revisão)',
 );
 
 /** Brazilian Portuguese (português do Brasil)
  * @author Eduardo.mps
  * @author Giro720
+ * @author Luckas
  */
 $messages['pt-br'] = array(
 	'pendingchanges' => 'Páginas com alterações pendentes',
@@ -1625,7 +1650,7 @@ $messages['pt-br'] = array(
 	'pendingchanges-diff' => 'analisar',
 	'pendingchanges-size' => 'Tamanho máximo da alteração (em bytes):',
 	'pendingchanges-unwatched' => '(não-vigiada)',
-	'pendingchanges-watched' => '($1 {{PLURAL:$1|utilizador ativo|utilizadores ativos}} vigiando)',
+	'pendingchanges-watched' => '($1 {{PLURAL:$1|usuário ativo|usuários ativos}} vigiando)',
 	'pendingchanges-viewing' => '(sob análise)',
 );
 
@@ -1803,6 +1828,7 @@ $messages['sk'] = array(
 
 /** Slovenian (slovenščina)
  * @author Dbc334
+ * @author Eleassar
  */
 $messages['sl'] = array(
 	'pendingchanges' => 'Strani s spremembami v teku',
@@ -1816,7 +1842,7 @@ $messages['sl'] = array(
 	'pendingchanges-onwatchlist' => 'Strani na mojem spisku nadzorov',
 	'pendingchanges-stable' => 'Ustaljena različica je privzeta',
 	'pendingchanges-diff' => 'preglej',
-	'pendingchanges-size' => 'Največja sprememba (bajtov):',
+	'pendingchanges-size' => 'Največja sprememba (zlogov):',
 	'pendingchanges-unwatched' => '(nespremljano)',
 	'pendingchanges-watched' => '({{PLURAL:$1|spremlja $1 aktiven uporabnik|spremljata $1 aktivna uporabnika|spremljajo $1 aktivni uporabniki|spremlja $1 aktivnih uporabnikov}})',
 	'pendingchanges-viewing' => '(v pregledu)',
@@ -2200,13 +2226,14 @@ $messages['yue'] = array(
  * @author Liangent
  * @author PhiLiP
  * @author Shinjiman
+ * @author Shirayuki
  */
 $messages['zh-hans'] = array(
 	'pendingchanges' => '有待复审更改的页面',
 	'pendingchanges-legend' => '列出含有待复审更改的已复审页面',
 	'pendingchanges-list' => '此页面列出了含有一至多个待复审编辑的[[{{MediaWiki:Validationpage}}|已复审]]页面。',
 	'pendingchanges-none' => '目前没有页面符合这些条件',
-	'pendingchanges-hours' => '（$1 {{PLURAL:$1|小时|小时}}）',
+	'pendingchanges-hours' => '（$1 {{PLURAL:$1|小时}}）',
 	'pendingchanges-days' => '（$1 {{PLURAL:$1|天|天}}）',
 	'pendingchanges-recent' => '（少于1小时）',
 	'pendingchanges-category' => '分类：',

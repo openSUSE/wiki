@@ -37,6 +37,7 @@ class FlaggedRevsUISetup {
 
 		# Add notice tags to edit view
 		$hooks['EditPage::showEditForm:initial'][] = 'FlaggedRevsUIHooks::addToEditView';
+		$hooks['TitleGetEditNotices'][] = 'FlaggedRevsUIHooks::getEditNotices';
 		# Tweak submit button name/title
 		$hooks['EditPageBeforeEditButtons'][] = 'FlaggedRevsUIHooks::onBeforeEditButtons';
 		# Autoreview information from form

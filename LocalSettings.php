@@ -94,7 +94,7 @@ $wgUseImageMagick = false;
 # $wgUseTeX			= true;
 $wgMathPath         = "{$wgUploadPath}/math";
 $wgMathDirectory    = "{$wgUploadDirectory}/math";
-$wgTmpDirectory     = "{$wgUploadDirectory}/tmp";
+$wgTmpDirectory     = "{$wgUploadDirectory}/temp";
 
 $wgLocalInterwiki   = $wgSitename;
 

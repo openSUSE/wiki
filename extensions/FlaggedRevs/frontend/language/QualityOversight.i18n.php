@@ -297,11 +297,12 @@ $messages['he'] = array(
 /** Hindi (हिन्दी)
  * @author Ansumang
  * @author Kaustubh
+ * @author Siddhartha Ghai
  */
 $messages['hi'] = array(
-	'qualityoversight' => 'गुणवत्ता ओवरसाईट', # Fuzzy
-	'qualityoversight-list' => 'यह पन्ना नवीनतम गुणवत्तापूर्ण अवतरणोंके प्रमाणिकरण की सूची दर्शाता हैं तथा गुणवत्तापूर्ण अवतरणोंका डिप्रिसिएशन दर्शाता हैं।', # Fuzzy
-	'qualityoversight-legend' => 'बर्त्तमान की समिक्षा लॉग ढूंदे',
+	'qualityoversight' => 'उच्च पुनरीक्षण लॉग',
+	'qualityoversight-list' => 'यह पृष्ठ अवतरणों के नवीनतम पुनरीक्षणों और पुनरीक्षण वापिस लिए जाने की सूची दर्शाता है।',
+	'qualityoversight-legend' => 'हाल की पुनरीक्षण लॉग में खोजें',
 );
 
 /** Croatian (hrvatski)
@@ -483,7 +484,7 @@ $messages['ms'] = array(
 	'qualityoversight-legend' => 'Cari log kaji semula terkini',
 );
 
-/** Norwegian Bokmål (norsk (bokmål)‎)
+/** Norwegian Bokmål (norsk bokmål)
  * @author Nghtwlkr
  */
 $messages['nb'] = array(
@@ -501,7 +502,7 @@ $messages['nl'] = array(
 	'qualityoversight-legend' => 'Recente controlelogboeken doorzoeken',
 );
 
-/** Norwegian Nynorsk (norsk (nynorsk)‎)
+/** Norwegian Nynorsk (norsk nynorsk)
  * @author Harald Khan
  * @author Njardarlogar
  */

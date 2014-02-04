@@ -40,12 +40,17 @@ class ActiveUsersPager extends UsersPager {
 	/**
 	 * @var Array
 	 */
-	protected $groups;
+	protected $hideGroups = array();
+
+	/**
+	 * @var Array
+	 */
+	protected $hideRights = array();
 
 	/**
 	 * @param $context IContextSource
 	 * @param $group null Unused
-	 * @param $par string Parameter passed to the page
+	 * @param string $par Parameter passed to the page
 	 */
 	function __construct( IContextSource $context = null, $group = null, $par = null ) {
 		global $wgActiveUserDays;
@@ -57,7 +62,7 @@ class ActiveUsersPager extends UsersPager {
 		$this->requestedUser = '';
 		if ( $un != '' ) {
 			$username = Title::makeTitleSafe( NS_USER, $un );
-			if( !is_null( $username ) ) {
+			if ( !is_null( $username ) ) {
 				$this->requestedUser = $username->getText();
 			}
 		}
@@ -73,12 +78,11 @@ class ActiveUsersPager extends UsersPager {
 
 		$this->opts->fetchValuesFromRequest( $this->getRequest() );
 
-		$this->groups = array();
 		if ( $this->opts->getValue( 'hidebots' ) == 1 ) {
-			$this->groups['bot'] = true;
+			$this->hideRights[] = 'bot';
 		}
 		if ( $this->opts->getValue( 'hidesysops' ) == 1 ) {
-			$this->groups['sysop'] = true;
+			$this->hideGroups[] = 'sysop';
 		}
 	}
 
@@ -87,35 +91,60 @@ class ActiveUsersPager extends UsersPager {
 	}
 
 	function getQueryInfo() {
-		$dbr = wfGetDB( DB_SLAVE );
-		$conds = array( 'rc_user > 0' ); // Users - no anons
-		$conds[] = 'ipb_deleted IS NULL'; // don't show hidden names
-		$conds[] = "rc_log_type IS NULL OR rc_log_type != 'newusers'";
-		$conds[] = "rc_timestamp >= '{$dbr->timestamp( wfTimestamp( TS_UNIX ) - $this->RCMaxAge*24*3600 )}'";
+		$dbr = $this->getDatabase();
 
-		if( $this->requestedUser != '' ) {
+		$conds = array( 'rc_user > 0' ); // Users - no anons
+		$conds[] = 'rc_log_type IS NULL OR rc_log_type != ' . $dbr->addQuotes( 'newusers' );
+		$conds[] = 'rc_timestamp >= ' . $dbr->addQuotes(
+			$dbr->timestamp( wfTimestamp( TS_UNIX ) - $this->RCMaxAge * 24 * 3600 ) );
+
+		if ( $this->requestedUser != '' ) {
 			$conds[] = 'rc_user_text >= ' . $dbr->addQuotes( $this->requestedUser );
 		}
 
-		$query = array(
-			'tables' => array( 'recentchanges', 'user', 'ipblocks' ),
-			'fields' => array( 'rc_user_text AS user_name', // inheritance
+		if ( !$this->getUser()->isAllowed( 'hideuser' ) ) {
+			$conds[] = 'NOT EXISTS (' . $dbr->selectSQLText(
+				'ipblocks', '1', array( 'rc_user=ipb_user', 'ipb_deleted' => 1 )
+			) . ')';
+		}
+
+		return array(
+			'tables' => array( 'recentchanges' ),
+			'fields' => array(
+				'user_name' => 'rc_user_text', // for Pager inheritance
 				'rc_user_text', // for Pager
-				'user_id',
-				'COUNT(*) AS recentedits',
-				'MAX(ipb_user) AS blocked'
+				'user_id' => 'MAX(rc_user)', // Postgres
+				'recentedits' => 'COUNT(*)'
 			),
 			'options' => array(
-				'GROUP BY' => 'rc_user_text, user_id',
+				'GROUP BY' => array( 'rc_user_text' ),
 				'USE INDEX' => array( 'recentchanges' => 'rc_user_text' )
-			),
-			'join_conds' => array(
-				'user' => array( 'INNER JOIN', 'rc_user_text=user_name' ),
-				'ipblocks' => array( 'LEFT JOIN', 'user_id=ipb_user AND ipb_auto=0 AND ipb_deleted=1' ),
 			),
 			'conds' => $conds
 		);
-		return $query;
+	}
+
+	function doBatchLookups() {
+		$uids = array();
+		foreach ( $this->mResult as $row ) {
+			$uids[] = $row->user_id;
+		}
+		// Fetch the block status of the user for showing "(blocked)" text and for
+		// striking out names of suppressed users when privileged user views the list.
+		// Although the first query already hits the block table for un-privileged, this
+		// is done in two queries to avoid huge quicksorts and to make COUNT(*) correct.
+		$dbr = $this->getDatabase();
+		$res = $dbr->select( 'ipblocks',
+			array( 'ipb_user', 'MAX(ipb_deleted) AS block_status' ),
+			array( 'ipb_user' => $uids ),
+			__METHOD__,
+			array( 'GROUP BY' => array( 'ipb_user' ) )
+		);
+		$this->blockStatusByUid = array();
+		foreach ( $res as $row ) {
+			$this->blockStatusByUid[$row->ipb_user] = $row->block_status; // 0 or 1
+		}
+		$this->mResult->seek( 0 );
 	}
 
 	function formatRow( $row ) {
@@ -127,18 +156,41 @@ class ActiveUsersPager extends UsersPager {
 		$lang = $this->getLanguage();
 
 		$list = array();
-		foreach( self::getGroups( $row->user_id ) as $group ) {
-			if ( isset( $this->groups[$group] ) ) {
-				return;
+		$user = User::newFromId( $row->user_id );
+
+		// User right filter
+		foreach ( $this->hideRights as $right ) {
+			// Calling User::getRights() within the loop so that
+			// if the hideRights() filter is empty, we don't have to
+			// trigger the lazy-init of the big userrights array in the
+			// User object
+			if ( in_array( $right, $user->getRights() ) ) {
+				return '';
+			}
+		}
+
+		// User group filter
+		// Note: This is a different loop than for user rights,
+		// because we're reusing it to build the group links
+		// at the same time
+		foreach ( $user->getGroups() as $group ) {
+			if ( in_array( $group, $this->hideGroups ) ) {
+				return '';
 			}
 			$list[] = self::buildGroupLink( $group, $userName );
 		}
+
 		$groups = $lang->commaList( $list );
 
 		$item = $lang->specialList( $ulinks, $groups );
+
+		$isBlocked = isset( $this->blockStatusByUid[$row->user_id] );
+		if ( $isBlocked && $this->blockStatusByUid[$row->user_id] == 1 ) {
+			$item = "<span class=\"deleted\">$item</span>";
+		}
 		$count = $this->msg( 'activeusers-count' )->numParams( $row->recentedits )
 			->params( $userName )->numParams( $this->RCMaxAge )->escaped();
-		$blocked = $row->blocked ? ' ' . $this->msg( 'listusers-blocked', $userName )->escaped() : '';
+		$blocked = $isBlocked ? ' ' . $this->msg( 'listusers-blocked', $userName )->escaped() : '';
 
 		return Html::rawElement( 'li', array(), "{$item} [{$count}]{$blocked}" );
 	}
@@ -154,15 +206,15 @@ class ActiveUsersPager extends UsersPager {
 		$out .= Html::hidden( 'title', $self->getPrefixedDBkey() ) . $limit . "\n";
 
 		$out .= Xml::inputLabel( $this->msg( 'activeusers-from' )->text(),
-			'username', 'offset', 20, $this->requestedUser ) . '<br />';# Username field
+			'username', 'offset', 20, $this->requestedUser, array( 'tabindex' => 1 ) ) . '<br />';# Username field
 
 		$out .= Xml::checkLabel( $this->msg( 'activeusers-hidebots' )->text(),
-			'hidebots', 'hidebots', $this->opts->getValue( 'hidebots' ) );
+			'hidebots', 'hidebots', $this->opts->getValue( 'hidebots' ), array( 'tabindex' => 2 ) );
 
 		$out .= Xml::checkLabel( $this->msg( 'activeusers-hidesysops' )->text(),
-			'hidesysops', 'hidesysops', $this->opts->getValue( 'hidesysops' ) ) . '<br />';
+			'hidesysops', 'hidesysops', $this->opts->getValue( 'hidesysops' ), array( 'tabindex' => 3 ) ) . '<br />';
 
-		$out .= Xml::submitButton( $this->msg( 'allpagessubmit' )->text() ) . "\n";# Submit button and form bottom
+		$out .= Xml::submitButton( $this->msg( 'allpagessubmit' )->text(), array( 'tabindex' => 4 ) ) . "\n";# Submit button and form bottom
 		$out .= Xml::closeElement( 'fieldset' );
 		$out .= Xml::closeElement( 'form' );
 
@@ -214,4 +266,7 @@ class SpecialActiveUsers extends SpecialPage {
 		}
 	}
 
+	protected function getGroupName() {
+		return 'users';
+	}
 }

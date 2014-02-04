@@ -1,12 +1,13 @@
 /**
- * FlaggedRevs Stylesheet
+ * FlaggedRevs Review JavaScript
  * @author Aaron Schulz
  * @author Daniel Arnold 2008
  */
-( function( $ ) {
+( function( mw, $ ) {
 	"use strict";
 
-var fr = {
+var wgFlaggedRevsParams = mw.config.get( 'wgFlaggedRevsParams' ),
+	fr = {
 	/* User is reviewing this page? */
 	'isUserReviewing': 0,
 
@@ -295,9 +296,9 @@ var fr = {
 			}
 			// (b) Output any error response message
 			if ( response.indexOf('<err#>') === 0 ) {
-				mediaWiki.util.jsMessage( msg, 'review' ); // failure notice
+				mw.util.jsMessage( msg, 'review' ); // failure notice
 			} else {
-				mediaWiki.util.jsMessage( response, 'review' ); // fatal notice
+				mw.util.jsMessage( response, 'review' ); // fatal notice
 			}
 			window.scroll( 0, 0 ); // scroll up to notice
 		}
@@ -420,4 +421,4 @@ $(document).ready( function() {
 	fr.init();
 } );
 
-})( jQuery );
+})( mediaWiki, jQuery );

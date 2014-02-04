@@ -4,7 +4,7 @@
  *
  * Created on June 14, 2007
  *
- * Copyright © 2006 Yuri Astrakhan <Firstname><Lastname>@gmail.com
+ * Copyright © 2006 Yuri Astrakhan "<Firstname><Lastname>@gmail.com"
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,22 +54,9 @@ class ApiQueryCategoryMembers extends ApiQueryGeneratorBase {
 	private function run( $resultPageSet = null ) {
 		$params = $this->extractRequestParams();
 
-		$this->requireOnlyOneParameter( $params, 'title', 'pageid' );
-
-		if ( isset( $params['title'] ) ) {
-			$categoryTitle = Title::newFromText( $params['title'] );
-
-			if ( is_null( $categoryTitle ) || $categoryTitle->getNamespace() != NS_CATEGORY ) {
-				$this->dieUsage( 'The category name you entered is not valid', 'invalidcategory' );
-			}
-		} elseif( isset( $params['pageid'] ) ) {
-			$categoryTitle = Title::newFromID( $params['pageid'] );
-
-			if ( !$categoryTitle ) {
-				$this->dieUsageMsg( array( 'nosuchpageid', $params['pageid'] ) );
-			} elseif ( $categoryTitle->getNamespace() != NS_CATEGORY ) {
-				$this->dieUsage( 'The category name you entered is not valid', 'invalidcategory' );
-			}
+		$categoryTitle = $this->getTitleOrPageId( $params )->getTitle();
+		if ( $categoryTitle->getNamespace() != NS_CATEGORY ) {
+			$this->dieUsage( 'The category name you entered is not valid', 'invalidcategory' );
 		}
 
 		$prop = array_flip( $params['prop'] );
@@ -91,7 +78,7 @@ class ApiQueryCategoryMembers extends ApiQueryGeneratorBase {
 
 		$this->addFieldsIf( 'cl_timestamp', $fld_timestamp || $params['sort'] == 'timestamp' );
 
-		$this->addTables( array( 'page', 'categorylinks' ) );	// must be in this order for 'USE INDEX'
+		$this->addTables( array( 'page', 'categorylinks' ) ); // must be in this order for 'USE INDEX'
 
 		$this->addWhereFld( 'cl_to', $categoryTitle->getDBkey() );
 		$queryTypes = $params['type'];
@@ -107,10 +94,10 @@ class ApiQueryCategoryMembers extends ApiQueryGeneratorBase {
 			$this->addWhereFld( 'page_namespace', $params['namespace'] );
 		}
 
-		$dir = $params['dir'] == 'asc' ? 'newer' : 'older';
+		$dir = in_array( $params['dir'], array( 'asc', 'ascending', 'newer' ) ) ? 'newer' : 'older';
 
 		if ( $params['sort'] == 'timestamp' ) {
-			$this->addWhereRange( 'cl_timestamp',
+			$this->addTimestampWhereRange( 'cl_timestamp',
 				$dir,
 				$params['start'],
 				$params['end'] );
@@ -119,11 +106,7 @@ class ApiQueryCategoryMembers extends ApiQueryGeneratorBase {
 		} else {
 			if ( $params['continue'] ) {
 				$cont = explode( '|', $params['continue'], 3 );
-				if ( count( $cont ) != 3 ) {
-					$this->dieUsage( 'Invalid continue param. You should pass the original value returned '.
-						'by the previous query', '_badcontinue'
-					);
-				}
+				$this->dieContinueUsageIf( count( $cont ) != 3 );
 
 				// Remove the types to skip from $queryTypes
 				$contTypeIndex = array_search( $cont[0], $queryTypes );
@@ -131,7 +114,7 @@ class ApiQueryCategoryMembers extends ApiQueryGeneratorBase {
 
 				// Add a WHERE clause for sortkey and from
 				// pack( "H*", $foo ) is used to convert hex back to binary
-				$escSortkey = $this->getDB()->addQuotes( pack( "H*", $cont[1] ) );
+				$escSortkey = $this->getDB()->addQuotes( pack( 'H*', $cont[1] ) );
 				$from = intval( $cont[2] );
 				$op = $dir == 'newer' ? '>' : '<';
 				// $contWhere is used further down
@@ -234,7 +217,7 @@ class ApiQueryCategoryMembers extends ApiQueryGeneratorBase {
 				if ( $fld_sortkeyprefix ) {
 					$vals['sortkeyprefix'] = $row->cl_sortkey_prefix;
 				}
-				if ( $fld_type  ) {
+				if ( $fld_type ) {
 					$vals['type'] = $row->cl_type;
 				}
 				if ( $fld_timestamp ) {
@@ -260,7 +243,7 @@ class ApiQueryCategoryMembers extends ApiQueryGeneratorBase {
 
 		if ( is_null( $resultPageSet ) ) {
 			$result->setIndexedTagName_internal(
-					 array( 'query', $this->getModuleName() ), 'cm' );
+				array( 'query', $this->getModuleName() ), 'cm' );
 		}
 	}
 
@@ -275,7 +258,7 @@ class ApiQueryCategoryMembers extends ApiQueryGeneratorBase {
 			'prop' => array(
 				ApiBase::PARAM_DFLT => 'ids|title',
 				ApiBase::PARAM_ISMULTI => true,
-				ApiBase::PARAM_TYPE => array (
+				ApiBase::PARAM_TYPE => array(
 					'ids',
 					'title',
 					'sortkey',
@@ -284,7 +267,7 @@ class ApiQueryCategoryMembers extends ApiQueryGeneratorBase {
 					'timestamp',
 				)
 			),
-			'namespace' => array (
+			'namespace' => array(
 				ApiBase::PARAM_ISMULTI => true,
 				ApiBase::PARAM_TYPE => 'namespace',
 			),
@@ -313,10 +296,15 @@ class ApiQueryCategoryMembers extends ApiQueryGeneratorBase {
 				)
 			),
 			'dir' => array(
-				ApiBase::PARAM_DFLT => 'asc',
+				ApiBase::PARAM_DFLT => 'ascending',
 				ApiBase::PARAM_TYPE => array(
 					'asc',
-					'desc'
+					'desc',
+					// Normalising with other modules
+					'ascending',
+					'descending',
+					'newer',
+					'older',
 				)
 			),
 			'start' => array(
@@ -357,7 +345,7 @@ class ApiQueryCategoryMembers extends ApiQueryGeneratorBase {
 			'endsortkey' => "Sortkey to end listing at. Must be given in binary format. Can only be used with {$p}sort=sortkey",
 			'startsortkeyprefix' => "Sortkey prefix to start listing from. Can only be used with {$p}sort=sortkey. Overrides {$p}startsortkey",
 			'endsortkeyprefix' => "Sortkey prefix to end listing BEFORE (not at, if this value occurs it will not be included!). Can only be used with {$p}sort=sortkey. Overrides {$p}endsortkey",
-			'continue' => 'For large categories, give the value retured from previous query',
+			'continue' => 'For large categories, give the value returned from previous query',
 			'limit' => 'The maximum number of pages to return.',
 		);
 
@@ -372,17 +360,45 @@ class ApiQueryCategoryMembers extends ApiQueryGeneratorBase {
 		return $desc;
 	}
 
+	public function getResultProperties() {
+		return array(
+			'ids' => array(
+				'pageid' => 'integer'
+			),
+			'title' => array(
+				'ns' => 'namespace',
+				'title' => 'string'
+			),
+			'sortkey' => array(
+				'sortkey' => 'string'
+			),
+			'sortkeyprefix' => array(
+				'sortkeyprefix' => 'string'
+			),
+			'type' => array(
+				'type' => array(
+					ApiBase::PROP_TYPE => array(
+						'page',
+						'subcat',
+						'file'
+					)
+				)
+			),
+			'timestamp' => array(
+				'timestamp' => 'timestamp'
+			)
+		);
+	}
+
 	public function getDescription() {
 		return 'List all pages in a given category';
 	}
 
 	public function getPossibleErrors() {
 		return array_merge( parent::getPossibleErrors(),
-			$this->getRequireOnlyOneParameterErrorMessages( array( 'title', 'pageid' ) ),
+			$this->getTitleOrPageIdErrorMessage(),
 			array(
 				array( 'code' => 'invalidcategory', 'info' => 'The category name you entered is not valid' ),
-				array( 'code' => 'badcontinue', 'info' => 'Invalid continue param. You should pass the original value returned by the previous query' ),
-				array( 'nosuchpageid', 'pageid' ),
 			)
 		);
 	}
@@ -396,9 +412,5 @@ class ApiQueryCategoryMembers extends ApiQueryGeneratorBase {
 
 	public function getHelpUrls() {
 		return 'https://www.mediawiki.org/wiki/API:Categorymembers';
-	}
-
-	public function getVersion() {
-		return __CLASS__ . ': $Id$';
 	}
 }

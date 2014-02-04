@@ -1,18 +1,19 @@
 <?php
+/**
+ * @todo covers tags
+ */
 class JpegTest extends MediaWikiTestCase {
 
-	public function setUp() {
-		$this->filePath = dirname( __FILE__ ) . '/../../data/media/';
-		if ( !wfDl( 'exif' ) ) {
+	protected function setUp() {
+		parent::setUp();
+		if ( !extension_loaded( 'exif' ) ) {
 			$this->markTestSkipped( "This test needs the exif extension." );
 		}
-		global $wgShowEXIF;
-		$this->show = $wgShowEXIF;
-		$wgShowEXIF = true;
-	}
-	public function tearDown() {
-		global $wgShowEXIF;
-		$wgShowEXIF = $this->show;
+
+		$this->filePath = __DIR__ . '/../../data/media/';
+
+
+		$this->setMwGlobals( 'wgShowEXIF', true );
 	}
 
 	public function testInvalidFile() {
@@ -20,6 +21,7 @@ class JpegTest extends MediaWikiTestCase {
 		$res = $jpeg->getMetadata( null, $this->filePath . 'README' );
 		$this->assertEquals( ExifBitmapHandler::BROKEN_FILE, $res );
 	}
+
 	public function testJpegMetadataExtraction() {
 		$h = new JpegHandler;
 		$res = $h->getMetadata( null, $this->filePath . 'test.jpg' );

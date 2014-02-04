@@ -17,6 +17,7 @@ class FlaggablePageView extends ContextSource {
 	protected $reviewFormRev = false;
 
 	protected $loaded = false;
+	protected $noticesDone = false;
 
 	protected static $instance = null;
 
@@ -186,9 +187,9 @@ class FlaggablePageView extends ContextSource {
 	 */
 	protected function isPageViewOrDiff( WebRequest $request ) {
 		global $mediaWiki;
-		$action = isset( $mediaWiki )
-			? $mediaWiki->getAction( $request )
-			: $request->getVal( 'action', 'view' ); // cli
+		$action = isset( $mediaWiki ) ?
+			$mediaWiki->getAction( $request ) :
+			$request->getVal( 'action', 'view' ); // cli
 		return self::isViewAction( $action );
 	}
 
@@ -209,9 +210,9 @@ class FlaggablePageView extends ContextSource {
 	 */
 	protected function isDefaultPageView( WebRequest $request ) {
 		global $mediaWiki;
-		$action = isset( $mediaWiki )
-			? $mediaWiki->getAction( $request )
-			: $request->getVal( 'action', 'view' ); // cli
+		$action = isset( $mediaWiki ) ?
+			$mediaWiki->getAction( $request ) :
+			$request->getVal( 'action', 'view' ); // cli
 		return ( self::isViewAction( $action )
 			&& $request->getVal( 'oldid' ) === null
 			&& $request->getVal( 'stable' ) === null
@@ -491,22 +492,22 @@ class FlaggablePageView extends ContextSource {
 				if ( !$reqUser->getId() ) {
 					$msgHTML = ''; // Anons just see simple icons
 				} elseif ( $synced ) {
-					$msg = $quality
-						? 'revreview-quick-quality-same'
-						: 'revreview-quick-basic-same';
+					$msg = $quality ?
+						'revreview-quick-quality-same' :
+						'revreview-quick-basic-same';
 					$msgHTML = $this->msg( $msg, $srev->getRevId(), $revsSince )->parse();
 				} else {
-					$msg = $quality
-						? 'revreview-quick-see-quality'
-						: 'revreview-quick-see-basic';
+					$msg = $quality ?
+						'revreview-quick-see-quality' :
+						'revreview-quick-see-basic';
 					$msgHTML = $this->msg( $msg, $srev->getRevId(), $revsSince )->parse();
 				}
 				$icon = '';
 				# For protection based configs, show lock only if it's not redundant.
 				if ( $this->showRatingIcon() ) {
-					$icon = $synced
-						? FlaggedRevsXML::stableStatusIcon( $quality )
-						: FlaggedRevsXML::draftStatusIcon();
+					$icon = $synced ?
+						FlaggedRevsXML::stableStatusIcon( $quality ) :
+						FlaggedRevsXML::draftStatusIcon();
 				}
 				$msgHTML = $prot . $icon . $msgHTML;
 				$tag .= FlaggedRevsXML::prettyRatingBox( $srev, $msgHTML,
@@ -514,22 +515,20 @@ class FlaggablePageView extends ContextSource {
 			// Standard UI
 			} else {
 				if ( $synced ) {
-					if ( $quality ) {
-						$msg = 'revreview-quality-same';
-					} else {
-						$msg = 'revreview-basic-same';
-					}
-					$msgHTML = $this->msg( $msg, $srev->getRevId(), $time, $revsSince )->parse();
+					$msg = $quality ?
+						'revreview-quality-same' :
+						'revreview-basic-same';
 				} else {
-					$msg = $quality
-						? 'revreview-newest-quality'
-						: 'revreview-newest-basic';
+					$msg = $quality ?
+						'revreview-newest-quality' :
+						'revreview-newest-basic';
+					// Messages: revreview-newest-quality-i, revreview-newest-basic-i
 					$msg .= ( $revsSince == 0 ) ? '-i' : '';
-					$msgHTML = $this->msg( $msg, $srev->getRevId(), $time, $revsSince )->parse();
 				}
-				$icon = $synced
-					? FlaggedRevsXML::stableStatusIcon( $quality )
-					: FlaggedRevsXML::draftStatusIcon();
+				$msgHTML = $this->msg( $msg, $srev->getRevId(), $time, $revsSince )->parse();
+				$icon = $synced ?
+					FlaggedRevsXML::stableStatusIcon( $quality ) :
+					FlaggedRevsXML::draftStatusIcon();
 				$tag .= $prot . $icon . $msgHTML . $diffToggle;
 			}
 		}
@@ -567,9 +566,9 @@ class FlaggablePageView extends ContextSource {
 				if ( !$reqUser->getId() ) {
 					$msgHTML = ''; // Anons just see simple icons
 				} else {
-					$msg = $quality
-						? 'revreview-quick-quality-old'
-						: 'revreview-quick-basic-old';
+					$msg = $quality ?
+						'revreview-quick-quality-old' :
+						'revreview-quick-basic-old';
 					$msgHTML = $this->msg( $msg, $frev->getRevId(), $revsSince )->parse();
 				}
 				$msgHTML = $prot . $icon . $msgHTML;
@@ -578,9 +577,9 @@ class FlaggablePageView extends ContextSource {
 			// Standard UI
 			} else {
 				$icon = FlaggedRevsXML::stableStatusIcon( $quality );
-				$msg = $quality
-					? 'revreview-quality-old'
-					: 'revreview-basic-old';
+				$msg = $quality ?
+					'revreview-quality-old' :
+					'revreview-basic-old';
 				$tag = $prot . $icon;
 				$tag .= $this->msg( $msg, $frev->getRevId(), $time )->parse();
 				# Hide clutter
@@ -593,14 +592,13 @@ class FlaggablePageView extends ContextSource {
 			}
 		}
 
-		$text = $frev->getRevText();
 		# Get the new stable parser output...
 		$pOpts = $this->article->makeParserOptions( $reqUser );
-		$parserOut = FlaggedRevs::parseStableText(
-			$this->article->getTitle(), $text, $frev->getRevId(), $pOpts );
+		$pOpts->setEditSection( false ); // old revision
+		$parserOut = FlaggedRevs::parseStableRevision( $frev, $pOpts );
 
 		# Parse and output HTML
-		$redirHtml = $this->getRedirectHtml( $text );
+		$redirHtml = $this->getRedirectHtml( $frev );
 		if ( $redirHtml == '' ) { // page is not a redirect...
 			# Add the stable output to the page view
 			$this->out->addParserOutput( $parserOut );
@@ -645,9 +643,9 @@ class FlaggablePageView extends ContextSource {
 				if ( !$reqUser->getId() ) {
 					$msgHTML = ''; // Anons just see simple icons
 				} else {
-					$msg = $quality
-						? 'revreview-quick-quality'
-						: 'revreview-quick-basic';
+					$msg = $quality ?
+						'revreview-quick-quality' :
+						'revreview-quick-basic';
 					# Uses messages 'revreview-quick-quality-same', 'revreview-quick-basic-same'
 					$msg = $synced ? "{$msg}-same" : $msg;
 					$msgHTML = $this->msg( $msg, $srev->getRevId(), $revsSince )->parse();
@@ -678,6 +676,9 @@ class FlaggablePageView extends ContextSource {
 
 		# Get parsed stable version and output HTML
 		$pOpts = $this->article->makeParserOptions( $reqUser );
+		if ( !$this->article->getTitle()->quickUserCan( 'edit', $reqUser ) ) {
+			$pOpts->setEditSection( false );
+		}
 		$parserCache = FRParserCacheStable::singleton();
 		$parserOut = $parserCache->get( $this->article, $pOpts );
 
@@ -688,7 +689,6 @@ class FlaggablePageView extends ContextSource {
 			# Cache hit. Note that redirects are not cached.
 			$this->out->addParserOutput( $parserOut );
 		} else {
-			$text = $srev->getRevText();
 			# Get the new stable parser output...
 			if ( FlaggedRevs::inclusionSetting() == FR_INCLUDES_CURRENT && $synced ) {
 				# We can try the current version cache, since they are the same revision
@@ -698,11 +698,10 @@ class FlaggablePageView extends ContextSource {
 			}
 
 			if ( !$parserOut ) {
-				$parserOut = FlaggedRevs::parseStableText(
-					$this->article->getTitle(), $text, $srev->getRevId(), $pOpts );
+				$parserOut = FlaggedRevs::parseStableRevision( $srev, $pOpts );
 			}
 
-			$redirHtml = $this->getRedirectHtml( $text );
+			$redirHtml = $this->getRedirectHtml( $srev );
 			if ( $redirHtml == '' ) { // page is not a redirect...
 				# Update the stable version cache
 				$parserCache->save( $parserOut, $this->article, $pOpts );
@@ -729,8 +728,8 @@ class FlaggablePageView extends ContextSource {
 	}
 
 	// Get fancy redirect arrow and link HTML
-	protected function getRedirectHtml( $text ) {
-		$rTargets = Title::newFromRedirectArray( $text );
+	protected function getRedirectHtml( $frev ) {
+		$rTargets = $frev->getRevision()->getContent()->getRedirectChain();
 		if ( $rTargets ) {
 			$article = new Article( $this->article->getTitle() );
 			return $article->viewRedirect( $rTargets );
@@ -772,9 +771,9 @@ class FlaggablePageView extends ContextSource {
 		}
 		$title = $this->article->getTitle(); // convenience
 		# Review status of left diff revision...
-		$leftNote = $quality
-			? 'revreview-hist-quality'
-			: 'revreview-hist-basic';
+		$leftNote = $quality ?
+			'revreview-hist-quality' :
+			'revreview-hist-basic';
 		$lClass = FlaggedRevsXML::getQualityColor( (int)$quality );
 		// @todo FIXME: i18n Hard coded brackets.
 		$leftNote = "<span class='$lClass'>[" . $this->msg( $leftNote )->escaped() . "]</span>";
@@ -876,7 +875,7 @@ class FlaggablePageView extends ContextSource {
 		}
 
 		if ( !$time ) {
-			return; // Use the default behaviour
+			return; // Use the default behavior
 		}
 
 		$title = $this->article->getTitle();
@@ -912,6 +911,47 @@ class FlaggablePageView extends ContextSource {
 			$this->out->addHTML( $tag );
 		}
 		return true;
+	}
+
+	public function getEditNotices( Title $title, $oldid, array &$notices ) {
+		// HACK: EditPage invokes addToEditView() before this function, so $this->noticesDone
+		// will only be true if we're being called by EditPage, in which case we need to do nothing
+		// to avoid duplicating the notices.
+		$this->load();
+		if ( $this->noticesDone || !$this->article->isReviewable() ) {
+			return;
+		}
+		// HACK fake EditPage
+		$editPage = new EditPage( new Article( $title, $oldid ) );
+		$editPage->oldid = $oldid;
+		$reqUser = $this->getUser();
+
+		// HACK this duplicates logic from addToEditView()
+		$log = $this->stabilityLogNotice( false );
+		if ( $log ) {
+			$notices[$this->article->isPageLocked() ? 'revreview-locked' : 'revreview-unlocked'] = $log;
+		} else if ( $this->editWillRequireReview( $editPage ) ) {
+			$notices['revreview-editnotice'] = $this->msg( 'revreview-editnotice' )->parseAsBlock();
+		}
+		$frev = $this->article->getStableRev();
+		if ( $frev && $this->article->revsArePending() ) {
+			$revsSince = $this->article->getPendingRevCount();
+			$pendingMsg = FlaggedRevsXML::pendingEditNoticeMessage( $this->article, $frev, $revsSince );
+			$notices[$pendingMsg->getKey()] = '<div class="plainlinks">' . $pendingMsg->parseAsBlock() . '</div>';
+		}
+		$latestId = $this->article->getLatest();
+		$revId  = $oldid ? $oldid : $latestId;
+		if ( $frev && $frev->getRevId() < $latestId // changes were made
+			&& $reqUser->getBoolOption( 'flaggedrevseditdiffs' ) // not disabled via prefs
+			&& $revId === $latestId // only for current rev
+		) {
+			// Construct a link to the diff
+			$diffUrl = $this->article->getTitle()->getFullURL( array(
+				'diff' => $revId, 'oldid' => $frev->getRevId() )
+			);
+			$notices['review-edit-diff'] = $this->msg( 'review-edit-diff' )->parse() . ' ' .
+				FlaggedRevsXML::diffToggle( $diffUrl );
+		}
 	}
 
 	/**
@@ -955,9 +995,9 @@ class FlaggablePageView extends ContextSource {
 				&& $editPage->formtype != 'diff' // not "show changes"
 			) {
 				# Left diff side...
-				$leftNote = $quality
-					? 'revreview-hist-quality'
-					: 'revreview-hist-basic';
+				$leftNote = $quality ?
+					'revreview-hist-quality' :
+					'revreview-hist-basic';
 				$lClass = FlaggedRevsXML::getQualityColor( (int)$quality );
 				// @todo i18n FIXME: Hard coded brackets
 				$leftNote = "<span class='$lClass'>[" .
@@ -998,21 +1038,26 @@ class FlaggablePageView extends ContextSource {
 				$this->out->addHTML( $html );
 			}
 		}
+		$this->noticesDone = true;
 		return true;
 	}
 
-	protected function stabilityLogNotice() {
+	protected function stabilityLogNotice( $showToggle = true ) {
 		$this->load();
 		$s = '';
 		# Only for pages manually made to be stable...
 		if ( $this->article->isPageLocked() ) {
 			$s = $this->msg( 'revreview-locked' )->parse();
-			$s .= ' ' . FlaggedRevsXML::logDetailsToggle();
+			if ( $showToggle ) {
+				$s .= ' ' . FlaggedRevsXML::logDetailsToggle();
+			}
 			$s .= FlaggedRevsXML::stabilityLogExcerpt( $this->article );
 		# ...or unstable
 		} elseif ( $this->article->isPageUnlocked() ) {
 			$s = $this->msg( 'revreview-unlocked' )->parse();
-			$s .= ' ' . FlaggedRevsXML::logDetailsToggle();
+			if ( $showToggle ) {
+				$s .= ' ' . FlaggedRevsXML::logDetailsToggle();
+			}
 			$s .= FlaggedRevsXML::stabilityLogExcerpt( $this->article );
 		}
 		return $s;
@@ -1152,15 +1197,15 @@ class FlaggablePageView extends ContextSource {
 			# Give a link to the page to configure the stable version
 			$frev = $this->article->getStableRev();
 			if ( $frev && $frev->getRevId() == $this->article->getLatest() ) {
-				$this->out->prependHTML( "<span class='plainlinks'>" .
+				$this->out->prependHTML( "<span class='revreview-visibility revreview-visibility-synced plainlinks'>" .
 					$this->msg( 'revreview-visibility-synced',
 						$title->getPrefixedText() )->parse() . "</span>" );
 			} elseif ( $frev ) {
-				$this->out->prependHTML( "<span class='plainlinks'>" .
+				$this->out->prependHTML( "<span class='revreview-visibility revreview-visibility-outdated plainlinks'>" .
 					$this->msg( 'revreview-visibility-outdated',
 						$title->getPrefixedText() )->parse() . "</span>" );
 			} else {
-				$this->out->prependHTML( "<span class='plainlinks'>" .
+				$this->out->prependHTML( "<span class='revreview-visibility revreview-visibility-nostable plainlinks'>" .
 					$this->msg( 'revreview-visibility-nostable',
 						$title->getPrefixedText() )->parse() . "</span>" );
 			}
@@ -1271,9 +1316,9 @@ class FlaggablePageView extends ContextSource {
 		} elseif ( $this->isPageViewOrDiff( $request ) ) {
 			$ts = null;
 			if ( $this->out->getRevisionId() ) { // @TODO: avoid same query in Skin.php
-				$ts = ( $this->out->getRevisionId() == $this->article->getLatest() )
-					? $this->article->getTimestamp() // skip query
-					: Revision::getTimestampFromId( $title, $this->out->getRevisionId() );
+				$ts = ( $this->out->getRevisionId() == $this->article->getLatest() ) ?
+					$this->article->getTimestamp() : // skip query
+					Revision::getTimestampFromId( $title, $this->out->getRevisionId() );
 			}
 			// Are we looking at a pending revision?
 			if ( $ts > $srev->getRevTimestamp() ) { // bug 15515
@@ -1361,12 +1406,13 @@ class FlaggablePageView extends ContextSource {
 		$this->load();
 		$time = $this->getLanguage()->date( $srev->getTimestamp(), true );
 		$revsSince = $this->article->getPendingRevCount();
-		$msg = $srev->getQuality()
-			? 'revreview-newest-quality'
-			: 'revreview-newest-basic';
+		$msg = $srev->getQuality() ?
+			'revreview-newest-quality' :
+			'revreview-newest-basic';
 		$msg .= ( $revsSince == 0 ) ? '-i' : '';
 		# Add bar msg to the top of the page...
 		$css = 'flaggedrevs_preview plainlinks';
+		// Messages: revreview-newest-quality-i, revreview-newest-basic-i
 		$msgHTML = $this->msg( $msg, $srev->getRevId(), $time, $revsSince )->parse();
 		$this->reviewNotice .= "<div id='mw-fr-reviewnotice' class='$css'>" .
 			"$msgHTML$diffToggle</div>";
@@ -1581,13 +1627,13 @@ class FlaggablePageView extends ContextSource {
 	) {
 		$tier = FlaggedRevision::getRevQuality( $rev->getId() );
 		if ( $tier !== false ) {
-			$msg = $tier
-				? 'revreview-hist-quality'
-				: 'revreview-hist-basic';
+			$msg = $tier ?
+				'revreview-hist-quality' :
+				'revreview-hist-basic';
 		} else {
-			$msg = ( $srev && $rev->getTimestamp() > $srev->getRevTimestamp() ) // bug 15515
-				? 'revreview-hist-pending'
-				: 'revreview-hist-draft';
+			$msg = ( $srev && $rev->getTimestamp() > $srev->getRevTimestamp() ) ? // bug 15515
+				'revreview-hist-pending' :
+				'revreview-hist-draft';
 		}
 		$css = FlaggedRevsXML::getQualityColor( $tier );
 		return array( $msg, $css );
@@ -1715,7 +1761,7 @@ class FlaggablePageView extends ContextSource {
 		if ( $extraQuery !== '' ) {
 			$extraQuery .= '&';
 		}
-		$extraQuery .= wfArrayToCGI( $params ); // note: EditPage will add initial "&"
+		$extraQuery .= wfArrayToCgi( $params ); // note: EditPage will add initial "&"
 		return true;
 	}
 
@@ -1794,7 +1840,11 @@ class FlaggablePageView extends ContextSource {
 			}
 			if ( !isset( $editPage->fr_baseFRev ) ) {
 				$baseRevId = self::getBaseRevId( $editPage, $this->getRequest() );
+				$baseRevId2 = self::getAltBaseRevId( $editPage, $this->getRequest() );
 				$editPage->fr_baseFRev = FlaggedRevision::newFromTitle( $title, $baseRevId );
+				if ( !$editPage->fr_baseFRev && $baseRevId2 ) {
+					$editPage->fr_baseFRev = FlaggedRevision::newFromTitle( $title, $baseRevId2 );
+				}
 			}
 			if ( $editPage->fr_baseFRev ) {
 				return true; // edit will be autoreviewed
@@ -1809,6 +1859,7 @@ class FlaggablePageView extends ContextSource {
 	 * (b) this is an unreviewed page (bug 23970)
 	 */
 	public function addReviewCheck( EditPage $editPage, array &$checkboxes, &$tabindex ) {
+		$this->load();
 		$request = $this->getRequest();
 		$title = $this->article->getTitle(); // convenience
 		if ( !$this->article->isReviewable() || !$title->userCan( 'review' ) ) {
@@ -1857,8 +1908,10 @@ class FlaggablePageView extends ContextSource {
 	 * Note: baseRevId trusted for Reviewers - text checked for others.
 	 */
 	public function addRevisionIDField( EditPage $editPage, OutputPage $out ) {
-		$revId = self::getBaseRevId( $editPage, $this->getRequest() );
-		$out->addHTML( "\n" . Html::hidden( 'baseRevId', $revId ) );
+		$out->addHTML( "\n" . Html::hidden( 'baseRevId',
+			self::getBaseRevId( $editPage, $this->getRequest() ) ) );
+		$out->addHTML( "\n" . Html::hidden( 'altBaseRevId',
+			self::getAltBaseRevId( $editPage, $this->getRequest() ) ) );
 		$out->addHTML( "\n" . Html::hidden( 'undidRev',
 			empty( $editPage->undidRev ) ? 0 : $editPage->undidRev )
 		);
@@ -1872,7 +1925,43 @@ class FlaggablePageView extends ContextSource {
 	 * @return int
 	 */
 	protected static function getBaseRevId( EditPage $editPage, WebRequest $request ) {
+		if ( $editPage->isConflict ) {
+			return 0; // throw away these values (bug 33481)
+		}
 		if ( !isset( $editPage->fr_baseRevId ) ) {
+			$article = $editPage->getArticle(); // convenience
+			$latestId = $article->getLatest(); // current rev
+			# Undoing edits...
+			if ( $request->getIntOrNull( 'undo' ) ) {
+				$revId = $latestId; // current rev is the base rev
+			# Other edits...
+			} else {
+				# If we are editing via oldid=X, then use that rev ID.
+				# Otherwise, check if the client specified the ID (bug 23098).
+				$revId = $article->getOldID() ?
+					$article->getOldID() :
+					$request->getInt( 'baseRevId' ); // e.g. "show changes"/"preview"
+			}
+			# Zero oldid => draft revision
+			$editPage->fr_baseRevId = $revId ?: $latestId;
+		}
+		return $editPage->fr_baseRevId;
+	}
+
+	/**
+	 * Guess the alternative rev ID the text of this form is based off.
+	 * When undoing the top X edits, the base can be though of as either
+	 * the current or the edit X edits prior to the latest.
+	 * Note: baseRevId trusted for Reviewers - check text for others.
+	 * @param EditPage $editPage
+	 * @param WebRequest $request
+	 * @return int
+	 */
+	protected static function getAltBaseRevId( EditPage $editPage, WebRequest $request ) {
+		if ( $editPage->isConflict ) {
+			return 0; // throw away these values (bug 33481)
+		}
+		if ( !isset( $editPage->fr_altBaseRevId ) ) {
 			$article = $editPage->getArticle(); // convenience
 			$latestId = $article->getLatest(); // current rev
 			$undo = $request->getIntOrNull( 'undo' );
@@ -1883,23 +1972,11 @@ class FlaggablePageView extends ContextSource {
 				# If undoafter is not given, then it is the previous rev ID.
 				$revId = $request->getInt( 'undoafter',
 					$article->getTitle()->getPreviousRevisionID( $latestId, Title::GAID_FOR_UPDATE ) );
-			# Undoing other edits...
-			} elseif ( $undo ) {
-				$revId = $latestId; // current rev is the base rev
-			# Other edits...
 			} else {
-				# If we are editing via oldid=X, then use that rev ID.
-				# Otherwise, check if the client specified the ID (bug 23098).
-				$revId = $article->getOldID()
-					? $article->getOldID()
-					: $request->getInt( 'baseRevId' ); // e.g. "show changes"/"preview"
+				$revId = $request->getInt( 'altBaseRevId' );
 			}
-			# Zero oldid => draft revision
-			if ( !$revId ) {
-				$revId = $latestId;
-			}
-			$editPage->fr_baseRevId = $revId;
+			$editPage->fr_altBaseRevId = $revId;
 		}
-		return $editPage->fr_baseRevId;
+		return $editPage->fr_altBaseRevId;
 	}
 }

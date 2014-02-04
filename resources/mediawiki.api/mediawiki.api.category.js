@@ -1,105 +1,133 @@
 /**
- * Additional mw.Api methods to assist with API calls related to categories.
+ * @class mw.Api.plugin.category
  */
-
-( function( $, mw, undefined ) {
+( function ( mw, $ ) {
 
 	$.extend( mw.Api.prototype, {
 		/**
 		 * Determine if a category exists.
-		 * @param title {mw.Title}
-		 * @param success {Function} callback to pass boolean of category's existence
-		 * @param err {Function} optional callback to run if api error
-		 * @return ajax call object
+		 * @param {mw.Title} title
+		 * @param {Function} [ok] Success callback (deprecated)
+		 * @param {Function} [err] Error callback (deprecated)
+		 * @return {jQuery.Promise}
+		 * @return {Function} return.done
+		 * @return {boolean} return.done.isCategory Whether the category exists.
 		 */
-		isCategory: function( title, success, err ) {
-			var params = {
+		isCategory: function ( title, ok, err ) {
+			var d = $.Deferred(),
+				apiPromise;
+
+			// Backwards compatibility (< MW 1.20)
+			d.done( ok ).fail( err );
+
+			apiPromise = this.get( {
 					prop: 'categoryinfo',
 					titles: title.toString()
-				},
-				ok = function( data ) {
+				} )
+				.done( function ( data ) {
 					var exists = false;
 					if ( data.query && data.query.pages ) {
-						$.each( data.query.pages, function( id, page ) {
+						$.each( data.query.pages, function ( id, page ) {
 							if ( page.categoryinfo ) {
 								exists = true;
 							}
 						} );
 					}
-					success( exists );
-				};
+					d.resolve( exists );
+				})
+				.fail( d.reject );
 
-			return this.get( params, { ok: ok, err: err } );
+			return d.promise( { abort: apiPromise.abort } );
 		},
 
 		/**
 		 * Get a list of categories that match a certain prefix.
 		 *   e.g. given "Foo", return "Food", "Foolish people", "Foosball tables" ...
-		 * @param prefix {String} prefix to match
-		 * @param success {Function} callback to pass matched categories to
-		 * @param err {Function} optional callback to run if api error
-		 * @return {jqXHR}
+		 * @param {string} prefix Prefix to match.
+		 * @param {Function} [ok] Success callback (deprecated)
+		 * @param {Function} [err] Error callback (deprecated)
+		 * @return {jQuery.Promise}
+		 * @return {Function} return.done
+		 * @return {String[]} return.done.categories Matched categories
 		 */
-		getCategoriesByPrefix: function( prefix, success, err ) {
+		getCategoriesByPrefix: function ( prefix, ok, err ) {
+			var d = $.Deferred(),
+				apiPromise;
 
-			// fetch with allpages to only get categories that have a corresponding description page.
-			var params = {
-				'list': 'allpages',
-				'apprefix': prefix,
-				'apnamespace': mw.config.get('wgNamespaceIds').category
-			};
+			// Backwards compatibility (< MW 1.20)
+			d.done( ok ).fail( err );
 
-			var ok = function( data ) {
-				var texts = [];
-				if ( data.query && data.query.allpages ) {
-					$.each( data.query.allpages, function( i, category ) {
-						texts.push( new mw.Title( category.title ).getNameText() );
-					} );
-				}
-				success( texts );
-			};
+			// Fetch with allpages to only get categories that have a corresponding description page.
+			apiPromise = this.get( {
+					list: 'allpages',
+					apprefix: prefix,
+					apnamespace: mw.config.get('wgNamespaceIds').category
+				} )
+				.done( function ( data ) {
+					var texts = [];
+					if ( data.query && data.query.allpages ) {
+						$.each( data.query.allpages, function ( i, category ) {
+							texts.push( new mw.Title( category.title ).getNameText() );
+						} );
+					}
+					d.resolve( texts );
+				})
+				.fail( d.reject );
 
-			return this.get( params, { ok: ok, err: err } );
+			return d.promise( { abort: apiPromise.abort } );
 		},
 
 
 		/**
 		 * Get the categories that a particular page on the wiki belongs to
-		 * @param title {mw.Title}
-		 * @param success {Function} callback to pass categories to (or false, if title not found)
-		 * @param err {Function} optional callback to run if api error
-		 * @param async {Boolean} optional asynchronousness (default = true = async)
-		 * @return {jqXHR}
+		 * @param {mw.Title} title
+		 * @param {Function} [ok] Success callback (deprecated)
+		 * @param {Function} [err] Error callback (deprecated)
+		 * @param {boolean} [async=true] Asynchronousness
+		 * @return {jQuery.Promise}
+		 * @return {Function} return.done
+		 * @return {boolean|mw.Title[]} return.done.categories List of category titles or false
+		 *  if title was not found.
 		 */
-		getCategories: function( title, success, err, async ) {
-			var params, ok;
-			params = {
-				prop: 'categories',
-				titles: title.toString()
-			};
-			if ( async === undefined ) {
-				async = true;
-			}
-			ok = function( data ) {
-				var ret = false;
-				if ( data.query && data.query.pages ) {
-					$.each( data.query.pages, function( id, page ) {
-						if ( page.categories ) {
-							if ( typeof ret !== 'object' ) {
-								ret = [];
-							}
-							$.each( page.categories, function( i, cat ) {
-								ret.push( new mw.Title( cat.title ) );
-							} );
-						}
-					} );
-				}
-				success( ret );
-			};
+		getCategories: function ( title, ok, err, async ) {
+			var d = $.Deferred(),
+				apiPromise;
 
-			return this.get( params, { ok: ok, err: err, async: async } );
+			// Backwards compatibility (< MW 1.20)
+			d.done( ok ).fail( err );
+
+			apiPromise = this.get( {
+					prop: 'categories',
+					titles: title.toString()
+				}, {
+					async: async === undefined ? true : async
+				} )
+				.done( function ( data ) {
+					var ret = false;
+					if ( data.query && data.query.pages ) {
+						$.each( data.query.pages, function ( id, page ) {
+							if ( page.categories ) {
+								if ( typeof ret !== 'object' ) {
+									ret = [];
+								}
+								$.each( page.categories, function ( i, cat ) {
+									ret.push( new mw.Title( cat.title ) );
+								} );
+							}
+						} );
+					}
+					d.resolve( ret );
+				} )
+				.fail( d.reject );
+
+			return d.promise( { abort: apiPromise.abort } );
 		}
 
 	} );
 
-} )( jQuery, mediaWiki );
+	/**
+	 * @class mw.Api
+	 * @mixins mw.Api.plugin.category
+	 */
+
+}( mediaWiki, jQuery ) );
