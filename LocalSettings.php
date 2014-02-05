@@ -231,14 +231,14 @@ $wgAuth = new NovellAuthenticationPlugin();
 require_once($IP.'/extensions/InputBox/InputBox.php');
 
 # FlaggedRevs ----------------------
-include_once("$IP/extensions/FlaggedRevs/FlaggedRevs.php");
-$wgFlaggedRevsNamespaces = array(NS_MAIN, NS_IMAGE, NS_TEMPLATE, 100, 102, 12, 106); // SDB, Portal, Help, HCL
-$wgSimpleFlaggedRevsUI = true;                                                           
-$wgFlaggedRevComments = true;                                                           
-$wgFlaggedRevsLowProfile = false;                                                         
-$wgFlaggedRevTabs = false;
-$wgFlaggedRevsAutoReview = true;
-$wgFlaggedRevsAutoReviewNew = true; 
+#include_once("$IP/extensions/FlaggedRevs/FlaggedRevs.php");
+#$wgFlaggedRevsNamespaces = array(NS_MAIN, NS_IMAGE, NS_TEMPLATE, 100, 102, 12, 106); // SDB, Portal, Help, HCL
+#$wgSimpleFlaggedRevsUI = true;                                                           
+#$wgFlaggedRevComments = true;                                                           
+#$wgFlaggedRevsLowProfile = false;                                                         
+#$wgFlaggedRevTabs = false;
+#$wgFlaggedRevsAutoReview = true;
+#$wgFlaggedRevsAutoReviewNew = true; 
 
 # ParserFunctions -----------------
 require_once( "$IP/extensions/ParserFunctions/ParserFunctions.php" );
