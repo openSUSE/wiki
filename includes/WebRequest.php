@@ -176,9 +176,9 @@ class WebRequest {
 			}
 			$host = $parts[0];
 			if ( $parts[1] === false ) {
-				if ( isset( $_SERVER['SERVER_PORT'] ) ) {
-					$port = $_SERVER['SERVER_PORT'];
-				} // else leave it as $stdPort
+				#if ( isset( $_SERVER['SERVER_PORT'] ) ) {
+				#	$port = $_SERVER['SERVER_PORT'];
+				#} // else leave it as $stdPort
 			} else {
 				$port = $parts[1];
 			}

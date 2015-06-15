@@ -98,8 +98,6 @@ $wgTmpDirectory     = "{$wgUploadDirectory}/temp";
 
 $wgLocalInterwiki   = $wgSitename;
 
-$wgSecretKey = "43eec14064049edec12eceb5cb11609dbdb0eeb27646d9996b7274d2a0617432";
-
 $wgCookieDomain = "opensuse.org";
 
 ## Default skin: you can change the default skin. Use the internal symbolic
@@ -120,7 +118,7 @@ $wgDefaultSkin = 'bentofluid';
 $wgWhitelistEdit = true;
 $wgLocalTZoffset = date("Z") / 3600;
 $wgGroupPermissions['*'    ]['edit']            = false;
-$wgFavicon = "http://www.opensuse.org/favicon.ico";
+$wgFavicon = "//www.opensuse.org/favicon.ico";
 $wgDiff3 = "/usr/bin/diff3";
 
    # used for mysql/search settings
@@ -195,7 +193,7 @@ $wgNamespacesToBeSearchedDefault = array(
 $wgUseAjax = true; // Enable Ajax
 $wgAllowExternalImages = true; // Enable links to external images
 # Allow upload of files with the following extensions            
-$wgFileExtensions = array( 'doc', 'docx', 'gif', 'jpg', 'jpeg', 'odp', 'ods', 'odt', 'pdf', 'png', 'ppt', 'pptx', 'svg', 'sxc', 'sxw', 'xls', 'xlsx' );                                                                     
+$wgFileExtensions = array( 'doc', 'docx', 'gif', 'jpg', 'jpeg', 'odp', 'ods', 'odt', 'pdf', 'png', 'ppt', 'pptx', 'sxc', 'sxw', 'xls', 'xlsx' );                                                                     
 # Add XMPP functionality
 $wgUrlProtocols[] = 'xmpp:';
 
@@ -221,7 +219,8 @@ $wgDefaultUserOptions['wikieditor-preview'] = 1;
 include("$IP/extensions/intersection/DynamicPageList.php");
 
 # SimpleFeed -----------------------
-include("$IP/extensions/SimpleFeed.php");
+#include("$IP/extensions/SimpleFeed.php");
+require_once("$IP/extensions/SimpleFeed.php");
 
 # Access Manager -------------------
 require_once("$IP/extensions/NovellAuthenticationPlugin.php");

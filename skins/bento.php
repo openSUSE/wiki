@@ -52,7 +52,7 @@ class BentoTemplate extends QuickTemplate {
         <script type="<?php $this->text('jsmimetype') ?>" src="https://static.opensuse.org/themes/bento/js/l10n/global-navigation-data-<?php echo $bento_lang; ?>.js"></script>
         <script type="<?php $this->text('jsmimetype') ?>" src="https://static.opensuse.org/themes/bento/js/global-navigation.js"></script>
 
-        <link rel="icon" type="image/png" href="http://static.opensuse.org/themes/bento/images/favicon.png" />
+        <link rel="icon" type="image/png" href="//static.opensuse.org/themes/bento/images/favicon.png" />
 
         <!-- Head Scripts -->
                 <?php $this->html('headscripts') ?>
