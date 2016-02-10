@@ -39,7 +39,7 @@ final class MapsGoogleGeocoder extends MapsGeocoder {
 	 * @return string
 	 */	
 	protected function getRequestUrl( $address ) {
-		return 'http://maps.googleapis.com/maps/api/geocode/xml?address=' . urlencode( $address ) . '&sensor=false';
+		return 'https://maps.googleapis.com/maps/api/geocode/xml?address=' . urlencode( $address ) . '&sensor=false';
 	}
 	
 	/**
