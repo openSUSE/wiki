@@ -336,4 +336,8 @@ $wgGroupPermissions['sysop']['abusefilter-revert'] = true;
 
 
 $wgShowExceptionDetails = true;
+
+// increase the time frame for recent changes to 180 days for cleanup. this is a temporary change and can be reverted
+// after the cleanup is completed
+$wgRCMaxAge = 180 * 24 * 60 * 60;
 ?>
