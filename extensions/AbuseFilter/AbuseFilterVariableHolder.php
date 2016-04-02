@@ -127,7 +127,7 @@ class AbuseFilterVariableHolder {
 			$coreVariables = array_keys( $coreVariables['vars'] );
 
 			// Title vars can have several prefixes
-			$prefixes = array( 'ARTICLE', 'MOVED_FROM', 'MOVED_TO', 'FILE' );
+			$prefixes = array( 'ARTICLE', 'MOVED_FROM', 'MOVED_TO' );
 			$titleVars = array( '_ARTICLEID', '_NAMESPACE', '_TEXT', '_PREFIXEDTEXT', '_recent_contributors' );
 			foreach ( $wgRestrictionTypes as $action ) {
 				$titleVars[] = "_restrictions_$action";

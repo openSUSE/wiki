@@ -573,7 +573,7 @@ class AbuseFilterHooks {
 
 		$vars->addHolders(
 			AbuseFilter::generateUserVars( $wgUser ),
-			AbuseFilter::generateTitleVars( $title, 'FILE' )
+			AbuseFilter::generateTitleVars( $title, 'ARTICLE' )
 		);
 
 		$vars->setVar( 'ACTION', 'upload' );
