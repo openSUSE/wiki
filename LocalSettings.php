@@ -325,6 +325,10 @@ include_once( "$IP/extensions/Nuke/Nuke.php");
 
 // spamfilter
 include_once( "$IP/extensions/AbuseFilter/AbuseFilter.php");
+# set higher EmergencyDisable limits to prevent spam filter from getting disabled with
+# "Warning: This filter was automatically disabled as a safety measure. It reached the limit of matching more than 5.00% of actions."
+$wgAbuseFilterEmergencyDisableThreshold['default'] = 0.50; # default 0.05
+$wgAbuseFilterEmergencyDisableCount['default'] = 50; # default 2
 
 $wgGroupPermissions['sysop']['abusefilter-modify'] = true;
 $wgGroupPermissions['*']['abusefilter-log-detail'] = true;
