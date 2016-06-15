@@ -203,6 +203,14 @@ $wgGroupPermissions['user']['importupload'] = true;
 $wgGroupPermissions['sysop']['deleterevision']  = true;
 $wgGroupPermissions['user']['move'] = true;
 
+# make the real IPs visible to the wiki instead of the auth proxy (AccessManager) IPs. Without this, IP blocking blocks the proxy IP and therefore edits from everywhere.
+$wgUseSquid = true;
+$wgSquidServers = array();
+$wgSquidServers[] = "137.65.227.73";
+$wgSquidServers[] = "137.65.227.74";
+$wgSquidServers[] = "137.65.227.75";
+$wgSquidServers[] = "137.65.227.76";
+
 ##### Extensions #####
 # UserMerge ------------------------
 require_once( "$IP/extensions/UserMerge/UserMerge.php" );
