@@ -5,7 +5,7 @@
 
 if( !defined( 'MEDIAWIKI' ) ) die();
 
-require_once( "skins/bento.php" );
+require_once( "skins/bento/bento.php" );
 
 class SkinBentoFluid extends SkinTemplate {
     function initPage( OutputPage $out ) {

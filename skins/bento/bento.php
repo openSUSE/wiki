@@ -92,7 +92,7 @@ class BentoTemplate extends QuickTemplate {
 
         <!-- Start: Header -->
                 <?php
-                $handle = fopen(dirname( __FILE__ ) . "/bento/includes/header.html","rb");
+                $handle = fopen(dirname( __FILE__ ) . "/includes/header.html","rb");
                 $content = stream_get_contents($handle);
                 fclose($handle);
                 $lastsearch = "Search";
@@ -337,7 +337,7 @@ class BentoTemplate extends QuickTemplate {
 
         <!-- Start: Footer -->
                 <?php
-                $handle = fopen(dirname( __FILE__ ) . "/bento/includes/footer.html","rb");
+                $handle = fopen(dirname( __FILE__ ) . "/includes/footer.html","rb");
                 $content = stream_get_contents($handle);
                 fclose($handle);
                 if(isset($this->data['lastmod'])) {

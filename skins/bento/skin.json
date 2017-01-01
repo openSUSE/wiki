@@ -1,0 +1,48 @@
+{
+	"name": "bento",
+	"author": [
+		"digitaltom",
+		"miska",
+		"cboltz"
+	],
+	"url": "https://www.opensuse.org",
+	"descriptionmsg": "bento-desc",
+	"namemsg": "skinname-bento",
+	"license-name": "GPL-2.0+",
+	"type": "skin",
+	"ValidSkinNames": {
+		"bento": "bento"
+	},
+	"requires": {
+		"MediaWiki": ">= 1.25.0"
+	},
+	"MessagesDirs": {
+		"bento": [
+			"i18n"
+		]
+	},
+	"ResourceModules": {
+		"skins.bento": {
+			"position": "top",
+			"styles": {
+				"https://static.opensuse.org/themes/bento/css/style.fluid.css": { "media": "screen" },
+				"https://static.opensuse.org/themes/bento/css/print.css":       { "media": "print" },
+				"/skins/bento/css_local/style.css":                             { "media": "screen" }
+			}
+		}
+	},
+	"ResourceFileModulePaths": {
+		"localBasePath": "",
+		"remoteSkinPath": "bento"
+	},
+	"ResourceModuleSkinStyles": {
+		"bento": {
+			"mediawiki.sectionAnchor": "resources/sectionAnchor.css"
+		}
+	},
+	"AutoloadClasses": {
+		"Skinbento": "bento.php",
+		"bentoTemplate": "bento.php"
+	},
+	"manifest_version": 1
+}
