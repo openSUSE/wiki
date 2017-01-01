@@ -262,9 +262,6 @@ $wgMultiBoilerplatePerNamespace = true;
 # Replace Text ----------------------------------------------
 require_once( "$IP/extensions/ReplaceText/ReplaceText.php" );
 
-# Hermes Notification ----------------
-require_once("$IP/extensions/HermesNotification/HermesNotify.php");
-
 # Interwiki links management ----------------------------------
 require_once("$IP/extensions/Interwiki/Interwiki.php");
 $wgInterwikiMagic=true;
