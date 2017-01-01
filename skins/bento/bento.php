@@ -7,16 +7,56 @@ if( !defined( 'MEDIAWIKI' ) ) die();
 
 class SkinBento extends SkinTemplate {
     function initPage( OutputPage $out ) {
+        global $bento_lang;
+
         parent::initPage( $out );
         $this->skinname  = 'bento';
         $this->stylename = 'bento';
         $this->template  = 'BentoTemplate';
 
+        $script = '
+<!-- begin bento headers -->
+
+<script type="text/javascript" src="https://static.opensuse.org/stage/themes/bento/js/jquery.js"></script>
+<script type="text/javascript" src="https://static.opensuse.org/stage/themes/bento/js/script.js"></script>
+<script type="text/javascript" src="/skins/bento/js_local/script.js"></script>
+<script type="text/javascript" src="/skins/bento/js_local/search.js"></script>
+<script type="text/javascript" src="https://static.opensuse.org/themes/bento/js/l10n/global-navigation-data-' . $bento_lang . '.js"></script>
+<script type="text/javascript" src="https://static.opensuse.org/themes/bento/js/global-navigation.js"></script>
+
+<link rel="icon" type="image/png" href="//static.opensuse.org/themes/bento/images/favicon.png" />
+
+<!-- end bento headers -->
+
+<!-- Piwik -->
+<script type="text/javascript">
+  var _paq = _paq || [];
+  (function(){
+	var u=(("https:" == document.location.protocol) ? "https://beans.opensuse.org/piwik/" : "http://beans.opensuse.org/piwik/");
+	_paq.push([\'setSiteId\', 9]);
+	_paq.push([\'setTrackerUrl\', u+\'piwik.php\']);
+	_paq.push([\'trackPageView\']);
+	_paq.push([ \'setDomains\', ["*.opensuse.org"]]);
+	var d=document,
+	g=d.createElement(\'script\'),
+	s=d.getElementsByTagName(\'script\')[0];
+	g.type=\'text/javascript\';
+	g.defer=true;
+	g.async=true;
+	g.src=u+\'piwik.js\';
+	s.parentNode.insertBefore(g,s);
+  })();
+</script>
+<!-- End Piwik Code -->
+';
+        $out->addHeadItem("openSUSE bento script", $script);
     }
+
     function setupSkinUserCss( OutputPage $out ) {
         parent::setupSkinUserCss( $out );
         // Append to the default screen common & print styles...
         $out->addStyle( 'https://static.opensuse.org/themes/bento/css/style.css', 'screen' );
+        $out->addStyle( '/skins/bento/css_local/style.css', 'screen' );
     	$out->addStyle( 'https://static.opensuse.org/themes/bento/css/print.css', 'print' );
     }
 }
@@ -28,69 +68,8 @@ class BentoTemplate extends QuickTemplate {
         $this->skin = $skin = $this->data['skin'];
         $action = $wgRequest->getText( 'action' );
 
-        // Suppress warnings to prevent notices about missing indexes in $this->data
-        wfSuppressWarnings();
-        ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="<?php $this->text('xhtmldefaultnamespace') ?>" <?php foreach($this->data['xhtmlnamespaces'] as $tag => $ns) { ?>xmlns:<?php echo "{$tag}=\"{$ns}\" ";
-        } ?>xml:lang="<?php $this->text('lang') ?>" lang="<?php $this->text('lang') ?>" dir="<?php $this->text('dir') ?>">
-    <head>
-        <meta http-equiv="Content-Type" content="<?php $this->text('mimetype') ?>; charset=<?php $this->text('charset') ?>" />
-        <?php $this->html('headlinks') ?>
-        <title><?php $this->text('pagetitle') ?></title>
-        <?php $this->html('csslinks') ?>
-        <link rel="stylesheet" href="/skins/bento/css_local/style.css" type="text/css" media="screen" />
-        <!--[if lt IE 7]>
-        <meta http-equiv="imagetoolbar" content="no" />
-        <![endif]-->
-        <script type="<?php $this->text('jsmimetype') ?>" src="<?php $this->text('stylepath' ) ?>/common/wikibits.js?<?php echo $GLOBALS['wgStyleVersion'] ?>"><!-- wikibits js --></script>
-        <script type="<?php $this->text('jsmimetype') ?>" src="https://static.opensuse.org/stage/themes/bento/js/jquery.js"></script>
-        <script type="<?php $this->text('jsmimetype') ?>" src="https://static.opensuse.org/stage/themes/bento/js/script.js"></script>
-        <script type="<?php $this->text('jsmimetype') ?>" src="<?php $this->text('stylepath') ?>/bento/js_local/script.js"></script>
-        <script type="<?php $this->text('jsmimetype') ?>" src="<?php $this->text('stylepath') ?>/bento/js_local/search.js"></script>
+        $this->html( 'headelement' );
 
-        <script type="<?php $this->text('jsmimetype') ?>" src="https://static.opensuse.org/themes/bento/js/l10n/global-navigation-data-<?php echo $bento_lang; ?>.js"></script>
-        <script type="<?php $this->text('jsmimetype') ?>" src="https://static.opensuse.org/themes/bento/js/global-navigation.js"></script>
-
-        <link rel="icon" type="image/png" href="//static.opensuse.org/themes/bento/images/favicon.png" />
-
-        <!-- Head Scripts -->
-                <?php $this->html('headscripts') ?>
-                <?php if($this->data['pagecss']) { ?> <style type="text/css"><?php $this->html('pagecss') ?></style><?php }?>
-                <?php if($this->data['usercss']) { ?><style type="text/css"><?php $this->html('usercss') ?></style><?php }?>
-                <?php if($this->data['userjs']) { ?><script type="<?php $this->text('jsmimetype') ?>" src="<?php $this->text('userjs' ) ?>"></script><?php }?>
-                <?php if($this->data['userjsprev']) { ?><script type="<?php $this->text('jsmimetype') ?>"><?php $this->html('userjsprev') ?></script><?php }?>
-        <?php if($this->data['trackbackhtml']) print $this->data['trackbackhtml']; ?>
-
-    <!-- Piwik -->
-    <script type="text/javascript">
-      var _paq = _paq || [];
-      (function(){
-        var u=(("https:" == document.location.protocol) ? "https://beans.opensuse.org/piwik/" : "http://beans.opensuse.org/piwik/");
-        _paq.push(['setSiteId', 9]);
-        _paq.push(['setTrackerUrl', u+'piwik.php']);
-        _paq.push(['trackPageView']);
-        _paq.push([ 'setDomains', ["*.opensuse.org"]]);
-        var d=document,
-        g=d.createElement('script'),
-        s=d.getElementsByTagName('script')[0];
-        g.type='text/javascript';
-        g.defer=true;
-        g.async=true;
-        g.src=u+'piwik.js';
-        s.parentNode.insertBefore(g,s);
-      })();
-    </script>
-    <!-- End Piwik Code -->
-
-
-    </head>
-
-    <body<?php if($this->data['body_ondblclick']) { ?> ondblclick="<?php $this->text('body_ondblclick') ?>"<?php } ?>
-        <?php if($this->data['body_onload']) { ?> onload="<?php $this->text('body_onload') ?>"<?php } ?>
-                                                       class="mediawiki <?php $this->text('dir') ?> <?php $this->text('pageclass') ?> <?php $this->text('skinnameclass') ?>">
-
-        <!-- Start: Header -->
-                <?php
                 $handle = fopen(dirname( __FILE__ ) . "/includes/header.html","rb");
                 $content = stream_get_contents($handle);
                 fclose($handle);
