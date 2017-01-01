@@ -298,12 +298,6 @@ include_once( "$IP/extensions/UserPageEditProtection/UserPageEditProtection.php"
 $wgOnlyUserEditUserPage = true; /* Set this to true to turn on user page protection */ 
 $wgGroupPermissions['sysop']['editalluserpages'] = true; /* Set this to allow sysops to edit all user pages */
 
-// Multiple Uploads
-//require_once("$IP/extensions/MultiUpload/SpecialMultipleUpload.php");
-//Uncomment this to make it the default uploader
-//$wgUploadNavigationUrl = '/index.php?title=Special:MultipleUpload';
-//$wgMaxUploadFiles = 5;
-
 include("$IP/extensions/BentoLanguage.php");
 include("$IP/extensions/google-coop.php");
 
