@@ -281,7 +281,7 @@ require_once("extensions/videoflash.php");
 # Syntax highlighting ----------------------------------
 require_once("$IP/extensions/SyntaxHighlight_GeSHi/SyntaxHighlight_GeSHi.php");
 
-require_once("$IP/extensions/CrossNamespaceLinks/CrossNamespaceLinks.php");
+# Hide page title ----------------------------------
 require_once("$IP/extensions/notitle.php");
 
 // Semantic Maps: 
