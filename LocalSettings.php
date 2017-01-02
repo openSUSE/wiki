@@ -211,6 +211,12 @@ $wgSquidServers[] = "137.65.227.74";
 $wgSquidServers[] = "137.65.227.75";
 $wgSquidServers[] = "137.65.227.76";
 
+# Category watching ----------------------------------
+# see https://www.mediawiki.org/wiki/Manual:CategoryMembershipChanges
+$wgRCWatchCategoryMembership = true;
+$wgDefaultUserOptions['hidecategorization'] = 0;
+$wgDefaultUserOptions['watchlisthidecategorization'] = 0;
+
 ##### Extensions #####
 # UserMerge ------------------------
 require_once( "$IP/extensions/UserMerge/UserMerge.php" );
@@ -274,9 +280,6 @@ require_once("extensions/videoflash.php");
 
 # Syntax highlighting ----------------------------------
 require_once("$IP/extensions/SyntaxHighlight_GeSHi/SyntaxHighlight_GeSHi.php");
-
-# Category watching ----------------------------------
-require_once("$IP/extensions/CategoryWatch/CategoryWatch.php");
 
 require_once("$IP/extensions/CrossNamespaceLinks/CrossNamespaceLinks.php");
 require_once("$IP/extensions/notitle.php");
