@@ -313,7 +313,7 @@ class BentoTemplate extends QuickTemplate {
                 $content = stream_get_contents($handle);
                 fclose($handle);
                 if(isset($this->data['lastmod'])) {
-                    $content = split('<p>',$content,2);
+                    $content = explode('<p>',$content,2);
                     echo $content[0];
                     echo '<p>';
             $this->html('viewcount');
