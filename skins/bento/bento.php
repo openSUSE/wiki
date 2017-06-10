@@ -99,25 +99,18 @@ class BentoTemplate extends QuickTemplate {
 
         <?php if( $this->data['username'] == NULL ) { ?>
             <div id="login-wrapper" class="grid_4 omega">
-		<?php if( strpos($_SERVER["SERVER_NAME"], "stage") !== FALSE ) { ?>
-                	<a href="https://secure-wwwstage.provo.novell.com/selfreg/jsp/createOpenSuseAccount.jsp?login=Sign+up?>">Sign up</a> | <a id="login-trigger" href="https://loginstage.microfocus.com/nidp/idff/sso?id=12&sid=3&option=credential&sid=3">Login</a>
-		<?php } else { ?>			
-                	<a href="https://secure-www.novell.com/selfreg/jsp/createOpenSuseAccount.jsp?login=Sign+up">Sign up</a> | <a id="login-trigger" href="https://login.microfocus.com/nidp/app/login?id=28&sid=0&option=credential&sid=0">Login</a>
-		<?php } ?>
+                <a href="https://secure-www.novell.com/selfreg/jsp/createOpenSuseAccount.jsp?login=Sign+up">Sign up</a> | <a id="login-trigger" href="/ICSLogin/auth-up/?url=https://<?php echo $_SERVER['SERVER_NAME'] . htmlentities($_SERVER['REQUEST_URI']) ?>">Login</a>
                 <!-- <a href="<?php //echo $this->data['personal_urls'][login][href] ?>">Sign up</a> | <a id="login-trigger" href="#login">Login</a> -->
 
                 <div id="login-form">
-		    <?php if( strpos($_SERVER["SERVER_NAME"], "stage") !== FALSE ) { ?>
-                    	<form action="https://loginstage.microfocus.com/nidp/idff/sso?sid=0" method="post" enctype="application/x-www-form-urlencoded" name="login_form">
-                    <?php } else { ?>
-                    	<form action="https://login.microfocus.com/nidp/idff/sso?sid=0" method="post" enctype="application/x-www-form-urlencoded" name="login_form">
-                    <?php } ?>
-		    <input name="target" value="http://<?php echo $_SERVER['SERVER_NAME'] . $this->data['personal_urls']['login']['href'] ?>" type="hidden"/>
+                    <form action="/ICSLogin/auth-up" method="post" enctype="application/x-www-form-urlencoded" id="login_form">
+                        <input name="url" value="https://<?php echo $_SERVER['SERVER_NAME'] . htmlentities($_SERVER['REQUEST_URI']) ?>" type="hidden">
                         <input name="context" value="default" type="hidden"/>
                         <input name="proxypath" value="reverse" type="hidden"/>
                         <input name="message" value="Please log In" type="hidden"/>
-                        <p><label class="inlined" for="username">Username</label><input type="text" class="inline-text" name="Ecom_User_ID" value="" id="username" /></p>
-                        <p><label class="inlined" for="password">Password</label><input type="password" class="inline-text" name="Ecom_Password" value="" id="password" /></p>
+                        <input name="return_to_path" value="<?php echo htmlentities($_SERVER['REQUEST_URI']) ?>" type="hidden">
+                        <p><label class="inlined" for="username" style="display: block;">Username</label><input class="inline-text" name="username" value="" id="username" type="text"></p>
+                        <p><label class="inlined" for="password">Password</label><input class="inline-text" name="password" value="" id="password" type="password"></p>
                         <p><input type="submit" value="Login" /></p>
                         <p class="slim-footer"><a id="close-login" href="#cancel">Cancel</a></p>
                     </form>
