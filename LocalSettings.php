@@ -229,6 +229,19 @@ $wgDefaultUserOptions['hidecategorization'] = 0;
 $wgDefaultUserOptions['watchlisthidecategorization'] = 0;
 
 ##### Extensions #####
+
+# Login proxy / Auth_remoteuser -------------------
+wfLoadExtension( 'Auth_remoteuser' );
+$wgAuthRemoteuserUserUrls = [ 'logout' => '/cmd/ICSLogout/?url=' . htmlentities($_SERVER['REQUEST_URI']) ];
+
+if (isset($_SERVER['HTTP_X_USERNAME'])) { # avoid logging 'undefined index' warnings
+    $wgAuthRemoteuserUserName = [ $_SERVER['HTTP_X_USERNAME'] ];
+    $wgAuthRemoteuserUserPrefsForced = [ 'email' => $_SERVER['HTTP_X_EMAIL'] ];
+} else {
+    $wgAuthRemoteuserUserName = [ '' ];
+    $wgAuthRemoteuserUserPrefsForced = [ 'email' => '' ];
+}
+
 # UserMerge ------------------------
 require_once( "$IP/extensions/UserMerge/UserMerge.php" );
 // By default nobody can use this function, enable for bureaucrat?
@@ -246,10 +259,6 @@ include("$IP/extensions/intersection/DynamicPageList.php");
 # SimpleFeed -----------------------
 #include("$IP/extensions/SimpleFeed.php");
 require_once("$IP/extensions/SimpleFeed.php");
-
-# Access Manager -------------------
-require_once("$IP/extensions/NovellAuthenticationPlugin.php");
-$wgAuth = new NovellAuthenticationPlugin();                   
 
 # InputBox -------------------------
 require_once($IP.'/extensions/InputBox/InputBox.php');
