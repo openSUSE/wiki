@@ -144,48 +144,59 @@ $wgDiff3 = "/usr/bin/diff3";
 # Project (meta) namespace                                                                      
 $wgMetaNamespace = 'openSUSE';                                                          
 # Custom namespaces                                                                                   
-$wgExtraNamespaces[100] = 'SDB';                                                                  
-$wgExtraNamespaces[101] = 'SDB_Talk';                                                               
-$wgExtraNamespaces[102] = 'Portal';                                                                 
-$wgExtraNamespaces[103] = 'Portal_Talk';
-$wgExtraNamespaces[104] = 'Archive';
-$wgExtraNamespaces[105] = 'Archive_Talk';
-$wgExtraNamespaces[106] = 'HCL';
-$wgExtraNamespaces[107] = 'HCL_Talk';
+define( 'NS_SDB', 100 );
+define( 'NS_SDB_TALK', 101 );
+define( 'NS_PORTAL', 102 );
+define( 'NS_PORTAL_TALK', 103 );
+define( 'NS_ARCHIVE', 104 );
+define( 'NS_ARCHIVE_TALK', 105 );
+define( 'NS_HCL', 106 );
+define( 'NS_HCL_TALK', 107 );
 # $wgExtraNamespaces[108] = '11.2';
 # $wgExtraNamespaces[109] = '11.2_Talk';
-$wgExtraNamespaces[110] = 'Book';
-$wgExtraNamespaces[111] = 'Book_Talk';
+define( 'NS_BOOK', 110 );
+define( 'NS_BOOK_TALK', 111 );
+
+$wgExtraNamespaces[NS_SDB] = 'SDB';
+$wgExtraNamespaces[NS_SDB_TALK] = 'SDB_Talk';
+$wgExtraNamespaces[NS_PORTAL] = 'Portal';
+$wgExtraNamespaces[NS_PORTAL_TALK] = 'Portal_Talk';
+$wgExtraNamespaces[NS_ARCHIVE] = 'Archive';
+$wgExtraNamespaces[NS_ARCHIVE_TALK] = 'Archive_Talk';
+$wgExtraNamespaces[NS_HCL] = 'HCL';
+$wgExtraNamespaces[NS_HCL_TALK] = 'HCL_Talk';
+$wgExtraNamespaces[NS_BOOK] = 'Book';
+$wgExtraNamespaces[NS_BOOK_TALK] = 'Book_Talk';
 
 # Enable/Disable subpages                                                                              
-$wgNamespacesWithSubpages[-1] = false;                                                             
-$wgNamespacesWithSubpages[0] = true;                                                           
-$wgNamespacesWithSubpages[1] = true;                                                              
-$wgNamespacesWithSubpages[2] = true;                                                          
-$wgNamespacesWithSubpages[3] = true;                                                          
-$wgNamespacesWithSubpages[4] = true;
-$wgNamespacesWithSubpages[5] = true;                                                               
-$wgNamespacesWithSubpages[6] = false;                                                       
-$wgNamespacesWithSubpages[7] = true;                                                         
-$wgNamespacesWithSubpages[8] = false;                                                    
-$wgNamespacesWithSubpages[9] = true;                                                     
-$wgNamespacesWithSubpages[10] = true;
-$wgNamespacesWithSubpages[11] = true;                                                          
-$wgNamespacesWithSubpages[100] = true;                                               
-$wgNamespacesWithSubpages[101] = true;                                               
-$wgNamespacesWithSubpages[102] = true;                                                         
-$wgNamespacesWithSubpages[103] = true;                                               
-$wgNamespacesWithSubpages[104] = true;                                               
-$wgNamespacesWithSubpages[105] = true;
-$wgNamespacesWithSubpages[110] = true;
+$wgNamespacesWithSubpages[NS_SPECIAL] = false;
+$wgNamespacesWithSubpages[NS_MAIN] = true;
+$wgNamespacesWithSubpages[NS_TALK] = true;
+$wgNamespacesWithSubpages[NS_USER] = true;
+$wgNamespacesWithSubpages[NS_USER_TALK] = true;
+$wgNamespacesWithSubpages[NS_PROJECT] = true;
+$wgNamespacesWithSubpages[NS_PROJECT_TALK] = true;
+$wgNamespacesWithSubpages[NS_FILE] = false;
+$wgNamespacesWithSubpages[NS_FILE_TALK] = true;
+$wgNamespacesWithSubpages[NS_MEDIAWIKI] = false;
+$wgNamespacesWithSubpages[NS_MEDIAWIKI_TALK] = true;
+$wgNamespacesWithSubpages[NS_TEMPLATE] = true;
+$wgNamespacesWithSubpages[NS_TEMPLATE_TALK] = true;
+$wgNamespacesWithSubpages[NS_SDB] = true;
+$wgNamespacesWithSubpages[NS_SDB_TALK] = true;
+$wgNamespacesWithSubpages[NS_PORTAL] = true;
+$wgNamespacesWithSubpages[NS_PORTAL_TALK] = true;
+$wgNamespacesWithSubpages[NS_ARCHIVE] = true;
+$wgNamespacesWithSubpages[NS_ARCHIVE_TALK] = true;
+$wgNamespacesWithSubpages[NS_BOOK] = true;
 
-$wgContentNamespaces = array (0, 4, 12, 100, 102, 104, 106, 110);
+$wgContentNamespaces = array (NS_MAIN, NS_PROJECT, NS_HELP, NS_SDB, NS_PORTAL, NS_ARCHIVE, NS_HCL, NS_BOOK);
 
 $wgAllowCategorizedRecentChanges = true;
 
 $wgNamespacesToBeSearchedDefault = array(
         NS_MAIN =>           true,
-        102 => true
+        NS_PORTAL => true
 );
 
 ##### Misc #####
