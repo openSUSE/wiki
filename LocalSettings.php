@@ -256,9 +256,9 @@ $wgDefaultUserOptions['wikieditor-preview'] = 1;
 # Intersection ---------------------
 include("$IP/extensions/intersection/DynamicPageList.php");
 
-# SimpleFeed -----------------------
-#include("$IP/extensions/SimpleFeed.php");
-require_once("$IP/extensions/SimpleFeed.php");
+# RSS -----------------------
+include("$IP/extensions/RSS/RSS.php");
+$wgRSSUrlWhitelist = array('*');
 
 # InputBox -------------------------
 require_once($IP.'/extensions/InputBox/InputBox.php');
