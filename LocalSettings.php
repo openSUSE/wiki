@@ -321,7 +321,6 @@ include_once( "$IP/extensions/UserPageEditProtection/UserPageEditProtection.php"
 $wgOnlyUserEditUserPage = true; /* Set this to true to turn on user page protection */ 
 $wgGroupPermissions['sysop']['editalluserpages'] = true; /* Set this to allow sysops to edit all user pages */
 
-include("$IP/extensions/BentoLanguage.php");
 include("$IP/extensions/google-coop.php");
 
 // mass deletion
