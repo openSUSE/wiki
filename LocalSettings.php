@@ -14,12 +14,12 @@ ini_set( "include_path", ".:$IP:$IP/includes:$IP/languages" );
 ini_set( 'memory_limit', '64M' );
 
 if ( $wgCommandLineMode ) {
-	if ( isset( $_SERVER ) && array_key_exists( 'REQUEST_METHOD', $_SERVER ) ) {
-		die( "This script must be run from the command line\n" );
-	}
+    if ( isset( $_SERVER ) && array_key_exists( 'REQUEST_METHOD', $_SERVER ) ) {
+        die( "This script must be run from the command line\n" );
+    }
 } elseif ( empty( $wgNoOutputBuffer ) ) {
-	## Compress output if the browser supports it
-	if( !ini_get( 'zlib.output_compression' ) ) @ob_start( 'ob_gzhandler' );
+    ## Compress output if the browser supports it
+    if( !ini_get( 'zlib.output_compression' ) ) @ob_start( 'ob_gzhandler' );
 }
 
 $wgSitename         = "openSUSE";
@@ -44,7 +44,7 @@ $wgEnableUserEmail = false;
 
 #$wgEmergencyContact = "webmaster@novell.com";
 $wgEmergencyContact = "noreply@novell.com";
-$wgPasswordSender	= "webmaster@novell.com";
+$wgPasswordSender   = "webmaster@novell.com";
 
 ## For a detailed description of the following switches see
 ## http://meta.wikimedia.org/Enotif and http://meta.wikimedia.org/Eauthent
@@ -78,8 +78,8 @@ $wgCacheDirectory = "/srv/www/cache";
 
 ## To enable image uploads, make sure the 'images' directory
 ## is writable, then uncomment this:
-$wgEnableUploads		= true;
-$wgUseImageResize		= true;
+$wgEnableUploads  = true;
+$wgUseImageResize = true;
 $wgUseImageMagick = false;
 #$wgImageMagickConvertCommand = "/usr/bin/convert";
 
@@ -91,7 +91,7 @@ $wgUseImageMagick = false;
 
 ## If you have the appropriate support software installed
 ## you can enable inline LaTeX equations:
-# $wgUseTeX			= true;
+# $wgUseTeX = true;
 $wgMathPath         = "{$wgUploadPath}/math";
 $wgMathDirectory    = "{$wgUploadDirectory}/math";
 $wgTmpDirectory     = "{$wgUploadDirectory}/temp";
@@ -129,16 +129,16 @@ $wgDiff3 = "/usr/bin/diff3";
        putenv("TZ=$oldtz");
    }
 
-#--------------------------------------------------------------                                        
-# Custom config section                                                                                 
-#                                                                                                 
-                                                                                                            
-##### Namespace configuration #####                                                                     
-#                                                        
-#                                                                      
-# Project (meta) namespace                                                                      
-$wgMetaNamespace = 'openSUSE';                                                          
-# Custom namespaces                                                                                   
+#--------------------------------------------------------------
+# Custom config section
+#
+
+##### Namespace configuration #####
+#
+#
+# Project (meta) namespace
+$wgMetaNamespace = 'openSUSE';
+# Custom namespaces
 define( 'NS_SDB', 100 );
 define( 'NS_SDB_TALK', 101 );
 define( 'NS_PORTAL', 102 );
@@ -163,7 +163,7 @@ $wgExtraNamespaces[NS_HCL_TALK] = 'HCL_Talk';
 $wgExtraNamespaces[NS_BOOK] = 'Book';
 $wgExtraNamespaces[NS_BOOK_TALK] = 'Book_Talk';
 
-# Enable/Disable subpages                                                                              
+# Enable/Disable subpages
 $wgNamespacesWithSubpages[NS_SPECIAL] = false;
 $wgNamespacesWithSubpages[NS_MAIN] = true;
 $wgNamespacesWithSubpages[NS_TALK] = true;
@@ -198,8 +198,8 @@ $wgNamespacesToBeSearchedDefault = array(
 
 $wgUseAjax = true; // Enable Ajax
 $wgAllowExternalImages = true; // Enable links to external images
-# Allow upload of files with the following extensions            
-$wgFileExtensions = array( 'doc', 'docx', 'gif', 'jpg', 'jpeg', 'odp', 'ods', 'odt', 'pdf', 'png', 'ppt', 'pptx', 'sxc', 'sxw', 'xls', 'xlsx' );                                                                     
+# Allow upload of files with the following extensions
+$wgFileExtensions = array( 'doc', 'docx', 'gif', 'jpg', 'jpeg', 'odp', 'ods', 'odt', 'pdf', 'png', 'ppt', 'pptx', 'sxc', 'sxw', 'xls', 'xlsx' );
 # Add XMPP functionality
 $wgUrlProtocols[] = 'xmpp:';
 
@@ -269,16 +269,16 @@ $wgCategoryTreeMaxDepth = array(CT_MODE_PAGES => 2, CT_MODE_ALL => 2, CT_MODE_CA
 require_once("$IP/extensions/EventCountdown.php");
 
 # SemanticMediaWiki ---------------
-$smwgNamespaceIndex=120;           
+$smwgNamespaceIndex=120;
 include_once("$IP/extensions/SemanticMediaWiki/SemanticMediaWiki.php");
-enableSemantics('wiki.opensuse.org');                                      
+enableSemantics('wiki.opensuse.org');
 
 # MultiBoilerplate ----------------
 require_once( "$IP/extensions/MultiBoilerplate/MultiBoilerplate.php" );
 $wgMultiBoilerplateOptions = false;
 $wgMultiBoilerplatePerNamespace = true;
 
-#-------------------------------------------------------------- 
+#--------------------------------------------------------------
 
 # Replace Text ----------------------------------------------
 require_once( "$IP/extensions/ReplaceText/ReplaceText.php" );
@@ -299,7 +299,7 @@ require_once("$IP/extensions/SyntaxHighlight_GeSHi/SyntaxHighlight_GeSHi.php");
 # Hide page title ----------------------------------
 require_once("$IP/extensions/notitle.php");
 
-// Semantic Maps: 
+// Semantic Maps:
 include_once( "$IP/extensions/SemanticForms/SemanticForms.php");
 require_once( "$IP/extensions/Validator/Validator.php" );
 require_once( "$IP/extensions/Maps/Maps.php" );
@@ -313,7 +313,7 @@ include_once( "/srv/settings/map_settings.php" );
 
 // protect user pages
 include_once( "$IP/extensions/UserPageEditProtection/UserPageEditProtection.php" );
-$wgOnlyUserEditUserPage = true; /* Set this to true to turn on user page protection */ 
+$wgOnlyUserEditUserPage = true; /* Set this to true to turn on user page protection */
 $wgGroupPermissions['sysop']['editalluserpages'] = true; /* Set this to allow sysops to edit all user pages */
 
 include("$IP/extensions/google-coop.php");
