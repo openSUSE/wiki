@@ -100,10 +100,6 @@ $wgLocalInterwiki   = $wgSitename;
 
 $wgCookieDomain = "opensuse.org";
 
-## Default skin: you can change the default skin. Use the internal symbolic
-## names, ie 'standard', 'nostalgia', 'cologneblue', 'monobook':
-# $wgDefaultSkin = 'monobook';
-
 ## For attaching licensing metadata to pages, and displaying an
 ## appropriate copyright notice / icon. GNU Free Documentation
 ## License and Creative Commons licenses are supported so far.
@@ -113,8 +109,7 @@ $wgRightsUrl = "";
 $wgRightsText = "";
 $wgRightsIcon = "";
 # $wgRightsCode = ""; # Not yet used
-$wgSkipSkins = array('cologneblue', 'nostalgia','myskin','standard','chick','simple', 'mono', 'modern');
-$wgDefaultSkin = 'bentofluid';
+$wgDefaultSkin = 'bento';
 $wgWhitelistEdit = true;
 $wgLocalTZoffset = date("Z") / 3600;
 $wgGroupPermissions['*'    ]['edit']            = false;
