@@ -1,0 +1,3 @@
+[submodule "skins/chameleon/chameleon"]
+	path = skins/chameleon/chameleon
+	url = https://github.com/openSUSE-zh/chameleon.git
