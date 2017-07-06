@@ -1,0 +1,14 @@
+#main-wrap {
+    display: flex;
+    min-height: 400px;
+    align-items: stretch;
+}
+
+#main-wrap > sidebar {
+    flex: 1 0 300px;
+    background: #ffffff;
+}
+
+#main-wrap > main {
+    flex: 2 1 auto;
+}
