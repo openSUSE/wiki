@@ -472,19 +472,5 @@ class ChameleonTemplate extends BaseTemplate
 <?php
 	}
 
-
-	/**
-	 * Render one or more navigations elements by name, automatically reveresed
-	 * when UI is in RTL mode
-	 *
-	 * @param $elements array
-	 */
-	private function renderNavigation() {
-
-?>
-
-<?php
-		
-	}
 }
 
