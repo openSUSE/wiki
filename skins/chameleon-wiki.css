@@ -7,6 +7,17 @@
 #main-wrap > sidebar {
     flex: 0 0 300px;
     background: #ffffff;
+    text-align: center;
+}
+
+#main-wrap > sidebar h4 {
+    font-weight: 300;
+}
+
+#main-wrap > sidebar h4::before,
+#main-wrap > sidebar h4::after {
+    content: ' ❆ ';
+    opacity: 0.5;
 }
 
 #main-wrap > sidebar > .container-fluid {

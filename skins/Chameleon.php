@@ -165,14 +165,9 @@ class ChameleonTemplate extends BaseTemplate
                     <div class="col-lg-4">
                         <!-- Search Form -->
                         <form action="<?php $this->text( 'wgScript' ) ?>" id="searchform" class="form-inline">
-                            <?php if ( $this->data['rtl'] ): ?>
-                            <?php echo $this->makeSearchButton( 'image', array( 'id' => 'searchButton', 'class' => 'btn btn-primary mr-2', 'src' => $this->getSkin()->getSkinStylePath( 'images/search-rtl.png' ) ) ); ?>
-                            <?php endif; ?>
-                            <?php echo $this->makeSearchInput( array( 'id' => 'searchInput', 'class' => 'form-control', 'type' => 'text' ) ); ?>
-                            <?php if ( !$this->data['rtl'] ): ?>
-                            <?php echo $this->makeSearchButton( 'image', array( 'id' => 'searchButton', 'class' => 'btn btn-primary ml-2', 'src' => $this->getSkin()->getSkinStylePath( 'images/search-ltr.png' ) ) ); ?>
-                            <?php endif; ?>
-                            <input type='hidden' name="title" value="<?php $this->text( 'searchtitle' ) ?>"/>
+                            <div class="input-group">
+                                <?php echo $this->makeSearchInput( array( 'id' => 'searchInput', 'class' => 'form-control', 'type' => 'search' ) ); ?>
+                            </div>
                         </form>
                     </div><!-- /.col- -->
 
@@ -222,7 +217,7 @@ class ChameleonTemplate extends BaseTemplate
                 </div>
 
                 <!-- Page Actions -->
-                <div class="btn-toolbar justify-content-end" role="toolbar" aria-label="Toolbar with button groups">
+                <div class="btn-toolbar justify-content-end hidden-sm-down" role="toolbar" aria-label="Toolbar with button groups">
                     <div class="btn-group mr-2" role="group" aria-label="First group">
                         <?php foreach ( $this->data['view_urls'] as $link ): ?>
                             <a class="btn btn-secondary" <?php echo $link['attributes'] ?> href="<?php echo htmlspecialchars( $link['href'] ) ?>" <?php echo $link['key'] ?>><?php
@@ -451,8 +446,8 @@ class ChameleonTemplate extends BaseTemplate
 			$msg = $name;
 		}
 		?>
-<div class="portal" id='<?php echo Sanitizer::escapeId( "p-$name" ) ?>'<?php echo Linker::tooltip( 'p-' . $name ) ?>>
-	<h4 class="my-3"<?php $this->html( 'userlangattributes' ) ?>><?php $msgObj = wfMessage( $msg ); echo htmlspecialchars( $msgObj->exists() ? $msgObj->text() : $msg ); ?></h4>
+<div class="portal mb-5" id='<?php echo Sanitizer::escapeId( "p-$name" ) ?>'<?php echo Linker::tooltip( 'p-' . $name ) ?>>
+	<h4 class="mb-3"<?php $this->html( 'userlangattributes' ) ?>><?php $msgObj = wfMessage( $msg ); echo htmlspecialchars( $msgObj->exists() ? $msgObj->text() : $msg ); ?></h4>
     <?php if ( is_array( $content ) ): ?>
 		<ul class="list-unstyled">
             <?php foreach( $content as $key => $val ): ?>
