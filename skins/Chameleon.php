@@ -27,23 +27,6 @@ class SkinChameleon extends SkinTemplate
         // Append to the default screen common & print styles...
         $out->addStyle( "$wgStylePath/chameleon/css/app.css", 'screen' );
         $out->addStyle( "$wgStylePath/chameleon-wiki.css", 'screen' );
-        $out->addScriptFile( "$wgStylePath/chameleon/js/app.js" );
-        $out->addScript(`<script>var _paq = _paq || [];
-        (function(){
-        var u=(("https:" == document.location.protocol) ? "https://beans.opensuse.org/piwik/" : "http://beans.opensuse.org/piwik/");
-        _paq.push(['setSiteId', 9]);
-        _paq.push(['setTrackerUrl', u+'piwik.php']);
-        _paq.push(['trackPageView']);
-        _paq.push([ 'setDomains', ["*.opensuse.org"]]);
-        var d=document,
-        g=d.createElement('script'),
-        s=d.getElementsByTagName('script')[0];
-        g.type='text/javascript';
-        g.defer=true;
-        g.async=true;
-        g.src=u+'piwik.js';
-        s.parentNode.insertBefore(g,s);
-        })();</script>`);
     }
 }
 
@@ -65,8 +48,59 @@ class ChameleonTemplate extends BaseTemplate
         $this->skin = $skin = $this->data['skin'];
         $action = $wgRequest->getText( 'action' );
 
-        // Suppress warnings to prevent notices about missing indexes in $this->data
-        wfSuppressWarnings();
+        global $wgVectorUseIconWatch;
+
+		// Build additional attributes for navigation urls
+		$nav = $this->data['content_navigation'];
+
+		if ( $wgVectorUseIconWatch ) {
+			$mode = $this->getSkin()->getTitle()->userIsWatching() ? 'unwatch' : 'watch';
+			if ( isset( $nav['actions'][$mode] ) ) {
+				$nav['views'][$mode] = $nav['actions'][$mode];
+				$nav['views'][$mode]['class'] = rtrim( 'icon ' . $nav['views'][$mode]['class'], ' ' );
+				$nav['views'][$mode]['primary'] = true;
+				unset( $nav['actions'][$mode] );
+			}
+		}
+
+		$xmlID = '';
+		foreach ( $nav as $section => $links ) {
+			foreach ( $links as $key => $link ) {
+				if ( $section == 'views' && !( isset( $link['primary'] ) && $link['primary'] ) ) {
+					$link['class'] = rtrim( 'collapsible ' . $link['class'], ' ' );
+				}
+
+				$xmlID = isset( $link['id'] ) ? $link['id'] : 'ca-' . $xmlID;
+				$nav[$section][$key]['attributes'] =
+					' id="' . Sanitizer::escapeId( $xmlID ) . '"';
+				if ( $link['class'] ) {
+					$nav[$section][$key]['attributes'] .=
+						' class="' . htmlspecialchars( $link['class'] ) . '"';
+					unset( $nav[$section][$key]['class'] );
+				}
+				if ( isset( $link['tooltiponly'] ) && $link['tooltiponly'] ) {
+					$nav[$section][$key]['key'] =
+						Linker::tooltip( $xmlID );
+				} else {
+					$nav[$section][$key]['key'] =
+						Xml::expandAttributes( Linker::tooltipAndAccesskeyAttribs( $xmlID ) );
+				}
+			}
+		}
+		$this->data['namespace_urls'] = $nav['namespaces'];
+		$this->data['view_urls'] = $nav['views'];
+		$this->data['action_urls'] = $nav['actions'];
+		$this->data['variant_urls'] = $nav['variants'];
+
+		// Reverse horizontally rendered navigation elements
+		if ( $this->data['rtl'] ) {
+			$this->data['view_urls'] =
+				array_reverse( $this->data['view_urls'] );
+			$this->data['namespace_urls'] =
+				array_reverse( $this->data['namespace_urls'] );
+			$this->data['personal_urls'] =
+				array_reverse( $this->data['personal_urls'] );
+		}
 
         $this->html( 'headelement' );
 ?>
@@ -106,264 +140,270 @@ class ChameleonTemplate extends BaseTemplate
 <!-- Main Wrap -->
 <div id="main-wrap" class="main-wrap d-flex">
 
-    <sidebar class="w-20 hidden-sm-down">
+    <sidebar class="w-20 hidden-md-down">
         <div class="container-fluid">
             <div id="p-logo"><a style="background-image: url(<?php $this->text( 'logopath' ) ?>);" href="<?php echo htmlspecialchars( $this->data['nav_urls']['mainpage']['href'] ) ?>" <?php echo Xml::expandAttributes( Linker::tooltipAndAccesskeyAttribs( 'p-logo' ) ) ?>></a></div>
             <?php $this->renderPortals( $this->data['sidebar'] ); ?>
+            <section>
+                <h4 class="my-3">Sponsors</h4>
+                <?php $arr = array("sponsor_amd.png", 'sponsor_b1-systems.png', 'sponsor_ip-exchange2.png', 'sponsor_heinlein.png'); ?>
+                <a class="sponsor-image" href="/Sponsors"><img src="https://static.opensuse.org/themes/bento/images/sponsors/<?php echo $arr[rand(0, count($arr)-1)] ?>" alt="Sponsor" style="max-width: 145px;"/></a>
+            </section>
         </div><!-- /.container-fluid -->
     </sidebar>
 
     <main>
-        <div class="container">
-            Main
+        <div class="container-fluid">
+            
+            <div id="mw-page-base" class="noprint"></div>
+		    <div id="mw-head-base" class="noprint"></div>
+
+            <!-- Page Header -->
+            <header id="mw-head" class="my-3">
+                
+                <div class="row my-3">
+                    <div class="col-lg-4">
+                        <!-- Search Form -->
+                        <form action="<?php $this->text( 'wgScript' ) ?>" id="searchform" class="form-inline">
+                            <?php if ( $this->data['rtl'] ): ?>
+                            <?php echo $this->makeSearchButton( 'image', array( 'id' => 'searchButton', 'class' => 'btn btn-primary mr-2', 'src' => $this->getSkin()->getSkinStylePath( 'images/search-rtl.png' ) ) ); ?>
+                            <?php endif; ?>
+                            <?php echo $this->makeSearchInput( array( 'id' => 'searchInput', 'class' => 'form-control', 'type' => 'text' ) ); ?>
+                            <?php if ( !$this->data['rtl'] ): ?>
+                            <?php echo $this->makeSearchButton( 'image', array( 'id' => 'searchButton', 'class' => 'btn btn-primary ml-2', 'src' => $this->getSkin()->getSkinStylePath( 'images/search-ltr.png' ) ) ); ?>
+                            <?php endif; ?>
+                            <input type='hidden' name="title" value="<?php $this->text( 'searchtitle' ) ?>"/>
+                        </form>
+                    </div><!-- /.col- -->
+
+                    <div class="col-lg-8">
+                        <!-- User Menu -->
+                        <ul class="nav nav-sm flex-wrap justify-content-lg-end hidden-sm-down"<?php $this->html( 'userlangattributes' ) ?>>
+                            <?php
+                                foreach( $this->getPersonalTools() as $key => $item ) {
+                                    $item['class'] .= ' nav-item';
+                                    foreach ($item['links'] as $key => $link) {
+                                        $link['class'] .= ' nav-link';
+                                        $item['links'][$key] = $link;
+                                    }
+                                    echo $this->makeListItem( $key, $item );
+                                }
+                            ?>
+                        </ul>
+                    </div><!-- /.col- -->
+                    
+                </div><!-- /.row- -->
+
+                <div class="my-3">
+                    <!-- Tabs for talk page and language variants -->
+                    <ul id="p-namespaces" class="nav nav-tabs"<?php $this->html( 'userlangattributes' ) ?>>
+                        <?php foreach ( $this->data['namespace_urls'] as $link ): ?>
+                            <li <?php echo str_replace('class="', 'class="nav-item ', $link['attributes']) ?>>
+                                <a class="nav-link <?php echo strpos($link['attributes'], 'selected') ? 'active' : '' ?>" href="<?php echo htmlspecialchars( $link['href'] ) ?>" <?php echo $link['key'] ?>>
+                                    <?php echo htmlspecialchars( $link['text'] ) ?>
+                                </a>
+                            </li>
+                        <?php endforeach; ?>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                                <?php foreach ( $this->data['variant_urls'] as $link ): ?>
+                                    <?php if ( stripos( $link['attributes'], 'selected' ) !== false ): ?>
+                                        <?php echo htmlspecialchars( $link['text'] ) ?>
+                                    <?php endif; ?>
+                                <?php endforeach; ?>
+                            </a>
+                            <div class="dropdown-menu" <?php $this->html( 'userlangattributes' ) ?>>
+                                <?php foreach ( $this->data['variant_urls'] as $link ): ?>
+                                    <a class="dropdown-item" <?php echo $link['attributes'] ?> href="<?php echo htmlspecialchars( $link['href'] ) ?>" <?php echo $link['key'] ?>><?php echo htmlspecialchars( $link['text'] ) ?></a>
+                                <?php endforeach; ?>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Page Actions -->
+                <div class="btn-toolbar justify-content-end" role="toolbar" aria-label="Toolbar with button groups">
+                    <div class="btn-group mr-2" role="group" aria-label="First group">
+                        <?php foreach ( $this->data['view_urls'] as $link ): ?>
+                            <a class="btn btn-secondary" <?php echo $link['attributes'] ?> href="<?php echo htmlspecialchars( $link['href'] ) ?>" <?php echo $link['key'] ?>><?php
+                                // $link['text'] can be undefined - bug 27764
+                                if ( array_key_exists( 'text', $link ) ) {
+                                    echo array_key_exists( 'img', $link ) ?  '<img src="' . $link['img'] . '" alt="' . $link['text'] . '" />' : htmlspecialchars( $link['text'] );
+                                }
+                                ?></a>
+                        <?php endforeach; ?>
+                    </div>
+                    <div class="btn-group mr-2" role="group" aria-label="Second group">
+                        <?php foreach ( $this->data['action_urls'] as $link ): ?>
+                            <a class="btn btn-secondary" <?php echo $link['attributes'] ?> href="<?php echo htmlspecialchars( $link['href'] ) ?>" <?php echo $link['key'] ?>><?php echo htmlspecialchars( $link['text'] ) ?></a>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            </header>
+            <!-- /header -->
+
+            <!-- content -->
+            <div id="content" class="mw-body">
+                <a id="top"></a>
+                <div id="mw-js-message" style="display:none;"<?php $this->html( 'userlangattributes' ) ?>></div>
+                <?php if ( $this->data['sitenotice'] ): ?>
+                <!-- sitenotice -->
+                <div id="siteNotice"><?php $this->html( 'sitenotice' ) ?></div>
+                <!-- /sitenotice -->
+                <?php endif; ?>
+                <!-- firstHeading -->
+                <h1 id="firstHeading" class="firstHeading display-1 mb-5">
+                    <span dir="auto"><?php $this->html( 'title' ) ?></span>
+                </h1>
+                <!-- /firstHeading -->
+                <!-- bodyContent -->
+                <div id="bodyContent">
+                    <?php if ( $this->data['isarticle'] ): ?>
+                    <?php endif; ?>
+                    <!-- subtitle -->
+                    <div id="contentSub"<?php $this->html( 'userlangattributes' ) ?>><?php $this->html( 'subtitle' ) ?></div>
+                    <!-- /subtitle -->
+                    <?php if ( $this->data['undelete'] ): ?>
+                    <!-- undelete -->
+                    <div id="contentSub2"><?php $this->html( 'undelete' ) ?></div>
+                    <!-- /undelete -->
+                    <?php endif; ?>
+                    <?php if( $this->data['newtalk'] ): ?>
+                    <!-- newtalk -->
+                    <div class="usermessage"><?php $this->html( 'newtalk' )  ?></div>
+                    <!-- /newtalk -->
+                    <?php endif; ?>
+                    <?php if ( $this->data['showjumplinks'] ): ?>
+                    <!-- jumpto -->
+                    <div id="jump-to-nav" class="mw-jump">
+                        <?php $this->msg( 'jumpto' ) ?> <a href="#mw-head"><?php $this->msg( 'jumptonavigation' ) ?></a>,
+                        <a href="#p-search"><?php $this->msg( 'jumptosearch' ) ?></a>
+                    </div>
+                    <!-- /jumpto -->
+                    <?php endif; ?>
+                    <!-- bodycontent -->
+                    <?php $this->html( 'bodycontent' ) ?>
+                    <!-- /bodycontent -->
+                    <?php if ( $this->data['printfooter'] ): ?>
+                    <!-- printfooter -->
+                    <div class="printfooter">
+                    <?php $this->html( 'printfooter' ); ?>
+                    </div>
+                    <!-- /printfooter -->
+                    <?php endif; ?>
+                    <?php if ( $this->data['catlinks'] ): ?>
+                    <!-- catlinks -->
+                    <?php $this->html( 'catlinks' ); ?>
+                    <!-- /catlinks -->
+                    <?php endif; ?>
+                    <?php if ( $this->data['dataAfterContent'] ): ?>
+                    <!-- dataAfterContent -->
+                    <?php $this->html( 'dataAfterContent' ); ?>
+                    <!-- /dataAfterContent -->
+                    <?php endif; ?>
+                    <div class="visualClear"></div>
+                    <!-- debughtml -->
+                    <?php $this->html( 'debughtml' ); ?>
+                    <!-- /debughtml -->
+                </div>
+                <!-- /bodyContent -->
+            </div>
+            <!-- /content -->
+
+            <!-- Wiki Footer -->
+            <footer class="row my-5" <?php $this->html( 'userlangattributes' ) ?>>
+                <div class="col-sm-6 text-muted">
+                    <?php foreach( $this->getFooterLinks() as $category => $links ): ?>
+                        <ul id="footer-<?php echo $category ?>" class="list-inline">
+                            <?php foreach( $links as $link ): ?>
+                                <li id="footer-<?php echo $category ?>-<?php echo $link ?>" class="list-inline-item"><small><?php $this->html( $link ) ?></small></li>
+                            <?php endforeach; ?>
+                        </ul>
+                    <?php endforeach; ?>
+                </div>
+                <div class="col-sm-6 text-right">
+                    <?php $footericons = $this->getFooterIcons("icononly");
+                    if ( count( $footericons ) > 0 ): ?>
+                        <ul id="footer-icons" class="list-inline">
+                <?php			foreach ( $footericons as $blockName => $footerIcons ): ?>
+                            <li id="footer-<?php echo htmlspecialchars( $blockName ); ?>ico">
+                <?php				foreach ( $footerIcons as $icon ): ?>
+                                <?php echo $this->getSkin()->makeFooterIcon( $icon ); ?>
+
+                <?php				endforeach; ?>
+                            </li>
+                <?php			endforeach; ?>
+                        </ul>
+                    <?php endif; ?>
+                </div>
+            </footer>
+
         </div><!-- /.container -->
     </main>
 </div>
-        <div id="subheader" class="container_16">
-            <div id="breadcrump" class="grid_12 alpha">
-                <a href="/" title="Home"><img src="<?php $this->text('stylepath' ) ?>/bento/home_grey.png" width="16" height="16" alt="Home" /> Wiki</a> &gt; <a href="" title=""><?php $this->data['displaytitle']!=""?$this->html('title'):$this->text('title') ?></a>
-            </div>
 
-
-        <?php if ($this->data['username'] == null) { ?>
-            <div id="login-wrapper" class="grid_4 omega">
-        <?php if (strpos($_SERVER["SERVER_NAME"], "stage") !== false) { ?>
-                    <a href="https://secure-wwwstage.provo.novell.com/selfreg/jsp/createOpenSuseAccount.jsp?login=Sign+up?>">Sign up</a> | <a id="login-trigger" href="https://loginstage.microfocus.com/nidp/idff/sso?id=12&sid=3&option=credential&sid=3">Login</a>
-        <?php } else { ?>           
-                    <a href="https://secure-www.novell.com/selfreg/jsp/createOpenSuseAccount.jsp?login=Sign+up">Sign up</a> | <a id="login-trigger" href="https://login.microfocus.com/nidp/app/login?id=28&sid=0&option=credential&sid=0">Login</a>
-        <?php } ?>
-                <!-- <a href="<?php //echo $this->data['personal_urls'][login][href] ?>">Sign up</a> | <a id="login-trigger" href="#login">Login</a> -->
-
-                <div id="login-form">
-            <?php if (strpos($_SERVER["SERVER_NAME"], "stage") !== false) { ?>
-                        <form action="https://loginstage.microfocus.com/nidp/idff/sso?sid=0" method="post" enctype="application/x-www-form-urlencoded" name="login_form">
-                    <?php } else { ?>
-                        <form action="https://login.microfocus.com/nidp/idff/sso?sid=0" method="post" enctype="application/x-www-form-urlencoded" name="login_form">
-                    <?php } ?>
-            <input name="target" value="http://<?php echo $_SERVER['SERVER_NAME'] . $this->data['personal_urls'][login][href] ?>" type="hidden"/>
-                        <input name="context" value="default" type="hidden"/>
-                        <input name="proxypath" value="reverse" type="hidden"/>
-                        <input name="message" value="Please log In" type="hidden"/>
-                        <p><label class="inlined" for="username">Username</label><input type="text" class="inline-text" name="Ecom_User_ID" value="" id="username" /></p>
-                        <p><label class="inlined" for="password">Password</label><input type="password" class="inline-text" name="Ecom_Password" value="" id="password" /></p>
-                        <p><input type="submit" value="Login" /></p>
-                        <p class="slim-footer"><a id="close-login" href="#cancel">Cancel</a></p>
-                    </form>
-                </div>
-            </div>
-            <?php } else { ?>
-
-            <div id="local-user-actions" class="grid_4 omega">
-                <ul id="pt-personal">
-                    <!-- Begin Personal links (Login, etc.) xx-->
-            <?php foreach ($this->data['personal_urls'] as $key => $item) { ?>
-                    <li id="<?php echo Sanitizer::escapeId( "pt-$key" ) ?>"<?php
-                    if ($item['active']) {
-?> class="active"<?php
-                    } ?>><a href="<?php
-                                                                echo htmlspecialchars($item['href']) ?>"<?php echo $skin->tooltipAndAccesskeyAttribs('pt-'.$key) ?><?php
-if (!empty($item['class'])) {
-?> class="<?php
-echo htmlspecialchars($item['class']) ?>"<?php
-} ?>><?php
-                                    echo htmlspecialchars($item['text']) ?></a></li>
-                <?php } ?>
-                    <!-- End Personal links (Login, etc.) -->
+<!-- Global Footer -->
+<footer class="global-footer m-0"<?php $this->html( 'userlangattributes' ) ?>>
+    <div class="container">
+        <div class="row">
+            <div class="col-6 col-md-3">
+                <h6><?= _("Developers") ?></h6>
+                <ul class="list-unstyled">
+                    <li><a href="https://en.opensuse.org/Portal:Development"><?= _("Documentation") ?></a></li>
+                    <li><a href="https://build.opensuse.org/"><?= _("Build service") ?></a></li>
+                    <li><a href="https://bugzilla.opensuse.org/">Bugzilla</a></li>
+                    <li><a href="https://github.com/openSUSE">Github</a></li>
+                    <li><a href="https://features.opensuse.org/">openFATE</a></li>
+                    <li><a href="https://susestudio.com/">SUSE Studio</a></li>
                 </ul>
-            </div>
-            <?php } ?>
+            </div><!-- /.col- -->
+            <div class="col-6 col-md-3">
+                <h6><?= _("Information") ?></h6>
+                <ul class="list-unstyled">
+                    <li><a href="https://news.opensuse.org/"><?= _("News") ?></a></li>
+                    <li><a href="https://doc.opensuse.org/release-notes/"><?= _("Release notes") ?></a></li>
+                    <li><a href="https://events.opensuse.org/"><?= _("Events") ?></a></li>
+                    <li><a href="http://planet.opensuse.org/"><?= _("Planet") ?></a></li>
+                    <li><a href="https://shop.opensuse.org/"><?= _("Shop") ?></a></li>
+                </ul>
+            </div><!-- /.col- -->
+            <div class="col-6 col-md-3">
+                <h6><?= _("Community") ?></h6>
+                <ul class="list-unstyled">
+                    <li><a href="https://forums.opensuse.org/"><?= _("Forums") ?></a></li>
+                    <li><a href="https://connect.opensuse.org/">Connect</a></li>
+                    <li><a href="https://www.facebook.com/groups/opensuseproject/"><?= _("Facebook group") ?></a></li>
+                    <li><a href="https://plus.google.com/communities/115444043324891769569"><?= _("Google+ group") ?></a></li>
+                    <li><a href="https://en.opensuse.org/openSUSE:Mailing_lists_subscription"><?= _("Mail lists") ?></a></li>
+                    <li><a href="https://en.opensuse.org/openSUSE:IRC_list"><?= _("IRC channels") ?></a></li>
+                </ul>
+            </div><!-- /.col- -->
+            <div class="col-6 col-md-3">
+                <h6><?= _("Social Media") ?></h6>
+                <ul class="list-unstyled">
+                    <li><a href="https://www.facebook.com/en.openSUSE">Facebook</a></li>
+                    <li><a href="https://plus.google.com/+openSUSE">Google+</a></li>
+                    <li><a href="https://twitter.com/opensuse">Twitter</a></li>
+                    <li><a href="https://www.youtube.com/user/opensusetv">YouTube</a></li>
+                    <li><a href="https://t.me/opensusenews">Telegram</a></li>
+                </ul>
+            </div><!-- /.col- -->
+        </div><!-- /.row -->
 
-        </div>
+        <p>&copy; 2011&ndash;2017 <?= _("openSUSE contributors") ?></p>
+    </div><!-- /.container -->
+</footer>
 
-        <!-- Start: Main Content Area -->
-        <div id="content" class="container_16 content-wrapper">
+<!-- Load Scripts Manually-->
+<!-- Better to load Bootstrap without jQuery, but MediaWiki's jQuery version is too old. -->
+<script src="/skins/chameleon/js/app.js"></script>
 
-            <div class="column grid_3 alpha">
+<?php $this->printTrail(); ?>
 
-               <!-- Begin custom navigation -->
-                
-
-
-                <div id="some_other_content" class="box box-shadow alpha clear-both navigation">
-                    <h2 class="box-header"><?php $this->msg('toolbox') ?></h2>
-                    <ul class="navigation">
-                                <?php if ($this->data['notspecialpage']) {
-?><li id="t-whatlinkshere"><a href="<?php echo htmlspecialchars($this->data['nav_urls']['whatlinkshere']['href']) ?>"<?php echo $this->skin->tooltipAndAccesskeyAttribs('t-whatlinkshere') ?>><?php $this->msg('whatlinkshere') ?></a></li>
-                                    <?php if ($this->data['nav_urls']['recentchangeslinked']) {
-?><li id="t-recentchangeslinked"><a href="<?php echo htmlspecialchars($this->data['nav_urls']['recentchangeslinked']['href']) ?>"<?php echo $this->skin->tooltipAndAccesskeyAttribs('t-recentchangeslinked') ?>><?php $this->msg('recentchangeslinked') ?></a></li>
-                <?php }
-}
-        ?>
-
-                                <?php if (isset($this->data['nav_urls']['trackbacklink'])) { ?>
-                        <li id="t-trackbacklink"><a href="<?php echo htmlspecialchars($this->data['nav_urls']['trackbacklink']['href']) ?>"><?php echo $this->msg('trackbacklink') ?></a></li>
-                                    <?php } ?>
-                                <?php if ($this->data['feeds']) { ?>
-                        <li id="feedlinks"><?php foreach ($this->data['feeds'] as $key => $feed) {
-?><span id="feed-<?php echo htmlspecialchars($key) ?>"><a href="<?php echo htmlspecialchars($feed['href']) ?>"><?php echo htmlspecialchars($feed['text'])?></a>&nbsp;</span><?php
-} ?></li>
-                                    <?php } ?>
-        <?php foreach (array('contributions', 'emailuser', 'upload', 'specialpages') as $special) {
-?><?php if ($this->data['nav_urls'][$special]) { ?>
-                        <li id="t-<?php echo $special ?>"><a href="<?php echo htmlspecialchars($this->data['nav_urls'][$special]['href']) ?>"><?php $this->msg($special) ?></a></li>
-                <?php } ?><?php
-} ?>
-                    </ul>
-                </div>
-
-                <div id="some_other_content" class="box box-shadow alpha clear-both navigation">
-                    <h2 class="box-header">Sponsors</h2>
-                    <?php $arr = array("sponsor_amd.png", 'sponsor_b1-systems.png', 'sponsor_ip-exchange2.png', 'sponsor_heinlein.png'); ?>
-                    <a class="sponsor-image" href="/Sponsors"><img src="https://static.opensuse.org/themes/bento/images/sponsors/<?php echo $arr[rand(0, count($arr)-1)] ?>" alt="Sponsor" style="max-width: 145px;"/></a>
-                </div>
-
-
-        <?php if ($this->data['language_urls']) { ?>
-                <div id="language_box" class="box box-shadow alpha clear-both navigation">
-                    <h2 class="box-header"><?php $this->msg('otherlanguages') ?></h2>
-                    <ul class="navigation">
-            <?php foreach ($this->data['language_urls'] as $langlink) { ?>
-                        <li><a href='<?php echo htmlspecialchars($langlink['href']) ?>'><?php echo $langlink['text'] ?></a></li>
-                                <?php } ?>
-                    </ul>
-                </div>
-            <?php } ?>
-
-
-            </div>
-
-
-                        <?php if ($this->data['sitenotice']) { ?>
-            <div class="grid_13">
-                <div class="ui-state-highlight ui-corner-all">
-                    <p>
-                        <span class="ui-icon ui-icon-info"/>
-                        <?php $this->html('sitenotice') ?>
-                    </p>
-                </div>
-            </div>
-                            <?php } ?>
-
-
-            <div id="some-content" class="box box-shadow grid_13 clearfix">
-                <!-- box header -->
-                <div class="box-header header-tabs">
-                    <ul>
-                                <?php $check=false;
-                                foreach ($this->data['content_actions'] as $key => $tab) {
-                                    echo '<li>';
-                                    echo'<a href="'.htmlspecialchars($tab['href']).'"';
-                                    if ($tab['class']) {
-                                        echo ' class="'.htmlspecialchars($tab['class']).'"';
-                                    }
-                                    # We don't want to give the watch tab an accesskey if the
-                                    # page is being edited, because that conflicts with the
-                                    # accesskey on the watch checkbox.  We also don't want to
-                                    # give the edit tab an accesskey, because that's fairly su-
-                                    # perfluous and conflicts with an accesskey (Ctrl-E) often
-                                    # used for editing in Safari.
-                                    if (in_array( $action, array( 'edit', 'submit' ) )
-                                            && in_array( $key, array( 'edit', 'watch', 'unwatch' ))) {
-                                        echo $skin->tooltip( "ca-$key" );
-                                    } else {
-                                        echo $skin->tooltipAndAccesskeyAttribs( "ca-$key" );
-                                    }
-                                    echo '>'.htmlspecialchars($tab['text']).'</a></li>';
-                                } ?>
-                    </ul>
-                </div>
-                <div id="contentSub"><?php $this->html('subtitle') ?></div>
-                <!-- End: box header -->
-
-
-                <a name="top" id="top"></a>
-
-                <div class="alpha omega">
-                    <h1><?php $this->data['displaytitle']!=""?$this->html('title'):$this->text('title') ?></h1>
-
-                    <h3 id="siteSub">tagline: <?php $this->msg('tagline') ?></h3>
-                    <!-- <div id="contentSub"><?php $this->html('subtitle') ?></div> -->
-                            <?php if ($this->data['undelete']) { ?>
-                    <div id="contentSub2">undelete: <?php $this->html('undelete') ?></div>
-                                <?php } ?>
-        <?php if ($this->data['newtalk']) { ?>
-                    <div class="usermessage">usermessage: <?php $this->html('newtalk')  ?></div>
-                                <?php } ?>
-
-                    <!-- Begin Content Area -->
-                            <?php $this->html('bodytext') ?>
-
-        <?php if ($this->data['catlinks']) {
-            $this->html('catlinks');
-} ?>
-        <?php if ($this->data['dataAfterContent']) {
-            $this->html ('dataAfterContent');
-} ?>
-                    <!-- End Content Area -->
-
-                </div>
-                <br/>
-
-                <div class="box-footer header-tabs">
-                    <ul>
-                                <?php $check=false;
-                                foreach ($this->data['content_actions'] as $key => $tab) {
-                                    echo '<li>';
-                                    echo'<a href="'.htmlspecialchars($tab['href']).'"';
-                                    if ($tab['class']) {
-                                        echo ' class="'.htmlspecialchars($tab['class']).'"';
-                                    }
-                                    # We don't want to give the watch tab an accesskey if the
-                                    # page is being edited, because that conflicts with the
-                                    # accesskey on the watch checkbox.  We also don't want to
-                                    # give the edit tab an accesskey, because that's fairly su-
-                                    # perfluous and conflicts with an accesskey (Ctrl-E) often
-                                    # used for editing in Safari.
-                                    if (in_array( $action, array( 'edit', 'submit' ) )
-                                    && in_array( $key, array( 'edit', 'watch', 'unwatch' ))) {
-                                        echo $skin->tooltip( "ca-$key" );
-                                    } else {
-                                        echo $skin->tooltipAndAccesskeyAttribs( "ca-$key" );
-                                    }
-                                    echo '>'.htmlspecialchars($tab['text']).'</a></li>';
-                                } ?>
-                    </ul>
-                </div>
-
-            </div></div>
-
-        <!-- Note: this clears floating, set in previous elements -->
-        <div class="clear"></div>
-
-
-        <!-- Start: Footer -->
-                <?php
-                $handle = fopen(dirname( __FILE__ ) . "/bento/includes/footer.html", "rb");
-                $content = stream_get_contents($handle);
-                fclose($handle);
-                if (isset($this->data['lastmod'])) {
-                    $content = split('<p>', $content, 2);
-                    echo $content[0];
-                    echo '<p>';
-                    $this->html('viewcount');
-                    echo '</p><p>';
-                    echo $content[1];
-                } else {
-                    echo $content;
-                }
-        ?>
-        <!-- End: Footer -->
-
-        <?php $this->html('bottomscripts'); /* JS call to runBodyOnloadHook */ ?>
-        <?php $this->html('reporttime') ?>
-
-    </body>
+</body>
 </html>
-        <?php
-        wfRestoreWarnings();
+<?php
     }
-
-
 
 	/**
 	 * Render a series of portals
@@ -412,31 +452,39 @@ echo htmlspecialchars($item['class']) ?>"<?php
 		}
 		?>
 <div class="portal" id='<?php echo Sanitizer::escapeId( "p-$name" ) ?>'<?php echo Linker::tooltip( 'p-' . $name ) ?>>
-	<h5<?php $this->html( 'userlangattributes' ) ?>><?php $msgObj = wfMessage( $msg ); echo htmlspecialchars( $msgObj->exists() ? $msgObj->text() : $msg ); ?></h5>
-	<div class="body">
-<?php
-		if ( is_array( $content ) ): ?>
-		<ul>
-<?php
-			foreach( $content as $key => $val ): ?>
-			<?php echo $this->makeListItem( $key, $val ); ?>
-
-<?php
-			endforeach;
-			if ( $hook !== null ) {
+	<h4 class="my-3"<?php $this->html( 'userlangattributes' ) ?>><?php $msgObj = wfMessage( $msg ); echo htmlspecialchars( $msgObj->exists() ? $msgObj->text() : $msg ); ?></h4>
+    <?php if ( is_array( $content ) ): ?>
+		<ul class="list-unstyled">
+            <?php foreach( $content as $key => $val ): ?>
+                <?php $val['class'] = 'mb-2' ?>
+			    <?php echo $this->makeListItem( $key, $val ); ?>
+            <?php endforeach; ?>
+			<?php
+            if ( $hook !== null ) {
 				wfRunHooks( $hook, array( &$this, true ) );
 			}
 			?>
 		</ul>
-<?php
-		else: ?>
+    <?php else: ?>
 		<?php echo $content; /* Allow raw HTML block to be defined by extensions */ ?>
-<?php
-		endif; ?>
-	</div>
+    <?php endif; ?>
 </div>
 <?php
 	}
 
+
+	/**
+	 * Render one or more navigations elements by name, automatically reveresed
+	 * when UI is in RTL mode
+	 *
+	 * @param $elements array
+	 */
+	private function renderNavigation() {
+
+?>
+
+<?php
+		
+	}
 }
 

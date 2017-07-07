@@ -5,10 +5,18 @@
 }
 
 #main-wrap > sidebar {
-    flex: 1 0 300px;
+    flex: 0 0 300px;
     background: #ffffff;
 }
 
+#main-wrap > sidebar > .container-fluid {
+    padding: 30px;
+}
+
 #main-wrap > main {
-    flex: 2 1 auto;
+    flex: 1 1 auto;
+}
+
+#main-wrap > main > .container-fluid {
+    max-width: 1200px;
 }
