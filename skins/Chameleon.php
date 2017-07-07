@@ -247,7 +247,7 @@ class ChameleonTemplate extends BaseTemplate
                 <!-- /sitenotice -->
                 <?php endif; ?>
                 <!-- firstHeading -->
-                <h1 id="firstHeading" class="firstHeading display-1 mb-5">
+                <h1 id="firstHeading" class="firstHeading display-3 mb-5">
                     <span dir="auto"><?php $this->html( 'title' ) ?></span>
                 </h1>
                 <!-- /firstHeading -->
