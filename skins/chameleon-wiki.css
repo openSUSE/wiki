@@ -38,7 +38,7 @@
 /* Table of content */
 
 #toc {
-    background: #2f5361;
+    background: #173F4F;
     color: #dceec8;
     padding: 1em;
     margin: 2em 0;
@@ -83,7 +83,7 @@
     background: #ffffff;
     padding: 0.5em 1em;
     margin: 2em 0;
-    border-left: 3px solid #81c13b;
+    border-left: 3px solid #73BA25;
 }
 
 .mw-normal-catlinks li {
@@ -131,8 +131,29 @@
 /* Responsive images */
 
 @media (max-width: 400px) {
-    div.tright, div.floatright, table.floatright {
-        float: none;
-        clear: none;
+    .tright, .floatright, .tleft, .floatleft {
+        float: none !important;
+        clear: none !important;
     }
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+.thumbinner {
+    max-width: 100%;
+    margin-bottom: 1em;
+}
+
+.thumbinner a.image {
+    display: block;
+}
+
+.thumbcaption {
+    font-size: 0.9em;
+    padding: 0.5em;
+    background: #ffffff;
+    border-bottom: 3px solid #73BA25;
 }
