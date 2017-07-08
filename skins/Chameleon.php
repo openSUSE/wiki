@@ -199,20 +199,22 @@ class ChameleonTemplate extends BaseTemplate
                                 </a>
                             </li>
                         <?php endforeach; ?>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-                                <?php foreach ( $this->data['variant_urls'] as $link ): ?>
-                                    <?php if ( stripos( $link['attributes'], 'selected' ) !== false ): ?>
-                                        <?php echo htmlspecialchars( $link['text'] ) ?>
-                                    <?php endif; ?>
-                                <?php endforeach; ?>
-                            </a>
-                            <div class="dropdown-menu" <?php $this->html( 'userlangattributes' ) ?>>
-                                <?php foreach ( $this->data['variant_urls'] as $link ): ?>
-                                    <a class="dropdown-item" <?php echo $link['attributes'] ?> href="<?php echo htmlspecialchars( $link['href'] ) ?>" <?php echo $link['key'] ?>><?php echo htmlspecialchars( $link['text'] ) ?></a>
-                                <?php endforeach; ?>
-                            </div>
-                        </li>
+                        <?php if ($this->data['variant_urls']) : ?>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                                    <?php foreach ( $this->data['variant_urls'] as $link ): ?>
+                                        <?php if ( stripos( $link['attributes'], 'selected' ) !== false ): ?>
+                                            <?php echo htmlspecialchars( $link['text'] ) ?>
+                                        <?php endif; ?>
+                                    <?php endforeach; ?>
+                                </a>
+                                <div class="dropdown-menu" <?php $this->html( 'userlangattributes' ) ?>>
+                                    <?php foreach ( $this->data['variant_urls'] as $link ): ?>
+                                        <a class="dropdown-item" <?php echo $link['attributes'] ?> href="<?php echo htmlspecialchars( $link['href'] ) ?>" <?php echo $link['key'] ?>><?php echo htmlspecialchars( $link['text'] ) ?></a>
+                                    <?php endforeach; ?>
+                                </div>
+                            </li>
+                        <?php endif ?>
                     </ul>
                 </div>
 
