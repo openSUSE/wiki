@@ -46,6 +46,7 @@
     color: #dceec8;
     padding: 1em;
     margin: 2em 0;
+    clear: both;
 }
 
 #toc ul {

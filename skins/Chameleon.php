@@ -392,6 +392,7 @@ class ChameleonTemplate extends BaseTemplate
 <!-- Load Scripts Manually-->
 <!-- Better to load Bootstrap without jQuery, but MediaWiki's jQuery version is too old. -->
 <script src="/skins/chameleon/js/app.js"></script>
+<script src="/skins/chameleon-wiki.js"></script>
 
 <?php $this->printTrail(); ?>
 
