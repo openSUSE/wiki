@@ -283,8 +283,8 @@ class ChameleonTemplate extends BaseTemplate
                     <!-- /bodycontent -->
                     <?php if ( $this->data['printfooter'] ): ?>
                     <!-- printfooter -->
-                    <div class="printfooter">
-                    <?php $this->html( 'printfooter' ); ?>
+                    <div class="printfooter d-none">
+                        <?php $this->html( 'printfooter' ); ?>
                     </div>
                     <!-- /printfooter -->
                     <?php endif; ?>
