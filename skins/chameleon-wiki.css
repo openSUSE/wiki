@@ -31,3 +31,37 @@
 #main-wrap > main > .container-fluid {
     max-width: 1200px;
 }
+
+
+/* Code */
+
+#content pre {
+    padding: 1em;
+    border: 1px solid #adadad;
+    border-radius: 3px;
+}
+
+#toc {
+    background: #2f5361;
+    color: #dceec8;
+    padding: 1em;
+    margin: 2em 0;
+}
+
+#toc ul {
+    list-style: none;
+}
+
+#toc a {
+    color: #dceec8;
+}
+
+#toctitle {
+    position: relative;
+}
+
+.toctoggle {
+    position: absolute;
+    right: 0;
+    top: 0;
+}
