@@ -33,7 +33,12 @@
     max-width: 1200px;
 }
 
+/* Avatar */
 
+.avatar {
+    width: 40px;
+    height: 40px;
+}
 
 /* Table of content */
 

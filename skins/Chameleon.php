@@ -110,6 +110,11 @@ class ChameleonTemplate extends BaseTemplate
             $this->data['signup_url'] = "https://secure-www.novell.com/selfreg/jsp/createOpenSuseAccount.jsp?login=Sign+up";
         }
 
+        if ($this->data['username']) {
+            $user = User::newFromName( $this->data['username'] );
+            $this->data['gravatar'] = "https://www.gravatar.com/avatar/" . md5( $user->getEmail() );
+        }
+
         $this->html( 'headelement' );
 ?>
 
@@ -225,16 +230,17 @@ class ChameleonTemplate extends BaseTemplate
                                         </div>
                                     </div>
                                 </div>
-                            <?php else :
-    foreach ($this->getPersonalTools() as $key => $item) {
-        $item['class'] .= ' nav-item';
-        foreach ($item['links'] as $key => $link) {
-            $link['class'] .= ' nav-link';
-            $item['links'][$key] = $link;
-        }
-        echo $this->makeListItem( $key, $item );
-    }
-endif ?>
+                            <?php else : ?>
+                                <img class="avatar" src="<?php echo $this->data['gravatar'] ?>" width="80" height="80" />
+                                <?php foreach ($this->getPersonalTools() as $key => $item) {
+                                    $item['class'] .= ' nav-item';
+                                    foreach ($item['links'] as $key => $link) {
+                                        $link['class'] .= ' nav-link';
+                                        $item['links'][$key] = $link;
+                                    }
+                                    echo $this->makeListItem( $key, $item );
+                                } ?>
+                            <?php endif ?>
                         </ul>
                     </div><!-- /.col- -->
                     
@@ -271,7 +277,7 @@ endif ?>
 
                 <!-- Page Actions -->
                 <div class="btn-toolbar justify-content-end hidden-sm-down" role="toolbar" aria-label="Toolbar with button groups">
-                    <div class="btn-group mr-2" role="group" aria-label="First group">
+                    <div class="btn-group" role="group" aria-label="First group">
                         <?php foreach ($this->data['view_urls'] as $link) : ?>
                             <a class="btn btn-secondary" <?php echo $link['attributes'] ?> href="<?php echo htmlspecialchars( $link['href'] ) ?>" <?php echo $link['key'] ?>><?php
                                 // $link['text'] can be undefined - bug 27764
@@ -281,7 +287,7 @@ endif ?>
                                 ?></a>
                         <?php endforeach; ?>
                     </div>
-                    <div class="btn-group mr-2" role="group" aria-label="Second group">
+                    <div class="btn-group ml-2" role="group" aria-label="Second group">
                         <?php foreach ($this->data['action_urls'] as $link) : ?>
                             <a class="btn btn-secondary" <?php echo $link['attributes'] ?> href="<?php echo htmlspecialchars( $link['href'] ) ?>" <?php echo $link['key'] ?>><?php echo htmlspecialchars( $link['text'] ) ?></a>
                         <?php endforeach; ?>
