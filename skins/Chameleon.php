@@ -50,57 +50,65 @@ class ChameleonTemplate extends BaseTemplate
 
         global $wgVectorUseIconWatch;
 
-		// Build additional attributes for navigation urls
-		$nav = $this->data['content_navigation'];
+        // Build additional attributes for navigation urls
+        $nav = $this->data['content_navigation'];
 
-		if ( $wgVectorUseIconWatch ) {
-			$mode = $this->getSkin()->getTitle()->userIsWatching() ? 'unwatch' : 'watch';
-			if ( isset( $nav['actions'][$mode] ) ) {
-				$nav['views'][$mode] = $nav['actions'][$mode];
-				$nav['views'][$mode]['class'] = rtrim( 'icon ' . $nav['views'][$mode]['class'], ' ' );
-				$nav['views'][$mode]['primary'] = true;
-				unset( $nav['actions'][$mode] );
-			}
-		}
+        if ($wgVectorUseIconWatch) {
+            $mode = $this->getSkin()->getTitle()->userIsWatching() ? 'unwatch' : 'watch';
+            if (isset( $nav['actions'][$mode] )) {
+                $nav['views'][$mode] = $nav['actions'][$mode];
+                $nav['views'][$mode]['class'] = rtrim( 'icon ' . $nav['views'][$mode]['class'], ' ' );
+                $nav['views'][$mode]['primary'] = true;
+                unset( $nav['actions'][$mode] );
+            }
+        }
 
-		$xmlID = '';
-		foreach ( $nav as $section => $links ) {
-			foreach ( $links as $key => $link ) {
-				if ( $section == 'views' && !( isset( $link['primary'] ) && $link['primary'] ) ) {
-					$link['class'] = rtrim( 'collapsible ' . $link['class'], ' ' );
-				}
+        $xmlID = '';
+        foreach ($nav as $section => $links) {
+            foreach ($links as $key => $link) {
+                if ($section == 'views' && !( isset( $link['primary'] ) && $link['primary'] )) {
+                    $link['class'] = rtrim( 'collapsible ' . $link['class'], ' ' );
+                }
 
-				$xmlID = isset( $link['id'] ) ? $link['id'] : 'ca-' . $xmlID;
-				$nav[$section][$key]['attributes'] =
-					' id="' . Sanitizer::escapeId( $xmlID ) . '"';
-				if ( $link['class'] ) {
-					$nav[$section][$key]['attributes'] .=
-						' class="' . htmlspecialchars( $link['class'] ) . '"';
-					unset( $nav[$section][$key]['class'] );
-				}
-				if ( isset( $link['tooltiponly'] ) && $link['tooltiponly'] ) {
-					$nav[$section][$key]['key'] =
-						Linker::tooltip( $xmlID );
-				} else {
-					$nav[$section][$key]['key'] =
-						Xml::expandAttributes( Linker::tooltipAndAccesskeyAttribs( $xmlID ) );
-				}
-			}
-		}
-		$this->data['namespace_urls'] = $nav['namespaces'];
-		$this->data['view_urls'] = $nav['views'];
-		$this->data['action_urls'] = $nav['actions'];
-		$this->data['variant_urls'] = $nav['variants'];
+                $xmlID = isset( $link['id'] ) ? $link['id'] : 'ca-' . $xmlID;
+                $nav[$section][$key]['attributes'] =
+                    ' id="' . Sanitizer::escapeId( $xmlID ) . '"';
+                if ($link['class']) {
+                    $nav[$section][$key]['attributes'] .=
+                        ' class="' . htmlspecialchars( $link['class'] ) . '"';
+                    unset( $nav[$section][$key]['class'] );
+                }
+                if (isset( $link['tooltiponly'] ) && $link['tooltiponly']) {
+                    $nav[$section][$key]['key'] =
+                        Linker::tooltip( $xmlID );
+                } else {
+                    $nav[$section][$key]['key'] =
+                        Xml::expandAttributes( Linker::tooltipAndAccesskeyAttribs( $xmlID ) );
+                }
+            }
+        }
+        $this->data['namespace_urls'] = $nav['namespaces'];
+        $this->data['view_urls'] = $nav['views'];
+        $this->data['action_urls'] = $nav['actions'];
+        $this->data['variant_urls'] = $nav['variants'];
 
-		// Reverse horizontally rendered navigation elements
-		if ( $this->data['rtl'] ) {
-			$this->data['view_urls'] =
-				array_reverse( $this->data['view_urls'] );
-			$this->data['namespace_urls'] =
-				array_reverse( $this->data['namespace_urls'] );
-			$this->data['personal_urls'] =
-				array_reverse( $this->data['personal_urls'] );
-		}
+        // Reverse horizontally rendered navigation elements
+        if ($this->data['rtl']) {
+            $this->data['view_urls'] =
+                array_reverse( $this->data['view_urls'] );
+            $this->data['namespace_urls'] =
+                array_reverse( $this->data['namespace_urls'] );
+            $this->data['personal_urls'] =
+                array_reverse( $this->data['personal_urls'] );
+        }
+
+        if (strpos($_SERVER["SERVER_NAME"], "stage") !== false) {
+            $this->data['login_url'] = "https://loginstage.microfocus.com/nidp/idff/sso?sid=0";
+            $this->data['signup_url'] = "https://secure-wwwstage.novell.com/selfreg/jsp/createOpenSuseAccount.jsp?login=Sign+up";
+        } else {
+            $this->data['login_url'] = "https://login.microfocus.com/nidp/idff/sso?sid=0";
+            $this->data['signup_url'] = "https://secure-www.novell.com/selfreg/jsp/createOpenSuseAccount.jsp?login=Sign+up";
+        }
 
         $this->html( 'headelement' );
 ?>
@@ -156,7 +164,7 @@ class ChameleonTemplate extends BaseTemplate
         <div class="container-fluid">
             
             <div id="mw-page-base" class="noprint"></div>
-		    <div id="mw-head-base" class="noprint"></div>
+            <div id="mw-head-base" class="noprint"></div>
 
             <!-- Page Header -->
             <header id="mw-head" class="my-3">
@@ -174,16 +182,59 @@ class ChameleonTemplate extends BaseTemplate
                     <div class="col-lg-8">
                         <!-- User Menu -->
                         <ul class="nav nav-sm flex-wrap justify-content-lg-end hidden-sm-down"<?php $this->html( 'userlangattributes' ) ?>>
-                            <?php
-                                foreach( $this->getPersonalTools() as $key => $item ) {
-                                    $item['class'] .= ' nav-item';
-                                    foreach ($item['links'] as $key => $link) {
-                                        $link['class'] .= ' nav-link';
-                                        $item['links'][$key] = $link;
-                                    }
-                                    echo $this->makeListItem( $key, $item );
-                                }
-                            ?>
+                            <?php if ($this->data['username'] == null) : ?>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="<?php echo $this->data['signup_url'] ?>"><?php echo $this->msg('createaccount') ?></a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="#" class="nav-link" data-toggle="modal" data-target="#login-modal"><?php echo $this->msg('login') ?></a>
+                                </li>
+                                <!-- Modal -->
+                                <div class="modal fade" id="login-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <form action="<?php echo $this->data['login_url'] ?>" method="post" enctype="application/x-www-form-urlencoded" name="login_form">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="exampleModalLabel"><?php echo $this->msg('login') ?></h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                
+                                                    <input name="target" value="http://<?php echo $_SERVER['SERVER_NAME'] . $this->data['personal_urls']['login']['href'] ?>" type="hidden"/>
+                                                    <input name="context" value="default" type="hidden"/>
+                                                    <input name="proxypath" value="reverse" type="hidden"/>
+                                                    <input name="message" value="Please log In" type="hidden"/>
+                                                    
+                                                    <div class="form-group">
+                                                        <label for="login-username"><?php echo $this->msg('userlogin-yourname') ?></label>
+                                                        <input type="text" class="form-control" name="Ecom_User_ID" value="" id="login-username" />
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="login-password"><?php echo $this->msg('userlogin-yourpassword') ?></label>
+                                                        <input type="password" class="form-control" name="Ecom_Password" value="" id="login-password" />
+                                                    </div>
+                                                    
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal"><?php echo $this->msg('cancel') ?></button>
+                                                    <button type="submit" class="btn btn-primary"><?php echo $this->msg('login') ?></button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php else :
+    foreach ($this->getPersonalTools() as $key => $item) {
+        $item['class'] .= ' nav-item';
+        foreach ($item['links'] as $key => $link) {
+            $link['class'] .= ' nav-link';
+            $item['links'][$key] = $link;
+        }
+        echo $this->makeListItem( $key, $item );
+    }
+endif ?>
                         </ul>
                     </div><!-- /.col- -->
                     
@@ -192,7 +243,7 @@ class ChameleonTemplate extends BaseTemplate
                 <div class="my-3">
                     <!-- Tabs for talk page and language variants -->
                     <ul id="p-namespaces" class="nav nav-tabs"<?php $this->html( 'userlangattributes' ) ?>>
-                        <?php foreach ( $this->data['namespace_urls'] as $link ): ?>
+                        <?php foreach ($this->data['namespace_urls'] as $link) : ?>
                             <li <?php echo str_replace('class="', 'class="nav-item ', $link['attributes']) ?>>
                                 <a class="nav-link <?php echo strpos($link['attributes'], 'selected') ? 'active' : '' ?>" href="<?php echo htmlspecialchars( $link['href'] ) ?>" <?php echo $link['key'] ?>>
                                     <?php echo htmlspecialchars( $link['text'] ) ?>
@@ -202,14 +253,14 @@ class ChameleonTemplate extends BaseTemplate
                         <?php if ($this->data['variant_urls']) : ?>
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-                                    <?php foreach ( $this->data['variant_urls'] as $link ): ?>
-                                        <?php if ( stripos( $link['attributes'], 'selected' ) !== false ): ?>
+                                    <?php foreach ($this->data['variant_urls'] as $link) : ?>
+                                        <?php if (stripos( $link['attributes'], 'selected' ) !== false) : ?>
                                             <?php echo htmlspecialchars( $link['text'] ) ?>
                                         <?php endif; ?>
                                     <?php endforeach; ?>
                                 </a>
                                 <div class="dropdown-menu" <?php $this->html( 'userlangattributes' ) ?>>
-                                    <?php foreach ( $this->data['variant_urls'] as $link ): ?>
+                                    <?php foreach ($this->data['variant_urls'] as $link) : ?>
                                         <a class="dropdown-item" <?php echo $link['attributes'] ?> href="<?php echo htmlspecialchars( $link['href'] ) ?>" <?php echo $link['key'] ?>><?php echo htmlspecialchars( $link['text'] ) ?></a>
                                     <?php endforeach; ?>
                                 </div>
@@ -221,17 +272,17 @@ class ChameleonTemplate extends BaseTemplate
                 <!-- Page Actions -->
                 <div class="btn-toolbar justify-content-end hidden-sm-down" role="toolbar" aria-label="Toolbar with button groups">
                     <div class="btn-group mr-2" role="group" aria-label="First group">
-                        <?php foreach ( $this->data['view_urls'] as $link ): ?>
+                        <?php foreach ($this->data['view_urls'] as $link) : ?>
                             <a class="btn btn-secondary" <?php echo $link['attributes'] ?> href="<?php echo htmlspecialchars( $link['href'] ) ?>" <?php echo $link['key'] ?>><?php
                                 // $link['text'] can be undefined - bug 27764
-                                if ( array_key_exists( 'text', $link ) ) {
-                                    echo array_key_exists( 'img', $link ) ?  '<img src="' . $link['img'] . '" alt="' . $link['text'] . '" />' : htmlspecialchars( $link['text'] );
-                                }
+                            if (array_key_exists( 'text', $link )) {
+                                echo array_key_exists( 'img', $link ) ?  '<img src="' . $link['img'] . '" alt="' . $link['text'] . '" />' : htmlspecialchars( $link['text'] );
+                            }
                                 ?></a>
                         <?php endforeach; ?>
                     </div>
                     <div class="btn-group mr-2" role="group" aria-label="Second group">
-                        <?php foreach ( $this->data['action_urls'] as $link ): ?>
+                        <?php foreach ($this->data['action_urls'] as $link) : ?>
                             <a class="btn btn-secondary" <?php echo $link['attributes'] ?> href="<?php echo htmlspecialchars( $link['href'] ) ?>" <?php echo $link['key'] ?>><?php echo htmlspecialchars( $link['text'] ) ?></a>
                         <?php endforeach; ?>
                     </div>
@@ -243,7 +294,7 @@ class ChameleonTemplate extends BaseTemplate
             <div id="content" class="mw-body">
                 <a id="top"></a>
                 <div id="mw-js-message" style="display:none;"<?php $this->html( 'userlangattributes' ) ?>></div>
-                <?php if ( $this->data['sitenotice'] ): ?>
+                <?php if ($this->data['sitenotice']) : ?>
                 <!-- sitenotice -->
                 <div id="siteNotice"><?php $this->html( 'sitenotice' ) ?></div>
                 <!-- /sitenotice -->
@@ -255,22 +306,22 @@ class ChameleonTemplate extends BaseTemplate
                 <!-- /firstHeading -->
                 <!-- bodyContent -->
                 <div id="bodyContent">
-                    <?php if ( $this->data['isarticle'] ): ?>
+                    <?php if ($this->data['isarticle']) : ?>
                     <?php endif; ?>
                     <!-- subtitle -->
                     <div id="contentSub"<?php $this->html( 'userlangattributes' ) ?>><?php $this->html( 'subtitle' ) ?></div>
                     <!-- /subtitle -->
-                    <?php if ( $this->data['undelete'] ): ?>
+                    <?php if ($this->data['undelete']) : ?>
                     <!-- undelete -->
                     <div id="contentSub2"><?php $this->html( 'undelete' ) ?></div>
                     <!-- /undelete -->
                     <?php endif; ?>
-                    <?php if( $this->data['newtalk'] ): ?>
+                    <?php if ($this->data['newtalk']) : ?>
                     <!-- newtalk -->
                     <div class="usermessage"><?php $this->html( 'newtalk' )  ?></div>
                     <!-- /newtalk -->
                     <?php endif; ?>
-                    <?php if ( $this->data['showjumplinks'] ): ?>
+                    <?php if ($this->data['showjumplinks']) : ?>
                     <!-- jumpto -->
                     <div id="jump-to-nav" class="mw-jump">
                         <?php $this->msg( 'jumpto' ) ?> <a href="#mw-head"><?php $this->msg( 'jumptonavigation' ) ?></a>,
@@ -281,19 +332,19 @@ class ChameleonTemplate extends BaseTemplate
                     <!-- bodycontent -->
                     <?php $this->html( 'bodycontent' ) ?>
                     <!-- /bodycontent -->
-                    <?php if ( $this->data['printfooter'] ): ?>
+                    <?php if ($this->data['printfooter']) : ?>
                     <!-- printfooter -->
                     <div class="printfooter d-none">
                         <?php $this->html( 'printfooter' ); ?>
                     </div>
                     <!-- /printfooter -->
                     <?php endif; ?>
-                    <?php if ( $this->data['catlinks'] ): ?>
+                    <?php if ($this->data['catlinks']) : ?>
                     <!-- catlinks -->
                     <?php $this->html( 'catlinks' ); ?>
                     <!-- /catlinks -->
                     <?php endif; ?>
-                    <?php if ( $this->data['dataAfterContent'] ): ?>
+                    <?php if ($this->data['dataAfterContent']) : ?>
                     <!-- dataAfterContent -->
                     <?php $this->html( 'dataAfterContent' ); ?>
                     <!-- /dataAfterContent -->
@@ -310,9 +361,9 @@ class ChameleonTemplate extends BaseTemplate
             <!-- Wiki Footer -->
             <footer class="row my-5" <?php $this->html( 'userlangattributes' ) ?>>
                 <div class="col-sm-6 text-muted">
-                    <?php foreach( $this->getFooterLinks() as $category => $links ): ?>
+                    <?php foreach ($this->getFooterLinks() as $category => $links) : ?>
                         <ul id="footer-<?php echo $category ?>" class="list-inline">
-                            <?php foreach( $links as $link ): ?>
+                            <?php foreach ($links as $link) : ?>
                                 <li id="footer-<?php echo $category ?>-<?php echo $link ?>" class="list-inline-item"><small><?php $this->html( $link ) ?></small></li>
                             <?php endforeach; ?>
                         </ul>
@@ -320,18 +371,18 @@ class ChameleonTemplate extends BaseTemplate
                 </div>
                 <div class="col-sm-6 text-right">
                     <?php $footericons = $this->getFooterIcons("icononly");
-                    if ( count( $footericons ) > 0 ): ?>
+                    if (count( $footericons ) > 0) : ?>
                         <ul id="footer-icons" class="list-inline">
-                <?php			foreach ( $footericons as $blockName => $footerIcons ): ?>
+                <?php	      foreach ($footericons as $blockName => $footerIcons) : ?>
                             <li id="footer-<?php echo htmlspecialchars( $blockName ); ?>ico">
-                <?php				foreach ( $footerIcons as $icon ): ?>
+                <?php	          foreach ($footerIcons as $icon) : ?>
                                 <?php echo $this->getSkin()->makeFooterIcon( $icon ); ?>
 
-                <?php				endforeach; ?>
+                <?php	          endforeach; ?>
                             </li>
-                <?php			endforeach; ?>
+                <?php	      endforeach; ?>
                         </ul>
-                    <?php endif; ?>
+                    <?php                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         endif; ?>
                 </div>
             </footer>
 
@@ -403,72 +454,75 @@ class ChameleonTemplate extends BaseTemplate
 <?php
     }
 
-	/**
-	 * Render a series of portals
-	 *
-	 * @param $portals array
-	 */
-	private function renderPortals( $portals ) {
-		// Force the rendering of the following portals
-		if ( !isset( $portals['SEARCH'] ) ) {
-			$portals['SEARCH'] = true;
-		}
-		if ( !isset( $portals['TOOLBOX'] ) ) {
-			$portals['TOOLBOX'] = true;
-		}
-		if ( !isset( $portals['LANGUAGES'] ) ) {
-			$portals['LANGUAGES'] = true;
-		}
-		// Render portals
-		foreach ( $portals as $name => $content ) {
-			if ( $content === false )
-				continue;
+    /**
+     * Render a series of portals
+     *
+     * @param $portals array
+     */
+    private function renderPortals($portals)
+    {
+        // Force the rendering of the following portals
+        if (!isset( $portals['SEARCH'] )) {
+            $portals['SEARCH'] = true;
+        }
+        if (!isset( $portals['TOOLBOX'] )) {
+            $portals['TOOLBOX'] = true;
+        }
+        if (!isset( $portals['LANGUAGES'] )) {
+            $portals['LANGUAGES'] = true;
+        }
+        // Render portals
+        foreach ($portals as $name => $content) {
+            if ($content === false) {
+                continue;
+            }
 
-			echo "\n<!-- {$name} -->\n";
-			switch( $name ) {
-				case 'SEARCH':
-					break;
-				case 'TOOLBOX':
-					$this->renderPortal( 'tb', $this->getToolbox(), 'toolbox', 'SkinTemplateToolboxEnd' );
-					break;
-				case 'LANGUAGES':
-					if ( $this->data['language_urls'] ) {
-						$this->renderPortal( 'lang', $this->data['language_urls'], 'otherlanguages' );
-					}
-					break;
-				default:
-					$this->renderPortal( $name, $content );
-				break;
-			}
-			echo "\n<!-- /{$name} -->\n";
-		}
-	}
+            echo "\n<!-- {$name} -->\n";
+            switch ($name) {
+                case 'SEARCH':
+                    break;
+                case 'TOOLBOX':
+                    $this->renderPortal( 'tb', $this->getToolbox(), 'toolbox', 'SkinTemplateToolboxEnd' );
+                    break;
+                case 'LANGUAGES':
+                    if ($this->data['language_urls']) {
+                        $this->renderPortal( 'lang', $this->data['language_urls'], 'otherlanguages' );
+                    }
+                    break;
+                default:
+                    $this->renderPortal( $name, $content );
+                    break;
+            }
+            echo "\n<!-- /{$name} -->\n";
+        }
+    }
 
-	private function renderPortal( $name, $content, $msg = null, $hook = null ) {
-		if ( $msg === null ) {
-			$msg = $name;
-		}
-		?>
+    private function renderPortal($name, $content, $msg = null, $hook = null)
+    {
+        if ($msg === null) {
+            $msg = $name;
+        }
+        ?>
 <div class="portal mb-5" id='<?php echo Sanitizer::escapeId( "p-$name" ) ?>'<?php echo Linker::tooltip( 'p-' . $name ) ?>>
-	<h4 class="mb-3"<?php $this->html( 'userlangattributes' ) ?>><?php $msgObj = wfMessage( $msg ); echo htmlspecialchars( $msgObj->exists() ? $msgObj->text() : $msg ); ?></h4>
-    <?php if ( is_array( $content ) ): ?>
-		<ul class="list-unstyled">
-            <?php foreach( $content as $key => $val ): ?>
+    <h4 class="mb-3"<?php $this->html( 'userlangattributes' ) ?>><?php $msgObj = wfMessage( $msg );
+    echo htmlspecialchars( $msgObj->exists() ? $msgObj->text() : $msg ); ?></h4>
+    <?php if (is_array( $content )) : ?>
+        <ul class="list-unstyled">
+            <?php foreach ($content as $key => $val) : ?>
                 <?php $val['class'] = 'mb-2' ?>
-			    <?php echo $this->makeListItem( $key, $val ); ?>
+                <?php echo $this->makeListItem( $key, $val ); ?>
             <?php endforeach; ?>
-			<?php
-            if ( $hook !== null ) {
-				wfRunHooks( $hook, array( &$this, true ) );
-			}
-			?>
-		</ul>
-    <?php else: ?>
-		<?php echo $content; /* Allow raw HTML block to be defined by extensions */ ?>
+            <?php
+            if ($hook !== null) {
+                wfRunHooks( $hook, array( &$this, true ) );
+            }
+            ?>
+        </ul>
+    <?php else : ?>
+        <?php echo $content; /* Allow raw HTML block to be defined by extensions */ ?>
     <?php endif; ?>
 </div>
 <?php
-	}
-
+    }
 }
 
