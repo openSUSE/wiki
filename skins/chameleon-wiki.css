@@ -126,3 +126,12 @@
 #bodyContent table {
     background: #ffffff;
 }
+
+/* Responsive images */
+
+@media (max-width: 400px) {
+    div.tright, div.floatright, table.floatright {
+        float: none;
+        clear: none;
+    }
+}
