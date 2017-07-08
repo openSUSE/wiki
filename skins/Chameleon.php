@@ -174,77 +174,85 @@ class ChameleonTemplate extends BaseTemplate
             <!-- Page Header -->
             <header id="mw-head" class="my-3">
                 
-                <div class="row my-3">
-                    <div class="col-lg-4">
-                        <!-- Search Form -->
-                        <form action="<?php $this->text( 'wgScript' ) ?>" id="searchform" class="form-inline">
-                            <div class="input-group">
-                                <?php echo $this->makeSearchInput( array( 'id' => 'searchInput', 'class' => 'form-control', 'type' => 'search' ) ); ?>
-                            </div>
-                        </form>
-                    </div><!-- /.col- -->
+                <div class="d-flex justify-content-between justify-content-md-end my-3">
+                    <!-- Search Form -->
+                    <form action="<?php $this->text( 'wgScript' ) ?>" id="searchform" class="form-inline">
+                        <div class="input-group">
+                            <?php echo $this->makeSearchInput( array( 'id' => 'searchInput', 'class' => 'form-control', 'type' => 'search' ) ); ?>
+                        </div>
+                    </form>
 
-                    <div class="col-lg-8">
-                        <!-- User Menu -->
-                        <ul class="nav nav-sm flex-wrap justify-content-lg-end hidden-sm-down"<?php $this->html( 'userlangattributes' ) ?>>
-                            <?php if ($this->data['username'] == null) : ?>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="<?php echo $this->data['signup_url'] ?>"><?php echo $this->msg('createaccount') ?></a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="#" class="nav-link" data-toggle="modal" data-target="#login-modal"><?php echo $this->msg('login') ?></a>
-                                </li>
-                                <!-- Modal -->
-                                <div class="modal fade" id="login-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog" role="document">
-                                        <div class="modal-content">
-                                            <form action="<?php echo $this->data['login_url'] ?>" method="post" enctype="application/x-www-form-urlencoded" name="login_form">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title" id="exampleModalLabel"><?php echo $this->msg('login') ?></h5>
-                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                </div>
-                                                <div class="modal-body">
-                                                
-                                                    <input name="target" value="http://<?php echo $_SERVER['SERVER_NAME'] . $this->data['personal_urls']['login']['href'] ?>" type="hidden"/>
-                                                    <input name="context" value="default" type="hidden"/>
-                                                    <input name="proxypath" value="reverse" type="hidden"/>
-                                                    <input name="message" value="Please log In" type="hidden"/>
-                                                    
-                                                    <div class="form-group">
-                                                        <label for="login-username"><?php echo $this->msg('userlogin-yourname') ?></label>
-                                                        <input type="text" class="form-control" name="Ecom_User_ID" value="" id="login-username" />
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label for="login-password"><?php echo $this->msg('userlogin-yourpassword') ?></label>
-                                                        <input type="password" class="form-control" name="Ecom_Password" value="" id="login-password" />
-                                                    </div>
-                                                    
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal"><?php echo $this->msg('cancel') ?></button>
-                                                    <button type="submit" class="btn btn-primary"><?php echo $this->msg('login') ?></button>
-                                                </div>
-                                            </form>
+                    <!-- User Menu -->
+                    <?php if ($this->data['username'] == null) : ?>
+
+                        <!-- Login Menu -->
+                        <div class="dropdown ml-2">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="user-menu-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <?php echo $this->msg('login') ?>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-right">
+                                <a class="dropdown-item" href="<?php echo $this->data['signup_url'] ?>"><?php echo $this->msg('createaccount') ?></a>
+                                <a class="dropdown-item" href="#" class="nav-link" data-toggle="modal" data-target="#login-modal"><?php echo $this->msg('login') ?></a>
+                            </div>
+                        </div><!-- /.dropdown -->
+
+                        <!-- Login Modal -->
+                        <div class="modal fade" id="login-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <form action="<?php echo $this->data['login_url'] ?>" method="post" enctype="application/x-www-form-urlencoded" name="login_form">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel"><?php echo $this->msg('login') ?></h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                            </button>
                                         </div>
-                                    </div>
+                                        <div class="modal-body">
+                                        
+                                            <input name="target" value="http://<?php echo $_SERVER['SERVER_NAME'] . $this->data['personal_urls']['login']['href'] ?>" type="hidden"/>
+                                            <input name="context" value="default" type="hidden"/>
+                                            <input name="proxypath" value="reverse" type="hidden"/>
+                                            <input name="message" value="Please log In" type="hidden"/>
+                                            
+                                            <div class="form-group">
+                                                <label for="login-username"><?php echo $this->msg('userlogin-yourname') ?></label>
+                                                <input type="text" class="form-control" name="Ecom_User_ID" value="" id="login-username" />
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="login-password"><?php echo $this->msg('userlogin-yourpassword') ?></label>
+                                                <input type="password" class="form-control" name="Ecom_Password" value="" id="login-password" />
+                                            </div>
+                                            
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal"><?php echo $this->msg('cancel') ?></button>
+                                            <button type="submit" class="btn btn-primary"><?php echo $this->msg('login') ?></button>
+                                        </div>
+                                    </form>
                                 </div>
-                            <?php else : ?>
+                            </div>
+                        </div>
+
+                    <?php else : ?>
+                        <div class="dropdown ml-2">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="user-menu-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <img class="avatar" src="<?php echo $this->data['gravatar'] ?>" width="80" height="80" />
-                                <?php foreach ($this->getPersonalTools() as $key => $item) {
-                                    $item['class'] .= ' nav-item';
-                                    foreach ($item['links'] as $key => $link) {
-                                        $link['class'] .= ' nav-link';
-                                        $item['links'][$key] = $link;
+                                <span class="hidden-xs-down"><?php echo $this->data['username'] ?></span>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-right">
+                                <?php
+                                    foreach ($this->getPersonalTools() as $key => $item) {
+                                        foreach ($item['links'] as $k => $link) {
+                                            $link['class'] .= ' dropdown-item';
+                                            echo $this->makeLink( $k, $link );
+                                        }
                                     }
-                                    echo $this->makeListItem( $key, $item );
-                                } ?>
-                            <?php endif ?>
-                        </ul>
-                    </div><!-- /.col- -->
+                                ?>
+                            </div>
+                        </div><!-- /.dropdown -->
+                    <?php endif ?>
                     
-                </div><!-- /.row- -->
+                </div><!-- /. -->
 
                 <div class="my-3">
                     <!-- Tabs for talk page and language variants -->
