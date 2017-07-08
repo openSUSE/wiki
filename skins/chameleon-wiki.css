@@ -26,6 +26,7 @@
 
 #main-wrap > main {
     flex: 1 1 auto;
+    max-width: 100%;
 }
 
 #main-wrap > main > .container-fluid {
