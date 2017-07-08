@@ -86,7 +86,13 @@
 }
 
 .mw-normal-catlinks li {
-    margin: 0 0.5em;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+}
+
+.mw-normal-catlinks > a {
+    color: inherit;
+    font-weight: bold;
 }
 
 /* Headings */
@@ -113,4 +119,10 @@
     padding: 1em;
     border: 1px solid #adadad;
     border-radius: 3px;
+}
+
+/* table */
+
+#bodyContent table {
+    background: #ffffff;
 }
