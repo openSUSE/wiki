@@ -145,7 +145,7 @@ class BentoTemplate extends QuickTemplate {
                <?php foreach ($this->data['sidebar'] as $bar => $cont) { ?>
                <div id="some_other_content" class="box box-shadow alpha clear-both navigation">
                <h2 class="box-header">
-                  <?php $out = wfMessage( $bar ); if ($out) echo $out; else echo $bar;?>
+                  <?php echo $bar; ?>
                </h2>
                  <ul class="navigation">
                   <?php foreach($cont as $key => $val) { ?>
