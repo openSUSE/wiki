@@ -14,12 +14,12 @@ ini_set( "include_path", ".:$IP:$IP/includes:$IP/languages" );
 ini_set( 'memory_limit', '64M' );
 
 if ( $wgCommandLineMode ) {
-	if ( isset( $_SERVER ) && array_key_exists( 'REQUEST_METHOD', $_SERVER ) ) {
-		die( "This script must be run from the command line\n" );
-	}
+    if ( isset( $_SERVER ) && array_key_exists( 'REQUEST_METHOD', $_SERVER ) ) {
+        die( "This script must be run from the command line\n" );
+    }
 } elseif ( empty( $wgNoOutputBuffer ) ) {
-	## Compress output if the browser supports it
-	if( !ini_get( 'zlib.output_compression' ) ) @ob_start( 'ob_gzhandler' );
+    ## Compress output if the browser supports it
+    if( !ini_get( 'zlib.output_compression' ) ) @ob_start( 'ob_gzhandler' );
 }
 
 $wgSitename         = "openSUSE";
@@ -44,7 +44,7 @@ $wgEnableUserEmail = false;
 
 #$wgEmergencyContact = "webmaster@novell.com";
 $wgEmergencyContact = "noreply@novell.com";
-$wgPasswordSender	= "webmaster@novell.com";
+$wgPasswordSender   = "webmaster@novell.com";
 
 ## For a detailed description of the following switches see
 ## http://meta.wikimedia.org/Enotif and http://meta.wikimedia.org/Eauthent
@@ -78,8 +78,8 @@ $wgCacheDirectory = "/srv/www/cache";
 
 ## To enable image uploads, make sure the 'images' directory
 ## is writable, then uncomment this:
-$wgEnableUploads		= true;
-$wgUseImageResize		= true;
+$wgEnableUploads  = true;
+$wgUseImageResize = true;
 $wgUseImageMagick = false;
 #$wgImageMagickConvertCommand = "/usr/bin/convert";
 
@@ -91,7 +91,7 @@ $wgUseImageMagick = false;
 
 ## If you have the appropriate support software installed
 ## you can enable inline LaTeX equations:
-# $wgUseTeX			= true;
+# $wgUseTeX = true;
 $wgMathPath         = "{$wgUploadPath}/math";
 $wgMathDirectory    = "{$wgUploadDirectory}/math";
 $wgTmpDirectory     = "{$wgUploadDirectory}/temp";
@@ -99,10 +99,6 @@ $wgTmpDirectory     = "{$wgUploadDirectory}/temp";
 $wgLocalInterwiki   = $wgSitename;
 
 $wgCookieDomain = "opensuse.org";
-
-## Default skin: you can change the default skin. Use the internal symbolic
-## names, ie 'standard', 'nostalgia', 'cologneblue', 'monobook':
-# $wgDefaultSkin = 'monobook';
 
 ## For attaching licensing metadata to pages, and displaying an
 ## appropriate copyright notice / icon. GNU Free Documentation
@@ -113,8 +109,7 @@ $wgRightsUrl = "";
 $wgRightsText = "";
 $wgRightsIcon = "";
 # $wgRightsCode = ""; # Not yet used
-$wgSkipSkins = array('cologneblue', 'nostalgia','myskin','standard','chick','simple', 'mono', 'modern');
-$wgDefaultSkin = 'bentofluid';
+$wgDefaultSkin = 'bento';
 $wgWhitelistEdit = true;
 $wgLocalTZoffset = date("Z") / 3600;
 $wgGroupPermissions['*'    ]['edit']            = false;
@@ -134,66 +129,77 @@ $wgDiff3 = "/usr/bin/diff3";
        putenv("TZ=$oldtz");
    }
 
-#--------------------------------------------------------------                                        
-# Custom config section                                                                                 
-#                                                                                                 
-                                                                                                            
-##### Namespace configuration #####                                                                     
-#                                                        
-#                                                                      
-# Project (meta) namespace                                                                      
-$wgMetaNamespace = 'openSUSE';                                                          
-# Custom namespaces                                                                                   
-$wgExtraNamespaces[100] = 'SDB';                                                                  
-$wgExtraNamespaces[101] = 'SDB_Talk';                                                               
-$wgExtraNamespaces[102] = 'Portal';                                                                 
-$wgExtraNamespaces[103] = 'Portal_Talk';
-$wgExtraNamespaces[104] = 'Archive';
-$wgExtraNamespaces[105] = 'Archive_Talk';
-$wgExtraNamespaces[106] = 'HCL';
-$wgExtraNamespaces[107] = 'HCL_Talk';
+#--------------------------------------------------------------
+# Custom config section
+#
+
+##### Namespace configuration #####
+#
+#
+# Project (meta) namespace
+$wgMetaNamespace = 'openSUSE';
+# Custom namespaces
+define( 'NS_SDB', 100 );
+define( 'NS_SDB_TALK', 101 );
+define( 'NS_PORTAL', 102 );
+define( 'NS_PORTAL_TALK', 103 );
+define( 'NS_ARCHIVE', 104 );
+define( 'NS_ARCHIVE_TALK', 105 );
+define( 'NS_HCL', 106 );
+define( 'NS_HCL_TALK', 107 );
 # $wgExtraNamespaces[108] = '11.2';
 # $wgExtraNamespaces[109] = '11.2_Talk';
-$wgExtraNamespaces[110] = 'Book';
-$wgExtraNamespaces[111] = 'Book_Talk';
+define( 'NS_BOOK', 110 );
+define( 'NS_BOOK_TALK', 111 );
 
-# Enable/Disable subpages                                                                              
-$wgNamespacesWithSubpages[-1] = false;                                                             
-$wgNamespacesWithSubpages[0] = true;                                                           
-$wgNamespacesWithSubpages[1] = true;                                                              
-$wgNamespacesWithSubpages[2] = true;                                                          
-$wgNamespacesWithSubpages[3] = true;                                                          
-$wgNamespacesWithSubpages[4] = true;
-$wgNamespacesWithSubpages[5] = true;                                                               
-$wgNamespacesWithSubpages[6] = false;                                                       
-$wgNamespacesWithSubpages[7] = true;                                                         
-$wgNamespacesWithSubpages[8] = false;                                                    
-$wgNamespacesWithSubpages[9] = true;                                                     
-$wgNamespacesWithSubpages[10] = true;
-$wgNamespacesWithSubpages[11] = true;                                                          
-$wgNamespacesWithSubpages[100] = true;                                               
-$wgNamespacesWithSubpages[101] = true;                                               
-$wgNamespacesWithSubpages[102] = true;                                                         
-$wgNamespacesWithSubpages[103] = true;                                               
-$wgNamespacesWithSubpages[104] = true;                                               
-$wgNamespacesWithSubpages[105] = true;
-$wgNamespacesWithSubpages[110] = true;
+$wgExtraNamespaces[NS_SDB] = 'SDB';
+$wgExtraNamespaces[NS_SDB_TALK] = 'SDB_Talk';
+$wgExtraNamespaces[NS_PORTAL] = 'Portal';
+$wgExtraNamespaces[NS_PORTAL_TALK] = 'Portal_Talk';
+$wgExtraNamespaces[NS_ARCHIVE] = 'Archive';
+$wgExtraNamespaces[NS_ARCHIVE_TALK] = 'Archive_Talk';
+$wgExtraNamespaces[NS_HCL] = 'HCL';
+$wgExtraNamespaces[NS_HCL_TALK] = 'HCL_Talk';
+$wgExtraNamespaces[NS_BOOK] = 'Book';
+$wgExtraNamespaces[NS_BOOK_TALK] = 'Book_Talk';
 
-$wgContentNamespaces = array (0, 4, 12, 100, 102, 104, 106, 110);
+# Enable/Disable subpages
+$wgNamespacesWithSubpages[NS_SPECIAL] = false;
+$wgNamespacesWithSubpages[NS_MAIN] = true;
+$wgNamespacesWithSubpages[NS_TALK] = true;
+$wgNamespacesWithSubpages[NS_USER] = true;
+$wgNamespacesWithSubpages[NS_USER_TALK] = true;
+$wgNamespacesWithSubpages[NS_PROJECT] = true;
+$wgNamespacesWithSubpages[NS_PROJECT_TALK] = true;
+$wgNamespacesWithSubpages[NS_FILE] = false;
+$wgNamespacesWithSubpages[NS_FILE_TALK] = true;
+$wgNamespacesWithSubpages[NS_MEDIAWIKI] = false;
+$wgNamespacesWithSubpages[NS_MEDIAWIKI_TALK] = true;
+$wgNamespacesWithSubpages[NS_TEMPLATE] = true;
+$wgNamespacesWithSubpages[NS_TEMPLATE_TALK] = true;
+$wgNamespacesWithSubpages[NS_SDB] = true;
+$wgNamespacesWithSubpages[NS_SDB_TALK] = true;
+$wgNamespacesWithSubpages[NS_PORTAL] = true;
+$wgNamespacesWithSubpages[NS_PORTAL_TALK] = true;
+$wgNamespacesWithSubpages[NS_ARCHIVE] = true;
+$wgNamespacesWithSubpages[NS_ARCHIVE_TALK] = true;
+$wgNamespacesWithSubpages[NS_BOOK] = true;
+
+$wgContentNamespaces = array (NS_MAIN, NS_PROJECT, NS_HELP, NS_SDB, NS_PORTAL, NS_ARCHIVE, NS_HCL, NS_BOOK);
 
 $wgAllowCategorizedRecentChanges = true;
 
 $wgNamespacesToBeSearchedDefault = array(
         NS_MAIN =>           true,
-        102 => true
+        NS_PORTAL => true
 );
 
 ##### Misc #####
 
 $wgUseAjax = true; // Enable Ajax
 $wgAllowExternalImages = true; // Enable links to external images
-# Allow upload of files with the following extensions            
-$wgFileExtensions = array( 'doc', 'docx', 'gif', 'jpg', 'jpeg', 'odp', 'ods', 'odt', 'pdf', 'png', 'ppt', 'pptx', 'sxc', 'sxw', 'xls', 'xlsx' );                                                                     
+# Allow upload of files with the following extensions
+$wgFileExtensions = array( 'doc', 'docx', 'gif', 'jpg', 'jpeg', 'odp', 'ods', 'odt', 'pdf', 'png', 'ppt', 'pptx', 'sxc', 'sxw', 'xls', 'xlsx' );
 # Add XMPP functionality
 $wgUrlProtocols[] = 'xmpp:';
 
@@ -211,7 +217,26 @@ $wgSquidServers[] = "137.65.227.74";
 $wgSquidServers[] = "137.65.227.75";
 $wgSquidServers[] = "137.65.227.76";
 
+# Category watching ----------------------------------
+# see https://www.mediawiki.org/wiki/Manual:CategoryMembershipChanges
+$wgRCWatchCategoryMembership = true;
+$wgDefaultUserOptions['hidecategorization'] = 0;
+$wgDefaultUserOptions['watchlisthidecategorization'] = 0;
+
 ##### Extensions #####
+
+# Login proxy / Auth_remoteuser -------------------
+wfLoadExtension( 'Auth_remoteuser' );
+$wgAuthRemoteuserUserUrls = [ 'logout' => '/cmd/ICSLogout/?url=' . htmlentities($_SERVER['REQUEST_URI']) ];
+
+if (isset($_SERVER['HTTP_X_USERNAME'])) { # avoid logging 'undefined index' warnings
+    $wgAuthRemoteuserUserName = [ $_SERVER['HTTP_X_USERNAME'] ];
+    $wgAuthRemoteuserUserPrefsForced = [ 'email' => $_SERVER['HTTP_X_EMAIL'] ];
+} else {
+    $wgAuthRemoteuserUserName = [ '' ];
+    $wgAuthRemoteuserUserPrefsForced = [ 'email' => '' ];
+}
+
 # UserMerge ------------------------
 require_once( "$IP/extensions/UserMerge/UserMerge.php" );
 // By default nobody can use this function, enable for bureaucrat?
@@ -226,26 +251,12 @@ $wgDefaultUserOptions['wikieditor-preview'] = 1;
 # Intersection ---------------------
 include("$IP/extensions/intersection/DynamicPageList.php");
 
-# SimpleFeed -----------------------
-#include("$IP/extensions/SimpleFeed.php");
-require_once("$IP/extensions/SimpleFeed.php");
-
-# Access Manager -------------------
-require_once("$IP/extensions/NovellAuthenticationPlugin.php");
-$wgAuth = new NovellAuthenticationPlugin();                   
+# RSS -----------------------
+include("$IP/extensions/RSS/RSS.php");
+$wgRSSUrlWhitelist = array('*');
 
 # InputBox -------------------------
 require_once($IP.'/extensions/InputBox/InputBox.php');
-
-# FlaggedRevs ----------------------
-#include_once("$IP/extensions/FlaggedRevs/FlaggedRevs.php");
-#$wgFlaggedRevsNamespaces = array(NS_MAIN, NS_IMAGE, NS_TEMPLATE, 100, 102, 12, 106); // SDB, Portal, Help, HCL
-#$wgSimpleFlaggedRevsUI = true;                                                           
-#$wgFlaggedRevComments = true;                                                           
-#$wgFlaggedRevsLowProfile = false;                                                         
-#$wgFlaggedRevTabs = false;
-#$wgFlaggedRevsAutoReview = true;
-#$wgFlaggedRevsAutoReviewNew = true; 
 
 # ParserFunctions -----------------
 require_once( "$IP/extensions/ParserFunctions/ParserFunctions.php" );
@@ -258,22 +269,19 @@ $wgCategoryTreeMaxDepth = array(CT_MODE_PAGES => 2, CT_MODE_ALL => 2, CT_MODE_CA
 require_once("$IP/extensions/EventCountdown.php");
 
 # SemanticMediaWiki ---------------
-$smwgNamespaceIndex=120;           
+$smwgNamespaceIndex=120;
 include_once("$IP/extensions/SemanticMediaWiki/SemanticMediaWiki.php");
-enableSemantics('wiki.opensuse.org');                                      
+enableSemantics('wiki.opensuse.org');
 
 # MultiBoilerplate ----------------
 require_once( "$IP/extensions/MultiBoilerplate/MultiBoilerplate.php" );
 $wgMultiBoilerplateOptions = false;
 $wgMultiBoilerplatePerNamespace = true;
 
-#-------------------------------------------------------------- 
+#--------------------------------------------------------------
 
 # Replace Text ----------------------------------------------
 require_once( "$IP/extensions/ReplaceText/ReplaceText.php" );
-
-# Hermes Notification ----------------
-require_once("$IP/extensions/HermesNotification/HermesNotify.php");
 
 # Interwiki links management ----------------------------------
 require_once("$IP/extensions/Interwiki/Interwiki.php");
@@ -288,21 +296,10 @@ require_once("extensions/videoflash.php");
 # Syntax highlighting ----------------------------------
 require_once("$IP/extensions/SyntaxHighlight_GeSHi/SyntaxHighlight_GeSHi.php");
 
-# Category watching ----------------------------------
-require_once("$IP/extensions/CategoryWatch/CategoryWatch.php");
-
-// This plugin caused trouble
-//require_once( 'extensions/SelectCategory/SelectCategory.php' );
-//$wgSelectCategoryNamespaces[100] = true;
-//$wgSelectCategoryNamespaces[102] = true;
-//$wgSelectCategoryNamespaces[104] = true;
-//$wgSelectCategoryNamespaces[106] = true;
-//$wgSelectCategoryNamespaces[108] = true;
-
-require_once("$IP/extensions/CrossNamespaceLinks/CrossNamespaceLinks.php");
+# Hide page title ----------------------------------
 require_once("$IP/extensions/notitle.php");
 
-// Semantic Maps: 
+// Semantic Maps:
 include_once( "$IP/extensions/SemanticForms/SemanticForms.php");
 require_once( "$IP/extensions/Validator/Validator.php" );
 require_once( "$IP/extensions/Maps/Maps.php" );
@@ -316,16 +313,9 @@ include_once( "/srv/settings/map_settings.php" );
 
 // protect user pages
 include_once( "$IP/extensions/UserPageEditProtection/UserPageEditProtection.php" );
-$wgOnlyUserEditUserPage = true; /* Set this to true to turn on user page protection */ 
+$wgOnlyUserEditUserPage = true; /* Set this to true to turn on user page protection */
 $wgGroupPermissions['sysop']['editalluserpages'] = true; /* Set this to allow sysops to edit all user pages */
 
-// Multiple Uploads
-//require_once("$IP/extensions/MultiUpload/SpecialMultipleUpload.php");
-//Uncomment this to make it the default uploader
-//$wgUploadNavigationUrl = '/index.php?title=Special:MultipleUpload';
-//$wgMaxUploadFiles = 5;
-
-include("$IP/extensions/BentoLanguage.php");
 include("$IP/extensions/google-coop.php");
 
 // mass deletion
