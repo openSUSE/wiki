@@ -13,8 +13,7 @@ nbproject
 /resources
 /serialized
 /skins/*
-!/skins/bento/
-!/skins/chameleon/
+!/skins/Chameleon/
 /tests
 /vendor
 /*.php
