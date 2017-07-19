@@ -1,0 +1,48 @@
+{
+	"name": "Chameleon",
+	"author": [
+		"Guo Yunhe"
+	],
+	"url": "https://github.com/openSUSE/wiki",
+	"descriptionmsg": "chameleon-desc",
+	"namemsg": "skinname-chameleon",
+	"license-name": "GPL-3.0+",
+	"type": "skin",
+	"requires": {
+		"MediaWiki": ">= 1.25.0"
+	},
+	"ValidSkinNames": {
+		"chameleon": "Chameleon"
+	},
+	"MessagesDirs": {
+		"Chameleon": [
+			"i18n"
+		]
+	},
+	"ResourceModules": {
+		"skins.chameleon": {
+			"position": "top",
+			"styles": {
+				"res/css/app.css": {
+					"media": "screen"
+				},
+				"wiki.css": {
+					"media": "screen"
+				}
+			},
+			"scripts": [
+				"res/js/app-no-jquery.js",
+				"wiki.js"
+			]
+		}
+	},
+	"ResourceFileModulePaths": {
+		"localBasePath": "",
+		"remoteSkinPath": "Chameleon"
+	},
+	"AutoloadClasses": {
+		"SkinChameleon": "SkinChameleon.php",
+		"ChameleonTemplate": "SkinChameleon.php"
+	},
+	"manifest_version": 1
+}
