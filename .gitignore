@@ -1,5 +1,37 @@
 nbproject
 
-# MediaWiki data
-cache
-images
+# MediaWiki files
+/cache
+/docs
+/extensions/*
+!/extensions/*.php
+/images
+/includes
+/languages
+/maintenance
+/mw-config
+/resources
+/serialized
+/skins/*
+!/skins/bento/
+!/skins/chameleon/
+/tests
+/vendor
+/*.php
+!/LocalSettings.php
+/*.json
+/*.js
+composer.local.json-sample
+phpcs.xml
+Gemfile.lock
+Rakefile
+StartProfiler.sample
+COPYING
+CREDITS
+FAQ
+HISTORY
+INSTALL
+README
+RELEASE-NOTES-*
+UPGRADE
+wiki.phtml
