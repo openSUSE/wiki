@@ -102,13 +102,8 @@ class ChameleonTemplate extends BaseTemplate
                 array_reverse( $this->data['personal_urls'] );
         }
 
-        if (strpos($_SERVER["SERVER_NAME"], "stage") !== false) {
-            $this->data['login_url'] = "https://loginstage.microfocus.com/nidp/idff/sso?sid=0";
-            $this->data['signup_url'] = "https://secure-wwwstage.novell.com/selfreg/jsp/createOpenSuseAccount.jsp?login=Sign+up";
-        } else {
-            $this->data['login_url'] = "https://login.microfocus.com/nidp/idff/sso?sid=0";
-            $this->data['signup_url'] = "https://secure-www.novell.com/selfreg/jsp/createOpenSuseAccount.jsp?login=Sign+up";
-        }
+        $this->data['login_url'] = "https://login.microfocus.com/nidp/idff/sso?sid=0";
+        $this->data['signup_url'] = "https://secure-www.novell.com/selfreg/jsp/createOpenSuseAccount.jsp?login=Sign+up";
 
         if ($this->data['username']) {
             $user = User::newFromName( $this->data['username'] );
@@ -242,7 +237,11 @@ class ChameleonTemplate extends BaseTemplate
                                 <?php
                                     foreach ($this->getPersonalTools() as $key => $item) {
                                         foreach ($item['links'] as $k => $link) {
-                                            $link['class'] .= ' dropdown-item';
+                                            if (isset($link['class'])) {
+                                                $link['class'] .= ' dropdown-item';
+                                            } else {
+                                                $link['class'] = ' dropdown-item';
+                                            }
                                             echo $this->makeLink( $k, $link );
                                         }
                                     }
