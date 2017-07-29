@@ -13,6 +13,7 @@ nbproject
 /resources
 /serialized
 /skins/*
+!/skins/bento/
 !/skins/Chameleon/
 /tests
 /vendor
