@@ -282,20 +282,21 @@ class ChameleonTemplate extends BaseTemplate
 
                 <!-- Page Actions -->
                 <div class="btn-toolbar justify-content-end hidden-sm-down" role="toolbar" aria-label="Toolbar with button groups">
-                    <div class="btn-group" role="group" aria-label="First group">
+                    <div class="btn-group" role="group">
                         <?php foreach ($this->data['view_urls'] as $link) : ?>
-                            <a class="btn btn-secondary" <?php echo $link['attributes'] ?> href="<?php echo htmlspecialchars( $link['href'] ) ?>" <?php echo $link['key'] ?>><?php
+                            <a class="btn btn-secondary" href="<?php echo htmlspecialchars( $link['href'] ) ?>" <?php echo $link['key'] ?>><?php
                                 // $link['text'] can be undefined - bug 27764
                             if (array_key_exists( 'text', $link )) {
                                 echo array_key_exists( 'img', $link ) ?  '<img src="' . $link['img'] . '" alt="' . $link['text'] . '" />' : htmlspecialchars( $link['text'] );
                             }
                                 ?></a>
                         <?php endforeach; ?>
-                    </div>
-                    <div class="btn-group ml-2" role="group" aria-label="Second group">
-                        <?php foreach ($this->data['action_urls'] as $link) : ?>
-                            <a class="btn btn-secondary" <?php echo $link['attributes'] ?> href="<?php echo htmlspecialchars( $link['href'] ) ?>" <?php echo $link['key'] ?>><?php echo htmlspecialchars( $link['text'] ) ?></a>
-                        <?php endforeach; ?>
+                        <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="btnGroupDrop1">
+                            <?php foreach ($this->data['action_urls'] as $link) : ?>
+                                <a class="dropdown-item" href="<?php echo htmlspecialchars( $link['href'] ) ?>" <?php echo $link['key'] ?>><?php echo htmlspecialchars( $link['text'] ) ?></a>
+                            <?php endforeach; ?>
+                        </div>
                     </div>
                 </div>
             </header>
