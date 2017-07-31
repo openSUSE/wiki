@@ -33,6 +33,16 @@
     max-width: 1200px;
 }
 
+#search-and-user {
+    margin-bottom: -32px;
+}
+
+@media (max-width: 768px) {
+    #search-and-user {
+        margin-bottom: 20px;
+    }
+}
+
 /* User menu */
 
 #user-menu-button .avatar {

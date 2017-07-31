@@ -167,7 +167,7 @@ class ChameleonTemplate extends BaseTemplate
             <!-- Page Header -->
             <header id="mw-head" class="my-3">
                 
-                <div class="d-flex justify-content-between justify-content-md-end my-3">
+                <div id="search-and-user" class="d-flex justify-content-between justify-content-md-end">
                     <!-- Search Form -->
                     <form action="<?php $this->text( 'wgScript' ) ?>" id="searchform" class="form-inline">
                         <div class="input-group">
@@ -251,7 +251,7 @@ class ChameleonTemplate extends BaseTemplate
                     
                 </div><!-- /. -->
 
-                <div class="my-3">
+                <div id="namespaces-variants" class="mb-2">
                     <!-- Tabs for talk page and language variants -->
                     <ul id="p-namespaces" class="nav nav-tabs"<?php $this->html( 'userlangattributes' ) ?>>
                         <?php foreach ($this->data['namespace_urls'] as $link) : ?>
@@ -281,7 +281,7 @@ class ChameleonTemplate extends BaseTemplate
                 </div>
 
                 <!-- Page Actions -->
-                <div class="btn-toolbar justify-content-end hidden-sm-down" role="toolbar" aria-label="Toolbar with button groups">
+                <div id="page-actions" class="btn-toolbar justify-content-end hidden-sm-down" role="toolbar" aria-label="Toolbar with button groups">
                     <div class="btn-group" role="group">
                         <?php foreach ($this->data['view_urls'] as $link) : ?>
                             <a class="btn btn-secondary" href="<?php echo htmlspecialchars( $link['href'] ) ?>" <?php echo $link['key'] ?>><?php
@@ -312,7 +312,7 @@ class ChameleonTemplate extends BaseTemplate
                 <!-- /sitenotice -->
                 <?php endif; ?>
                 <!-- firstHeading -->
-                <h1 id="firstHeading" class="firstHeading display-3 mb-5">
+                <h1 id="firstHeading" class="firstHeading display-3 mt-0 mb-3">
                     <span dir="auto"><?php $this->html( 'title' ) ?></span>
                 </h1>
                 <!-- /firstHeading -->
