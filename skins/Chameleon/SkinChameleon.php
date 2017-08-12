@@ -185,7 +185,7 @@ class ChameleonTemplate extends BaseTemplate
                             </button>
                             <div class="dropdown-menu dropdown-menu-right">
                                 <a class="dropdown-item" href="<?php echo $this->data['signup_url'] ?>"><?php echo $this->msg('createaccount') ?></a>
-                                <a class="dropdown-item" href="#" class="nav-link" data-toggle="modal" data-target="#login-modal"><?php echo $this->msg('login') ?></a>
+                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#login-modal"><?php echo $this->msg('login') ?></a>
                             </div>
                         </div><!-- /.dropdown -->
 
@@ -202,7 +202,7 @@ class ChameleonTemplate extends BaseTemplate
                                         </div>
                                         <div class="modal-body">
                                         
-                                            <input name="target" value="http://<?php echo $_SERVER['SERVER_NAME'] . $this->data['personal_urls']['login']['href'] ?>" type="hidden"/>
+                                            <input name="target" value="http://<?php echo $_SERVER['SERVER_NAME'] . htmlentities($this->data['personal_urls']['login']['href']) ?>" type="hidden"/>
                                             <input name="context" value="default" type="hidden"/>
                                             <input name="proxypath" value="reverse" type="hidden"/>
                                             <input name="message" value="Please log In" type="hidden"/>
