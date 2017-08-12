@@ -255,7 +255,7 @@ class ChameleonTemplate extends BaseTemplate
                     <!-- Tabs for talk page and language variants -->
                     <ul id="p-namespaces" class="nav nav-tabs"<?php $this->html( 'userlangattributes' ) ?>>
                         <?php foreach ($this->data['namespace_urls'] as $link) : ?>
-                            <li <?php echo str_replace('class="', 'class="nav-item ', $link['attributes']) ?>>
+                            <li class="nav-item">
                                 <a class="nav-link <?php echo strpos($link['attributes'], 'selected') ? 'active' : '' ?>" href="<?php echo htmlspecialchars( $link['href'] ) ?>" <?php echo $link['key'] ?>>
                                     <?php echo htmlspecialchars( $link['text'] ) ?>
                                 </a>
