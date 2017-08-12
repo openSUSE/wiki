@@ -45,12 +45,21 @@
 
 /* User menu */
 
+#user-menu-button {
+    position: relative;
+    overflow: hidden;    
+}
+
 #user-menu-button .avatar {
-    width: 1.8em;
-    height: 1.8em;
-    border-radius: 1em;
-    margin: -0.4em 0 -0.4em -0.5em;
-    vertical-align: middle;
+    position: absolute;
+    width: 36px;
+    height: 36px;
+    left: 0;
+    top: 0;
+}
+
+#user-menu-button .name {
+    margin-left: 30px;
 }
 
 /* Table of content */
