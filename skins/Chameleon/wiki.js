@@ -10,7 +10,7 @@ jQuery('.card img').addClass('card-img-top img-fluid');
 jQuery('.card .card-block')
 
 // .mw-editsection
-jQuery('.mw-editsection a').addClass('btn btn-secondary btn-sm');
+jQuery('.mw-editsection a').addClass('btn btn-info btn-sm float-right');
 
 // table
 jQuery('#bodyContent table').addClass('table').addClass('table-responsive');
