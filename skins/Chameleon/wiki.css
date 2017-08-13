@@ -94,13 +94,17 @@
 
 #toc ul {
     list-style: none;
-    margin-top: 1em;
-    margin-bottom: 0;
+    margin: 0;
+    padding: 0;
+}
+
+#toc ul ul {
+    padding-left: 1em;
 }
 
 .tocnumber {
     display: inline-block;
-    min-width: 1.5em;
+    min-width: 1em;
 }
 
 /* Edit section button */
