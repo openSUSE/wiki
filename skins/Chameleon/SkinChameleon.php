@@ -20,7 +20,8 @@ class SkinChameleon extends SkinTemplate
     {
         parent::initPage( $out );
         $out->addMeta( 'viewport', 'width=device-width, initial-scale=1' );
-        $out->addModules( 'skins.chameleon' );
+        $out->addModuleStyles( 'skins.chameleon' );
+        $out->addModules( 'skins.chameleon.js' );
     }
 
     function setupSkinUserCss(OutputPage $out)

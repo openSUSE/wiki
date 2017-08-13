@@ -29,7 +29,10 @@
 				"wiki.css": {
 					"media": "screen"
 				}
-			},
+			}
+		},
+		"skins.chameleon.js": {
+			"position": "bottom",
 			"scripts": [
 				"res/js/app-no-jquery.js",
 				"wiki.js"
