@@ -45,12 +45,21 @@
 
 /* User menu */
 
+#user-menu-button {
+    position: relative;
+    overflow: hidden;    
+}
+
 #user-menu-button .avatar {
-    width: 1.8em;
-    height: 1.8em;
-    border-radius: 1em;
-    margin: -0.4em 0 -0.4em -0.5em;
-    vertical-align: middle;
+    position: absolute;
+    width: 36px;
+    height: 36px;
+    left: 0;
+    top: 0;
+}
+
+#user-menu-button .name {
+    margin-left: 30px;
 }
 
 /* Table of content */
@@ -85,20 +94,27 @@
 
 #toc ul {
     list-style: none;
-    margin-top: 1em;
-    margin-bottom: 0;
+    margin: 0;
+    padding: 0;
+}
+
+#toc ul ul {
+    padding-left: 1em;
 }
 
 .tocnumber {
     display: inline-block;
-    min-width: 1.5em;
+    min-width: 1em;
 }
 
 /* Edit section button */
 
+.mw-editsection {
+    float: right;
+    margin-left: 0.5rem;
+}
+
 .mw-editsection a {
-    font-size: 1rem;
-    margin-left: 1rem;
     font-family: "Open Sans", sans-serif;
     font-weight: normal;
     vertical-align: middle;
@@ -110,11 +126,16 @@
 
 /* Categories */
 
+.catlinks {
+    clear: both;
+}
+
 .mw-normal-catlinks {
     background: #ffffff;
     padding: 0.5em 1em;
     margin: 2em 0;
     border-left: 3px solid #73BA25;
+    clear: both;
 }
 
 .mw-normal-catlinks li {
@@ -135,8 +156,10 @@ h3,
 h4,
 h5,
 h6 {
-    margin-top: 1rem;
-    margin-bottom: 1rem;
+    margin-top: 1rem !important;
+    margin-bottom: 1rem !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
 }
 
 ul {

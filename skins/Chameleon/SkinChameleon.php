@@ -20,7 +20,8 @@ class SkinChameleon extends SkinTemplate
     {
         parent::initPage( $out );
         $out->addMeta( 'viewport', 'width=device-width, initial-scale=1' );
-        $out->addModules( 'skins.chameleon' );
+        $out->addModuleStyles( 'skins.chameleon' );
+        $out->addModules( 'skins.chameleon.js' );
     }
 
     function setupSkinUserCss(OutputPage $out)
@@ -180,12 +181,12 @@ class ChameleonTemplate extends BaseTemplate
 
                         <!-- Login Menu -->
                         <div class="dropdown ml-2">
-                            <button class="btn btn-secondary dropdown-toggle" type="button" id="user-menu-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <button class="btn btn-primary" type="button" id="user-menu-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <?php echo $this->msg('login') ?>
                             </button>
                             <div class="dropdown-menu dropdown-menu-right">
                                 <a class="dropdown-item" href="<?php echo $this->data['signup_url'] ?>"><?php echo $this->msg('createaccount') ?></a>
-                                <a class="dropdown-item" href="#" class="nav-link" data-toggle="modal" data-target="#login-modal"><?php echo $this->msg('login') ?></a>
+                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#login-modal"><?php echo $this->msg('login') ?></a>
                             </div>
                         </div><!-- /.dropdown -->
 
@@ -229,9 +230,9 @@ class ChameleonTemplate extends BaseTemplate
 
                     <?php else : ?>
                         <div class="dropdown ml-2">
-                            <button class="btn btn-secondary dropdown-toggle" type="button" id="user-menu-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <button class="btn btn-primary" type="button" id="user-menu-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <img class="avatar" src="<?php echo $this->data['gravatar'] ?>" width="80" height="80" />
-                                <span class="hidden-xs-down"><?php echo $this->data['username'] ?></span>
+                                <span class="name hidden-xs-down"><?php echo $this->data['username'] ?></span>
                             </button>
                             <div class="dropdown-menu dropdown-menu-right">
                                 <?php
@@ -256,7 +257,7 @@ class ChameleonTemplate extends BaseTemplate
                     <!-- Tabs for talk page and language variants -->
                     <ul id="p-namespaces" class="nav nav-tabs"<?php $this->html( 'userlangattributes' ) ?>>
                         <?php foreach ($this->data['namespace_urls'] as $link) : ?>
-                            <li <?php echo str_replace('class="', 'class="nav-item ', $link['attributes']) ?>>
+                            <li class="nav-item">
                                 <a class="nav-link <?php echo strpos($link['attributes'], 'selected') ? 'active' : '' ?>" href="<?php echo htmlspecialchars( $link['href'] ) ?>" <?php echo $link['key'] ?>>
                                     <?php echo htmlspecialchars( $link['text'] ) ?>
                                 </a>
@@ -282,8 +283,8 @@ class ChameleonTemplate extends BaseTemplate
                 </div>
 
                 <!-- Page Actions -->
-                <div id="page-actions" class="btn-toolbar justify-content-end hidden-sm-down" role="toolbar" aria-label="Toolbar with button groups">
-                    <div class="btn-group" role="group">
+                <div id="page-actions" class="btn-toolbar float-right hidden-sm-down" role="toolbar" aria-label="Toolbar with button groups">
+                    <div class="btn-group btn-group-sm" role="group">
                         <?php foreach ($this->data['view_urls'] as $link) : ?>
                             <a class="btn btn-secondary" href="<?php echo htmlspecialchars( $link['href'] ) ?>" <?php echo $link['key'] ?>><?php
                                 // $link['text'] can be undefined - bug 27764
@@ -292,12 +293,14 @@ class ChameleonTemplate extends BaseTemplate
                             }
                                 ?></a>
                         <?php endforeach; ?>
-                        <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
-                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="btnGroupDrop1">
-                            <?php foreach ($this->data['action_urls'] as $link) : ?>
-                                <a class="dropdown-item" href="<?php echo htmlspecialchars( $link['href'] ) ?>" <?php echo $link['key'] ?>><?php echo htmlspecialchars( $link['text'] ) ?></a>
-                            <?php endforeach; ?>
-                        </div>
+                        <?php if ($this->data['action_urls']) : ?>
+                            <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="btnGroupDrop1">
+                                <?php foreach ($this->data['action_urls'] as $link) : ?>
+                                    <a class="dropdown-item" href="<?php echo htmlspecialchars( $link['href'] ) ?>" <?php echo $link['key'] ?>><?php echo htmlspecialchars( $link['text'] ) ?></a>
+                                <?php endforeach; ?>
+                            </div>
+                        <?php endif ?>
                     </div>
                 </div>
             </header>
@@ -313,7 +316,7 @@ class ChameleonTemplate extends BaseTemplate
                 <!-- /sitenotice -->
                 <?php endif; ?>
                 <!-- firstHeading -->
-                <h1 id="firstHeading" class="firstHeading display-3 mt-0 mb-3">
+                <h1 id="firstHeading" class="firstHeading display-4 mt-0 mb-3">
                     <span dir="auto"><?php $this->html( 'title' ) ?></span>
                 </h1>
                 <!-- /firstHeading -->
