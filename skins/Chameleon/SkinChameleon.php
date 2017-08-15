@@ -454,7 +454,11 @@ class ChameleonTemplate extends BaseTemplate
             </div><!-- /.col- -->
         </div><!-- /.row -->
 
-        <p>&copy; 2011&ndash;2017 <?= _("openSUSE contributors") ?></p>
+        <p>&copy; 2001&ndash;2017 SUSE LLC, &copy; 2005&ndash;2017 openSUSE Contributors &amp; others.
+            All content is made available under the terms
+            of the GNU Free Documentation License version 1.2 ("GFDL") unless expressly
+            otherwise indicated. | <a href="/Terms_of_site">Terms of site</a></p>
+
     </div><!-- /.container -->
 </footer>
 
