@@ -2,6 +2,8 @@ nbproject
 
 # MediaWiki files
 /cache
+/data/*
+!/data/.gitkeep
 /docs
 /extensions/*
 !/extensions/*.php
