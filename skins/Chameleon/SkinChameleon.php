@@ -114,7 +114,7 @@ class ChameleonTemplate extends BaseTemplate
 ?>
 
 <!-- Global Navbar -->
-<nav id="global-navbar" class="navbar navbar-toggleable navbar-inverse bg-inverse">
+<nav id="global-navbar" class="navbar navbar-expand-md navbar-dark bg-dark">
 
     <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
