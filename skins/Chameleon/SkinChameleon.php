@@ -145,9 +145,9 @@ class ChameleonTemplate extends BaseTemplate
 </nav>
 
 <!-- Main Wrap -->
-<div id="main-wrap" class="main-wrap d-flex">
+<div id="main-wrap" class="main-wrap d-flex align-items-stretch">
 
-    <sidebar class="w-20 hidden-md-down">
+    <sidebar class="w-20 d-sm-none d-md-block">
         <div class="container-fluid">
             <?php $this->renderPortals( $this->data['sidebar'] ); ?>
             <section>
@@ -231,7 +231,7 @@ class ChameleonTemplate extends BaseTemplate
                         <div class="dropdown ml-2">
                             <button class="btn btn-primary" type="button" id="user-menu-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <img class="avatar" src="<?php echo $this->data['gravatar'] ?>" width="80" height="80" />
-                                <span class="name hidden-xs-down"><?php echo $this->data['username'] ?></span>
+                                <span class="name d-xs-none d-sm-block"><?php echo $this->data['username'] ?></span>
                             </button>
                             <div class="dropdown-menu dropdown-menu-right">
                                 <?php
@@ -282,7 +282,7 @@ class ChameleonTemplate extends BaseTemplate
                 </div>
 
                 <!-- Page Actions -->
-                <div id="page-actions" class="btn-toolbar float-right hidden-sm-down" role="toolbar" aria-label="Toolbar with button groups">
+                <div id="page-actions" class="btn-toolbar float-right d-sm-none d-md-block" role="toolbar" aria-label="Toolbar with button groups">
                     <div class="btn-group btn-group-sm" role="group">
                         <?php foreach ($this->data['view_urls'] as $link) : ?>
                             <a class="btn btn-secondary" href="<?php echo htmlspecialchars( $link['href'] ) ?>" <?php echo $link['key'] ?>><?php

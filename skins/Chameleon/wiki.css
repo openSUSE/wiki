@@ -1,7 +1,5 @@
 #main-wrap {
-    display: flex;
     min-height: 400px;
-    align-items: stretch;
 }
 
 #main-wrap > sidebar {
