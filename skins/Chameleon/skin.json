@@ -4,8 +4,8 @@
 		"Guo Yunhe"
 	],
 	"url": "https://github.com/openSUSE/wiki",
-	"descriptionmsg": "chameleon-desc",
-	"namemsg": "skinname-chameleon",
+	"description": "Bootstrap 4 based skin for openSUSE wiki websites",
+	"version": "0.1",
 	"license-name": "GPL-3.0+",
 	"type": "skin",
 	"requires": {
@@ -39,6 +39,7 @@
 			"scripts": [
 				"res/js/app-no-jquery.js",
 				"wiki.js",
+				"js/card.js",
 				"js/toc.js"
 			]
 		}

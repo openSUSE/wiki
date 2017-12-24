@@ -1,8 +1,4 @@
-// .card unnecessary <p> tag by MediaWiki
-jQuery('.card > p, .card-block > p:not(.card-title):not(.card-text)').each(function () {
-    jQuery(this).after(jQuery(this).html());
-    jQuery(this).remove();
-});
+
 
 // .card-image
 jQuery('.card img').addClass('card-img-top img-fluid');
