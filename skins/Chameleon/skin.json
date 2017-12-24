@@ -28,6 +28,9 @@
 				},
 				"wiki.css": {
 					"media": "screen"
+				},
+				"css/toc.css": {
+					"media": "screen"
 				}
 			}
 		},
@@ -35,7 +38,8 @@
 			"position": "bottom",
 			"scripts": [
 				"res/js/app-no-jquery.js",
-				"wiki.js"
+				"wiki.js",
+				"js/toc.js"
 			]
 		}
 	},
