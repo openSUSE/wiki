@@ -40,6 +40,7 @@
 				"res/js/app-no-jquery.js",
 				"wiki.js",
 				"js/card.js",
+				"js/table.js",
 				"js/toc.js"
 			]
 		}
