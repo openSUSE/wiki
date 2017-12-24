@@ -29,6 +29,12 @@
 				"wiki.css": {
 					"media": "screen"
 				},
+				"css/card.css": {
+					"media": "screen"
+				},
+				"css/migrate-bento-intro.css": {
+					"media": "screen"
+				},
 				"css/toc.css": {
 					"media": "screen"
 				}
@@ -41,7 +47,8 @@
 				"wiki.js",
 				"js/card.js",
 				"js/table.js",
-				"js/toc.js"
+				"js/toc.js",
+				"js/migrate-bento-box.js"
 			]
 		}
 	},
