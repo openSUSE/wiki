@@ -1,4 +1,9 @@
 /* Table of content */
+
+#bodyContent #toc {
+    display: none;
+}
+
 #toc {
     position: sticky;
     top: 0;
