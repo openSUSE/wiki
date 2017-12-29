@@ -48,8 +48,6 @@ class ChameleonTemplate extends BaseTemplate
         $this->skin = $skin = $this->data['skin'];
         $action = $wgRequest->getText( 'action' );
 
-        global $wgVectorUseIconWatch;
-
         // Build additional attributes for navigation urls
         $nav = $this->data['content_navigation'];
 
@@ -110,17 +108,8 @@ class ChameleonTemplate extends BaseTemplate
 <div id="main-wrap" class="container-fluid">
     <div class="row">
 
-        <div class="col-md-4 col-lg-3 col-xl-2 d-sm-none d-md-block">
-            <div class="container-fluid">
-                <?php $this->renderPortals( $this->data['sidebar'] ); ?>
-                <section>
-                    <h4 class="my-3">Sponsors</h4>
-                    <?php $arr = array("sponsor_amd.png", 'sponsor_b1-systems.png', 'sponsor_ip-exchange2.png', 'sponsor_heinlein.png'); ?>
-                    <a class="sponsor-image" href="/Sponsors"><img src="https://static.opensuse.org/themes/bento/images/sponsors/<?php echo $arr[rand(0, count($arr)-1)] ?>" alt="Sponsor" style="max-width: 145px;"/></a>
-                </section>
-            </div><!-- /.container-fluid -->
-        </div>
-
+        <?php include(__DIR__ . '/parts/sidebar.php'); ?>
+        
         <div class="col-md-8 col-lg-6 col-xl-8">
             <div class="container-fluid">
                 

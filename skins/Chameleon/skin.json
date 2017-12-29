@@ -35,6 +35,9 @@
 				"css/migrate-bento-intro.css": {
 					"media": "screen"
 				},
+				"css/sidebar.css": {
+					"media": "screen"
+				},
 				"css/toc.css": {
 					"media": "screen"
 				}
