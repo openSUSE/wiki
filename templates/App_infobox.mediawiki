@@ -1,0 +1,19 @@
+<onlyinclude><div class="card float-right mb-3">
+[[File:{{{screenshot|opensuse-logo.png}}}|link=|300px]]
+<div class="card-block">
+<div class="card-title h4">[[File:{{{icon|opensuse-logo.png}}}|link=|32px]] {{{name|App name}}}</div>
+<div class="card-text">{{{description|Write application description here...}}}</div>
+{{#if:{{{package|}}}|[https://software.opensuse.org/package/{{{package}}} Install]}}{{#if:{{{website|}}}|[{{{website}}} Website]}}
+</div><!-- /.card-block -->
+<ul class="list-group list-group-flush">
+    <li class="list-group-item">'''Vendor''': {{{vendor|-}}}</li>
+    <li class="list-group-item">'''Developer''': {{{developer|-}}}</li>
+    <li class="list-group-item">'''License''': {{{license|-}}}</li>
+ </ul>
+</div></onlyinclude>
+
+{{{{PAGENAME}}/doc}}
+
+[[Category:Info box templates]]
+
+{{IW|{{FULLPAGENAME}}}}

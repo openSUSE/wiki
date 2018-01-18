@@ -1,38 +1,3 @@
-#main-wrap {
-    display: flex;
-    min-height: 400px;
-    align-items: stretch;
-}
-
-#main-wrap > sidebar {
-    flex: 0 0 300px;
-    background: #ffffff;
-    text-align: center;
-}
-
-#main-wrap > sidebar h4 {
-    font-weight: 300;
-}
-
-#main-wrap > sidebar h4::before,
-#main-wrap > sidebar h4::after {
-    content: ' ❆ ';
-    opacity: 0.5;
-}
-
-#main-wrap > sidebar > .container-fluid {
-    padding: 30px;
-}
-
-#main-wrap > main {
-    flex: 1 1 auto;
-    max-width: 100%;
-}
-
-#main-wrap > main > .container-fluid {
-    max-width: 1200px;
-}
-
 #search-and-user {
     margin-bottom: -32px;
 }
@@ -60,51 +25,6 @@
 
 #user-menu-button .name {
     margin-left: 30px;
-}
-
-/* Table of content */
-
-#toc {
-    background: #173F4F;
-    color: #dceec8;
-    padding: 1em;
-    margin: 2em 0;
-    clear: both;
-}
-
-#toc a {
-    color: #dceec8;
-}
-
-#toctitle {
-    position: relative;
-}
-
-#toctitle h2 {
-    font-size: 1.5em;
-    margin-top: 0;
-    margin-bottom: 0;
-}
-
-.toctoggle {
-    position: absolute;
-    right: 0;
-    top: 0;
-}
-
-#toc ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-}
-
-#toc ul ul {
-    padding-left: 1em;
-}
-
-.tocnumber {
-    display: inline-block;
-    min-width: 1em;
 }
 
 /* Edit section button */
@@ -149,18 +69,6 @@
 }
 
 /* Headings */
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-    margin-top: 1rem !important;
-    margin-bottom: 1rem !important;
-    padding-top: 0 !important;
-    padding-bottom: 0 !important;
-}
 
 ul {
     margin-bottom: 1em;

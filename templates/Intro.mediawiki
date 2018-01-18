@@ -1,0 +1,9 @@
+<onlyinclude><blockquote class="blockquote">{{{1|Write some introduction text here...}}}</blockquote></onlyinclude>
+
+----
+
+{{{{PAGENAME}}/doc}}
+
+[[Category:Info box templates]]
+
+{{IW|{{FULLPAGENAME}}}}

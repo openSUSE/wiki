@@ -1,7 +1,7 @@
-nbproject
-
 # MediaWiki files
 /cache
+/data/*
+!/data/.gitkeep
 /docs
 /extensions/*
 !/extensions/*.php
@@ -35,3 +35,10 @@ README
 RELEASE-NOTES-*
 UPGRADE
 wiki.phtml
+
+# OS/file manager files
+.directory
+
+# Editor/IDE files
+nbproject
+.vscode
