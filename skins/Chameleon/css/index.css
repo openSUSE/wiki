@@ -7578,10 +7578,11 @@ ul {
   font-size: 1.2rem;
   font-style: italic; }
 
-.knowledge img {
-  width: initial;
-  height: initial; }
-
-.knowledge ul {
-  padding-left: 0;
-  list-style: none; }
+.knowledge {
+  border: none; }
+  .knowledge img {
+    width: initial;
+    height: initial; }
+  .knowledge ul {
+    padding-left: 0;
+    list-style: none; }
