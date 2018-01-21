@@ -105,259 +105,258 @@ class ChameleonTemplate extends BaseTemplate
 <?php include(__DIR__ . '/parts/global-navbar.php'); ?>
 
 <!-- Main Wrap -->
-<div id="main-wrap" class="container-fluid">
-    <div class="row">
+<div id="main-wrap">
+	<?php include(__DIR__ . '/parts/sidebar.php'); ?>
 
-        <?php include(__DIR__ . '/parts/sidebar.php'); ?>
+	<main id="main">
+		<div class="container-fluid">
 
-        <div class="col-md-8 col-lg-6 col-xl-8">
-            <div class="container-fluid">
+			<div id="mw-page-base" class="noprint"></div>
+			<div id="mw-head-base" class="noprint"></div>
 
-                <div id="mw-page-base" class="noprint"></div>
-                <div id="mw-head-base" class="noprint"></div>
+			<!-- Page Header -->
+			<header id="mw-head" class="my-3">
 
-                <!-- Page Header -->
-                <header id="mw-head" class="my-3">
+				<div id="search-and-user" class="d-flex justify-content-between justify-content-md-end">
+					<!-- Search Form -->
+					<form action="<?php $this->text( 'wgScript' ) ?>" id="searchform" class="form-inline">
+						<div class="input-group">
+							<?php echo $this->makeSearchInput( array( 'id' => 'searchInput', 'class' => 'form-control', 'type' => 'search' ) ); ?>
+						</div>
+					</form>
 
-                    <div id="search-and-user" class="d-flex justify-content-between justify-content-md-end">
-                        <!-- Search Form -->
-                        <form action="<?php $this->text( 'wgScript' ) ?>" id="searchform" class="form-inline">
-                            <div class="input-group">
-                                <?php echo $this->makeSearchInput( array( 'id' => 'searchInput', 'class' => 'form-control', 'type' => 'search' ) ); ?>
-                            </div>
-                        </form>
+					<!-- User Menu -->
+					<?php if ($this->data['username'] == null) : ?>
 
-                        <!-- User Menu -->
-                        <?php if ($this->data['username'] == null) : ?>
+						<!-- Login Menu -->
+						<div class="dropdown ml-2">
+							<button class="btn btn-link" type="button" id="user-menu-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								<?php echo $this->msg('login') ?>
+							</button>
+							<div class="dropdown-menu dropdown-menu-right">
+								<a class="dropdown-item" href="<?php echo $this->data['signup_url'] ?>"><?php echo $this->msg('createaccount') ?></a>
+								<a class="dropdown-item" href="#" data-toggle="modal" data-target="#login-modal"><?php echo $this->msg('login') ?></a>
+							</div>
+						</div><!-- /.dropdown -->
 
-                            <!-- Login Menu -->
-                            <div class="dropdown ml-2">
-                                <button class="btn btn-link" type="button" id="user-menu-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <?php echo $this->msg('login') ?>
-                                </button>
-                                <div class="dropdown-menu dropdown-menu-right">
-                                    <a class="dropdown-item" href="<?php echo $this->data['signup_url'] ?>"><?php echo $this->msg('createaccount') ?></a>
-                                    <a class="dropdown-item" href="#" data-toggle="modal" data-target="#login-modal"><?php echo $this->msg('login') ?></a>
-                                </div>
-                            </div><!-- /.dropdown -->
+						<!-- Login Modal -->
+						<div class="modal fade" id="login-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+							<div class="modal-dialog" role="document">
+								<div class="modal-content">
+									<form action="<?php echo $this->data['login_url'] ?>" method="post" enctype="application/x-www-form-urlencoded" name="login_form">
+										<div class="modal-header">
+											<h5 class="modal-title" id="exampleModalLabel"><?php echo $this->msg('login') ?></h5>
+											<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+											<span aria-hidden="true">&times;</span>
+											</button>
+										</div>
+										<div class="modal-body">
 
-                            <!-- Login Modal -->
-                            <div class="modal fade" id="login-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                <div class="modal-dialog" role="document">
-                                    <div class="modal-content">
-                                        <form action="<?php echo $this->data['login_url'] ?>" method="post" enctype="application/x-www-form-urlencoded" name="login_form">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="exampleModalLabel"><?php echo $this->msg('login') ?></h5>
-                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                                </button>
-                                            </div>
-                                            <div class="modal-body">
+											<input name="url" value="https://<?php echo $_SERVER['SERVER_NAME'] . htmlentities($_SERVER['REQUEST_URI']) ?>" type="hidden">
+											<input name="return_to_path" value="<?php echo htmlentities($_SERVER['REQUEST_URI']) ?>" type="hidden">
+											<input name="context" value="default" type="hidden"/>
+											<input name="proxypath" value="reverse" type="hidden"/>
+											<input name="message" value="Please log In" type="hidden"/>
 
-                                                <input name="url" value="https://<?php echo $_SERVER['SERVER_NAME'] . htmlentities($_SERVER['REQUEST_URI']) ?>" type="hidden">
-                                                <input name="return_to_path" value="<?php echo htmlentities($_SERVER['REQUEST_URI']) ?>" type="hidden">
-                                                <input name="context" value="default" type="hidden"/>
-                                                <input name="proxypath" value="reverse" type="hidden"/>
-                                                <input name="message" value="Please log In" type="hidden"/>
+											<div class="form-group">
+												<label for="login-username"><?php echo $this->msg('userlogin-yourname') ?></label>
+												<input type="text" class="form-control" name="username" value="" id="login-username" />
+											</div>
+											<div class="form-group">
+												<label for="login-password"><?php echo $this->msg('userlogin-yourpassword') ?></label>
+												<input type="password" class="form-control" name="password" value="" id="login-password" />
+											</div>
 
-                                                <div class="form-group">
-                                                    <label for="login-username"><?php echo $this->msg('userlogin-yourname') ?></label>
-                                                    <input type="text" class="form-control" name="username" value="" id="login-username" />
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="login-password"><?php echo $this->msg('userlogin-yourpassword') ?></label>
-                                                    <input type="password" class="form-control" name="password" value="" id="login-password" />
-                                                </div>
+										</div>
+										<div class="modal-footer">
+											<button type="button" class="btn btn-secondary" data-dismiss="modal"><?php echo $this->msg('cancel') ?></button>
+											<button type="submit" class="btn btn-primary"><?php echo $this->msg('login') ?></button>
+										</div>
+									</form>
+								</div>
+							</div>
+						</div>
 
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-dismiss="modal"><?php echo $this->msg('cancel') ?></button>
-                                                <button type="submit" class="btn btn-primary"><?php echo $this->msg('login') ?></button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
+					<?php else : ?>
+						<div class="dropdown ml-2">
+							<button class="btn btn-link" type="button" id="user-menu-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								<img class="avatar" src="<?php echo $this->data['gravatar'] ?>" width="80" height="80" />
+								<span class="name d-xs-none d-sm-block"><?php echo $this->data['username'] ?></span>
+							</button>
+							<div class="dropdown-menu dropdown-menu-right">
+								<?php
+									foreach ($this->getPersonalTools() as $key => $item) {
+										foreach ($item['links'] as $k => $link) {
+											if (isset($link['class'])) {
+												$link['class'] .= ' dropdown-item';
+											} else {
+												$link['class'] = ' dropdown-item';
+											}
+											echo $this->makeLink( $k, $link );
+										}
+									}
+								?>
+							</div>
+						</div><!-- /.dropdown -->
+					<?php endif ?>
 
-                        <?php else : ?>
-                            <div class="dropdown ml-2">
-                                <button class="btn btn-link" type="button" id="user-menu-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <img class="avatar" src="<?php echo $this->data['gravatar'] ?>" width="80" height="80" />
-                                    <span class="name d-xs-none d-sm-block"><?php echo $this->data['username'] ?></span>
-                                </button>
-                                <div class="dropdown-menu dropdown-menu-right">
-                                    <?php
-                                        foreach ($this->getPersonalTools() as $key => $item) {
-                                            foreach ($item['links'] as $k => $link) {
-                                                if (isset($link['class'])) {
-                                                    $link['class'] .= ' dropdown-item';
-                                                } else {
-                                                    $link['class'] = ' dropdown-item';
-                                                }
-                                                echo $this->makeLink( $k, $link );
-                                            }
-                                        }
-                                    ?>
-                                </div>
-                            </div><!-- /.dropdown -->
-                        <?php endif ?>
+				</div><!-- /. -->
 
-                    </div><!-- /. -->
+				<div id="namespaces-variants" class="mb-2">
+					<!-- Tabs for talk page and language variants -->
+					<ul id="p-namespaces" class="nav nav-tabs"<?php $this->html( 'userlangattributes' ) ?>>
+						<?php foreach ($this->data['namespace_urls'] as $link) : ?>
+							<li class="nav-item">
+								<a class="nav-link <?php echo strpos($link['attributes'], 'selected') ? 'active' : '' ?>" href="<?php echo htmlspecialchars( $link['href'] ) ?>" <?php echo $link['key'] ?>>
+									<?php echo htmlspecialchars( $link['text'] ) ?>
+								</a>
+							</li>
+						<?php endforeach; ?>
+						<?php if ($this->data['variant_urls']) : ?>
+							<li class="nav-item dropdown">
+								<a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+									<?php foreach ($this->data['variant_urls'] as $link) : ?>
+										<?php if (stripos( $link['attributes'], 'selected' ) !== false) : ?>
+											<?php echo htmlspecialchars( $link['text'] ) ?>
+										<?php endif; ?>
+									<?php endforeach; ?>
+								</a>
+								<div class="dropdown-menu" <?php $this->html( 'userlangattributes' ) ?>>
+									<?php foreach ($this->data['variant_urls'] as $link) : ?>
+										<a class="dropdown-item" <?php echo $link['attributes'] ?> href="<?php echo htmlspecialchars( $link['href'] ) ?>" <?php echo $link['key'] ?>><?php echo htmlspecialchars( $link['text'] ) ?></a>
+									<?php endforeach; ?>
+								</div>
+							</li>
+						<?php endif ?>
+					</ul>
+				</div>
 
-                    <div id="namespaces-variants" class="mb-2">
-                        <!-- Tabs for talk page and language variants -->
-                        <ul id="p-namespaces" class="nav nav-tabs"<?php $this->html( 'userlangattributes' ) ?>>
-                            <?php foreach ($this->data['namespace_urls'] as $link) : ?>
-                                <li class="nav-item">
-                                    <a class="nav-link <?php echo strpos($link['attributes'], 'selected') ? 'active' : '' ?>" href="<?php echo htmlspecialchars( $link['href'] ) ?>" <?php echo $link['key'] ?>>
-                                        <?php echo htmlspecialchars( $link['text'] ) ?>
-                                    </a>
-                                </li>
-                            <?php endforeach; ?>
-                            <?php if ($this->data['variant_urls']) : ?>
-                                <li class="nav-item dropdown">
-                                    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-                                        <?php foreach ($this->data['variant_urls'] as $link) : ?>
-                                            <?php if (stripos( $link['attributes'], 'selected' ) !== false) : ?>
-                                                <?php echo htmlspecialchars( $link['text'] ) ?>
-                                            <?php endif; ?>
-                                        <?php endforeach; ?>
-                                    </a>
-                                    <div class="dropdown-menu" <?php $this->html( 'userlangattributes' ) ?>>
-                                        <?php foreach ($this->data['variant_urls'] as $link) : ?>
-                                            <a class="dropdown-item" <?php echo $link['attributes'] ?> href="<?php echo htmlspecialchars( $link['href'] ) ?>" <?php echo $link['key'] ?>><?php echo htmlspecialchars( $link['text'] ) ?></a>
-                                        <?php endforeach; ?>
-                                    </div>
-                                </li>
-                            <?php endif ?>
-                        </ul>
-                    </div>
+				<!-- Page Actions -->
+				<div id="page-actions" class="btn-toolbar d-sm-none d-md-flex flex-row-reverse" role="toolbar" aria-label="Toolbar with button groups">
+					<div class="btn-group btn-group-sm" role="group">
+						<?php foreach ($this->data['view_urls'] as $link) : ?>
+							<a class="btn btn-secondary" href="<?php echo htmlspecialchars( $link['href'] ) ?>" <?php echo $link['key'] ?>><?php
+								// $link['text'] can be undefined - bug 27764
+							if (array_key_exists( 'text', $link )) {
+								echo array_key_exists( 'img', $link ) ?  '<img src="' . $link['img'] . '" alt="' . $link['text'] . '" />' : htmlspecialchars( $link['text'] );
+							}
+								?></a>
+						<?php endforeach; ?>
+						<?php if ($this->data['action_urls']) : ?>
+							<button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+							<div class="dropdown-menu dropdown-menu-right" aria-labelledby="btnGroupDrop1">
+								<?php foreach ($this->data['action_urls'] as $link) : ?>
+									<a class="dropdown-item" href="<?php echo htmlspecialchars( $link['href'] ) ?>" <?php echo $link['key'] ?>><?php echo htmlspecialchars( $link['text'] ) ?></a>
+								<?php endforeach; ?>
+							</div>
+						<?php endif ?>
+					</div>
+				</div>
+			</header>
+			<!-- /header -->
 
-                    <!-- Page Actions -->
-                    <div id="page-actions" class="btn-toolbar d-sm-none d-md-flex flex-row-reverse" role="toolbar" aria-label="Toolbar with button groups">
-                        <div class="btn-group btn-group-sm" role="group">
-                            <?php foreach ($this->data['view_urls'] as $link) : ?>
-                                <a class="btn btn-secondary" href="<?php echo htmlspecialchars( $link['href'] ) ?>" <?php echo $link['key'] ?>><?php
-                                    // $link['text'] can be undefined - bug 27764
-                                if (array_key_exists( 'text', $link )) {
-                                    echo array_key_exists( 'img', $link ) ?  '<img src="' . $link['img'] . '" alt="' . $link['text'] . '" />' : htmlspecialchars( $link['text'] );
-                                }
-                                    ?></a>
-                            <?php endforeach; ?>
-                            <?php if ($this->data['action_urls']) : ?>
-                                <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
-                                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="btnGroupDrop1">
-                                    <?php foreach ($this->data['action_urls'] as $link) : ?>
-                                        <a class="dropdown-item" href="<?php echo htmlspecialchars( $link['href'] ) ?>" <?php echo $link['key'] ?>><?php echo htmlspecialchars( $link['text'] ) ?></a>
-                                    <?php endforeach; ?>
-                                </div>
-                            <?php endif ?>
-                        </div>
-                    </div>
-                </header>
-                <!-- /header -->
+			<!-- content -->
+			<div id="content" class="mw-body">
+				<a id="top"></a>
+				<div id="mw-js-message" style="display:none;"<?php $this->html( 'userlangattributes' ) ?>></div>
+				<?php if ($this->data['sitenotice']) : ?>
+				<!-- sitenotice -->
+				<div id="siteNotice"><?php $this->html( 'sitenotice' ) ?></div>
+				<!-- /sitenotice -->
+				<?php endif; ?>
+				<!-- firstHeading -->
+				<h1 id="firstHeading" class="firstHeading display-4 mt-0 mb-3">
+					<span dir="auto"><?php $this->html( 'title' ) ?></span>
+				</h1>
+				<!-- /firstHeading -->
+				<!-- bodyContent -->
+				<div id="bodyContent">
+					<?php if ($this->data['isarticle']) : ?>
+					<?php endif; ?>
+					<!-- subtitle -->
+					<div id="contentSub"<?php $this->html( 'userlangattributes' ) ?>><?php $this->html( 'subtitle' ) ?></div>
+					<!-- /subtitle -->
+					<?php if ($this->data['undelete']) : ?>
+					<!-- undelete -->
+					<div id="contentSub2"><?php $this->html( 'undelete' ) ?></div>
+					<!-- /undelete -->
+					<?php endif; ?>
+					<?php if ($this->data['newtalk']) : ?>
+					<!-- newtalk -->
+					<div class="usermessage"><?php $this->html( 'newtalk' )  ?></div>
+					<!-- /newtalk -->
+					<?php endif; ?>
+					<?php if ($this->data['showjumplinks']) : ?>
+					<!-- jumpto -->
+					<div id="jump-to-nav" class="mw-jump">
+						<?php $this->msg( 'jumpto' ) ?> <a href="#mw-head"><?php $this->msg( 'jumptonavigation' ) ?></a>,
+						<a href="#p-search"><?php $this->msg( 'jumptosearch' ) ?></a>
+					</div>
+					<!-- /jumpto -->
+					<?php endif; ?>
+					<!-- bodycontent -->
+					<?php $this->html( 'bodycontent' ) ?>
+					<!-- /bodycontent -->
+					<?php if ($this->data['printfooter']) : ?>
+					<!-- printfooter -->
+					<div class="printfooter d-none">
+						<?php $this->html( 'printfooter' ); ?>
+					</div>
+					<!-- /printfooter -->
+					<?php endif; ?>
+					<?php if ($this->data['catlinks']) : ?>
+					<!-- catlinks -->
+					<?php $this->html( 'catlinks' ); ?>
+					<!-- /catlinks -->
+					<?php endif; ?>
+					<?php if ($this->data['dataAfterContent']) : ?>
+					<!-- dataAfterContent -->
+					<?php $this->html( 'dataAfterContent' ); ?>
+					<!-- /dataAfterContent -->
+					<?php endif; ?>
+					<div class="visualClear"></div>
+					<!-- debughtml -->
+					<?php $this->html( 'debughtml' ); ?>
+					<!-- /debughtml -->
+				</div>
+				<!-- /bodyContent -->
+			</div>
+			<!-- /content -->
 
-                <!-- content -->
-                <div id="content" class="mw-body">
-                    <a id="top"></a>
-                    <div id="mw-js-message" style="display:none;"<?php $this->html( 'userlangattributes' ) ?>></div>
-                    <?php if ($this->data['sitenotice']) : ?>
-                    <!-- sitenotice -->
-                    <div id="siteNotice"><?php $this->html( 'sitenotice' ) ?></div>
-                    <!-- /sitenotice -->
-                    <?php endif; ?>
-                    <!-- firstHeading -->
-                    <h1 id="firstHeading" class="firstHeading display-4 mt-0 mb-3">
-                        <span dir="auto"><?php $this->html( 'title' ) ?></span>
-                    </h1>
-                    <!-- /firstHeading -->
-                    <!-- bodyContent -->
-                    <div id="bodyContent">
-                        <?php if ($this->data['isarticle']) : ?>
-                        <?php endif; ?>
-                        <!-- subtitle -->
-                        <div id="contentSub"<?php $this->html( 'userlangattributes' ) ?>><?php $this->html( 'subtitle' ) ?></div>
-                        <!-- /subtitle -->
-                        <?php if ($this->data['undelete']) : ?>
-                        <!-- undelete -->
-                        <div id="contentSub2"><?php $this->html( 'undelete' ) ?></div>
-                        <!-- /undelete -->
-                        <?php endif; ?>
-                        <?php if ($this->data['newtalk']) : ?>
-                        <!-- newtalk -->
-                        <div class="usermessage"><?php $this->html( 'newtalk' )  ?></div>
-                        <!-- /newtalk -->
-                        <?php endif; ?>
-                        <?php if ($this->data['showjumplinks']) : ?>
-                        <!-- jumpto -->
-                        <div id="jump-to-nav" class="mw-jump">
-                            <?php $this->msg( 'jumpto' ) ?> <a href="#mw-head"><?php $this->msg( 'jumptonavigation' ) ?></a>,
-                            <a href="#p-search"><?php $this->msg( 'jumptosearch' ) ?></a>
-                        </div>
-                        <!-- /jumpto -->
-                        <?php endif; ?>
-                        <!-- bodycontent -->
-                        <?php $this->html( 'bodycontent' ) ?>
-                        <!-- /bodycontent -->
-                        <?php if ($this->data['printfooter']) : ?>
-                        <!-- printfooter -->
-                        <div class="printfooter d-none">
-                            <?php $this->html( 'printfooter' ); ?>
-                        </div>
-                        <!-- /printfooter -->
-                        <?php endif; ?>
-                        <?php if ($this->data['catlinks']) : ?>
-                        <!-- catlinks -->
-                        <?php $this->html( 'catlinks' ); ?>
-                        <!-- /catlinks -->
-                        <?php endif; ?>
-                        <?php if ($this->data['dataAfterContent']) : ?>
-                        <!-- dataAfterContent -->
-                        <?php $this->html( 'dataAfterContent' ); ?>
-                        <!-- /dataAfterContent -->
-                        <?php endif; ?>
-                        <div class="visualClear"></div>
-                        <!-- debughtml -->
-                        <?php $this->html( 'debughtml' ); ?>
-                        <!-- /debughtml -->
-                    </div>
-                    <!-- /bodyContent -->
-                </div>
-                <!-- /content -->
+			<!-- Wiki Footer -->
+			<footer class="row my-5" <?php $this->html( 'userlangattributes' ) ?>>
+				<div class="col-sm-6 text-muted">
+					<?php foreach ($this->getFooterLinks() as $category => $links) : ?>
+						<ul id="footer-<?php echo $category ?>" class="list-inline">
+							<?php foreach ($links as $link) : ?>
+								<li id="footer-<?php echo $category ?>-<?php echo $link ?>" class="list-inline-item"><small><?php $this->html( $link ) ?></small></li>
+							<?php endforeach; ?>
+						</ul>
+					<?php endforeach; ?>
+				</div>
+				<div class="col-sm-6 text-right">
+					<?php $footericons = $this->getFooterIcons("icononly");
+					if (count( $footericons ) > 0) : ?>
+						<ul id="footer-icons" class="list-inline">
+				<?php	      foreach ($footericons as $blockName => $footerIcons) : ?>
+							<li id="footer-<?php echo htmlspecialchars( $blockName ); ?>ico">
+				<?php	          foreach ($footerIcons as $icon) : ?>
+								<?php echo $this->getSkin()->makeFooterIcon( $icon ); ?>
 
-                <!-- Wiki Footer -->
-                <footer class="row my-5" <?php $this->html( 'userlangattributes' ) ?>>
-                    <div class="col-sm-6 text-muted">
-                        <?php foreach ($this->getFooterLinks() as $category => $links) : ?>
-                            <ul id="footer-<?php echo $category ?>" class="list-inline">
-                                <?php foreach ($links as $link) : ?>
-                                    <li id="footer-<?php echo $category ?>-<?php echo $link ?>" class="list-inline-item"><small><?php $this->html( $link ) ?></small></li>
-                                <?php endforeach; ?>
-                            </ul>
-                        <?php endforeach; ?>
-                    </div>
-                    <div class="col-sm-6 text-right">
-                        <?php $footericons = $this->getFooterIcons("icononly");
-                        if (count( $footericons ) > 0) : ?>
-                            <ul id="footer-icons" class="list-inline">
-                    <?php	      foreach ($footericons as $blockName => $footerIcons) : ?>
-                                <li id="footer-<?php echo htmlspecialchars( $blockName ); ?>ico">
-                    <?php	          foreach ($footerIcons as $icon) : ?>
-                                    <?php echo $this->getSkin()->makeFooterIcon( $icon ); ?>
+				<?php	          endforeach; ?>
+							</li>
+				<?php	      endforeach; ?>
+						</ul>
+					<?php endif; ?>
+				</div>
+			</footer>
 
-                    <?php	          endforeach; ?>
-                                </li>
-                    <?php	      endforeach; ?>
-                            </ul>
-                        <?php                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         endif; ?>
-                    </div>
-                </footer>
+		</div><!-- /.container -->
+	</main>
 
-            </div><!-- /.container -->
-        </div>
-
-        <div id="toc-wrap" class="col-lg-3 col-xl-2 d-md-none d-lg-block"></div>
-    </div>
+	<sidebar id="toc-sidebar" class="d-none d-md-block">
+		<div class="container-fluid"></div>
+	</sidebar>
 </div>
 
 <!-- Global Footer -->
