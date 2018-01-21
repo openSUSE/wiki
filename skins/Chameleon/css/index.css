@@ -69,10 +69,10 @@
     display: none; }
   .badge {
     border: 1px solid #000; }
-  .table {
+  .table, .knowledge {
     border-collapse: collapse !important; }
-    .table td,
-    .table th {
+    .table td, .knowledge td,
+    .table th, .knowledge th {
       background-color: #fff !important; }
   .table-bordered th,
   .table-bordered td {
@@ -1079,22 +1079,22 @@ pre {
   .offset-xl-11 {
     margin-left: 91.66667%; } }
 
-.table {
+.table, .knowledge {
   width: 100%;
   max-width: 100%;
   margin-bottom: 1rem;
   background-color: transparent; }
-  .table th,
-  .table td {
+  .table th, .knowledge th,
+  .table td, .knowledge td {
     padding: 0.75rem;
     vertical-align: top;
     border-top: 1px solid #ced4da; }
-  .table thead th {
+  .table thead th, .knowledge thead th {
     vertical-align: bottom;
     border-bottom: 2px solid #ced4da; }
-  .table tbody + tbody {
+  .table tbody + tbody, .knowledge tbody + tbody {
     border-top: 2px solid #ced4da; }
-  .table .table {
+  .table .table, .knowledge .table, .table .knowledge, .knowledge .knowledge {
     background-color: #ffffff; }
 
 .table-sm th,
@@ -1215,12 +1215,12 @@ pre {
   .table-hover .table-active:hover > th {
     background-color: rgba(0, 0, 0, 0.075); }
 
-.table .thead-dark th {
+.table .thead-dark th, .knowledge .thead-dark th {
   color: #ffffff;
   background-color: #212529;
   border-color: #32383e; }
 
-.table .thead-light th {
+.table .thead-light th, .knowledge .thead-light th {
   color: #495057;
   background-color: #e9ecef;
   border-color: #ced4da; }
@@ -7538,3 +7538,11 @@ ul {
   background: #f8f9fA;
   font-size: 1.2rem;
   font-style: italic; }
+
+.knowledge img {
+  width: initial;
+  height: initial; }
+
+.knowledge ul {
+  padding-left: 0;
+  list-style: none; }
