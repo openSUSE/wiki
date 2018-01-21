@@ -109,16 +109,16 @@ class ChameleonTemplate extends BaseTemplate
     <div class="row">
 
         <?php include(__DIR__ . '/parts/sidebar.php'); ?>
-        
+
         <div class="col-md-8 col-lg-6 col-xl-8">
             <div class="container-fluid">
-                
+
                 <div id="mw-page-base" class="noprint"></div>
                 <div id="mw-head-base" class="noprint"></div>
 
                 <!-- Page Header -->
                 <header id="mw-head" class="my-3">
-                    
+
                     <div id="search-and-user" class="d-flex justify-content-between justify-content-md-end">
                         <!-- Search Form -->
                         <form action="<?php $this->text( 'wgScript' ) ?>" id="searchform" class="form-inline">
@@ -132,7 +132,7 @@ class ChameleonTemplate extends BaseTemplate
 
                             <!-- Login Menu -->
                             <div class="dropdown ml-2">
-                                <button class="btn btn-primary" type="button" id="user-menu-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <button class="btn btn-link" type="button" id="user-menu-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <?php echo $this->msg('login') ?>
                                 </button>
                                 <div class="dropdown-menu dropdown-menu-right">
@@ -181,7 +181,7 @@ class ChameleonTemplate extends BaseTemplate
 
                         <?php else : ?>
                             <div class="dropdown ml-2">
-                                <button class="btn btn-primary" type="button" id="user-menu-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <button class="btn btn-link" type="button" id="user-menu-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <img class="avatar" src="<?php echo $this->data['gravatar'] ?>" width="80" height="80" />
                                     <span class="name d-xs-none d-sm-block"><?php echo $this->data['username'] ?></span>
                                 </button>
@@ -201,7 +201,7 @@ class ChameleonTemplate extends BaseTemplate
                                 </div>
                             </div><!-- /.dropdown -->
                         <?php endif ?>
-                        
+
                     </div><!-- /. -->
 
                     <div id="namespaces-variants" class="mb-2">

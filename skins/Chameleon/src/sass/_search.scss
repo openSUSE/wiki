@@ -1,0 +1,6 @@
+#search-and-user {
+	margin-bottom: 20px;
+	@include media-breakpoint-up(sm) {
+		margin-bottom: -32px;
+	}
+}
