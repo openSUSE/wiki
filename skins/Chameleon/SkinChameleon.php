@@ -234,7 +234,7 @@ class ChameleonTemplate extends BaseTemplate
                     </div>
 
                     <!-- Page Actions -->
-                    <div id="page-actions" class="btn-toolbar float-right d-sm-none d-md-block" role="toolbar" aria-label="Toolbar with button groups">
+                    <div id="page-actions" class="btn-toolbar d-sm-none d-md-flex flex-row-reverse" role="toolbar" aria-label="Toolbar with button groups">
                         <div class="btn-group btn-group-sm" role="group">
                             <?php foreach ($this->data['view_urls'] as $link) : ?>
                                 <a class="btn btn-secondary" href="<?php echo htmlspecialchars( $link['href'] ) ?>" <?php echo $link['key'] ?>><?php
