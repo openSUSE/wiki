@@ -1,67 +1,41 @@
 {
-	"name": "Chameleon",
-	"author": [
-		"Guo Yunhe"
-	],
-	"url": "https://github.com/openSUSE/wiki",
-	"description": "Bootstrap 4 based skin for openSUSE wiki websites",
-	"version": "0.1",
-	"license-name": "GPL-3.0+",
-	"type": "skin",
-	"requires": {
-		"MediaWiki": ">= 1.25.0"
-	},
-	"ValidSkinNames": {
-		"chameleon": "Chameleon"
-	},
-	"MessagesDirs": {
-		"Chameleon": [
-			"i18n"
-		]
-	},
-	"ResourceModules": {
-		"skins.chameleon": {
-			"position": "top",
-			"styles": {
-				"res/css/app.css": {
-					"media": "screen"
-				},
-				"wiki.css": {
-					"media": "screen"
-				},
-				"css/card.css": {
-					"media": "screen"
-				},
-				"css/migrate-bento-intro.css": {
-					"media": "screen"
-				},
-				"css/sidebar.css": {
-					"media": "screen"
-				},
-				"css/toc.css": {
-					"media": "screen"
-				}
-			}
-		},
-		"skins.chameleon.js": {
-			"position": "bottom",
-			"scripts": [
-				"res/js/app-no-jquery.js",
-				"wiki.js",
-				"js/card.js",
-				"js/table.js",
-				"js/toc.js",
-				"js/migrate-bento-box.js"
-			]
-		}
-	},
-	"ResourceFileModulePaths": {
-		"localBasePath": "",
-		"remoteSkinPath": "Chameleon"
-	},
-	"AutoloadClasses": {
-		"SkinChameleon": "SkinChameleon.php",
-		"ChameleonTemplate": "SkinChameleon.php"
-	},
-	"manifest_version": 1
+  "name": "Chameleon",
+  "author": ["Guo Yunhe"],
+  "url": "https://github.com/openSUSE/wiki",
+  "description": "Bootstrap 4 based skin for openSUSE wiki websites",
+  "version": "0.1",
+  "license-name": "GPL-3.0+",
+  "type": "skin",
+  "requires": {
+    "MediaWiki": ">= 1.25.0"
+  },
+  "ValidSkinNames": {
+    "chameleon": "Chameleon"
+  },
+  "MessagesDirs": {
+    "Chameleon": ["i18n"]
+  },
+  "ResourceModules": {
+    "skins.chameleon": {
+      "position": "top",
+      "styles": {
+        "css/index.css": {
+          "media": "screen"
+        }
+      }
+    },
+    "skins.chameleon.js": {
+      "position": "bottom",
+      "scripts": ["js/index.js"]
+    }
+  },
+  "ResourceFileModulePaths": {
+    "localBasePath": "",
+    "remoteSkinPath": "Chameleon"
+  },
+  "AutoloadClasses": {
+    "SkinChameleon": "SkinChameleon.php",
+    "ChameleonTemplate": "SkinChameleon.php"
+  },
+  "manifest_version": 1
 }

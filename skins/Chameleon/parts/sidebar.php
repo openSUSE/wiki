@@ -1,4 +1,4 @@
-<sidebar id="sidebar" class="bg-light col-md-4 col-lg-3 col-xl-2 d-sm-none d-md-block">
+<sidebar id="sidebar" class="d-none d-md-block">
     <div class="container-fluid">
         <?php $this->renderPortals( $this->data['sidebar'] ); ?>
         <section>

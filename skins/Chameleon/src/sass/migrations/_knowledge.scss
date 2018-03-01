@@ -1,0 +1,14 @@
+.knowledge {
+	@extend .table;
+	border: none;
+
+	// Icon should not use max-width: 100% otherwise they are very small
+	img {
+		width: initial;
+		height: initial;
+	}
+
+	ul {
+		@include list-unstyled();
+	}
+}
