@@ -33,6 +33,7 @@ $wgArticlePath      = "$wgScriptPath/$1";
 # $wgArticlePath      = "$wgScript?title=$1";
 
 $wgStylePath        = "$wgScriptPath/skins";
+wfLoadSkin( 'Chameleon' );
 $wgStyleDirectory   = "$IP/skins";
 $wgLogo             = "$wgStylePath/common/images/wiki.png";
 

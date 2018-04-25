@@ -18,7 +18,7 @@
 /tests
 /vendor
 /*.php
-!/LocalSettings.php
+!/GlobalSettings.php
 /*.json
 /*.js
 composer.local.json-sample
