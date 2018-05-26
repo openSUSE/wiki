@@ -284,7 +284,7 @@ if (isset($_SERVER['HTTP_X_USERNAME'])) { # avoid logging 'undefined index' warn
 
 ##### UserMerge
 
-wfLoadExtension( 'UserMerge' );
+require_once "$IP/extensions/UserMerge/UserMerge.php";
 
 # By default nobody can use this function, enable for bureaucrat?
 $wgGroupPermissions['bureaucrat']['usermerge'] = true;
@@ -292,7 +292,7 @@ $wgGroupPermissions['bureaucrat']['usermerge'] = true;
 
 ##### WikiEditor
 
-wfLoadExtension( 'WikiEditor' );
+require_once "$IP/extensions/WikiEditor/WikiEditor.php";
 
 # Default user options for WikiEditor. Otherwise it is not enabled by default.
 $wgDefaultUserOptions['usebetatoolbar'] = 1;
