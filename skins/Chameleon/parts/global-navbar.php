@@ -16,7 +16,7 @@
                 <a class="nav-link" href="https://software.opensuse.org/search"><?= _('Software') ?></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="https://doc.opensuse.org/"><?= _('Guides') ?></a>
+                <a class="nav-link" href="https://doc.opensuse.org/"><?= _('Documentation') ?></a>
             </li>
             <li class="nav-item active">
                 <a class="nav-link" href="/"><?= _('Wiki') ?></a>
