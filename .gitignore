@@ -20,6 +20,7 @@
 /*.php
 !/LocalSettings.php
 !/wiki_settings.example.php
+!/server.php
 /*.json
 /*.js
 composer.local.json-sample
