@@ -4,70 +4,22 @@
 
 ### Setup
 
-1.  Of course, you are using openSUSE 🦎.
+Of course, you are using openSUSE 🦎.
 
-    ```bash
-    sudo zypper install git php7 php7-fileinfo php7-json php7-opcache php7-sqlite php7-mbstring php-composer
-    ```
-
-2.  Optional, if you want to build skin.
-
-    ```bash
-    sudo zypper install nodejs npm
-    sudo npm install -g gulp
-    ```
-
-3.  Fork this project and clone your forked repository to your machine.
-
-    ```bash
-    git clone <your-git-url>
-    cd wiki
-    git submodule update --init
-    ```
-
-4.  Install MediaWiki 1.27 LTS release (a little bit old...)
-
-    ```bash
-    git clone --branch REL1_27 --depth 1 https://gerrit.wikimedia.org/r/p/mediawiki/core.git
-    cd core
-    rm -rf .git
-    mv -n * ..
-    cd ..
-    rm -rf core
-    ```
-
-5.  Install Composer packages
-
-    ```bash
-    composer install
-    ```
-
-6.  Start PHP internal web server
-
-    ```bash
-    php -S localhost:8023 server.php
-    ```
-
+1.  Fork this project on Github if you don't have direct push access.
+2.  Clone it to your computer: `git clone <your-git-url>`
+3.  Change to project directory: `cd <your-git-dir>`
+4.  Update Git submodules: `git submodule update --init`
+5.  Run installation script: `./install_devel.sh`
+6.  Start PHP built-in web server: `./start_devel.sh`
 7.  Visit http://localhost:8023/mw-config/ and install the wiki
 
-### Upgrade MediaWiki
+Everytime you want to code, just do:
 
-Replace REL1_27 to the release branch you want.
+1.  Start PHP built-in web server: `./start_devel.sh`
+2.  Visit http://localhost:8023/
 
-```
-rm -r docs includes languages maintenance mw-config resources tests
-git clone --branch REL1_27 --depth 1 https://gerrit.wikimedia.org/r/p/mediawiki/core.git
-cd core
-rm -rf .git
-mv -n * ..
-cd ..
-rm -rf core
-php maintenance/update.php
-```
-
-## Production Deployment
-
-### PHP Configuration
+### PHP Configuration (Optional)
 
 Modify `/etc/php7/apache2/php.ini`:
 
