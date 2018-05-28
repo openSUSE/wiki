@@ -33,6 +33,7 @@ download ReplaceText-REL1_27-7676bf8.tar.gz
 download RSS-REL1_27-d945221.tar.gz
 download UserMerge-REL1_27-31ea86d.tar.gz
 download UserPageEditProtection-REL1_27-8affdda.tar.gz
+cd ..
 
 # Install Composer Packages
 composer install
