@@ -45,6 +45,8 @@ cp wiki_settings.example.php wiki_settings.php
 mkdir /tmp/wiki_sessions
 
 # Run Installation Script
+rm -r data
+mkdir data
 mv LocalSettings.php _LocalSettings.php
 php maintenance/install.php --dbuser="" --dbpass="" --dbname=wiki --dbpath=./data \
     --dbtype=sqlite --confpath=./ --scriptpath=/ --pass=evergreen openSUSE Geeko
