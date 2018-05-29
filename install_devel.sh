@@ -40,3 +40,14 @@ composer install
 
 # Copy Test Settings
 cp wiki_settings.example.php wiki_settings.php
+
+# Make Directories
+mkdir /tmp/wiki_sessions
+
+# Run Installation Script
+mv LocalSettings.php _LocalSettings.php
+php maintenance/install.php --dbuser="" --dbpass="" --dbname=wiki --dbpath=./data \
+    --dbtype=sqlite --confpath=./ --scriptpath=/ --pass=evergreen openSUSE Geeko
+
+rm LocalSettings.php
+mv _LocalSettings.php LocalSettings.php

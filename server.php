@@ -18,8 +18,6 @@ if ($uri !== '/' && file_exists(__DIR__.$uri) && !preg_match('/\.php$/', $uri)) 
     return false;
 }
 
-session_save_path(__DIR__.'/sessions');
-
 if (preg_match('/\.php$/', $uri)) {
     require_once __DIR__.$uri;
 } else {
