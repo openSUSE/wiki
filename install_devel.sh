@@ -2,12 +2,18 @@
 
 # Installation Script for Local Development
 
+# Install Git submodules
+git submodule update --init
+
 # Install RPM packages
 sudo zypper install git php7 php7-fileinfo php7-gettext php7-json php7-mbstring \
     php7-opcache php7-sqlite php-composer nodejs8 npm8
 
-# Install Node packages
+# Install NodeJS packages
 sudo npm install -g gulp-cli
+cd skins/Chameleon
+npm install
+cd ../..
 
 # Download MediaWiki 1.27.4
 wget https://releases.wikimedia.org/mediawiki/1.27/mediawiki-1.27.4.tar.gz
@@ -15,7 +21,7 @@ tar -xvzf mediawiki-1.27.4.tar.gz
 cp -rf mediawiki-1.27.4/* .
 rm -r mediawiki-1.27.4 mediawiki-1.27.4.tar.gz
 
-# Download Extensions
+# Download MediaWiki extensions
 
 function download {
     wget https://extdist.wmflabs.org/dist/extensions/$1
@@ -35,16 +41,17 @@ download UserMerge-REL1_27-31ea86d.tar.gz
 download UserPageEditProtection-REL1_27-8affdda.tar.gz
 cd ..
 
-# Install Composer Packages
+# Install Composer packages
 composer install
 
-# Copy Test Settings
+# Copy development settings
 cp wiki_settings.example.php wiki_settings.php
 
-# Make Directories
-mkdir /tmp/wiki_sessions
+# Make directories
+mkdir /tmp/wiki_sessions # PHP session save path
+mkdir data # Save SQLite files
 
-# Run Installation Script
+# Run installation script
 rm -r data
 mkdir data
 mv LocalSettings.php _LocalSettings.php
