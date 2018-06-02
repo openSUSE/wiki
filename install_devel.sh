@@ -60,3 +60,4 @@ php maintenance/install.php --dbuser="" --dbpass="" --dbname=wiki --dbpath=./dat
 
 rm LocalSettings.php
 mv _LocalSettings.php LocalSettings.php
+php maintenance/update.php
