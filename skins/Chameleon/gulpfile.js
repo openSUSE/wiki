@@ -8,7 +8,6 @@ var buffer = require("gulp-buffer");
 var sourcemaps = require("gulp-sourcemaps");
 var uglify = require("gulp-uglify");
 var sass = require("gulp-sass");
-var svgmin = require("gulp-svgmin");
 
 // Compile JavaScripts with sourcemaps
 gulp.task("js", function() {
@@ -42,27 +41,24 @@ gulp.task("sass", function() {
 		.pipe(gulp.dest("dist/css"));
 });
 
-// Minify SVG images
-gulp.task("svg", function() {
+// Copy font files
+gulp.task("copy-images", function() {
 	return gulp
-		.src("src/images/**/*.svg")
-		.pipe(svgmin())
+		.src(["node_modules/opensuse-theme-chameleon/dist/images/**/*"])
 		.pipe(gulp.dest("dist/images"));
 });
-
-// Copy font files
-gulp.task("copy", function() {
+gulp.task("copy-fonts", function() {
 	return gulp
 		.src(["node_modules/opensuse-theme-chameleon/dist/fonts/**/*"])
 		.pipe(gulp.dest("dist/fonts"));
 });
+gulp.task("copy", gulp.parallel("copy-images", "copy-fonts"));
 
 // Build all
-gulp.task("default", gulp.parallel("js", "sass", "svg"));
+gulp.task("default", gulp.parallel("js", "sass"));
 
 // Watch all
 gulp.task("watch", function() {
 	gulp.watch("src/sass/**/*.scss", gulp.parallel("sass"));
 	gulp.watch("src/js/**/*.js", gulp.parallel("js"));
-	gulp.watch("src/images/**/*.svg", gulp.parallel("svg"));
 });
