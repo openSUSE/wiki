@@ -10,6 +10,7 @@
 /languages
 /maintenance
 /mw-config
+node_modules
 /resources
 /serialized
 /skins/*
