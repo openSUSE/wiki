@@ -1,7 +1,18 @@
 .card-body :last-child {
-    margin-bottom: 0;
+	margin-bottom: 0;
 }
 
 .card-body :first-child {
-    margin-top: 0;
+	margin-top: 0;
+}
+
+.card {
+	ul,
+	ol {
+		@extend .list-group;
+		@extend .list-group-flush;
+	}
+	li {
+		@extend .list-group-item;
+	}
 }
