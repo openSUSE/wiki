@@ -7,7 +7,7 @@ git submodule update --init
 
 # Install RPM packages
 sudo zypper install git php7 php7-fileinfo php7-gettext php7-json php7-mbstring \
-    php7-opcache php7-sqlite php-composer nodejs8 npm8
+    php7-opcache php7-sqlite php-composer nodejs8 npm8 ImageMagick
 
 # Install NodeJS packages
 sudo npm install -g gulp-cli

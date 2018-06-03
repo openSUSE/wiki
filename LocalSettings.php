@@ -53,9 +53,6 @@ $wgStylePath = "$wgScriptPath/skins";
 ## or else you'll overwrite your logo when you upgrade!
 $wgLogo = "$wgStylePath/common/images/wiki.png";
 
-$wgUploadPath = "$wgScriptPath/images";
-$wgUploadDirectory = "$IP/images";
-
 $wgEnableEmail = true;
 $wgEnableUserEmail = false;
 
@@ -102,12 +99,11 @@ if ( $is_production ) {
 ## To enable image uploads, make sure the 'images' directory
 ## is writable, then uncomment this:
 $wgEnableUploads  = true;
-$wgUseImageResize = true;
-$wgUseImageMagick = false;
-#$wgImageMagickConvertCommand = "/usr/bin/convert";
+$wgUseImageMagick = true;
+$wgImageMagickConvertCommand = "/usr/bin/convert";
 
 # InstantCommons allows wiki to use images from http://commons.wikimedia.org
-$wgUseInstantCommons = true;
+#$wgUseInstantCommons = true;
 
 ## If you want to use image uploads under safe mode,
 ## create the directories images/archive, images/thumb and
@@ -117,10 +113,12 @@ $wgUseInstantCommons = true;
 
 ## If you have the appropriate support software installed
 ## you can enable inline LaTeX equations:
-# $wgUseTeX = true;
-$wgMathPath         = "{$wgUploadPath}/math";
-$wgMathDirectory    = "{$wgUploadDirectory}/math";
-$wgTmpDirectory     = "{$wgUploadDirectory}/temp";
+if ( $is_production ) {
+	# $wgUseTeX = true;
+	$wgMathPath         = "{$wgUploadPath}/math";
+	$wgMathDirectory    = "{$wgUploadDirectory}/math";
+	$wgTmpDirectory     = "{$wgUploadDirectory}/temp";
+}
 
 $wgLocalInterwiki   = $wgSitename;
 
