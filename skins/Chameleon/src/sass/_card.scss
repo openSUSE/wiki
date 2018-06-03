@@ -1,11 +1,3 @@
-.card-body :last-child {
-	margin-bottom: 0;
-}
-
-.card-body :first-child {
-	margin-top: 0;
-}
-
 .card {
 	ul,
 	ol {
@@ -15,4 +7,28 @@
 	li {
 		@extend .list-group-item;
 	}
+
+	&,
+	& > p:first-child {
+		> a:first-child > img,
+		> img:first-child {
+			@extend .card-img-top;
+		}
+	}
+
+	&,
+	& > p:last-child {
+		> a:last-child > img,
+		> img:last-child {
+			@extend .card-img-bottom;
+		}
+	}
+}
+
+.card-body :last-child {
+	margin-bottom: 0;
+}
+
+.card-body :first-child {
+	margin-top: 0;
 }
