@@ -130,7 +130,7 @@ class ChameleonTemplate extends BaseTemplate
 
 						<!-- Login Menu -->
 						<div class="dropdown ml-2">
-							<button class="btn btn-link" type="button" id="user-menu-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							<button class="btn btn-secondary" type="button" id="user-menu-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 								<?php echo $this->msg('login') ?>
 							</button>
 							<div class="dropdown-menu dropdown-menu-right">
@@ -179,9 +179,8 @@ class ChameleonTemplate extends BaseTemplate
 
 					<?php else : ?>
 						<div class="dropdown ml-2">
-							<button class="btn btn-link" type="button" id="user-menu-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-								<img class="avatar" src="<?php echo $this->data['gravatar'] ?>" width="80" height="80" />
-								<span class="name d-xs-none d-sm-block"><?php echo $this->data['username'] ?></span>
+							<button class="btn btn-secondary" type="button" id="user-menu-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								<img class="avatar rounded" src="<?php echo $this->data['gravatar'] ?>" width="40" height="40" title="<?php echo $this->data['username'] ?>"/>
 							</button>
 							<div class="dropdown-menu dropdown-menu-right">
 								<?php
