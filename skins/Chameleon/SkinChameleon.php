@@ -105,102 +105,17 @@ class ChameleonTemplate extends BaseTemplate
 <?php include(__DIR__ . '/parts/global-navbar.php'); ?>
 
 <!-- Main Wrap -->
-<div id="main-wrap">
-	<?php include(__DIR__ . '/parts/sidebar.php'); ?>
-
-	<main id="main">
-		<div class="container-fluid">
-
+<div class="container-fluid">
+	<div class="row flex-xl-nowrap">
+		<div class="col-12 col-md-3 col-xl-2">
+			<?php include(__DIR__ . '/parts/sidebar.php'); ?>
+		</div><!-- /.col -->
+		<div class="col-12 col-md-9 col-xl-8">
 			<div id="mw-page-base" class="noprint"></div>
 			<div id="mw-head-base" class="noprint"></div>
 
 			<!-- Page Header -->
 			<header id="mw-head" class="my-3">
-
-				<div id="search-and-user" class="d-flex justify-content-between justify-content-md-end">
-					<!-- Search Form -->
-					<form action="<?php $this->text( 'wgScript' ) ?>" id="searchform" class="form-inline">
-						<div class="input-group">
-							<?php echo $this->makeSearchInput( array( 'id' => 'searchInput', 'class' => 'form-control', 'type' => 'search' ) ); ?>
-						</div>
-					</form>
-
-					<!-- User Menu -->
-					<?php if ($this->data['username'] == null) : ?>
-
-						<!-- Login Menu -->
-						<div class="dropdown ml-2">
-							<button class="btn btn-link" type="button" id="user-menu-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-								<?php echo $this->msg('login') ?>
-							</button>
-							<div class="dropdown-menu dropdown-menu-right">
-								<a class="dropdown-item" href="<?php echo $this->data['signup_url'] ?>"><?php echo $this->msg('createaccount') ?></a>
-								<a class="dropdown-item" href="#" data-toggle="modal" data-target="#login-modal"><?php echo $this->msg('login') ?></a>
-							</div>
-						</div><!-- /.dropdown -->
-
-						<!-- Login Modal -->
-						<div class="modal fade" id="login-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-							<div class="modal-dialog" role="document">
-								<div class="modal-content">
-									<form action="<?php echo $this->data['login_url'] ?>" method="post" enctype="application/x-www-form-urlencoded" name="login_form">
-										<div class="modal-header">
-											<h5 class="modal-title" id="exampleModalLabel"><?php echo $this->msg('login') ?></h5>
-											<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-											<span aria-hidden="true">&times;</span>
-											</button>
-										</div>
-										<div class="modal-body">
-
-											<input name="url" value="https://<?php echo $_SERVER['SERVER_NAME'] . htmlentities($_SERVER['REQUEST_URI']) ?>" type="hidden">
-											<input name="return_to_path" value="<?php echo htmlentities($_SERVER['REQUEST_URI']) ?>" type="hidden">
-											<input name="context" value="default" type="hidden"/>
-											<input name="proxypath" value="reverse" type="hidden"/>
-											<input name="message" value="Please log In" type="hidden"/>
-
-											<div class="form-group">
-												<label for="login-username"><?php echo $this->msg('userlogin-yourname') ?></label>
-												<input type="text" class="form-control" name="username" value="" id="login-username" />
-											</div>
-											<div class="form-group">
-												<label for="login-password"><?php echo $this->msg('userlogin-yourpassword') ?></label>
-												<input type="password" class="form-control" name="password" value="" id="login-password" />
-											</div>
-
-										</div>
-										<div class="modal-footer">
-											<button type="button" class="btn btn-secondary" data-dismiss="modal"><?php echo $this->msg('cancel') ?></button>
-											<button type="submit" class="btn btn-primary"><?php echo $this->msg('login') ?></button>
-										</div>
-									</form>
-								</div>
-							</div>
-						</div>
-
-					<?php else : ?>
-						<div class="dropdown ml-2">
-							<button class="btn btn-link" type="button" id="user-menu-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-								<img class="avatar" src="<?php echo $this->data['gravatar'] ?>" width="80" height="80" />
-								<span class="name d-xs-none d-sm-block"><?php echo $this->data['username'] ?></span>
-							</button>
-							<div class="dropdown-menu dropdown-menu-right">
-								<?php
-									foreach ($this->getPersonalTools() as $key => $item) {
-										foreach ($item['links'] as $k => $link) {
-											if (isset($link['class'])) {
-												$link['class'] .= ' dropdown-item';
-											} else {
-												$link['class'] = ' dropdown-item';
-											}
-											echo $this->makeLink( $k, $link );
-										}
-									}
-								?>
-							</div>
-						</div><!-- /.dropdown -->
-					<?php endif ?>
-
-				</div><!-- /. -->
 
 				<div id="namespaces-variants" class="mb-2">
 					<!-- Tabs for talk page and language variants -->
@@ -256,7 +171,7 @@ class ChameleonTemplate extends BaseTemplate
 			<!-- /header -->
 
 			<!-- content -->
-			<div id="content" class="mw-body">
+			<main id="content" class="mw-body">
 				<a id="top"></a>
 				<div id="mw-js-message" style="display:none;"<?php $this->html( 'userlangattributes' ) ?>></div>
 				<?php if ($this->data['sitenotice']) : ?>
@@ -320,7 +235,7 @@ class ChameleonTemplate extends BaseTemplate
 					<!-- /debughtml -->
 				</div>
 				<!-- /bodyContent -->
-			</div>
+			</main>
 			<!-- /content -->
 
 			<!-- Wiki Footer -->
@@ -351,13 +266,12 @@ class ChameleonTemplate extends BaseTemplate
 				</div>
 			</footer>
 
-		</div><!-- /.container -->
-	</main>
-
-	<sidebar id="toc-sidebar" class="d-none d-md-block">
-		<div class="container-fluid"></div>
-	</sidebar>
-</div>
+		</div><!-- /.col -->
+		<div class="d-none d-xl-block col-xl-2">
+			<aside id="toc-sidebar"></aside>
+		</div><!-- /.col -->
+	</div><!-- /.row -->
+</div><!-- /.container-fluid -->
 
 <!-- Global Footer -->
 <?php include(__DIR__ . '/parts/global-footer.php'); ?>
@@ -436,13 +350,13 @@ var _paq = _paq || [];
             $msg = $name;
         }
         ?>
-<div class="portal mb-5" id='<?php echo Sanitizer::escapeId( "p-$name" ) ?>'<?php echo Linker::tooltip( 'p-' . $name ) ?>>
+<section class="portal mb-3" id="<?php echo Sanitizer::escapeId( "p-$name" ) ?>" <?php echo Linker::tooltip( 'p-' . $name ) ?>>
     <h4 class="mb-3"<?php $this->html( 'userlangattributes' ) ?>><?php $msgObj = wfMessage( $msg );
     echo htmlspecialchars( $msgObj->exists() ? $msgObj->text() : $msg ); ?></h4>
     <?php if (is_array( $content )) : ?>
         <ul class="list-unstyled">
             <?php foreach ($content as $key => $val) : ?>
-                <?php $val['class'] = 'mb-2' ?>
+                <?php $val['class'] = 'mb-1' ?>
                 <?php echo $this->makeListItem( $key, $val ); ?>
             <?php endforeach; ?>
             <?php
@@ -454,7 +368,7 @@ var _paq = _paq || [];
     <?php else : ?>
         <?php echo $content; /* Allow raw HTML block to be defined by extensions */ ?>
     <?php endif; ?>
-</div>
+</section>
 <?php
     }
 }

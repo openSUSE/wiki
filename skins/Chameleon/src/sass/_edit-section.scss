@@ -1,15 +1,14 @@
+// Style edit section link as button
 .mw-editsection {
-	float: right;
-	margin-left: 0.5rem;
+	vertical-align: 0.6em;
 
 	a {
+		@extend .btn;
+		@extend .btn-sm;
+		@extend .btn-light;
 		font-family: $font-family-sans-serif;
-		font-weight: normal;
-		vertical-align: middle;
 	}
 }
-
-.mw-editsection
 
 .mw-editsection-bracket {
 	display: none;
