@@ -2,47 +2,90 @@
 
 # Installation Script for Local Development
 
-# Install Git submodules
-git submodule update --init
+if [ -e /etc/os-release ]; then
+   . /etc/os-release
+else
+   . /usr/lib/os-release
+fi
+if [ "$ID" = "opensuse-leap" ]; then
+    echo "Do something Leap $VERSION"
+    sudo zypper addrepo https://download.opensuse.org/repositories/openSUSE:infrastructure:wiki/openSUSE_Leap_$VERSION/openSUSE:infrastructure:wiki.repo
+elif [ "$ID" = "opensuse-tumbleweed" ]; then
+    echo "Add wiki repository for openSUSE Tumbleweed"
+    # TODO: use Tumbleweed repository
+    sudo zypper addrepo https://download.opensuse.org/repositories/openSUSE:infrastructure:wiki/openSUSE_Leap_15.0/openSUSE:infrastructure:wiki.repo
+fi
+
+sudo zypper refresh
 
 # Install RPM packages
-sudo zypper install git php7 php7-fileinfo php7-gettext php7-json php7-mbstring \
-    php7-opcache php7-sqlite php-composer nodejs8 npm8 ImageMagick
+sudo zypper install mediawiki_1_27-openSUSE nodejs8 npm8
 
-# Install NodeJS packages
+# Install global NodeJS packages
 sudo npm install -g gulp-cli
+
+# Install project NodeJS packages
 cd skins/Chameleon
 npm install
 cd ../..
 
-# Download MediaWiki 1.27.4
-wget https://releases.wikimedia.org/mediawiki/1.27/mediawiki-1.27.4.tar.gz
-tar -xvzf mediawiki-1.27.4.tar.gz
-cp -rf mediawiki-1.27.4/* .
-rm -r mediawiki-1.27.4 mediawiki-1.27.4.tar.gz
+# Link folders and files
 
-# Download MediaWiki extensions
-
-function download {
-    wget https://extdist.wmflabs.org/dist/extensions/$1
-    tar -xvzf $1
-    rm $1
+function link() {
+    rm ./$1
+    ln -s /usr/share/mediawiki_1_27/$1 ./$1
 }
 
-cd extensions
-download AbuseFilter-REL1_27-2072d2f.tar.gz
-download Auth_remoteuser-REL1_27-89faa0c.tar.gz
-download CategoryTree-REL1_27-b454f2c.tar.gz
-download intersection-REL1_27-38cdaf6.tar.gz
-download MultiBoilerplate-REL1_27-bb13f76.tar.gz
-download ReplaceText-REL1_27-7676bf8.tar.gz
-download RSS-REL1_27-d945221.tar.gz
-download UserMerge-REL1_27-31ea86d.tar.gz
-download UserPageEditProtection-REL1_27-8affdda.tar.gz
-cd ..
+link api.php
+link autoload.php
+link img_auth.php
+link index.php
+link load.php
+link opensearch_desc.php
+link thumb_handler.php
+link thumb.php
 
-# Install Composer packages
-composer install
+link extensions/AbuseFilter
+link extensions/Auth_remoteuser
+link extensions/CategoryTree
+link extensions/CirrusSearch
+link extensions/Cite
+link extensions/CiteThisPage
+link extensions/ConfirmEdit
+link extensions/Elastica
+link extensions/Gadgets
+link extensions/GitHub
+link extensions/HitCounters
+link extensions/ImageMap
+link extensions/InputBox
+link extensions/intersection
+link extensions/Interwiki
+link extensions/LocalisationUpdate
+link extensions/Maps
+link extensions/maps-vendor
+link extensions/MultiBoilerplate
+link extensions/Nuke
+link extensions/ParamProcessor
+link extensions/ParserFunctions
+link extensions/PdfHandler
+link extensions/Poem
+link extensions/Renameuser
+link extensions/ReplaceText
+link extensions/RSS
+link extensions/SpamBlacklist
+link extensions/SyntaxHighlight_GeSHi
+link extensions/TitleBlacklist
+link extensions/UserMerge
+link extensions/UserPageEditProtection
+link extensions/Validator
+link extensions/WikiEditor
+
+link includes
+link languages
+link maintenance
+link resources
+link serialized
+link vendor
 
 # Copy development settings
 cp wiki_settings.example.php wiki_settings.php
