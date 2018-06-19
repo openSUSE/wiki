@@ -99,8 +99,8 @@ if ( $is_production ) {
 ## To enable image uploads, make sure the 'images' directory
 ## is writable, then uncomment this:
 $wgEnableUploads  = true;
-$wgUseImageMagick = true;
-$wgImageMagickConvertCommand = "/usr/bin/convert";
+$wgUseImageMagick = false;
+#$wgImageMagickConvertCommand = "/usr/bin/convert";
 
 # InstantCommons allows wiki to use images from http://commons.wikimedia.org
 #$wgUseInstantCommons = true;
