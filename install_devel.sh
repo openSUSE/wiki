@@ -8,20 +8,21 @@ else
    . /usr/lib/os-release
 fi
 if [ "$ID" = "opensuse-leap" ]; then
-    echo "Do something Leap $VERSION"
+    echo "Add wiki repository for openSUSE Leap $VERSION"
     sudo zypper addrepo https://download.opensuse.org/repositories/openSUSE:infrastructure:wiki/openSUSE_Leap_$VERSION/openSUSE:infrastructure:wiki.repo
 elif [ "$ID" = "opensuse-tumbleweed" ]; then
     echo "Add wiki repository for openSUSE Tumbleweed"
-    # TODO: use Tumbleweed repository
-    sudo zypper addrepo https://download.opensuse.org/repositories/openSUSE:infrastructure:wiki/openSUSE_Leap_15.0/openSUSE:infrastructure:wiki.repo
+    sudo zypper addrepo https://download.opensuse.org/repositories/openSUSE:infrastructure:wiki/openSUSE_Tumbleweed/openSUSE:infrastructure:wiki.repo
 fi
 
 sudo zypper refresh
 
 # Install RPM packages
+echo "Install RPM packages"
 sudo zypper install mediawiki_1_27-openSUSE nodejs8 npm8
 
 # Install global NodeJS packages
+echo "Install Node packages"
 sudo npm install -g gulp-cli
 
 # Install project NodeJS packages
@@ -30,6 +31,8 @@ npm install
 cd ../..
 
 # Link folders and files
+
+echo "Link MediaWiki files and folders"
 
 function link() {
     rm ./$1
@@ -88,18 +91,23 @@ link serialized
 link vendor
 
 # Copy development settings
+echo "Copy development settings"
 cp wiki_settings.example.php wiki_settings.php
 
 # Make directories
+echo "Make directories"
+rm -r data
 mkdir data # Save SQLite files
 
 # Run installation script
-rm -r data
-mkdir data
+echo "Run installation script"
+
+# Install without extensions
 mv LocalSettings.php _LocalSettings.php
 php maintenance/install.php --dbuser="" --dbpass="" --dbname=wiki --dbpath=./data \
     --dbtype=sqlite --confpath=./ --scriptpath=/ --pass=evergreen openSUSE Geeko
 
+# Update with extensions
 rm LocalSettings.php
 mv _LocalSettings.php LocalSettings.php
 php maintenance/update.php --conf LocalSettings.php
