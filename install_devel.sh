@@ -91,7 +91,6 @@ link vendor
 cp wiki_settings.example.php wiki_settings.php
 
 # Make directories
-mkdir /tmp/wiki_sessions # PHP session save path
 mkdir data # Save SQLite files
 
 # Run installation script
