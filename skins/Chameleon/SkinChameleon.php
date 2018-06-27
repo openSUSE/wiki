@@ -158,8 +158,8 @@ class ChameleonTemplate extends BaseTemplate
 								?></a>
 						<?php endforeach; ?>
 						<?php if ($this->data['action_urls']) : ?>
-							<button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
-							<div class="dropdown-menu dropdown-menu-right" aria-labelledby="btnGroupDrop1">
+							<button id="action-dropdown-button" type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+							<div class="dropdown-menu dropdown-menu-right" aria-labelledby="action-dropdown-button">
 								<?php foreach ($this->data['action_urls'] as $link) : ?>
 									<a class="dropdown-item" href="<?php echo htmlspecialchars( $link['href'] ) ?>" <?php echo $link['key'] ?>><?php echo htmlspecialchars( $link['text'] ) ?></a>
 								<?php endforeach; ?>

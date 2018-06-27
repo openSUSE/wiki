@@ -21,12 +21,12 @@
 				</div><!-- /.dropdown -->
 
 				<!-- Login Modal -->
-				<div class="modal fade" id="login-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+				<div class="modal fade" id="login-modal" tabindex="-1" role="dialog" aria-labelledby="login-modal-label" aria-hidden="true">
 					<div class="modal-dialog" role="document">
 						<div class="modal-content">
 							<form action="<?php echo $this->data['login_url'] ?>" method="post" enctype="application/x-www-form-urlencoded" name="login_form">
 								<div class="modal-header">
-									<h5 class="modal-title" id="exampleModalLabel"><?php echo $this->msg('login') ?></h5>
+									<h5 class="modal-title" id="login-modal-label"><?php echo $this->msg('login') ?></h5>
 									<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 									<span aria-hidden="true">&times;</span>
 									</button>
@@ -61,7 +61,7 @@
 			<?php else : ?>
 				<div class="dropdown ml-2">
 					<button class="btn btn-secondary" type="button" id="user-menu-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-						<img class="avatar rounded" src="<?php echo $this->data['gravatar'] ?>" width="40" height="40" title="<?php echo $this->data['username'] ?>"/>
+						<img class="avatar rounded" src="<?php echo $this->data['gravatar'] ?>" width="40" height="40" alt="Avatar" title="<?php echo $this->data['username'] ?>"/>
 					</button>
 					<div class="dropdown-menu dropdown-menu-right">
 						<?php
