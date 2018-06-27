@@ -1,0 +1,9 @@
+// Improvements for editing and previewing pages
+
+body.action-submit,
+body.action-edit {
+	#mw-head,
+	#siteNotice {
+		display: none;
+	}
+}

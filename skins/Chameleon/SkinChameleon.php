@@ -117,37 +117,35 @@ class ChameleonTemplate extends BaseTemplate
 			<!-- Page Header -->
 			<header id="mw-head" class="my-3">
 
-				<div id="namespaces-variants" class="mb-2">
-					<!-- Tabs for talk page and language variants -->
-					<ul id="p-namespaces" class="nav nav-tabs"<?php $this->html( 'userlangattributes' ) ?>>
-						<?php foreach ($this->data['namespace_urls'] as $link) : ?>
-							<li class="nav-item">
-								<a class="nav-link <?php echo strpos($link['attributes'], 'selected') ? 'active' : '' ?>" href="<?php echo htmlspecialchars( $link['href'] ) ?>" <?php echo $link['key'] ?>>
-									<?php echo htmlspecialchars( $link['text'] ) ?>
-								</a>
-							</li>
-						<?php endforeach; ?>
-						<?php if ($this->data['variant_urls']) : ?>
-							<li class="nav-item dropdown">
-								<a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-									<?php foreach ($this->data['variant_urls'] as $link) : ?>
-										<?php if (stripos( $link['attributes'], 'selected' ) !== false) : ?>
-											<?php echo htmlspecialchars( $link['text'] ) ?>
-										<?php endif; ?>
-									<?php endforeach; ?>
-								</a>
-								<div class="dropdown-menu" <?php $this->html( 'userlangattributes' ) ?>>
-									<?php foreach ($this->data['variant_urls'] as $link) : ?>
-										<a class="dropdown-item" <?php echo $link['attributes'] ?> href="<?php echo htmlspecialchars( $link['href'] ) ?>" <?php echo $link['key'] ?>><?php echo htmlspecialchars( $link['text'] ) ?></a>
-									<?php endforeach; ?>
-								</div>
-							</li>
-						<?php endif ?>
-					</ul>
-				</div>
+				<!-- Tabs for talk page and language variants -->
+				<ul id="namespaces" class="nav nav-tabs"<?php $this->html( 'userlangattributes' ) ?>>
+					<?php foreach ($this->data['namespace_urls'] as $link) : ?>
+						<li class="nav-item">
+							<a class="nav-link <?php echo strpos($link['attributes'], 'selected') ? 'active' : '' ?>" href="<?php echo htmlspecialchars( $link['href'] ) ?>" <?php echo $link['key'] ?>>
+								<?php echo htmlspecialchars( $link['text'] ) ?>
+							</a>
+						</li>
+					<?php endforeach; ?>
+					<?php if ($this->data['variant_urls']) : ?>
+						<li class="nav-item dropdown">
+							<a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+								<?php foreach ($this->data['variant_urls'] as $link) : ?>
+									<?php if (stripos( $link['attributes'], 'selected' ) !== false) : ?>
+										<?php echo htmlspecialchars( $link['text'] ) ?>
+									<?php endif; ?>
+								<?php endforeach; ?>
+							</a>
+							<div class="dropdown-menu" <?php $this->html( 'userlangattributes' ) ?>>
+								<?php foreach ($this->data['variant_urls'] as $link) : ?>
+									<a class="dropdown-item" <?php echo $link['attributes'] ?> href="<?php echo htmlspecialchars( $link['href'] ) ?>" <?php echo $link['key'] ?>><?php echo htmlspecialchars( $link['text'] ) ?></a>
+								<?php endforeach; ?>
+							</div>
+						</li>
+					<?php endif ?>
+				</ul>
 
 				<!-- Page Actions -->
-				<div id="page-actions" class="btn-toolbar d-sm-none d-md-flex flex-row-reverse" role="toolbar" aria-label="Toolbar with button groups">
+				<div id="actions" class="btn-toolbar d-flex flex-row-reverse" role="toolbar" aria-label="Toolbar with button groups">
 					<div class="btn-group btn-group-sm" role="group">
 						<?php foreach ($this->data['view_urls'] as $link) : ?>
 							<a class="btn btn-secondary" href="<?php echo htmlspecialchars( $link['href'] ) ?>" <?php echo $link['key'] ?>><?php
@@ -180,7 +178,7 @@ class ChameleonTemplate extends BaseTemplate
 				<!-- /sitenotice -->
 				<?php endif; ?>
 				<!-- firstHeading -->
-				<h1 id="firstHeading" class="firstHeading display-4 mt-0 mb-3">
+				<h1 id="firstHeading" class="firstHeading display-4 my-3">
 					<span dir="auto"><?php $this->html( 'title' ) ?></span>
 				</h1>
 				<!-- /firstHeading -->
