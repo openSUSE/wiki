@@ -35,7 +35,7 @@ cd ../..
 echo "Link MediaWiki files and folders"
 
 function link() {
-    rm ./$1
+    rm ./$1 -rf
     ln -s /usr/share/mediawiki_1_27/$1 ./$1
 }
 
