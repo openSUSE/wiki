@@ -145,26 +145,28 @@ class ChameleonTemplate extends BaseTemplate
 				</ul>
 
 				<!-- Page Actions -->
-				<div id="actions" class="btn-toolbar d-flex flex-row-reverse" role="toolbar" aria-label="Toolbar with button groups">
-					<div class="btn-group btn-group-sm" role="group">
-						<?php foreach ($this->data['view_urls'] as $link) : ?>
-							<a class="btn btn-secondary" href="<?php echo htmlspecialchars( $link['href'] ) ?>" <?php echo $link['key'] ?>><?php
-								// $link['text'] can be undefined - bug 27764
-							if (array_key_exists( 'text', $link )) {
-								echo array_key_exists( 'img', $link ) ?  '<img src="' . $link['img'] . '" alt="' . $link['text'] . '" />' : htmlspecialchars( $link['text'] );
-							}
-								?></a>
-						<?php endforeach; ?>
-						<?php if ($this->data['action_urls']) : ?>
-							<button id="action-dropdown-button" type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
-							<div class="dropdown-menu dropdown-menu-right" aria-labelledby="action-dropdown-button">
-								<?php foreach ($this->data['action_urls'] as $link) : ?>
-									<a class="dropdown-item" href="<?php echo htmlspecialchars( $link['href'] ) ?>" <?php echo $link['key'] ?>><?php echo htmlspecialchars( $link['text'] ) ?></a>
-								<?php endforeach; ?>
-							</div>
-						<?php endif ?>
+				<?php if ($this->data['view_urls']) : ?>
+					<div id="actions" class="btn-toolbar d-flex flex-row-reverse" role="toolbar" aria-label="Toolbar with button groups">
+						<div class="btn-group btn-group-sm" role="group">
+							<?php foreach ($this->data['view_urls'] as $link) : ?>
+								<a class="btn btn-secondary" href="<?php echo htmlspecialchars( $link['href'] ) ?>" <?php echo $link['key'] ?>><?php
+									// $link['text'] can be undefined - bug 27764
+								if (array_key_exists( 'text', $link )) {
+									echo array_key_exists( 'img', $link ) ?  '<img src="' . $link['img'] . '" alt="' . $link['text'] . '" />' : htmlspecialchars( $link['text'] );
+								}
+									?></a>
+							<?php endforeach; ?>
+							<?php if ($this->data['action_urls']) : ?>
+								<button id="action-dropdown-button" type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+								<div class="dropdown-menu dropdown-menu-right" aria-labelledby="action-dropdown-button">
+									<?php foreach ($this->data['action_urls'] as $link) : ?>
+										<a class="dropdown-item" href="<?php echo htmlspecialchars( $link['href'] ) ?>" <?php echo $link['key'] ?>><?php echo htmlspecialchars( $link['text'] ) ?></a>
+									<?php endforeach; ?>
+								</div>
+							<?php endif ?>
+						</div>
 					</div>
-				</div>
+				<?php endif; ?>
 			</header>
 			<!-- /header -->
 
@@ -236,8 +238,9 @@ class ChameleonTemplate extends BaseTemplate
 			</main>
 			<!-- /content -->
 
+			<hr class="mt-5" />
 			<!-- Wiki Footer -->
-			<footer class="row my-5" <?php $this->html( 'userlangattributes' ) ?>>
+			<footer class="row" <?php $this->html( 'userlangattributes' ) ?>>
 				<div class="col-sm-6 text-muted">
 					<?php foreach ($this->getFooterLinks() as $category => $links) : ?>
 						<ul id="footer-<?php echo $category ?>" class="list-inline">
@@ -252,7 +255,7 @@ class ChameleonTemplate extends BaseTemplate
 					if (count( $footericons ) > 0) : ?>
 						<ul id="footer-icons" class="list-inline">
 				<?php	      foreach ($footericons as $blockName => $footerIcons) : ?>
-							<li id="footer-<?php echo htmlspecialchars( $blockName ); ?>ico">
+							<li id="footer-<?php echo htmlspecialchars( $blockName ); ?>ico" class="list-inline-item">
 				<?php	          foreach ($footerIcons as $icon) : ?>
 								<?php echo $this->getSkin()->makeFooterIcon( $icon ); ?>
 
