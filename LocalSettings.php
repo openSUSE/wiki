@@ -10,18 +10,42 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 	exit;
 }
 
+
+#-------------------------------------------------------------------------------
+# Load instance custom settings in wiki_settings.php
+#-------------------------------------------------------------------------------
+
 # Include production server configuration if file exists
-if ( file_exists( '/srv/settings/wiki_settings.php' ) ) {
-	require_once '/srv/settings/wiki_settings.php';
-	$is_production = true;
+if ( file_exists( '../wiki_settings.php' ) ) {
+	require_once '../wiki_settings.php';
+	$wgIsProduction = true;
 }
 # Include local development configuration if file exists
 elseif ( file_exists( 'wiki_settings.php' ) ) {
 	require_once 'wiki_settings.php';
-	$is_production = false;
+	$wgIsProduction = false;
 } else {
 	exit('Please create wiki_settings.php file.');
 }
+
+
+#-------------------------------------------------------------------------------
+# PHP INI
+#-------------------------------------------------------------------------------
+
+# Include path
+ini_set( "include_path", ".:$IP:$IP/includes:$IP/languages" );
+# If PHP's memory limit is very low, some operations may fail.
+ini_set( 'memory_limit', '64M' );
+# Maximum allowed size for uploaded files.
+ini_set( 'upload_max_filesize', '8M');
+# Must be greater than upload_max_filesize
+ini_set( 'post_max_size', '8M');
+
+
+#-------------------------------------------------------------------------------
+# CommandLineMode / HTTPMode
+#-------------------------------------------------------------------------------
 
 if ( $wgCommandLineMode ) {
     if ( isset( $_SERVER ) && array_key_exists( 'REQUEST_METHOD', $_SERVER ) ) {
@@ -32,9 +56,16 @@ if ( $wgCommandLineMode ) {
     if( !ini_get( 'zlib.output_compression' ) ) @ob_start( 'ob_gzhandler' );
 }
 
+
+#-------------------------------------------------------------------------------
+# Basics
+#-------------------------------------------------------------------------------
+
 $wgSitename = "openSUSE";
 $wgMetaNamespace = "OpenSUSE";
 
+# Allow to display title different than actual page title
+# e.g. Main Page --> Welcome to openSUSE
 $wgAllowDisplayTitle = true;
 
 ## The URL base path to the directory containing the wiki;
@@ -51,14 +82,18 @@ $wgStylePath = "$wgScriptPath/skins";
 
 ## The relative URL path to the logo.  Make sure you change this from the default,
 ## or else you'll overwrite your logo when you upgrade!
-$wgLogo = "$wgStylePath/common/images/wiki.png";
+$wgLogo = "$wgStylePath/Chameleon/dist/images/logo/logo-white.svg";
+
+
+#-------------------------------------------------------------------------------
+# Emails & Notifications
+#-------------------------------------------------------------------------------
 
 $wgEnableEmail = true;
 $wgEnableUserEmail = false;
 
-#$wgEmergencyContact = "webmaster@novell.com";
-$wgEmergencyContact = "noreply@novell.com";
-$wgPasswordSender   = "webmaster@novell.com";
+$wgEmergencyContact = "noreply@opensuse.org";
+$wgPasswordSender   = "noreply@opensuse.org";
 
 ## For a detailed description of the following switches see
 ## http://meta.wikimedia.org/Enotif and http://meta.wikimedia.org/Eauthent
@@ -69,36 +104,66 @@ $wgEnotifUserTalk = true; # UPO
 $wgEnotifWatchlist = true; # UPO
 $wgEmailAuthentication = false;
 
+
+#-------------------------------------------------------------------------------
+# Database
+#-------------------------------------------------------------------------------
+
 # If you're on MySQL 3.x, this next line must be FALSE:
 $wgDBmysql4 = true;
 
 # Experimental charset support for MySQL 4.1/5.0.
 $wgDBmysql5 = true;
 
-## Cache
-if ( $is_production ) {
+
+#-------------------------------------------------------------------------------
+# Caching
+#-------------------------------------------------------------------------------
+
+if ( $wgIsProduction ) {
 	# File Cache
 	#$wgUseFileCache = true; /* default: false */
 	#$wgFileCacheDirectory = "/srv/www/htdocs/cache";
 	$wgShowIPinHeader = false;
 
-	$wgMemCachedServers = array( 0 => '127.0.0.1:11211' );
+	# Use MemCache as main cache type
+	$wgMemCachedServers = [ 0 => '127.0.0.1:11211' ];
 	$wgMainCacheType = CACHE_MEMCACHED;
-	$wgMessageCacheType = CACHE_ANYTHING;
-	$wgParserCacheType = CACHE_MEMCACHED;
+
+	# Session Cache
+	# session cache needs to be persistent, see
+	# https://www.mediawiki.org/wiki/Topic:T75cloz7981b8i92
+	$wgSessionCacheType = CACHE_DB;
+
+	# Cache Expiration
+	# Cache older than LocalSettings.php modification time will expire
 	$configdate = gmdate( 'YmdHis', @filemtime( __FILE__ ) );
 	$wgCacheEpoch = max( $wgCacheEpoch, $configdate );
+
 	$wgEnableSidebarCache = true;
-	$wgCacheDirectory = "/srv/www/cache";
+
+	# Make the real IPs visible to the wiki instead of the auth proxy
+	# (AccessManager) IPs. Without this, IP blocking blocks the proxy IP and
+	# therefore edits from everywhere.
+	$wgUseSquid = true;
+	$wgSquidServers = [];
+	$wgSquidServers[] = '192.168.47.101';  # elsa.infra.o.o
+	$wgSquidServers[] = '192.168.47.102';  # anna.infra.o.o
+
 } else {
 	$wgMainCacheType = CACHE_NONE;
-	$wgCacheDirectory = "$IP/cache";
 	$wgCachePages = false;
 }
+
+
+#-------------------------------------------------------------------------------
+# Upload
+#-------------------------------------------------------------------------------
 
 ## To enable image uploads, make sure the 'images' directory
 ## is writable, then uncomment this:
 $wgEnableUploads  = true;
+$wgUseImageResize = true;
 $wgUseImageMagick = false;
 #$wgImageMagickConvertCommand = "/usr/bin/convert";
 
@@ -111,65 +176,120 @@ $wgUseImageMagick = false;
 ## this, if it's not already uncommented:
 # $wgHashedUploadDirectory = false;
 
+# Allow upload of files with the following extensions
+$wgFileExtensions = [
+	'doc',
+	'docx',
+	'gif',
+	'jpg',
+	'jpeg',
+	'odp',
+	'ods',
+	'odt',
+	'pdf',
+	'png',
+	'ppt',
+	'pptx',
+	'svg',
+	'sxc',
+	'sxw',
+	'xls',
+	'xlsx'
+];
+
+#-------------------------------------------------------------------------------
+# Math
+#-------------------------------------------------------------------------------
+
 ## If you have the appropriate support software installed
 ## you can enable inline LaTeX equations:
-if ( $is_production ) {
-	# $wgUseTeX = true;
-	$wgMathPath         = "{$wgUploadPath}/math";
-	$wgMathDirectory    = "{$wgUploadDirectory}/math";
-	$wgTmpDirectory     = "{$wgUploadDirectory}/temp";
-}
+# $wgUseTeX = true;
+$wgMathPath         = "$wgUploadPath/math";
+$wgMathDirectory    = "$wgUploadDirectory/math";
+$wgTmpDirectory     = "$wgUploadDirectory/temp";
 
 $wgLocalInterwiki   = $wgSitename;
 
-if ( $is_production ) {
-	$wgCookieDomain = "opensuse.org";
-}
+
+#-------------------------------------------------------------------------------
+# Copyright/License
+#-------------------------------------------------------------------------------
 
 ## For attaching licensing metadata to pages, and displaying an
 ## appropriate copyright notice / icon. GNU Free Documentation
 ## License and Creative Commons licenses are supported so far.
 # $wgEnableCreativeCommonsRdf = true;
-$wgRightsPage = ""; # Set to the title of a wiki page that describes your license/copyright
-$wgRightsUrl = "";
+$wgRightsPage = "";
+$wgRightsUrl  = "https://www.gnu.org/copyleft/fdl.html";
 $wgRightsText = "";
-$wgRightsIcon = "";
+$wgRightsIcon = "$wgScriptPath/resources/assets/licenses/gnu-fdl.png";
 # $wgRightsCode = ""; # Not yet used
-$wgWhitelistEdit = true;
-$wgLocalTZoffset = date("Z") / 3600;
-$wgGroupPermissions['*'    ]['edit']            = false;
+
+
+#-------------------------------------------------------------------------------
+# Logo & Icon
+#-------------------------------------------------------------------------------
+
 $wgFavicon = "//www.opensuse.org/favicon.ico";
+
+
+#-------------------------------------------------------------------------------
+# Misc
+#-------------------------------------------------------------------------------
+
 $wgDiff3 = "/usr/bin/diff3";
 
-# used for mysql/search settings
-$tmarray = getdate(time());
-$hour = $tmarray['hours'];
-$day = $tmarray['wday'];
+$wgUseAjax = true; // Enable Ajax
 
-# Ugly hack warning! This needs smoothing out.
-if($wgLocaltimezone) {
-	$oldtz = getenv('TZ');
-	putenv("TZ=$wgLocaltimezone");
-	$wgLocalTZoffset = date('Z') / 3600;
-	putenv("TZ=$oldtz");
+# Enable links to external images
+$wgAllowExternalImages = true;
+
+# Add XMPP functionality
+$wgUrlProtocols[] = 'xmpp:';
+
+# Category watching
+# see https://www.mediawiki.org/wiki/Manual:CategoryMembershipChanges
+$wgRCWatchCategoryMembership = true;
+$wgDefaultUserOptions['hidecategorization'] = 0;
+$wgDefaultUserOptions['watchlisthidecategorization'] = 0;
+
+
+#-------------------------------------------------------------------------------
+# Debug
+#-------------------------------------------------------------------------------
+
+if (!$wgIsProduction) {
+	$wgShowExceptionDetails = true;
+	$wgDebugToolbar=true;
 }
 
-## Debug
-
-$wgShowExceptionDetails = true;
-
-# increase the time frame for recent changes to 180 days for cleanup. this is a
-# temporary change and can be reverted after the cleanup is completed
-$wgRCMaxAge = 180 * 24 * 60 * 60;
 
 #-------------------------------------------------------------------------------
-# Custom config section
+# Permissions
 #-------------------------------------------------------------------------------
 
-##### Namespace configuration #####
+# Only login user can edit/create pages
+$wgGroupPermissions['*'    ]['edit']              = false;
 
-# Custom namespaces
+# To be removed once the wiki transition is finished
+$wgGroupPermissions['user' ]['import']            = true;
+$wgGroupPermissions['user' ]['importupload']      = true;
+$wgGroupPermissions['user' ]['move']              = true;
+$wgGroupPermissions['sysop']['deleterevision']    = true;
 
+# Don't allow account creating in MediaWiki. Only authenticate with SUSE SSO.
+$wgGroupPermissions['*'    ]['createaccount']     = false;
+$wgGroupPermissions['*'    ]['autocreateaccount'] = true;
+
+
+#-------------------------------------------------------------------------------
+# Namespaces
+#-------------------------------------------------------------------------------
+
+# Project (meta) namespace
+$wgMetaNamespace = 'openSUSE';
+
+# Define namespace constants
 define( 'NS_SDB', 100 );
 define( 'NS_SDB_TALK', 101 );
 define( 'NS_PORTAL', 102 );
@@ -181,78 +301,70 @@ define( 'NS_HCL_TALK', 107 );
 define( 'NS_BOOK', 110 );
 define( 'NS_BOOK_TALK', 111 );
 
-$wgExtraNamespaces[NS_SDB] = 'SDB';
-$wgExtraNamespaces[NS_SDB_TALK] = 'SDB_Talk';
-$wgExtraNamespaces[NS_PORTAL] = 'Portal';
-$wgExtraNamespaces[NS_PORTAL_TALK] = 'Portal_Talk';
-$wgExtraNamespaces[NS_ARCHIVE] = 'Archive';
+# Define namespaces
+$wgExtraNamespaces[NS_SDB]          = 'SDB';
+$wgExtraNamespaces[NS_SDB_TALK]     = 'SDB_Talk';
+$wgExtraNamespaces[NS_PORTAL]       = 'Portal';
+$wgExtraNamespaces[NS_PORTAL_TALK]  = 'Portal_Talk';
+$wgExtraNamespaces[NS_ARCHIVE]      = 'Archive';
 $wgExtraNamespaces[NS_ARCHIVE_TALK] = 'Archive_Talk';
-$wgExtraNamespaces[NS_HCL] = 'HCL';
-$wgExtraNamespaces[NS_HCL_TALK] = 'HCL_Talk';
-$wgExtraNamespaces[NS_BOOK] = 'Book';
-$wgExtraNamespaces[NS_BOOK_TALK] = 'Book_Talk';
+$wgExtraNamespaces[NS_HCL]          = 'HCL';
+$wgExtraNamespaces[NS_HCL_TALK]     = 'HCL_Talk';
+$wgExtraNamespaces[NS_BOOK]         = 'Book';
+$wgExtraNamespaces[NS_BOOK_TALK]    = 'Book_Talk';
 
 # Enable/Disable subpages
-$wgNamespacesWithSubpages[NS_SPECIAL] = false;
-$wgNamespacesWithSubpages[NS_MAIN] = true;
-$wgNamespacesWithSubpages[NS_TALK] = true;
-$wgNamespacesWithSubpages[NS_USER] = true;
-$wgNamespacesWithSubpages[NS_USER_TALK] = true;
-$wgNamespacesWithSubpages[NS_PROJECT] = true;
-$wgNamespacesWithSubpages[NS_PROJECT_TALK] = true;
-$wgNamespacesWithSubpages[NS_FILE] = false;
-$wgNamespacesWithSubpages[NS_FILE_TALK] = true;
-$wgNamespacesWithSubpages[NS_MEDIAWIKI] = false;
+$wgNamespacesWithSubpages[NS_SPECIAL]        = false;
+$wgNamespacesWithSubpages[NS_MAIN]           = true;
+$wgNamespacesWithSubpages[NS_TALK]           = true;
+$wgNamespacesWithSubpages[NS_USER]           = true;
+$wgNamespacesWithSubpages[NS_USER_TALK]      = true;
+$wgNamespacesWithSubpages[NS_PROJECT]        = true;
+$wgNamespacesWithSubpages[NS_PROJECT_TALK]   = true;
+$wgNamespacesWithSubpages[NS_FILE]           = false;
+$wgNamespacesWithSubpages[NS_FILE_TALK]      = true;
+$wgNamespacesWithSubpages[NS_MEDIAWIKI]      = false;
 $wgNamespacesWithSubpages[NS_MEDIAWIKI_TALK] = true;
-$wgNamespacesWithSubpages[NS_TEMPLATE] = true;
-$wgNamespacesWithSubpages[NS_TEMPLATE_TALK] = true;
-$wgNamespacesWithSubpages[NS_SDB] = true;
-$wgNamespacesWithSubpages[NS_SDB_TALK] = true;
-$wgNamespacesWithSubpages[NS_PORTAL] = true;
-$wgNamespacesWithSubpages[NS_PORTAL_TALK] = true;
-$wgNamespacesWithSubpages[NS_ARCHIVE] = true;
-$wgNamespacesWithSubpages[NS_ARCHIVE_TALK] = true;
-$wgNamespacesWithSubpages[NS_BOOK] = true;
+$wgNamespacesWithSubpages[NS_TEMPLATE]       = true;
+$wgNamespacesWithSubpages[NS_TEMPLATE_TALK]  = true;
+$wgNamespacesWithSubpages[NS_SDB]            = true;
+$wgNamespacesWithSubpages[NS_SDB_TALK]       = true;
+$wgNamespacesWithSubpages[NS_PORTAL]         = true;
+$wgNamespacesWithSubpages[NS_PORTAL_TALK]    = true;
+$wgNamespacesWithSubpages[NS_ARCHIVE]        = true;
+$wgNamespacesWithSubpages[NS_ARCHIVE_TALK]   = true;
+$wgNamespacesWithSubpages[NS_BOOK]           = true;
+$wgNamespacesWithSubpages[NS_BOOK_TALK]      = true;
 
-$wgContentNamespaces = array (NS_MAIN, NS_PROJECT, NS_HELP, NS_SDB, NS_PORTAL, NS_ARCHIVE, NS_HCL, NS_BOOK);
+# Content namespaces will be listed in search result by default
+$wgContentNamespaces = [
+	NS_MAIN,
+	NS_PROJECT,
+	NS_HELP,
+	NS_SDB,
+	NS_PORTAL,
+	NS_ARCHIVE,
+	NS_HCL,
+	NS_BOOK
+];
+
 
 $wgAllowCategorizedRecentChanges = true;
 
 $wgNamespacesToBeSearchedDefault = [
-	NS_MAIN => true,
-	NS_PORTAL => true
+	NS_MAIN     => true,
+	NS_USER     => true,
+	NS_PROJECT  => true,
+	NS_FILE     => true,
+	NS_TEMPLATE => true,
+	NS_HELP     => true,
+	NS_CATEGORY => true,
+	NS_SDB      => true,
+	NS_PORTAL   => true,
+	NS_ARCHIVE  => true,
+	NS_HCL      => true,
 ];
 
-##### Misc #####
-
-$wgUseAjax = true; // Enable Ajax
-$wgAllowExternalImages = true; // Enable links to external images
-# Allow upload of files with the following extensions
-$wgFileExtensions = array( 'doc', 'docx', 'gif', 'jpg', 'jpeg', 'odp', 'ods', 'odt', 'pdf', 'png', 'ppt', 'pptx', 'sxc', 'sxw', 'xls', 'xlsx' );
-# Add XMPP functionality
-$wgUrlProtocols[] = 'xmpp:';
-
-# To be removed once the wiki transition is finished
-$wgGroupPermissions['user']['import'] = true;
-$wgGroupPermissions['user']['importupload'] = true;
-$wgGroupPermissions['sysop']['deleterevision']  = true;
-$wgGroupPermissions['user']['move'] = true;
-
-# make the real IPs visible to the wiki instead of the auth proxy (AccessManager) IPs. Without this, IP blocking blocks the proxy IP and therefore edits from everywhere.
-if ( $is_production ) {
-	$wgUseSquid = true;
-	$wgSquidServers = array();
-	$wgSquidServers[] = "137.65.227.73";
-	$wgSquidServers[] = "137.65.227.74";
-	$wgSquidServers[] = "137.65.227.75";
-	$wgSquidServers[] = "137.65.227.76";
-}
-
-# Category watching ----------------------------------
-# see https://www.mediawiki.org/wiki/Manual:CategoryMembershipChanges
-$wgRCWatchCategoryMembership = true;
-$wgDefaultUserOptions['hidecategorization'] = 0;
-$wgDefaultUserOptions['watchlisthidecategorization'] = 0;
 
 #-------------------------------------------------------------------------------
 # Skins
@@ -271,9 +383,12 @@ $wgDefaultSkin = "Chameleon";
 
 wfLoadExtension( 'Auth_remoteuser' );
 
-$wgAuthRemoteuserUserUrls = [ 'logout' => '/cmd/ICSLogout/?url=' . htmlentities($_SERVER['REQUEST_URI']) ];
+$wgAuthRemoteuserUserUrls = [
+	'logout' => '/cmd/ICSLogout/?url=' . htmlentities($_SERVER['REQUEST_URI'])
+];
 
-if (isset($_SERVER['HTTP_X_USERNAME'])) { # avoid logging 'undefined index' warnings
+if (isset($_SERVER['HTTP_X_USERNAME'])) {
+	# avoid logging 'undefined index' warnings
     $wgAuthRemoteuserUserName = [ $_SERVER['HTTP_X_USERNAME'] ];
     $wgAuthRemoteuserUserPrefsForced = [ 'email' => $_SERVER['HTTP_X_EMAIL'] ];
 } else {
@@ -309,7 +424,7 @@ require_once "$IP/extensions/intersection/intersection.php";
 
 require_once "$IP/extensions/RSS/RSS.php";
 
-$wgRSSUrlWhitelist = array('*');
+$wgRSSUrlWhitelist = [ '*' ];
 
 
 ##### InputBox
@@ -326,7 +441,11 @@ require_once "$IP/extensions/ParserFunctions/ParserFunctions.php";
 
 require_once "$IP/extensions/CategoryTree/CategoryTree.php";
 
-$wgCategoryTreeMaxDepth = array(CT_MODE_PAGES => 2, CT_MODE_ALL => 2, CT_MODE_CATEGORIES => 3);
+$wgCategoryTreeMaxDepth = [
+	CT_MODE_PAGES => 2,
+	CT_MODE_ALL => 2,
+	CT_MODE_CATEGORIES => 3,
+];
 
 
 ##### EventCountdown
@@ -334,27 +453,14 @@ $wgCategoryTreeMaxDepth = array(CT_MODE_PAGES => 2, CT_MODE_ALL => 2, CT_MODE_CA
 require_once("$IP/extensions/EventCountdown.php");
 
 
-##### SemanticMediaWiki
+##### Semantic Maps
 
-if ($is_production) {
-	$smwgNamespaceIndex=120;
-	require_once "$IP/extensions/SemanticMediaWiki/SemanticMediaWiki.php";
-	enableSemantics('wiki.opensuse.org');
-
-	### Validator
-	require_once "$IP/extensions/Validator/Validator.php";
-
-	### Maps
-	require_once "$IP/extensions/Maps/Maps.php";
-	require_once '/srv/settings/map_settings.php';
-
-	### Semantic Forms
-	require_once "$IP/extensions/SemanticForms/SemanticForms.php";
-
-	### Semantic Maps
-	require_once "$IP/extensions/SemanticMaps/SemanticMaps.php";
+if ($wgIsProduction) {
+	require_once("$IP/extensions/maps-vendor/autoload.php");
+	$GLOBALS['egMapsGMaps3ApiKey'] = $google_maps_key;
+	#$GLOBALS['egMapsDefaultService'] = 'openlayers';
+	#$GLOBALS['egMapsDefaultService'] = 'leaflet';
 }
-
 
 ##### MultiBoilerplate
 
@@ -373,9 +479,10 @@ require_once "$IP/extensions/ReplaceText/ReplaceText.php";
 
 require_once "$IP/extensions/Interwiki/Interwiki.php";
 
-$wgInterwikiMagic=true;
-$wgHideInterlanguageLinks=false;
-$wgGroupPermissions['*']['interwiki'] = false;
+$wgInterwikiMagic = true;
+$wgHideInterlanguageLinks = false;
+
+$wgGroupPermissions['*'    ]['interwiki'] = false;
 $wgGroupPermissions['sysop']['interwiki'] = true;
 
 
@@ -392,14 +499,6 @@ require_once "$IP/extensions/SyntaxHighlight_GeSHi/SyntaxHighlight_GeSHi.php";
 ##### Hide page title
 
 require_once "$IP/extensions/notitle.php";
-
-
-##### Smooth Gallery... it is not working right now
-
-#require_once "$IP/extensions/SmoothGallery/SmoothGallery.php";
-
-#$wgSmoothGalleryExtensionPath = "/extensions/SmoothGallery";
-#$wgSmoothGalleryDelimiter = "\n";
 
 
 ##### UserPageEditProtection
@@ -422,7 +521,7 @@ require_once "$IP/extensions/google-coop.php";
 require_once "$IP/extensions/Nuke/Nuke.php";
 
 
-##### AbuseFilter - spamfilter
+##### AbuseFilter - spam filter
 
 require_once "$IP/extensions/AbuseFilter/AbuseFilter.php";
 
@@ -440,3 +539,41 @@ $wgGroupPermissions['sysop']['abusefilter-private'] = true;
 $wgGroupPermissions['sysop']['abusefilter-modify-restricted'] = true;
 $wgGroupPermissions['sysop']['abusefilter-revert'] = true;
 
+
+##### Hit counter
+
+require_once "$IP/extensions/HitCounters/HitCounters.php";
+
+
+##### GitHub: include READMEs etc. from GitHub
+
+require_once "$IP/extensions/GitHub/GitHub.php";
+
+
+##### Elastica search
+
+if ($wgIsProduction) {
+
+	require_once "$IP/extensions/Elastica/Elastica.php";
+
+	require_once "$IP/extensions/CirrusSearch/CirrusSearch.php";
+
+	$wgCirrusSearchServers = [ $elasticsearch_server ];
+
+	$wgSearchType = 'CirrusSearch';
+
+	$wgCirrusSearchNamespaceWeights = [
+		NS_MAIN     => 1,
+		NS_USER     => 0.05, # default
+		NS_PROJECT  => 0.6,
+		NS_MEDIAWIKI => 0.05, # default
+		NS_FILE     => 0.02,
+		NS_TEMPLATE => 0.005, # default
+		NS_HELP     => 0.1, # default
+		NS_CATEGORY => 0.02,
+		NS_SDB      => 0.6,
+		NS_PORTAL   => 1,
+		NS_ARCHIVE  => 0.2,
+		NS_HCL      => 0.2,
+	];
+}
