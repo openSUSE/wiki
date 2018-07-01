@@ -1,0 +1,678 @@
+/* CSS placed here will be applied to all skins */
+
+/*
+--------------------------------------------------------------------------------
+Bento styles (to be removed in future)
+--------------------------------------------------------------------------------
+*/
+.skin-bento .greybar {
+	background-color: #e5e5e6;
+	text-align: center;
+	color: #000000;
+}
+
+.skin-bento h1,
+.skin-bento h2,
+.skin-bento h3,
+.skin-bento h4,
+.skin-bento h5,
+.skin-bento h6 {
+	margin-bottom: 1.1em; /* was 1.2em */
+	margin-top: 0.4em; /* was 0.5em */
+	padding-top: 0.1em;
+	padding-bottom: 0.1em;
+}
+
+/* fix wikitable position */
+.skin-bento table.wikitable {
+	background: none repeat scroll 0 0 white;
+	border: 1px solid #aaaaaa;
+	border-collapse: collapse;
+	margin: 1em;
+}
+
+/* fix left margin for ul */
+.skin-bento ul li,
+.skin-bento ol li {
+	margin: 0.5em 1em;
+}
+
+/* Special:PopularPages has ordered list going out of content area - this is attempt to fix it */
+
+.skin-bento ol {
+	margin-left: 30px;
+}
+
+/*
+--------------------------------------------------------------------------------
+Layout helpers
+--------------------------------------------------------------------------------
+*/
+
+/* Clear */
+
+.clear {
+	clear: both;
+}
+
+.clear-left {
+	clear: left;
+}
+
+.clear-right {
+	clear: right;
+}
+
+/* Alignment and floating */
+
+.align-right {
+	text-align: right;
+}
+
+.align-left {
+	text-align: left;
+}
+
+.float-right {
+	float: right;
+}
+
+.float-left {
+	float: left;
+}
+
+.vertical-align-mid {
+	vertical-align: middle;
+}
+
+/* Margin, padding, width, height */
+
+.width49 {
+	width: 49%;
+}
+
+.no-margin {
+	margin: 0 0 0 0;
+}
+
+.small-padding {
+	padding: 0 0.5em 0 0.5em;
+}
+
+/*
+--------------------------------------------------------------------------------
+Text styles
+--------------------------------------------------------------------------------
+*/
+
+.bold {
+	font-weight: bold;
+}
+
+.strikethrough {
+	text-decoration: line-through;
+}
+
+.gray-bg {
+	background-color: #e3e3e3;
+}
+
+.smalltext {
+	font-size: 80%;
+}
+
+.bigtext {
+	font-size: 120%;
+}
+
+/*
+--------------------------------------------------------------------------------
+Components
+--------------------------------------------------------------------------------
+*/
+
+.single-right-pad {
+	padding-right: 1em;
+}
+
+.single-pad {
+	padding: 1em;
+}
+
+.vertical-align-top {
+	vertical-align: top;
+}
+
+.alphabet-box-header {
+	text-indent: 0.5em;
+	font-size: 120%;
+}
+
+.alphabet-index-box {
+	text-indent: 0.5em;
+	font-size: 120%;
+}
+
+.message {
+	width: 96.5%;
+	/* Is this supposed to be "text-align"?*/
+	align: center;
+	margin: 1em 1em 1em 1em;
+}
+
+.green-message {
+	border: 1px solid #ade874;
+	width: 100%;
+	padding: 0.7em;
+	margin: 1em;
+	display: block;
+	width: auto;
+	background-color: #f4f9ef;
+}
+
+.skin-bento .side-navigation {
+	width: 30%;
+	float: right;
+}
+
+.single-margin {
+	margin: 1em;
+}
+
+.box-footer {
+	text-align: right;
+	margin: 0.3em 0.2em 0.2em 0.3em;
+	padding: 0.3em 0.2em 0.2em 0.3em;
+	/*    border-bottom: 1px; */
+	margin-bottom: -10px !important; /* override -15px !important from https://static.opensuse.org/themes/bento/css/base.fluid.fix.css which hides the border - must match padding for .box, see base.css line 128 */
+	width: auto; /* override width:100% from base.css around line 181 */
+	clear: both; /* should be added to base.css */
+}
+
+.box-header-span {
+	color: black;
+	float: right;
+	padding-right: 1em;
+	font-size: 80%;
+	font-weight: normal;
+}
+
+.box-header-container {
+	margin: 0 1em 0.5em 1em;
+	width: 240px;
+	float: right;
+	text-align: center;
+}
+
+.cellyes {
+	border: 1px solid gray;
+	background: #90ff90;
+}
+
+.cellno {
+	border: 1px solid gray;
+	background: #ff9090;
+}
+
+.celltodo {
+	border: 1px solid gray;
+	background: #ffff99;
+}
+
+.cleanup {
+	background: #ffeecc;
+	border: 2px solid #ff9900;
+}
+
+.marked-for-deletion {
+	background: #ffcccc;
+	border: 2px solid #aa0000;
+}
+
+.edu {
+}
+
+.linux-tag-img {
+	margin-right: 15px;
+	margin-top: 0px;
+}
+
+.event-table {
+	background: #f6f6f6;
+	font-size: 100%;
+	width: 95%;
+	border: 1px solid #aaa;
+}
+
+.expand,
+.forbidden-wrapper {
+	background: #ffeecc;
+	border: 2px solid #ff9900;
+}
+
+.forbidden {
+	border-left: 0.5em solid #c01717;
+	padding: 0.4em 0.5em 0.1em 1em;
+}
+
+.dark-gray {
+	color: #555555;
+}
+
+.hl-bg {
+	background-color: #cfdfff;
+}
+
+.icon-step-wrapper {
+	width: 215px;
+	text-align: right;
+	vertical-align: center;
+	padding: 0 0.5em 0 0;
+	color: #fff;
+}
+
+.icon-step {
+	width: 75%;
+	margin: 0 1em 0 0;
+	padding: 0 1em 0 0.5em;
+	font-size: 100%;
+	border-left: 1px solid #babdb6;
+}
+
+.info-wrapper {
+	background: #fefefe;
+	color: #666666;
+	padding: 0 1em 0 1.1em;
+	margin: 0.5em 0 0.5em 0;
+}
+
+.info {
+	border-left: 0.5em solid #ccc;
+	padding: 0.2em 0.5em 0.4em 1em;
+}
+
+.infobox {
+	margin: 0 1em 0.5em 1em;
+	width: 240px;
+}
+
+.intro-wrapper {
+	background: #fefefe;
+	color: black;
+	padding: 0 1em 0 1.1em;
+	margin: 0.5em 0 1em 0;
+}
+
+.intro {
+	border-left: 0.5em solid #3399cc;
+	padding: 0.2em 0.5em 0.4em 1em;
+	text-align: justify;
+}
+
+.knowledge {
+	border: 1px dotted #aaa;
+	padding: 1em;
+	margin-bottom: 0.5em;
+}
+
+.knowledge-section {
+	background: #fff;
+	color: #669900;
+	width: 33%;
+}
+
+.knowledge-icon-text {
+	vertical-align: top;
+	text-align: left;
+	width: 30%;
+}
+
+.knowledge-icon {
+	vertical-align: top;
+}
+
+.knowledgev {
+	width: 28%;
+	float: right;
+}
+
+.laptoptable2 {
+	text-align: center;
+	font-size: 9px;
+}
+
+.laptoptable2-remark {
+	text-align: left;
+	font-size: 12px;
+}
+
+.legendmedical {
+	table-layout: fixed;
+	width: 300px;
+	border: 1px ridge #669900;
+	background: #fcfcfc;
+	float: right;
+	clear: right;
+	font-size: 100%;
+	margin-left: 3em;
+}
+
+.legendmedical-legend {
+	background: #d9e5bf;
+	color: #669900;
+	text-align: center;
+	font-size: 120%;
+}
+
+.list-subpage {
+	border: 1px solid #ccc;
+}
+
+.list-subpage-subject {
+	margin-bottom: -1px;
+	padding: 0.1em;
+	border-bottom: 1px solid #ccc;
+	font-size: 0.9em;
+}
+
+.red-notice {
+	width: 96.5%;
+	background: #ffcccc;
+	border: 2px solid #aa0000;
+}
+
+.red-notice-nobg {
+	width: 96.5%;
+	background: none;
+	border: 2px solid #aa0000;
+}
+
+.info-notice {
+	width: 96.5%;
+	background: #ffeecc;
+	border: 2px solid #ff9900;
+}
+
+.move_to {
+	background: #dee1ff;
+	border: 2px solid #6699cc;
+}
+
+.move_to_hcl {
+	width: 95%;
+}
+
+.move_to_portal {
+	width: 100%;
+}
+
+.move_to_sdb {
+	width: 100%;
+}
+
+.moved_to_external {
+	width: 96.5%;
+}
+
+.skin-bento .navbar {
+	margin: 0 0 1em 1em;
+	width: 97%;
+}
+
+.skin-bento .navbar-inner {
+	text-indent: 0.5em;
+	font-size: 120%;
+}
+
+.skin-bento .navbar-content {
+	margin: 0 0 0 0;
+	padding: 0 0.5em 0 0.5em;
+}
+
+.skin-bento .navigation-wrapper {
+	align: right;
+	width: 100%;
+	background-color: #ddffdd;
+	margin: 0em 0em 1.2em 0em;
+	padding: 3px;
+	border: 1px solid #aaa;
+}
+
+.navigation-header {
+	background-color: white;
+	size: 10em;
+	padding: 5px 5px 5px 1.2em;
+}
+
+.petite {
+	border: 1px solid #ade874;
+	width: 100%;
+	padding: 0.7em;
+	margin: 1em;
+	display: block;
+	width: auto;
+	background-color: #f4f9ef;
+}
+
+.pointhere-outside {
+	margin-left: 15px;
+	width: 48px;
+	float: left;
+}
+
+.pointhere-inside {
+	margin-left: 70px;
+	border-left: 1px solid #babdb6;
+	padding-left: 0.5em;
+	padding-top: 1px;
+}
+
+.quotation {
+	padding: 0 1em 0 1.1em;
+	margin: 0.5em 0 0.5em 0;
+}
+
+.sandbox-filepath {
+	margin: 8;
+	text-align: center;
+	vertical-align: center;
+	padding: 0 0.5em 0 0;
+	color: #fff;
+
+	border-bottom: 1px solid #babdb6;
+}
+
+.sandbox-header {
+	margin: 0 1em 0 0;
+	padding: 0 1em 0 0.5em;
+	font-size: 100%;
+	border-bottom: 1px solid #babdb6;
+}
+
+.step-screenshot-image {
+	width: 215px;
+	text-align: right;
+	vertical-align: center;
+	padding: 0 0.5em 0 0;
+	color: #fff;
+}
+
+.step-screenshot-text {
+	width: 75%;
+	margin: 0 1em 0 0;
+	padding: 0 1em 0 0.5em;
+	font-size: 100%;
+	border-left: 1px solid #babdb6;
+}
+
+.step-screenshot-big-image {
+	width: 415px;
+}
+
+.section {
+	background-color: #e5e5e6;
+	text-align: center;
+	color: #000000;
+}
+
+.special_info {
+	background-color: #f6f6f6;
+}
+
+.stats {
+	margin: 0 1em 0.5em 1em;
+	width: 150px;
+	float: right;
+	text-align: center;
+}
+
+.support-question {
+	margin: 1em 1em 1em 1em;
+	font-size: 100%;
+	padding: 1px;
+}
+
+.tested-on {
+	width: 95%;
+	margin: 1em 2.5% 0 2.5%;
+	background: #d9e5bf;
+	border: 1px solid #aaa;
+}
+
+.text-and-img-txt {
+	width: 69%;
+	text-align: justify;
+	float: left;
+}
+
+.update {
+	width: 95%;
+	background: #dee1ff;
+	border: 2px solid #6699cc;
+}
+
+.update-version {
+	font-weight: bold;
+	padding: 0.2em 0.5em 0.4em 0em;
+}
+
+.userpage-left {
+	width: 76%;
+	float: left;
+	clear: left;
+}
+
+.userpage-right {
+	width: 22%;
+	float: right;
+	clear: right;
+}
+
+.version-wrapper {
+	width: 95%;
+	background-color: #d9e5bf;
+	margin: 1em 2.5% 0 2.5%;
+	border: 1px solid #aaa;
+}
+
+.version-suseimg {
+	width: 50px;
+	background-color: white;
+	padding: 3px 3px;
+}
+
+.version-label {
+	width: 10%;
+	background-color: #669900;
+	padding: 3px 3px;
+}
+
+.version-header {
+	text-align: center;
+	color: white;
+}
+
+.version {
+	text-align: center;
+	font-size: 120%;
+	font-weight: bold;
+	color: white;
+}
+
+.version-note-outer-wrapper {
+	background: #fefefe;
+	padding: 0 1em 0 1.1em;
+	margin: 0.5em 0 0.5em 0;
+}
+
+.version-note-inner-wrapper {
+	border-left: 0.5em solid #669900;
+	padding: 0.2em 0.5em 0.4em 1em;
+}
+
+.version-note-label {
+	font-weight: bold;
+	color: #669900;
+	padding: 0.2em 0.5em 0.4em 0em;
+}
+
+.version-note-version {
+	padding: 0.2em 0.5em 0.4em 0em;
+}
+
+.warning-container {
+	background: #fefefe;
+	padding: 0 1em 0 1.1em;
+	margin: 0.5em 0 0.5em 0;
+}
+
+.warning-inner-wrapper {
+	border-left: 0.5em solid #c01717;
+	padding: 0.2em 0.5em 0.4em 1em;
+}
+
+.warning-label {
+	font-weight: bold;
+	color: #c01717;
+	padding: 0.2em 0.5em 0.4em 0em;
+}
+
+.weekly-news-header {
+	background-color: #e5e5e6;
+	text-align: center;
+	color: #000000;
+}
+
+.weekly-news-header-container {
+	width: 70%;
+	background: #fefefe;
+	vertical-align: top;
+	float: left;
+	clear: left;
+}
+
+.weekly-news-header-issue {
+	width: 70%;
+	float: left;
+}
+
+.weekly-news-header-info {
+	width: 28%;
+	float: right;
+	clear: right;
+}
+
+.weekly-news-header-light {
+	background-color: #d9e5bf;
+	text-align: center;
+	color: #0b5147;
+}
+
+.wiki-question-help {
+	margin: 1em 1em 1em 1em;
+	width: 96.5%;
+	background: #ffeecc;
+	border: 2px solid #ff9900;
+	font-size: 100%;
+	padding: 1px;
+}

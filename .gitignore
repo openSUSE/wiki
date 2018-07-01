@@ -10,6 +10,7 @@
 /languages
 /maintenance
 /mw-config
+node_modules
 /resources
 /serialized
 /skins/*
@@ -19,12 +20,17 @@
 /vendor
 /*.php
 !/LocalSettings.php
+!/wiki_settings.example.php
+!/server.php
 /*.json
 /*.js
 composer.local.json-sample
 phpcs.xml
+Gemfile
 Gemfile.lock
 Rakefile
+README
+README.mediawiki
 StartProfiler.sample
 COPYING
 CREDITS

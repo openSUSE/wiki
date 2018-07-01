@@ -1,17 +1,21 @@
-@import "../../res/src/sass/app.scss";
+@import "chameleon/src/sass/chameleon";
 
 @import "button";
 @import "card";
 @import "catlinks";
 @import "code";
+@import "cse-search-box";
+@import "edit";
 @import "edit-section";
+@import "header";
+@import "heading";
 @import "image";
 @import "input";
-@import "layout";
 @import "list";
+@import "preference";
 @import "search";
 @import "sidebar";
+@import "table";
 @import "toc";
-@import "user-menu";
 
 @import "migrations/index";

@@ -1,0 +1,20 @@
+#cse-search-box,
+.searchbox {
+	margin-left: 0 !important;
+	margin-bottom: 1rem;
+
+	input[type="text"] {
+		@extend .form-control;
+		margin-bottom: 1rem;
+	}
+
+	input[type="submit"] {
+		@extend .btn;
+		@extend .btn-primary;
+		@extend .btn-block;
+	}
+
+	br {
+		display: none;
+	}
+}

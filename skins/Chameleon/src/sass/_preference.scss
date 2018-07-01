@@ -1,0 +1,18 @@
+ul#preftoc {
+	@extend .nav;
+	@extend .nav-tabs;
+
+	li {
+		@extend .nav-item;
+
+		&.selected {
+			a {
+				@extend .active;
+			}
+		}
+
+		a {
+			@extend .nav-link;
+		}
+	}
+}

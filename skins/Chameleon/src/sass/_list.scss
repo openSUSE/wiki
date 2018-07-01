@@ -1,3 +1,15 @@
-ul {
-    margin-bottom: 1em;
+.mw-content-ltr,
+.mw-content-rtl .mw-content-ltr {
+	ol,
+	ul,
+	dl {
+		margin-top: 0;
+		margin-bottom: 1rem;
+	}
+
+	.list-group {
+		margin-left: 0;
+		margin-right: 0;
+		margin-bottom: 0;
+	}
 }
