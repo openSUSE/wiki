@@ -96,8 +96,12 @@ cp wiki_settings.example.php wiki_settings.php
 
 # Make directories
 echo "Make directories"
+rm -r cache
+mkdir cache
 rm -r data
 mkdir data # Save SQLite files
+rm -r images
+mkdir images
 
 # Run installation script
 echo "Run installation script"
