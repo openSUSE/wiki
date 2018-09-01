@@ -276,6 +276,7 @@ class ChameleonTemplate extends BaseTemplate
 
 <!-- Global Footer -->
 <?php include(__DIR__ . '/parts/global-footer.php'); ?>
+<?php include(__DIR__ . '/parts/login-modal.php'); ?>
 <?php $this->printTrail(); ?>
 
 <script>

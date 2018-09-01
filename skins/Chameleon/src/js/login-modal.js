@@ -1,6 +1,8 @@
 /**
  * Automatically focus username input after opening login modal.
- * This is a fallback for Firefox because autofocus property doesn't work.
+ * This is a fallback for old Firefox (<= 57) because autofocus property doesn't
+ * work and cause style loading issues.
+ * @see https://bugzilla.mozilla.org/show_bug.cgi?id=1404468
  */
 $(function() {
 	$("#login-modal-toggle").click(function() {
