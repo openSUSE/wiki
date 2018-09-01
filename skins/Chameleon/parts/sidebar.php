@@ -41,7 +41,7 @@
 
 									<div class="form-group">
 										<label for="login-username"><?php echo $this->msg('userlogin-yourname') ?></label>
-										<input type="text" class="form-control" name="username" value="" id="login-username" autofocus />
+										<input type="text" class="form-control" name="username" value="" id="login-username" />
 									</div>
 									<div class="form-group">
 										<label for="login-password"><?php echo $this->msg('userlogin-yourpassword') ?></label>
