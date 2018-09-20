@@ -1,0 +1,33 @@
+table.mw-enhanced-rc {
+	table-layout: fixed;
+
+	.mw-collapsible-toggle {
+		float: unset;
+	}
+
+	&.mw-collapsible {
+		// Column 1: collapse icon
+		td:nth-child(1) {
+			width: 15px;
+		}
+		// Column 2: type icon and timestamp
+		td:nth-child(2) {
+			width: 7em;
+		}
+		// Column 3: description text
+		td:nth-child(3) {
+			width: auto;
+		}
+	}
+
+	&:not(.mw-collapsible) {
+		// Column 1: type icon and timestamp
+		td:nth-child(1) {
+			width: calc(7em + 15px);
+		}
+		// Column 2: description text
+		td:nth-child(2) {
+			width: auto;
+		}
+	}
+}
