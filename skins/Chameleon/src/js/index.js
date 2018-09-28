@@ -1,7 +1,5 @@
 window.$ = window.jQuery;
-window.Tether = require("tether");
-window.Popper = require("popper.js");
-require("bootstrap");
+require("opensuse-theme-chameleon/dist/js/chameleon-no-jquery");
 
 require("./login-modal");
 require("./toc");

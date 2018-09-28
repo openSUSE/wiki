@@ -18,7 +18,6 @@
 	"homepage": "https://github.com/openSUSE/wiki#readme",
 	"devDependencies": {
 		"browserify": "^16.2.2",
-		"chameleon": "github:openSUSE/opensuse-theme-chameleon",
 		"gulp": "^4.0.0",
 		"gulp-buffer": "0.0.2",
 		"gulp-sass": "^4.0.1",
