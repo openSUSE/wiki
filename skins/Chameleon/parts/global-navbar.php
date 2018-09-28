@@ -10,26 +10,26 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item">
-                <a class="nav-link" href="https://software.opensuse.org/"><?= _('Download') ?></a>
+                <a class="nav-link l10n" data-msg-id="download" href="https://software.opensuse.org/">Download</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="https://software.opensuse.org/search"><?= _('Software') ?></a>
+                <a class="nav-link l10n" data-msg-id="software" href="https://software.opensuse.org/search">Software</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="https://doc.opensuse.org/"><?= _('Documentation') ?></a>
+                <a class="nav-link l10n" data-msg-id="documentation" href="https://doc.opensuse.org/">Documentation</a>
             </li>
             <li class="nav-item active">
-                <a class="nav-link" href="/"><?= _('Wiki') ?></a>
+                <a class="nav-link l10n" data-msg-id="wiki" data-url-id="wiki-url" href="/">Wiki</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="https://forums.opensuse.org/"><?= _('Forums') ?></a>
+                <a class="nav-link l10n" data-msg-id="forum" data-url-id="forum-url" href="https://forums.opensuse.org/">Forums</a>
             </li>
         </ul>
 		<ul id="user-menu" class="navbar-nav">
 			<!-- User Menu -->
 			<?php if ($this->data['username'] == null) : ?>
 				<li class="nav-item">
-					<a class="nav-link" href="<?php echo $this->data['signup_url'] ?>">
+					<a class="nav-link"href="<?php echo $this->data['signup_url'] ?>">
 						<?php echo $this->msg('createaccount') ?>
 					</a>
 				</li>
