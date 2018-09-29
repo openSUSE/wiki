@@ -26,6 +26,6 @@
 		"gulp-tap": "^1.0.1",
 		"gulp-uglify": "^3.0.0",
 		"gulplog": "^1.0.0",
-		"opensuse-theme-chameleon": "^1.0.0"
+		"opensuse-theme-chameleon": "^1.1.1"
 	}
 }
