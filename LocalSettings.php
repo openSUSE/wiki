@@ -61,7 +61,7 @@ if ( $wgCommandLineMode ) {
 # Basics
 #-------------------------------------------------------------------------------
 
-$wgSitename = "openSUSE";
+$wgSitename = "openSUSE Wiki";
 $wgMetaNamespace = "OpenSUSE";
 
 # Allow to display title different than actual page title
