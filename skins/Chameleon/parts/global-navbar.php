@@ -29,7 +29,7 @@
 			<!-- User Menu -->
 			<?php if ($this->data['username'] == null) : ?>
 				<li class="nav-item">
-					<a class="nav-link"href="<?php echo $this->data['signup_url'] ?>">
+					<a class="nav-link" href="<?php echo $this->data['signup_url'] ?>">
 						<?php echo $this->msg('createaccount') ?>
 					</a>
 				</li>
