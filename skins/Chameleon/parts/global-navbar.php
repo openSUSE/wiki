@@ -1,6 +1,6 @@
 <nav id="global-navbar" class="navbar navbar-expand-sm navbar-dark bg-dark">
     <a class="navbar-brand" href="https://www.opensuse.org/">
-        <img src="<?= $wgStylePath ?>/Chameleon/dist/images/logo/logo-white.svg" width="48" height="30" class="d-inline-block align-top" alt="Logo">
+        <img src="https://static.opensuse.org/chameleon/dist/images/logo/logo-white.svg" width="48" height="30" class="d-inline-block align-top" alt="Logo">
     </a>
 
     <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">

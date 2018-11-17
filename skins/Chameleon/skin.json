@@ -1,6 +1,8 @@
 {
 	"name": "Chameleon",
-	"author": ["Guo Yunhe"],
+	"author": [
+		"Guo Yunhe"
+	],
 	"url": "https://github.com/openSUSE/wiki",
 	"description": "Bootstrap 4 based skin for openSUSE wiki websites",
 	"version": "0.1",
@@ -13,20 +15,9 @@
 		"chameleon": "Chameleon"
 	},
 	"MessagesDirs": {
-		"Chameleon": ["i18n"]
-	},
-	"ResourceModules": {
-		"skins.chameleon": {
-			"styles": {
-				"dist/css/index.css": {
-					"media": "screen"
-				}
-			}
-		},
-		"skins.chameleon.js": {
-			"position": "bottom",
-			"scripts": ["dist/js/index.js"]
-		}
+		"Chameleon": [
+			"i18n"
+		]
 	},
 	"ResourceFileModulePaths": {
 		"localBasePath": "",
