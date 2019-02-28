@@ -51,9 +51,6 @@
 						<a class="l10n" data-msg-id="facebook-group" href="https://www.facebook.com/groups/opensuseproject/">Facebook group</a>
 					</li>
 					<li>
-						<a class="l10n" data-msg-id="google-group" href="https://plus.google.com/communities/115444043324891769569">Google+ group</a>
-					</li>
-					<li>
 						<a class="l10n" data-msg-id="mail-lists" href="https://en.opensuse.org/openSUSE:Mailing_lists_subscription">Mail lists</a>
 					</li>
 					<li>
