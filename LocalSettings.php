@@ -190,7 +190,6 @@ $wgFileExtensions = [
 	'png',
 	'ppt',
 	'pptx',
-	'svg',
 	'sxc',
 	'sxw',
 	'xls',
