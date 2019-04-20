@@ -238,9 +238,9 @@ class ChameleonTemplate extends BaseTemplate
 			</main>
 			<!-- /content -->
 
-			<hr class="mt-5 noprint" />
+			<hr class="mt-5" />
 			<!-- Wiki Footer -->
-			<footer class="row noprint" <?php $this->html( 'userlangattributes' ) ?>>
+			<footer class="row" <?php $this->html( 'userlangattributes' ) ?>>
 				<div class="col-sm-6 text-muted">
 					<?php foreach ($this->getFooterLinks() as $category => $links) : ?>
 						<ul id="footer-<?php echo $category ?>" class="list-inline">
