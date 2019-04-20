@@ -1,4 +1,4 @@
-<footer id="global-footer" class="global-footer m-0"<?php $this->html( 'userlangattributes' ) ?>>
+<footer id="global-footer" class="global-footer m-0 noprint"<?php $this->html( 'userlangattributes' ) ?>>
     <div class="container">
 		<div class="row">
 			<div class="col-6 col-md-3">
