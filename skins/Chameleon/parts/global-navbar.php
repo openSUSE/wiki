@@ -61,7 +61,7 @@
 							}
 						?>
 					</div><!-- /.dropdown-menu -->
-				</div><!-- /.dropdown -->
+				</li><!-- /.dropdown -->
 			<?php endif; ?>
 		</ul>
     </div>
