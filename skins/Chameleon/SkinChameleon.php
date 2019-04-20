@@ -268,9 +268,7 @@ class ChameleonTemplate extends BaseTemplate
 			</footer>
 
 		</div><!-- /.col -->
-		<div class="d-none d-xl-block col-xl-2 noprint">
-			<aside id="toc-sidebar"></aside>
-		</div><!-- /.col -->
+		<div id="toc-sidebar" class="d-none d-xl-block col-xl-2 noprint"></div><!-- /.col -->
 	</div><!-- /.row -->
 </div><!-- /.container-fluid -->
 
