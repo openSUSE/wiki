@@ -105,7 +105,7 @@ class ChameleonTemplate extends BaseTemplate
 <?php include(__DIR__ . '/parts/global-navbar.php'); ?>
 
 <!-- Main Wrap -->
-<div class="container-fluid">
+<div id="main-wrap" class="container-fluid">
 	<div class="row flex-xl-nowrap">
 		<div class="col-12 col-md-3 col-xl-2 noprint">
 			<?php include(__DIR__ . '/parts/sidebar.php'); ?>
