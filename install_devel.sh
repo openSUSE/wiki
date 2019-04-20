@@ -19,16 +19,7 @@ sudo zypper refresh
 
 # Install RPM packages
 echo "Install RPM packages"
-sudo zypper install mediawiki_1_27-openSUSE nodejs8 npm8
-
-# Install global NodeJS packages
-echo "Install Node packages"
-sudo npm install -g gulp-cli
-
-# Install project NodeJS packages
-cd skins/Chameleon
-npm install
-cd ../..
+sudo zypper install mediawiki_1_27-openSUSE
 
 # Link folders and files
 

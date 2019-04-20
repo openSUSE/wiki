@@ -1,4 +1,4 @@
-<aside id="sidebar">
+<aside id="sidebar" class="noprint">
 	<div class="container-fluid">
 		<nav class="d-flex mb-3">
 			<!-- Search Form -->

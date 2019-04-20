@@ -1,4 +1,4 @@
-<nav id="global-navbar" class="navbar navbar-expand-sm navbar-dark bg-dark">
+<nav id="global-navbar" class="navbar navbar-expand-sm navbar-dark bg-dark noprint">
     <a class="navbar-brand" href="https://www.opensuse.org/">
         <img src="https://static.opensuse.org/chameleon/dist/images/logo/logo-white.svg" width="48" height="30" class="d-inline-block align-top" alt="Logo">
     </a>
@@ -61,7 +61,7 @@
 							}
 						?>
 					</div><!-- /.dropdown-menu -->
-				</div><!-- /.dropdown -->
+				</li><!-- /.dropdown -->
 			<?php endif; ?>
 		</ul>
     </div>

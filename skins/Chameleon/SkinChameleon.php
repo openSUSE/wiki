@@ -105,9 +105,9 @@ class ChameleonTemplate extends BaseTemplate
 <?php include(__DIR__ . '/parts/global-navbar.php'); ?>
 
 <!-- Main Wrap -->
-<div class="container-fluid">
+<div id="main-wrap" class="container-fluid">
 	<div class="row flex-xl-nowrap">
-		<div class="col-12 col-md-3 col-xl-2">
+		<div class="col-12 col-md-3 col-xl-2 noprint">
 			<?php include(__DIR__ . '/parts/sidebar.php'); ?>
 		</div><!-- /.col -->
 		<div class="col-12 col-md-9 col-xl-8">
@@ -115,7 +115,7 @@ class ChameleonTemplate extends BaseTemplate
 			<div id="mw-head-base" class="noprint"></div>
 
 			<!-- Page Header -->
-			<header id="mw-head" class="my-3">
+			<header id="mw-head" class="my-3 noprint">
 
 				<!-- Tabs for talk page and language variants -->
 				<ul id="namespaces" class="nav nav-tabs"<?php $this->html( 'userlangattributes' ) ?>>
@@ -238,9 +238,9 @@ class ChameleonTemplate extends BaseTemplate
 			</main>
 			<!-- /content -->
 
-			<hr class="mt-5" />
+			<hr class="mt-5 noprint" />
 			<!-- Wiki Footer -->
-			<footer class="row" <?php $this->html( 'userlangattributes' ) ?>>
+			<footer class="row noprint" <?php $this->html( 'userlangattributes' ) ?>>
 				<div class="col-sm-6 text-muted">
 					<?php foreach ($this->getFooterLinks() as $category => $links) : ?>
 						<ul id="footer-<?php echo $category ?>" class="list-inline">
@@ -268,7 +268,7 @@ class ChameleonTemplate extends BaseTemplate
 			</footer>
 
 		</div><!-- /.col -->
-		<div class="d-none d-xl-block col-xl-2">
+		<div class="d-none d-xl-block col-xl-2 noprint">
 			<aside id="toc-sidebar"></aside>
 		</div><!-- /.col -->
 	</div><!-- /.row -->
