@@ -65,9 +65,6 @@
 						<a href="https://www.facebook.com/en.openSUSE">Facebook</a>
 					</li>
 					<li>
-						<a href="https://plus.google.com/+openSUSE">Google+</a>
-					</li>
-					<li>
 						<a href="https://twitter.com/opensuse">Twitter</a>
 					</li>
 					<li>
