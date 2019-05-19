@@ -48,6 +48,9 @@
 						<a class="l10n" data-msg-id="connect" href="https://connect.opensuse.org/">Connect</a>
 					</li>
 					<li>
+						<a href="https://discord.gg/opensuse">Discord</a>
+					</li>
+					<li>
 						<a class="l10n" data-msg-id="facebook-group" href="https://www.facebook.com/groups/opensuseproject/">Facebook group</a>
 					</li>
 					<li>
