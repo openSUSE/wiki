@@ -54,10 +54,10 @@
 						<a class="l10n" data-msg-id="facebook-group" href="https://www.facebook.com/groups/opensuseproject/">Facebook group</a>
 					</li>
 					<li>
-						<a class="l10n" data-msg-id="mail-lists" href="https://en.opensuse.org/openSUSE:Mailing_lists_subscription">Mail lists</a>
+						<a class="l10n" data-msg-id="irc-channels" href="https://en.opensuse.org/openSUSE:IRC_list">IRC channels</a>
 					</li>
 					<li>
-						<a class="l10n" data-msg-id="irc-channels" href="https://en.opensuse.org/openSUSE:IRC_list">IRC channels</a>
+						<a class="l10n" data-msg-id="mail-lists" href="https://en.opensuse.org/openSUSE:Mailing_lists_subscription">Mail lists</a>
 					</li>
 				</ul>
 			</div>
@@ -68,13 +68,13 @@
 						<a href="https://www.facebook.com/en.openSUSE">Facebook</a>
 					</li>
 					<li>
+						<a href="https://t.me/opensusenews">Telegram</a>
+					</li>
+					<li>
 						<a href="https://twitter.com/opensuse">Twitter</a>
 					</li>
 					<li>
 						<a href="https://www.youtube.com/user/opensusetv">YouTube</a>
-					</li>
-					<li>
-						<a href="https://t.me/opensusenews">Telegram</a>
 					</li>
 				</ul>
 			</div>
