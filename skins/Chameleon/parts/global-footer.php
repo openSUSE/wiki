@@ -68,6 +68,12 @@
 						<a href="https://www.facebook.com/en.openSUSE">Facebook</a>
 					</li>
 					<li>
+						<a href="https://fosstodon.org/@opensuse">Mastodon</a>
+					</li>
+					<li>
+						<a href="http://reddit.com/r/openSUSE/">Reddit</a>
+					</li>
+					<li>
 						<a href="https://t.me/opensusenews">Telegram</a>
 					</li>
 					<li>
