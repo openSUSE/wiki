@@ -379,6 +379,10 @@ $wgDefaultSkin = "Chameleon";
 # Extensions
 #-------------------------------------------------------------------------------
 
+##### Leap version variable provider
+
+wfLoadExtension( 'LeapVersion' );
+
 ##### Login proxy / Auth_remoteuser
 
 wfLoadExtension( 'Auth_remoteuser' );

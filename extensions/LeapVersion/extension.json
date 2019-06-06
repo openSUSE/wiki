@@ -1,0 +1,16 @@
+{
+	"name": "LeapVersion",
+	"version": "0.0.1",
+	"author": ["Guo Yunhe"],
+	"url": "https://github.com/openSUSE/wiki",
+	"description": "Provide variables of Leap version numbers",
+	"license-name": "GPL-3.0",
+	"type": "other",
+	"Hooks": {
+		"ParserBeforeInternalParse": "LeapVersionHooks::onParserBeforeInternalParse"
+	},
+	"AutoloadClasses": {
+		"LeapVersionHooks": "LeapVersionHooks.php"
+	},
+	"manifest_version": 1
+}
