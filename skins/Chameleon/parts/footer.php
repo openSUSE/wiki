@@ -1,5 +1,5 @@
 <footer id="site-footer" class="site-footer noprint"<?php $this->html( 'userlangattributes' ) ?>>
-    <div class="container-fluid">
+	<div class="wiki-container container-fluid">
 		<div class="row">
 			<div class="col-12 col-lg-9">
 				<?php foreach ($this->getFooterLinks() as $category => $links) : ?>
@@ -17,5 +17,5 @@
 				<?php include __DIR__ . '/sponsors.php'; ?>
 			</div><!-- /.col-* -->
 		</div><!-- /.row -->
-    </div><!-- /.container -->
+	</div><!-- /.container -->
 </footer>

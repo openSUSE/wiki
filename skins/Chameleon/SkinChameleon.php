@@ -106,16 +106,18 @@ class ChameleonTemplate extends BaseTemplate
 <?php include(__DIR__ . '/parts/navbar.php'); ?>
 
 <!-- Main Wrap -->
-<div id="main-wrap" class="container-fluid">
-	<div class="row">
-		<div class="col-12 col-lg-9">
-			<?php include(__DIR__ . '/parts/header.php'); ?>
-			<?php include(__DIR__ . '/parts/content.php'); ?>
-		</div><!-- /.col -->
-		<div id="toc-sidebar" class="d-none d-lg-block col-lg-3 noprint">
-		</div><!-- /.col -->
-	</div><!-- /.row -->
-</div><!-- /.container-fluid -->
+<div id="main-wrap">
+	<div class="wiki-container container-fluid">
+		<div class="row">
+				<div id="main" class="col-12">
+				<?php include(__DIR__ . '/parts/header.php'); ?>
+				<?php include(__DIR__ . '/parts/content.php'); ?>
+			</div><!-- /.col -->
+				<div id="toc-sidebar" class="d-none noprint">
+			</div><!-- /.col -->
+		</div><!-- /.row -->
+	</div><!-- /.container-fluid -->
+</div><!-- /.main-wrap -->
 
 <?php include(__DIR__ . '/parts/footer.php'); ?>
 <?php include(__DIR__ . '/parts/login-modal.php'); ?>
