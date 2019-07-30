@@ -107,7 +107,7 @@ class ChameleonTemplate extends BaseTemplate
 
 <!-- Main Wrap -->
 <div id="main-wrap">
-	<div class="wiki-container container-fluid">
+	<div class="container">
 		<div class="row">
 				<div id="main" class="col-12">
 				<?php include(__DIR__ . '/parts/header.php'); ?>
