@@ -1,30 +1,20 @@
-<nav id="global-navbar" class="navbar navbar-expand-sm navbar-dark bg-dark noprint">
-    <a class="navbar-brand" href="https://www.opensuse.org/">
-        <img src="https://static.opensuse.org/chameleon/dist/images/logo/logo-white.svg" width="48" height="30" class="d-inline-block align-top" alt="Logo">
+<nav class="navbar navbar-expand-md navbar-light bg-light noprint">
+    <a class="navbar-brand" href="/">
+		<img src="https://static.opensuse.org/chameleon/dist/images/logo/logo-white.svg" class="mr-2" alt="Logo">
+		<span class="l10n" data-msg-id="wiki">Wiki</span>
     </a>
 
-    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#site-menu">
         <span class="navbar-toggler-icon"></span>
-    </button>
+	</button>
 
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <div class="collapse navbar-collapse" id="site-menu">
         <ul class="navbar-nav mr-auto">
-            <li class="nav-item">
-                <a class="nav-link l10n" data-msg-id="download" href="https://software.opensuse.org/">Download</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link l10n" data-msg-id="software" href="https://software.opensuse.org/search">Software</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link l10n" data-msg-id="documentation" href="https://doc.opensuse.org/">Documentation</a>
-            </li>
-            <li class="nav-item active">
-                <a class="nav-link l10n" data-msg-id="wiki" data-url-id="wiki-url" href="/">Wiki</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link l10n" data-msg-id="forum" data-url-id="forum-url" href="https://forums.opensuse.org/">Forums</a>
-            </li>
-        </ul>
+            <?php $this->renderPortals($this->data['sidebar']); ?>
+		</ul>
+
+		<?php include __DIR__ . '/search-form.php' ?>
+
 		<ul id="user-menu" class="navbar-nav">
 			<!-- User Menu -->
 			<?php if ($this->data['username'] == null) : ?>

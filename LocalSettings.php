@@ -221,7 +221,7 @@ $wgLocalInterwiki   = $wgSitename;
 # $wgEnableCreativeCommonsRdf = true;
 $wgRightsPage = "";
 $wgRightsUrl  = "https://www.gnu.org/copyleft/fdl.html";
-$wgRightsText = "";
+$wgRightsText = "GNU Free Documentation License";
 $wgRightsIcon = "$wgScriptPath/resources/assets/licenses/gnu-fdl.png";
 # $wgRightsCode = ""; # Not yet used
 
