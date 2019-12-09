@@ -23,16 +23,3 @@ Everytime you want to code, just do:
 Default site admin user is `Geeko`, password is `evergreen`. Note default login modal
 won't work on local development environment. You need to visit
 <http://localhost:8023/Special:UserLogin>
-
-### Chameleon Skin
-
-> Gulp and other Node modules should have been installed. See `install_devel.sh`.
-
-To rebuild skin
-
-```bash
-cd skins/Chameleon
-gulp
-```
-
-When modifying skin, run `gulp watch` to rebuild automatically.
