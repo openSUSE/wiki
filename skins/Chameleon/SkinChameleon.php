@@ -101,8 +101,7 @@ class ChameleonTemplate extends BaseTemplate
         $this->html( 'headelement' );
 ?>
 
-<!-- Navbars -->
-<?php include(__DIR__ . '/parts/cross-site-navbar.php'); ?>
+<!-- Navbar -->
 <?php include(__DIR__ . '/parts/navbar.php'); ?>
 
 <!-- Main Wrap -->
