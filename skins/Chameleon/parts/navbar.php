@@ -1,6 +1,8 @@
 <nav class="navbar navbar-expand-md navbar-light bg-light noprint">
     <a class="navbar-brand" href="/">
-		<img src="https://static.opensuse.org/chameleon/dist/images/logo/logo-white.svg" class="mr-2" alt="Logo">
+		<svg class="icon icon-2x mr-2">
+			<use xlink:href="#opensuse">
+		</svg>
 		<span class="l10n" data-msg-id="wiki">Wiki</span>
     </a>
 
