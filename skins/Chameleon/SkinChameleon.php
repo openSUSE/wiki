@@ -21,7 +21,9 @@ class SkinChameleon extends SkinTemplate
         parent::initPage( $out );
         $out->addMeta( 'viewport', 'width=device-width, initial-scale=1' );
         $out->addStyle( 'https://static.opensuse.org/chameleon/dist/css/chameleon.css' );
+        $out->addStyle( 'https://static.opensuse.org/chameleon/dist/css/chameleon-wiki.css' );
         $out->addScriptFile( 'https://static.opensuse.org/chameleon/dist/js/chameleon-no-jquery.js' );
+        $out->addScriptFile( 'https://static.opensuse.org/chameleon/dist/js/chameleon-wiki.js' );
     }
 
     function setupSkinUserCss(OutputPage $out)
