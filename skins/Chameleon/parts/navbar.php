@@ -21,23 +21,21 @@
 			<!-- User Menu -->
 			<?php if ($this->data['username'] == null) : ?>
 				<li class="nav-item">
-					<a class="nav-link" href="<?php echo $this->data['signup_url'] ?>">
-						<?php echo $this->msg('createaccount') ?>
-					</a>
-				</li>
-				<li class="nav-item">
-					<a id="login-modal-toggle" class="nav-link" href="#" data-toggle="modal" data-target="#login-modal">
-						<?php echo $this->msg('login') ?>
+					<a id="login-modal-toggle" class="nav-link" href="#" data-toggle="modal" data-target="#login-modal" title="<?= $this->msg('login') ?>">
+						<svg class="icon">
+							<use xlink:href="#login-box-line">
+						</svg>
+						<span class="d-md-none"><?= $this->msg('login') ?></span>
 					</a>
 				</li>
 			<?php else : ?>
 				<li class="nav-item dropdown">
-					<a class="nav-link dropdown-toggle" href="#" id="user-dropdown"
+					<a class="nav-link" href="#" id="user-dropdown"
 					   	role="button" data-toggle="dropdown" aria-haspopup="true"
 					   	aria-expanded="false">
-						<img class="avatar rounded" src="<?php echo $this->data['gravatar'] ?>"
+						<img class="avatar" src="<?php echo $this->data['gravatar'] ?>"
 						 	width="40" height="40" alt="Avatar" title="<?php echo $this->data['username'] ?>"/>
-						<span class="ml-1"><?php echo $this->data['username'] ?></span>
+						<span class="ml-1 d-md-none"><?php echo $this->data['username'] ?></span>
 					</a>
 					<div class="dropdown-menu dropdown-menu-right" aria-labelledby="user-dropdown">
 						<?php
@@ -57,4 +55,6 @@
 			<?php endif; ?>
 		</ul>
     </div>
+
+	<button class="navbar-toggler megamenu-toggler" type="button"><svg class="icon"><use xlink:href="#apps-line"></use></svg></button>
 </nav>
