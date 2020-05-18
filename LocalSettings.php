@@ -246,6 +246,8 @@ $wgAllowExternalImages = true;
 
 # Add XMPP functionality
 $wgUrlProtocols[] = 'xmpp:';
+# Add AppStream functionality
+$wgUrlProtocols[] = 'appstream:';
 
 # Category watching
 # see https://www.mediawiki.org/wiki/Manual:CategoryMembershipChanges
