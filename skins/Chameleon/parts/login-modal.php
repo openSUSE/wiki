@@ -27,6 +27,9 @@
 
 				</div>
 				<div class="modal-footer">
+					<a class="btn btn-link" href="<?php echo $this->data['signup_url'] ?>">
+						<?php echo $this->msg('createaccount') ?>
+					</a>
 					<button type="button" class="btn btn-secondary" data-dismiss="modal"><?php echo $this->msg('cancel') ?></button>
 					<button type="submit" class="btn btn-primary"><?php echo $this->msg('login') ?></button>
 				</div>
