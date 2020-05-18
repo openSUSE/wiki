@@ -91,7 +91,7 @@ class ChameleonTemplate extends BaseTemplate
         }
 
         $this->data['login_url'] = '/ICSLogin/auth-up';
-        $this->data['signup_url'] = "https://www.suse.com/selfreg/jsp/createOpenSuseAccount.jsp?login=Sign+up";
+        $this->data['signup_url'] = "https://idp-portal.suse.com/univention/self-service/#page=createaccount";
 
         if ($this->data['username']) {
             $user = User::newFromName( $this->data['username'] );

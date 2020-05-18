@@ -99,7 +99,7 @@ class BentoTemplate extends QuickTemplate {
 
         <?php if( $this->data['username'] == null ) { ?>
             <div id="login-wrapper" class="grid_4 omega">
-                <a href="https://www.suse.com/selfreg/jsp/createOpenSuseAccount.jsp?login=Sign+up">Sign up</a> | <a id="login-trigger" href="/ICSLogin/auth-up/?url=https://<?php echo $_SERVER['SERVER_NAME'] . htmlentities($_SERVER['REQUEST_URI']) ?>">Login</a>
+                <a href="https://idp-portal.suse.com/univention/self-service/#page=createaccount">Sign up</a> | <a id="login-trigger" href="/ICSLogin/auth-up/?url=https://<?php echo $_SERVER['SERVER_NAME'] . htmlentities($_SERVER['REQUEST_URI']) ?>">Login</a>
                 <!-- <a href="<?php //echo $this->data['personal_urls'][login][href] ?>">Sign up</a> | <a id="login-trigger" href="#login">Login</a> -->
 
                 <div id="login-form">
