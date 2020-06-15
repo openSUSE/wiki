@@ -18,12 +18,16 @@ class SkinChameleon extends SkinTemplate
 
     function initPage(OutputPage $out)
     {
-        parent::initPage( $out );
+		parent::initPage( $out );
+		#$chameleon_url = 'http://localhost:8044';
+		$chameleon_url = 'https://static.opensuse.org/chameleon-3.0';
         $out->addMeta( 'viewport', 'width=device-width, initial-scale=1' );
-        $out->addStyle( 'https://static.opensuse.org/chameleon/dist/css/chameleon.css' );
-        $out->addStyle( 'https://static.opensuse.org/chameleon/dist/css/chameleon-wiki.css' );
-        $out->addScriptFile( 'https://static.opensuse.org/chameleon/dist/js/chameleon-no-jquery.js' );
-        $out->addScriptFile( 'https://static.opensuse.org/chameleon/dist/js/chameleon-wiki.js' );
+        $out->addStyle( $chameleon_url . '/dist/css/chameleon.css' );
+		$out->addStyle( $chameleon_url . '/dist/css/chameleon-wiki.css' );
+		$out->addScriptFile( $chameleon_url . '/dist/js/jquery.slim.js' );
+		$out->addScriptFile( $chameleon_url . '/dist/js/bootstrap.bundle.js' );
+        $out->addScriptFile( $chameleon_url . '/dist/js/chameleon.js' );
+        $out->addScriptFile( $chameleon_url . '/dist/js/chameleon-wiki.js' );
     }
 
     function setupSkinUserCss(OutputPage $out)
@@ -97,7 +101,7 @@ class ChameleonTemplate extends BaseTemplate
 
         if ($this->data['username']) {
             $user = User::newFromName( $this->data['username'] );
-            $this->data['gravatar'] = "https://www.gravatar.com/avatar/" . md5( $user->getEmail() );
+            $this->data['gravatar'] = "https://www.gravatar.com/avatar/" . md5( $user->getEmail() ) . '?s=96&d=monsterid';
         }
 
         $this->html( 'headelement' );
@@ -107,17 +111,17 @@ class ChameleonTemplate extends BaseTemplate
 <?php include(__DIR__ . '/parts/navbar.php'); ?>
 
 <!-- Main Wrap -->
-<div id="main-wrap">
+<div id="main-wrap" class="main-wrap">
 	<div class="container">
 		<div class="row">
-				<div id="main" class="col-12">
+			<div id="main" class="col-12">
 				<?php include(__DIR__ . '/parts/header.php'); ?>
 				<?php include(__DIR__ . '/parts/content.php'); ?>
 			</div><!-- /.col -->
-				<div id="toc-sidebar" class="d-none noprint">
+			<div id="toc-sidebar" class="d-none noprint">
 			</div><!-- /.col -->
 		</div><!-- /.row -->
-	</div><!-- /.container-fluid -->
+	</div><!-- /.container -->
 </div><!-- /.main-wrap -->
 
 <?php include(__DIR__ . '/parts/footer.php'); ?>

@@ -1,5 +1,5 @@
 <!-- content -->
-<main id="content" class="mw-body">
+<main id="content" class="mw-body mb-5">
 	<a id="top"></a>
 	<div id="mw-js-message" style="display:none;"<?php $this->html( 'userlangattributes' ) ?>></div>
 	<?php if ($this->data['sitenotice']) : ?>
