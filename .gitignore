@@ -5,6 +5,7 @@
 /docs
 /extensions/*
 !/extensions/*.php
+!/extensions/LeapVersion
 /images
 /includes
 /languages
