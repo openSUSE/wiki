@@ -80,11 +80,6 @@ $wgUsePathInfo = true;
 
 $wgStylePath = "$wgScriptPath/skins";
 
-## The relative URL path to the logo.  Make sure you change this from the default,
-## or else you'll overwrite your logo when you upgrade!
-$wgLogo = "$wgStylePath/Chameleon/dist/images/logo/logo-white.svg";
-
-
 #-------------------------------------------------------------------------------
 # Emails & Notifications
 #-------------------------------------------------------------------------------
@@ -230,8 +225,9 @@ $wgRightsIcon = "$wgScriptPath/resources/assets/licenses/gnu-fdl.png";
 # Logo & Icon
 #-------------------------------------------------------------------------------
 
-$wgFavicon = "//www.opensuse.org/favicon.ico";
-
+$wgLogo           = "https://static.opensuse.org/favicon.svg";
+$wgFavicon        = "https://static.opensuse.org/favicon.ico";
+$wgAppleTouchIcon = "https://static.opensuse.org/favicon-192.png";
 
 #-------------------------------------------------------------------------------
 # Misc
