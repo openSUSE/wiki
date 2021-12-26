@@ -122,7 +122,7 @@ class BentoTemplate extends QuickTemplate {
                 <ul id="pt-personal">
                     <!-- Begin Personal links (Login, etc.) xx-->
             <?php foreach($this->data['personal_urls'] as $key => $item) { ?>
-                    <li id="<?php echo Sanitizer::escapeId( "pt-$key" ) ?>"<?php
+                    <li id="<?php echo Sanitizer::escapeIdForAttribute( "pt-$key" ) ?>"<?php
                                                                 if ($item['active']) { ?> class="active"<?php } ?>><a href="<?php
                                                                 echo htmlspecialchars($item['href']) ?>"<?php
                                                                 if(!empty($item['class'])) { ?> class="<?php

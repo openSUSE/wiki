@@ -66,7 +66,7 @@ class ChameleonTemplate extends BaseTemplate
 
                 $xmlID = isset( $link['id'] ) ? $link['id'] : 'ca-' . $xmlID;
                 $nav[$section][$key]['attributes'] =
-                    ' id="' . Sanitizer::escapeId( $xmlID ) . '"';
+                    ' id="' . Sanitizer::escapeIdForAttribute( $xmlID ) . '"';
                 if ($link['class']) {
                     $nav[$section][$key]['attributes'] .=
                         ' class="' . htmlspecialchars( $link['class'] ) . '"';
