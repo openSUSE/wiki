@@ -215,7 +215,7 @@ var _paq = _paq || [];
 			?>
             <?php
             if ($hook !== null) {
-                wfRunHooks( $hook, array( &$this, true ) );
+                Hooks::run( $hook, array( &$this, true ) );
             }
             ?>
         </div>
