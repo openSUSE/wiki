@@ -104,7 +104,7 @@ class ChameleonTemplate extends BaseTemplate
             $this->data['gravatar'] = "https://www.gravatar.com/avatar/" . md5( $user->getEmail() ) . '?s=96&d=monsterid';
         }
 
-        $this->html( 'headelement' );
+        # $this->html( 'headelement' );
 ?>
 
 <!-- Navbar -->
@@ -126,7 +126,7 @@ class ChameleonTemplate extends BaseTemplate
 
 <?php include(__DIR__ . '/parts/footer.php'); ?>
 <?php include(__DIR__ . '/parts/login-modal.php'); ?>
-<?php $this->printTrail(); ?>
+<?php #$this->printTrail(); ?>
 
 <script>
 var _paq = _paq || [];
@@ -177,7 +177,7 @@ var _paq = _paq || [];
                 case 'SEARCH':
                     break;
                 case 'TOOLBOX':
-                    $this->renderPortal( 'tb', $this->data['sidebar']['TOOLBOX'], 'toolbox', 'SkinTemplateToolboxEnd' );
+                    $this->renderPortal( 'tb', $this->data['sidebar']['TOOLBOX'], 'toolbox', 'SidebarBeforeOutput' );
                     break;
                 case 'LANGUAGES':
                     if ($this->data['language_urls']) {
@@ -215,7 +215,9 @@ var _paq = _paq || [];
 			?>
             <?php
             if ($hook !== null) {
-                Hooks::run( $hook, array( &$this, true ) );
+                // Hooks::run( $hook, array( &$this, true ) );
+                // $hookContainer = MediaWikiServices::getInstance()->getHookContainer();
+                // $hookContainer->run( $hook, array( &$this, true ) );
             }
             ?>
         </div>
