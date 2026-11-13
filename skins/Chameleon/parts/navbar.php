@@ -17,7 +17,7 @@
 			<!-- User Menu -->
 			<?php if ($this->data['username'] == null) : ?>
 				<li class="nav-item">
-					<a id="login-modal-toggle" class="nav-link" href="#" data-toggle="modal" data-target="#login-modal" title="<?= $this->msg('login') ?>">
+					<a href="<?php echo $this->data['login_url'] ?>" class="nav-link" title="<?= $this->msg('login') ?>">
 					<svg class="avatar" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
 						<path d="M13.468 12.37C12.758 11.226 11.195 10 8 10s-4.757 1.225-5.468 2.37A6.987 6.987 0 0 0 8 15a6.987 6.987 0 0 0 5.468-2.63z"/>
 						<path fill-rule="evenodd" d="M8 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
